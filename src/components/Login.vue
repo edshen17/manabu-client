@@ -25,8 +25,8 @@
                     </ul>
                 </div>
               <hr class="my-4">
-              <button class="btn btn-lg btn-google btn-block text-uppercase" v-google-signin-button="clientId"><i class="fab fa-google mr-2"></i> Log in with Google</button>
-              <button class="btn btn-lg btn-facebook btn-block text-uppercase"><i class="fab fa-facebook-f mr-2"></i> Log in with Facebook</button>
+              <button class="btn btn-lg btn-google btn-block text-uppercase" v-google-signin-button="clientId"><i class="fab fa-google mr-2 "></i> Continue with Google</button>
+              <!-- <v-facebook-login class="btn btn-lg btn-facebook btn-block text-uppercase" :app-id="appId" :login-options="{ scope: 'email' }" @login="flogin" v-model="model" @sdk-init="handleSdkInit"></v-facebook-login> -->
             </div>
           </div>
         </div>
@@ -40,46 +40,45 @@
 import axios from 'axios';
 import LayoutDefault from './layouts/LayoutDefault';
 import GoogleSignInButton from 'vue-google-signin-button-directive'
-
+import VFacebookLogin from 'vue-facebook-login-component'
 
 export default {
     directives: {
-        GoogleSignInButton
+        GoogleSignInButton,
     },
     name: 'Login',
     created() {
     this.$emit('update:layout', LayoutDefault);
     },
+    components: {
+        VFacebookLogin
+    },
     data() {
         return {
             clientId: '406805009852-i2g9ccjm8frj23098sp678qnrjn5bmdk.apps.googleusercontent.com',
+            appId: '202539034881612',
             errors: [],
             email: '',
             password: '',
             host: 'http://localhost:5000/api',
+            FB: {},
+            model: {},
+            scope: {}
         }
     },
     mounted() {
-       
+ 
     },
     methods: {
         checkForm() {
             this.errors = [];
-            if (!this.email) {
-                this.errors.push('Email required.');
-            } 
+             if (!this.email || !this.password) {
+                this.errors.push('Please fill out all required fields.');
+            }
             
-            if (!this.validEmail(this.email)) {
+            if (this.password && !this.validEmail(this.email)) {
                 this.errors.push('Valid email required.');
             } 
-            
-            if (!this.password) {
-                this.errors.push('Password required.');
-            }
-
-            if (!this.errors.length) {
-                return true;
-            }
         },
         validEmail: function (email) {
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -112,12 +111,23 @@ export default {
                     this.$router.push('/') // change later
                 }
             }).catch((err) => { // username/password was wrong
-                alert(`Something went wrong with Google Authentication! ${err}`);
+                alert(`Something went wrong during Google Authentication! ${err}`);
             });
         },
     OnGoogleAuthFail (err) {
-      alert(`Something went wrong with Google Authentication! ${err}`);
-    }
+      alert(`Something went wrong during Google Authentication! ${err}`);
+    },
+    handleSdkInit({ FB, scope }) {
+        this.FB = FB
+        this.scope = scope
+      },
+
+       flogin(res){ // for facebook logins. finish this.fb once https enabled...
+            console.log(res)
+            this.FB.api('/me', function(response) {
+                console.log(JSON.stringify(response));
+            });
+        },
     }
 }
 </script>
