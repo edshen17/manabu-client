@@ -26,7 +26,8 @@
                 </div>
               <hr class="my-4">
               <button class="btn btn-lg btn-google btn-block text-uppercase" v-google-signin-button="clientId"><i class="fab fa-google mr-2 "></i> Continue with Google</button>
-              <!-- <v-facebook-login class="btn btn-lg btn-facebook btn-block text-uppercase" :app-id="appId" :login-options="{ scope: 'email' }" @login="flogin" v-model="model" @sdk-init="handleSdkInit"></v-facebook-login> -->
+              <v-facebook-login class="btn btn-lg btn-facebook btn-block text-uppercase" :app-id="appId" :login-options="{ scope: 'email' }" @login="flogin" v-model="model" @sdk-init="handleSdkInit"></v-facebook-login>
+              <p class="mt-4 float-right">Already have an account? <b-link :to="`/signup?teacherSignup=${isTeacherApp}`">Sign up here</b-link></p>
             </div>
           </div>
         </div>
@@ -55,6 +56,7 @@ export default {
     },
     data() {
         return {
+            isTeacherApp: this.$route.query.teacherSignup == 'true',
             clientId: '406805009852-i2g9ccjm8frj23098sp678qnrjn5bmdk.apps.googleusercontent.com',
             appId: '202539034881612',
             errors: [],
@@ -92,6 +94,7 @@ export default {
                 axios.post('http://localhost:5000/api/login', {
                     email: this.email,
                     password: this.password,
+                    isTeacherApp: this.isTeacherApp,
                 }).then((res) =>{
                     if (res.status == 200) {
                         localStorage.setItem('token', res.data.token);
@@ -104,7 +107,8 @@ export default {
         },
         OnGoogleAuthSuccess (idToken) {
             axios.post('http://localhost:5000/api/glogin', {
-                idToken
+                idToken, 
+                isTeacherApp: this.isTeacherApp,
             }).then((res) =>{
                 if (res.status == 200) {
                     localStorage.setItem('token', res.data.token);

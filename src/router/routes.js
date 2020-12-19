@@ -5,7 +5,7 @@ import Home from '@/components/Home';
 import Signup from '@/components/Signup';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
-
+import TeacherApplication from '@/components/TeacherApplication';
 
 Vue.use(Router);
 
@@ -45,6 +45,14 @@ const router = new Router({
       component: Home,
       meta: {
         title: 'Teachers',
+      },
+    },
+    {
+      path: '/apply',
+      name: 'Apply',
+      component: TeacherApplication,
+      meta: {
+        title: 'Become a Teacher',
       },
     },
     {
