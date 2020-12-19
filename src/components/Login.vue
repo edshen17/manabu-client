@@ -95,10 +95,10 @@ export default {
                 }).then((res) =>{
                     if (res.status == 200) {
                         localStorage.setItem('token', res.data.token);
-                        this.$router.push('/') // change later
+                        this.$router.go()
                     }
                 }).catch((err) => { // username/password was wrong
-                    this.errors.push('Incorrect username or password');
+                    this.errors.push('Incorrect username or password. Passwords requirements were: a minimum of 8 characters with at least one capital letter, a number, and a special character.');
                 });
             }
         },
@@ -108,7 +108,7 @@ export default {
             }).then((res) =>{
                 if (res.status == 200) {
                     localStorage.setItem('token', res.data.token);
-                    this.$router.push('/') // change later
+                    this.$router.go()
                 }
             }).catch((err) => { // username/password was wrong
                 alert(`Something went wrong during Google Authentication! ${err}`);

@@ -113,7 +113,7 @@ export default {
                 }).then((res) =>{
                     if (res.status == 200) {
                         localStorage.setItem('token', res.data.token);
-                        this.$router.push('/') // change later
+                        this.$router.go() // change later
                     }
                 }).catch((err) => {
                     this.errors.push('A user with that email already exists.');
