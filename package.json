@@ -12,6 +12,7 @@
     "bootstrap-vue": "^2.21.1",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
+    "vue-google-signin-button-directive": "^1.0.3",
     "vue-router": "^3.4.9"
   },
   "devDependencies": {

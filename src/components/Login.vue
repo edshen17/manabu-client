@@ -13,20 +13,19 @@
               </div>
 
               <div class="form-label-group">
-                <input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password">
+                <input type="password" id="inputPassword" class="form-control" placeholder="Password" autocomplete="on" v-model="password" @keyup.13="login">
                 <label for="inputPassword"></label>
               </div>
             </form>
             <div class="form-signin">
                 <button class="btn btn-lg btn-dark btn-block text-uppercase sign-up" @click="login">Log in</button>
                 <div v-if="errors.length">
-                    <p class="mt-4">Please correct the following error(s):</p>
-                    <ul class="list-group">
+                    <ul class="list-group mt-4">
                         <li v-for="error in errors" :key="error" class="list-group-item list-group-item-danger">{{ error }}</li>
                     </ul>
                 </div>
               <hr class="my-4">
-              <button class="btn btn-lg btn-google btn-block text-uppercase"><i class="fab fa-google mr-2"></i> Log in with Google</button>
+              <button class="btn btn-lg btn-google btn-block text-uppercase" v-google-signin-button="clientId"><i class="fab fa-google mr-2"></i> Log in with Google</button>
               <button class="btn btn-lg btn-facebook btn-block text-uppercase"><i class="fab fa-facebook-f mr-2"></i> Log in with Facebook</button>
             </div>
           </div>
@@ -40,14 +39,20 @@
 <script>
 import axios from 'axios';
 import LayoutDefault from './layouts/LayoutDefault';
+import GoogleSignInButton from 'vue-google-signin-button-directive'
+
 
 export default {
+    directives: {
+        GoogleSignInButton
+    },
     name: 'Login',
     created() {
     this.$emit('update:layout', LayoutDefault);
     },
     data() {
         return {
+            clientId: '406805009852-i2g9ccjm8frj23098sp678qnrjn5bmdk.apps.googleusercontent.com',
             errors: [],
             email: '',
             password: '',
@@ -55,7 +60,7 @@ export default {
         }
     },
     mounted() {
-        axios.get("http://localhost:5000/api/service/").then((res) => console.log(res)).catch((err) => console.log(err))
+       
     },
     methods: {
         checkForm() {
@@ -89,12 +94,30 @@ export default {
                     email: this.email,
                     password: this.password,
                 }).then((res) =>{
-                    console.log(res)
-                }).catch((err) => {
-                    console.log(err);
-                })
+                    if (res.status == 200) {
+                        localStorage.setItem('token', res.data.token);
+                        this.$router.push('/') // change later
+                    }
+                }).catch((err) => { // username/password was wrong
+                    this.errors.push('Incorrect username or password');
+                });
             }
-        }
+        },
+        OnGoogleAuthSuccess (idToken) {
+            axios.post('http://localhost:5000/api/glogin', {
+                idToken
+            }).then((res) =>{
+                if (res.status == 200) {
+                    localStorage.setItem('token', res.data.token);
+                    this.$router.push('/') // change later
+                }
+            }).catch((err) => { // username/password was wrong
+                alert(`Something went wrong with Google Authentication! ${err}`);
+            });
+        },
+    OnGoogleAuthFail (err) {
+      alert(`Something went wrong with Google Authentication! ${err}`);
+    }
     }
 }
 </script>
