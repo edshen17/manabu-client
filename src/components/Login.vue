@@ -8,7 +8,7 @@
             <h5 class="card-title text-center">Log in</h5>
             <form class="form-signin">
               <div class="form-label-group">
-                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" v-model="email">
+                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" v-model="email" @keyup.13="login">
                 <label for="inputEmail"></label>
               </div>
 
@@ -21,12 +21,12 @@
                 <button class="btn btn-lg btn-dark btn-block text-uppercase sign-up" @click="login">Log in</button>
                 <div v-if="errors.length">
                     <ul class="list-group mt-4">
-                        <li v-for="error in errors" :key="error" class="list-group-item list-group-item-danger">{{ error }}</li>
+                        <li v-for="(error, i) in errors" :key="i" class="list-group-item list-group-item-danger">{{ error }}</li>
                     </ul>
                 </div>
               <hr class="my-4">
               <button class="btn btn-lg btn-google btn-block text-uppercase" v-google-signin-button="clientId"><i class="fab fa-google mr-2 "></i> Continue with Google</button>
-              <v-facebook-login class="btn btn-lg btn-facebook btn-block text-uppercase" :app-id="appId" :login-options="{ scope: 'email' }" @login="flogin" v-model="model" @sdk-init="handleSdkInit"></v-facebook-login>
+              <!-- <v-facebook-login class="btn btn-lg btn-facebook btn-block text-uppercase" :app-id="appId" :login-options="{ scope: 'email' }" @login="flogin" v-model="model" @sdk-init="handleSdkInit"></v-facebook-login> -->
               <p class="mt-4 float-right">Already have an account? <b-link :to="`/signup?teacherSignup=${isTeacherApp}`">Sign up here</b-link></p>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default {
                         this.$router.go()
                     }
                 }).catch((err) => { // username/password was wrong
-                    this.errors.push('Incorrect username or password. Passwords requirements were: a minimum of 8 characters with at least one capital letter, a number, and a special character.');
+                    this.errors.push(err.response.data);
                 });
             }
         },
@@ -115,11 +115,11 @@ export default {
                     this.$router.go()
                 }
             }).catch((err) => { // username/password was wrong
-                alert(`Something went wrong during Google Authentication! ${err}`);
+                alert('Something went wrong during Google Authentication!');
             });
         },
     OnGoogleAuthFail (err) {
-      alert(`Something went wrong during Google Authentication! ${err}`);
+      alert('Something went wrong during Google Authentication!');
     },
     handleSdkInit({ FB, scope }) {
         this.FB = FB

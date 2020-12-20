@@ -9,10 +9,10 @@
             <form class="form-signin">
               <div class="form-label-group">
             <div class="form-label-group">
-                <input type="name" id="inputName" class="form-control" placeholder="Name" autofocus v-model="name">
+                <input type="name" id="inputName" class="form-control" placeholder="Name" autofocus v-model="name" @keyup.13="signUp">
                 <label for="inputName"></label>
               </div>
-                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" v-model="email">
+                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" v-model="email" @keyup.13="signUp">
                 <label for="inputEmail"></label>
               </div>
 
@@ -31,12 +31,12 @@
             <button class="btn btn-lg btn-dark btn-block text-uppercase sign-up" type="submit" onsubmit="return false" @click="signUp">Sign Up</button>
               <div v-if="errors.length">
                     <ul class="list-group mt-4">
-                        <li v-for="error in errors" :key="error" class="list-group-item list-group-item-danger"></li>
+                        <li v-for="(error, i) in errors" :key="i" class="list-group-item list-group-item-danger">{{ error }}</li>
                     </ul>
                 </div>
               <hr class="my-4">
               <button class="btn btn-lg btn-google btn-block text-uppercase" v-google-signin-button="clientId"><i class="fab fa-google mr-2 "></i> Continue with Google</button>
-              <button class="btn btn-lg btn-facebook btn-block text-uppercase" onsubmit="return false"><i class="fab fa-facebook-f mr-2"></i> Continue with Facebook</button>
+              <!-- <button class="btn btn-lg btn-facebook btn-block text-uppercase" onsubmit="return false"><i class="fab fa-facebook-f mr-2"></i> Continue with Facebook</button> -->
                 <p class="mt-4 float-right">Already have an account? <b-link :to="`/login?teacherSignup=${isTeacherApp}`">Log in here</b-link></p>
           </div>
           </div>
@@ -123,7 +123,7 @@ export default {
 
                 }).catch((err) => {
                     this.errors = [];
-                    this.errors.push(err.response.data.msg);
+                    this.errors.push(err.response.data);
                 });
             }
         },
@@ -137,11 +137,11 @@ export default {
                     this.$router.go()
                 }
             }).catch((err) => { // username/password was wrong
-                alert(`Something went wrong during Google Authentication! ${err}`);
+                alert('Something went wrong during Google Authentication!');
             });
         },
     OnGoogleAuthFail (err) {
-      alert(`Something went wrong during Google Authentication! ${err}`);
+      alert('Something went wrong during Google Authentication!');
     },
   }
 }

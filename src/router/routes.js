@@ -39,14 +39,14 @@ const router = new Router({
         }
       },
     },
-    {
-      path: '/teachers',
-      name: 'Teachers',
-      component: Home,
-      meta: {
-        title: 'Teachers',
-      },
-    },
+    // {
+    //   path: '/teachers',
+    //   name: 'Teachers',
+    //   component: ,
+    //   meta: {
+    //     title: 'Teachers',
+    //   },
+    // },
     {
       path: '/apply',
       name: 'Apply',
