@@ -1,14 +1,11 @@
 <template>
-    <div class ="Dashboard">
+    <div class ="TeacherDashboard">
+        <p>sadas</p>
     </div>
 </template>
 <script>
-import LayoutDefault from './layouts/LayoutDefault';
 export default {
-    name: 'Dashboard',
-    created() {
-        this.$emit('update:layout', LayoutDefault);
-    },
+    name: 'TeacherDashboard',
     data() {
         return {
         }
@@ -16,8 +13,3 @@ export default {
     methods: {},
 }
 </script>
-
-<style lang="css">
-@import '../../src/assets/css/styles.css';
-
-</style>

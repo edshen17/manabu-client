@@ -37,16 +37,17 @@
 
 <script>
 import axios from 'axios';
+import getUserData from '../../assets/scripts/tokenGetter'
 
 export default {
   name: 'LayoutDefault',
   async mounted() {
-    let userData = await this.getUserData();
+    let userData = await getUserData();
     this.isLoggedIn = (userData != null);
   },
   watch: {
     async '$route' () { // if route changes, update variables to avoid mutation errors
-      let userData = await this.getUserData();
+      let userData = await getUserData();
       this.isLoggedIn = (userData != null);
     }
   },
@@ -54,18 +55,6 @@ export default {
     return {
       isLoggedIn: false,
     };
-  },
-  methods : {
-    async getUserData() {
-      // get token from local storage to use in routes 
-      const res = await axios.get('http://localhost:5000/api/me', { headers: {
-          'x-access-token': localStorage.getItem('token'),
-          'Accept' : 'application/json',
-          'Content-Type': 'application/json'
-        } 
-      }).catch((err) => console.log(err));
-        return res;
-    },
   },
 };
 </script>
