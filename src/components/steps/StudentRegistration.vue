@@ -12,14 +12,14 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="level">Level</label>
+                                <label for="level">Target Language Level</label>
                                 <b-form-select v-model="user.level" :options="optionsLevel" size="md"></b-form-select>
                                 <div v-if="submitted && user.level.length == 0" class="invalid">Please provide a language level</div>
                             </div>
                             <div class="form-group">
                                 <label for="learnedLanguage">Native Language</label>
                                 <b-form-select v-model="user.learnedLanguage" :options="optionsNativeLanguage" size="md"></b-form-select>
-                                <div v-if="submitted && user.learnedLanguage.length == 0" class="invalid">Please provide a timezone</div>
+                                <div v-if="submitted && user.learnedLanguage.length == 0" class="invalid">Please provide a language</div>
                             </div>
                             <div class="form-group">
                                 <label for="region">Country/Region</label>
@@ -113,8 +113,8 @@
             handleSubmit(e) {
                 this.submitted = true;
 
-                if (this.learningLanguage && this.learnedLanguage && this.level && this.region && this.timZone) { // all inputs are filled in
-
+                if (this.user.learningLanguage && this.user.learnedLanguage && this.user.level && this.user.region && this.user.timeZone) { // all inputs are filled in
+                    console.log('good')
                 }
             }
         }
