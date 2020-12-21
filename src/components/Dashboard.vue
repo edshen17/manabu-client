@@ -6,7 +6,7 @@
                     Welcome to Manabu! Let us know about you!
                 </div>
             </template>
-            <student-registration></student-registration>
+            <student-registration v-on:student-reg-submit="hideModal"></student-registration>
         </b-modal> 
         <div v-if="userData"> <!--change here: if current-view = admin... from select dropdown-->
             <div class="student-dashboard" v-show="userData.data.role == 'user' || userData.data.role == 'admin'">

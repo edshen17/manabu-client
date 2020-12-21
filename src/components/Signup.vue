@@ -137,11 +137,13 @@ export default {
                     this.$router.go()
                 }
             }).catch((err) => { // username/password was wrong
-                alert('Something went wrong during Google Authentication!');
+                this.errors = [];
+                this.errors.push('Something went wrong during Google Authentication! If you are using incognito mode, make sure you have enabled cookies.')
             });
         },
     OnGoogleAuthFail (err) {
-      alert('Something went wrong during Google Authentication!');
+        this.errors = [];
+        this.errors.push('Something went wrong during Google Authentication! If you are using incognito mode, make sure you have enabled cookies.')
     },
   }
 }

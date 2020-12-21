@@ -67,22 +67,21 @@
             return {
                 host: 'http://localhost:5000/api',
                 optionsLearningLanguage: [
-                    { value: 'jp', text: 'Japanese' },
+                    { value: 'JP', text: 'Japanese' },
                     { value: null, text: 'Other languages coming soon!', disabled: true }
                 ],
                 optionsLevel: [
-                    { value: 'a1', text: 'Beginner (A1)' },
-                    { value: 'a2', text: 'Elementary (A2)' },
-                    { value: 'b1', text: 'Intermediate (B1)' },
-                    { value: 'b2', text: 'Upper Intermediate (B2)' },
-                    { value: 'c1', text: 'Advanced (C1)' },
-                    { value: 'c2', text: 'Proficient (C2)' },
+                    { value: 'A2', text: 'Elementary (A2)' },
+                    { value: 'B1', text: 'Intermediate (B1)' },
+                    { value: 'B2', text: 'Upper Intermediate (B2)' },
+                    { value: 'C1', text: 'Advanced (C1)' },
+                    { value: 'C2', text: 'Proficient (C2)' },
                 ],
                 optionsNativeLanguage: [
-                    { value: 'en', text: 'English' },
-                    { value: 'jp', text: 'Japanese' },
-                    { value: 'cn', text: 'Chinese' },
-                    { value: 'kr', text: 'Korean' },
+                    { value: 'EN', text: 'English' },
+                    { value: 'JP', text: 'Japanese' },
+                    { value: 'CN', text: 'Chinese' },
+                    { value: 'KR', text: 'Korean' },
                     { value: 'other', text: 'Other' },
                 ],
                 optionsRegion: [],
@@ -127,7 +126,7 @@
 
                     }
                     axios.put(`${this.host}/user/${this.user._id}/updateProfile`, sendUpdateObj).then(() => {
-                        this.$emit('studentRegSubmit', true);
+                        this.$emit('student-reg-submit', true);
                     }).catch((err) => {
                         console.log(err);
                     })
