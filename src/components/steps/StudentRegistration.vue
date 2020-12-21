@@ -1,0 +1,137 @@
+<template>
+    <div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md">
+                    <div>
+                        <form @submit.prevent="handleSubmit">
+                            <div class="form-group">
+                                <label for="learningLanguage">Target Language</label>
+                                <b-form-select v-model="user.learningLanguage" :options="optionsLearningLanguage" size="md"></b-form-select>
+                                <div v-if="submitted && user.learningLanguage.length == 0" class="invalid">Please provide a target language</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="level">Level</label>
+                                <b-form-select v-model="user.level" :options="optionsLevel" size="md"></b-form-select>
+                                <div v-if="submitted && user.level.length == 0" class="invalid">Please provide a language level</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="learnedLanguage">Native Language</label>
+                                <b-form-select v-model="user.learnedLanguage" :options="optionsNativeLanguage" size="md"></b-form-select>
+                                <div v-if="submitted && user.learnedLanguage.length == 0" class="invalid">Please provide a timezone</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="region">Country/Region</label>
+                                <b-form-select v-model="user.region" @change="updateTimezone" :options="optionsRegion" size="md"></b-form-select>
+                                <div v-if="submitted && user.region.length == 0" class="invalid">Please provide a region</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="timeZone">Timezone</label>
+                                <b-form-select v-model="user.timeZone" :options="optionsTz" size="md"></b-form-select>
+                                <div v-if="submitted && user.timeZone.length == 0" class="invalid">Please provide a timezone</div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary" @click="handleSubmit">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import ct from 'countries-and-timezones'
+    import { required, minLength } from 'vuelidate/lib/validators';
+
+    export default {
+        name: 'StudentRegistration',
+        mounted() {
+            const countries = ct.getAllCountries();
+            for (const countryCode in countries) {
+                const regionObj = {
+                    value: countryCode,
+                    text: `${countries[countryCode].name} - ${countryCode}`,
+                }
+                this.optionsRegion.push(regionObj);
+            }
+
+            this.optionsRegion.sort(this.compare);
+        },
+     
+        data() {
+            return {
+                optionsLearningLanguage: [
+                { value: 'Japanese', text: 'Japanese' },
+                { value: null, text: 'Other languages coming soon!', disabled: true }
+                ],
+                optionsLevel: [
+                    { value: 'a1', text: 'Beginner (A1)' },
+                    { value: 'a2', text: 'Elementary (A2)' },
+                    { value: 'b1', text: 'Intermediate (B1)' },
+                    { value: 'b2', text: 'Upper Intermediate (B2)' },
+                    { value: 'c1', text: 'Advanced (C1)' },
+                    { value: 'c2', text: 'Proficient (C2)' },
+                ],
+                optionsNativeLanguage: [
+                    { value: 'en', text: 'English' },
+                    { value: 'jp', text: 'Japanese' },
+                    { value: 'cn', text: 'Chinese' },
+                    { value: 'kr', text: 'Korean' },
+                    { value: 'other', text: 'Other' },
+                ],
+                optionsRegion: [],
+                optionsTz: [],
+                user: {
+                    learningLanguage: '',
+                    learnedLanguage: '',
+                    level: '',
+                    region: '',
+                    timeZone: '',
+                },
+                submitted: false,
+            };
+        },
+        methods: {
+            compare(a, b) { // used to sort the countries in the select dropdown
+                if (a.text < b.text)
+                    return -1;
+                if (a.text > b.text)
+                    return 1;
+                return 0;
+            },
+            updateTimezone() { // update timezone when region is changed
+                this.optionsTz = [];
+                const region = this.user.region;
+                const tz = ct.getTimezonesForCountry(region);
+                for (let i = 0; i < tz.length; i++) {
+                    this.optionsTz.push(`${tz[i].name} (UTC${tz[i].utcOffsetStr})`)
+                }
+            },
+            handleSubmit(e) {
+                this.submitted = true;
+
+                if (this.learningLanguage && this.learnedLanguage && this.level && this.region && this.timZone) { // all inputs are filled in
+
+                }
+            }
+        }
+    };
+</script>
+<style lang="css" scoped>
+.invalid {
+    width: 100%;
+    margin-top: .25rem;
+    font-size:  80%;
+    color: #dc3545;
+}
+
+.btn {
+    float: right;
+}
+
+
+
+</style>

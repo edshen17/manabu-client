@@ -11,11 +11,13 @@
     "axios": "^0.21.0",
     "bootstrap-vue": "^2.21.1",
     "core-js": "^3.6.5",
+    "countries-and-timezones": "^2.3.1",
     "jwt-decode": "^3.1.2",
     "vue": "^2.6.11",
     "vue-facebook-login-component": "^3.0.0",
     "vue-google-signin-button-directive": "^1.0.3",
-    "vue-router": "^3.4.9"
+    "vue-router": "^3.4.9",
+    "vuelidate": "^0.7.6"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
