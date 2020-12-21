@@ -13,7 +13,7 @@
                             
                             <div class="form-group">
                                 <label for="level">Target Language Level</label>
-                                <b-form-select v-model="user.level" :options="optionsLevel" size="md"></b-form-select>
+                                <b-form-select v-model="user.level" :options="optionsLevel" size="md" :select-size="3"></b-form-select>
                                 <div v-if="submitted && user.level.length == 0" class="invalid">Please provide a language level</div>
                             </div>
                             <div class="form-group">
@@ -43,7 +43,9 @@
 </template>
 
 <script>
-    import ct from 'countries-and-timezones'
+    import axios from 'axios';
+    import ct from 'countries-and-timezones';
+    import jwt_decode from "jwt-decode";
     import { required, minLength } from 'vuelidate/lib/validators';
 
     export default {
@@ -63,9 +65,10 @@
      
         data() {
             return {
+                host: 'http://localhost:5000/api',
                 optionsLearningLanguage: [
-                { value: 'Japanese', text: 'Japanese' },
-                { value: null, text: 'Other languages coming soon!', disabled: true }
+                    { value: 'jp', text: 'Japanese' },
+                    { value: null, text: 'Other languages coming soon!', disabled: true }
                 ],
                 optionsLevel: [
                     { value: 'a1', text: 'Beginner (A1)' },
@@ -83,13 +86,14 @@
                     { value: 'other', text: 'Other' },
                 ],
                 optionsRegion: [],
-                optionsTz: [],
+                optionsTz: ['Asia/Singapore (UTC+08:00)'],
                 user: {
-                    learningLanguage: '',
-                    learnedLanguage: '',
-                    level: '',
-                    region: '',
-                    timeZone: '',
+                    _id: jwt_decode(localStorage.getItem('token')).id,
+                    learningLanguage: 'jp',
+                    learnedLanguage: 'en',
+                    level: 'b1',
+                    region: 'SG',
+                    timeZone: 'Asia/Singapore (UTC+08:00)',
                 },
                 submitted: false,
             };
@@ -114,7 +118,19 @@
                 this.submitted = true;
 
                 if (this.user.learningLanguage && this.user.learnedLanguage && this.user.level && this.user.region && this.user.timeZone) { // all inputs are filled in
-                    console.log('good')
+                    const sendUpdateObj = {
+                        token: localStorage.getItem('token'),
+                        learningLanguages: [`${this.user.learningLanguage}-${this.user.level}`],
+                        learnedLanguages: [`${this.user.learnedLanguage}-c2`],
+                        region: this.user.region,
+                        timezone: this.user.timeZone,
+
+                    }
+                    axios.put(`${this.host}/user/${this.user._id}/updateProfile`, sendUpdateObj).then(() => {
+                        this.$emit('studentRegSubmit', true);
+                    }).catch((err) => {
+                        console.log(err);
+                    })
                 }
             }
         }

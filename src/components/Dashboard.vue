@@ -1,13 +1,17 @@
 <template>
-    <div class ="Dashboard">
-        <div v-if="userData"> <!--change here: if current-view = admin... from select dropdown-->
-            <div class="student-dashboard" v-if="userData.data.role == 'user' || userData.data.role == 'admin'">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Large modal</button>
+    <div class ="Dashboard">   
+        <b-modal id="student-reg" size="lg" :no-close-on-backdrop="true" :hide-footer="true">
+            <template #modal-title>
                 <div>
-                    <b-button v-b-modal.modal-lg>Launch demo modal</b-button>
-                    <b-modal id="modal-lg" size="lg" :title="`Welcome to Manabu, ${userData.data.name}! Let us know more about you!`" :no-close-on-backdrop="true" :hide-footer="true">
-                        <student-registration></student-registration>
-                    </b-modal>
+                    Welcome to Manabu! Let us know about you!
+                </div>
+            </template>
+            <student-registration></student-registration>
+        </b-modal> 
+        <div v-if="userData"> <!--change here: if current-view = admin... from select dropdown-->
+            <div class="student-dashboard" v-show="userData.data.role == 'user' || userData.data.role == 'admin'">
+                <div>
+                    stuff
                 </div>
             </div>
         <teacher-dashboard v-if="userData.data.role == 'teacher'">
@@ -35,8 +39,11 @@ export default {
     async mounted() {
         this.userData = await getUserData();
         this.loading = false;
-
-        console.log(this.loading)
+        
+        // user has not filled out registration form, so show form
+        if (this.userData.data.learnedLanguages.length == 0 && this.userData.data.learningLanguages.length == 0 && !this.userData.data.region && !this.userData.data.timezone) { 
+            this.showModal();
+        }
     },
     components: {
         TeacherDashboard,
@@ -55,7 +62,12 @@ export default {
         }
     },
     methods: {
-
+    showModal() {
+        this.$bvModal.show('student-reg')
+    },
+    hideModal() {
+        this.$bvModal.hide('student-reg')
+    }
     },
 }
 </script>
