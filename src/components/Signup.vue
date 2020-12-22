@@ -117,7 +117,6 @@ export default {
                     isTeacherApp: this.isTeacherApp,
                 }).then((res) =>{
                     if (res.status == 200) {
-                        localStorage.setItem('token', res.data.token);
                         this.$router.go()
                     }
 
@@ -133,7 +132,6 @@ export default {
                 isTeacherApp: this.isTeacherApp,
             }).then((res) =>{
                 if (res.status == 200) {
-                    localStorage.setItem('token', res.data.token);
                     this.$router.go()
                 }
             }).catch((err) => { // username/password was wrong

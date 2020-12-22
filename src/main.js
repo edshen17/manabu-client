@@ -5,6 +5,9 @@ import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import Vuelidate from 'vuelidate'
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies);
+Vue.$cookies.config('1d')
 Vue.use(Vuelidate);
 
 Vue.config.productionTip = false

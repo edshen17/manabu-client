@@ -8,15 +8,12 @@ import Dashboard from '@/components/Dashboard';
 import TeacherApplication from '@/components/TeacherApplication';
 
 Vue.use(Router);
-
+const host = 'http://localhost:5000/api';
 // use token to get user info
 const getUserData = async () => {
-  let res = await axios.get('http://localhost:5000/api/me', { headers: {
-    'x-access-token': localStorage.getItem('token'),
-    'Accept' : 'application/json',
-    'Content-Type': 'application/json'
-  } 
-}).catch((err) => console.log(err));
+  let res = await axios.get(`${host}/me`, {withCredentials: true, headers: {
+    'X-Requested-With': 'XMLHttpRequest'
+  } }).catch((err) => {});
   return res;
 }
 
@@ -31,7 +28,7 @@ const router = new Router({
         title: 'Manabu',
       },
       async beforeEnter(to, from, next) {
-        const data = await getUserData(localStorage.getItem('token'));
+        const data = await getUserData();
         if (data && data.data.email) {
           next('/dashboard');
         }  else {
@@ -107,7 +104,7 @@ const router = new Router({
       path: '/logout',
       name: 'Logout',
       async beforeEnter(to, from, next) {
-        localStorage.setItem('token', '');
+        Vue.$cookies.set('hp', '').set('sig', '');
         next('/')
       },
     },

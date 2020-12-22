@@ -47,10 +47,11 @@
     import ct from 'countries-and-timezones';
     import jwt_decode from "jwt-decode";
     import { required, minLength } from 'vuelidate/lib/validators';
+    import getUserData from '../../assets/scripts/tokenGetter'
 
     export default {
         name: 'StudentRegistration',
-        mounted() {
+        async mounted() {
             const countries = ct.getAllCountries();
             for (const countryCode in countries) {
                 const regionObj = {
@@ -61,6 +62,7 @@
             }
 
             this.optionsRegion.sort(this.compare);
+            this.userData = await getUserData();
         },
      
         data() {
@@ -87,13 +89,14 @@
                 optionsRegion: [],
                 optionsTz: ['Asia/Singapore (UTC+08:00)'],
                 user: {
-                    _id: jwt_decode(localStorage.getItem('token')).id,
-                    learningLanguage: 'jp',
-                    learnedLanguage: 'en',
-                    level: 'b1',
+                    _id: '',
+                    learningLanguage: 'JP',
+                    learnedLanguage: 'EN',
+                    level: 'B1',
                     region: 'SG',
                     timeZone: 'Asia/Singapore (UTC+08:00)',
                 },
+                userData: null,
                 submitted: false,
             };
         },
@@ -118,16 +121,19 @@
 
                 if (this.user.learningLanguage && this.user.learnedLanguage && this.user.level && this.user.region && this.user.timeZone) { // all inputs are filled in
                     const sendUpdateObj = {
-                        token: localStorage.getItem('token'),
                         learningLanguages: [`${this.user.learningLanguage}-${this.user.level}`],
                         learnedLanguages: [`${this.user.learnedLanguage}-c2`],
                         region: this.user.region,
                         timezone: this.user.timeZone,
 
                     }
-                    axios.put(`${this.host}/user/${this.user._id}/updateProfile`, sendUpdateObj).then(() => {
+                    axios.put(`${this.host}/user/${this.userData.data._id}/updateProfile`, sendUpdateObj, { headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+    }).then(() => {
                         this.$emit('student-reg-submit', true);
                     }).catch((err) => {
+                        console.log('fail')
                         console.log(err);
                     })
                 }

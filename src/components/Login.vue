@@ -43,6 +43,8 @@ import LayoutDefault from './layouts/LayoutDefault';
 import GoogleSignInButton from 'vue-google-signin-button-directive'
 import VFacebookLogin from 'vue-facebook-login-component'
 
+axios.defaults.withCredentials = true;
+
 export default {
     directives: {
         GoogleSignInButton,
@@ -69,7 +71,7 @@ export default {
         }
     },
     mounted() {
- 
+       
     },
     methods: {
         checkForm() {
@@ -97,7 +99,6 @@ export default {
                     isTeacherApp: this.isTeacherApp,
                 }).then((res) =>{
                     if (res.status == 200) {
-                        localStorage.setItem('token', res.data.token);
                         this.$router.go()
                     }
                 }).catch((err) => { // username/password was wrong
@@ -111,7 +112,6 @@ export default {
                 isTeacherApp: this.isTeacherApp,
             }).then((res) =>{
                 if (res.status == 200) {
-                    localStorage.setItem('token', res.data.token);
                     this.$router.go()
                 }
             }).catch((err) => { // username/password was wrong
