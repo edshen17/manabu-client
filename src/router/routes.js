@@ -5,7 +5,7 @@ import Home from '@/components/Home';
 import Signup from '@/components/Signup';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
-import TeacherApplication from '@/components/TeacherApplication';
+import TeacherSignup from '@/components/TeacherSignup';
 
 Vue.use(Router);
 const host = 'http://localhost:5000/api';
@@ -47,7 +47,7 @@ const router = new Router({
     {
       path: '/apply',
       name: 'Apply',
-      component: TeacherApplication,
+      component: TeacherSignup,
       meta: {
         title: 'Become a Teacher',
       },

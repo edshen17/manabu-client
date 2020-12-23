@@ -6,16 +6,32 @@
                     Welcome to Manabu! Let us know about you!
                 </div>
             </template>
-            <student-registration v-on:student-reg-submit="hideModal"></student-registration>
+            <registration-form v-on:form-submitted="hideModal" 
+                submitButtonText='Submit' :formData="formData" endpoint="/user">
+                <template v-slot:uniqueSelect>
+                    <div class="form-group">
+                                <label>Target Language</label>
+                                <b-form-select v-model="formData.targetLanguage" :options="optionsLearningLanguage" size="md" :userId="userId"></b-form-select>
+                            </div>
+                            <div class="form-group">
+                                <label>Target Language Level</label>
+                                <b-form-select v-model="formData.level" :options="optionsLevel" size="md" :select-size="3"></b-form-select>
+                            </div>
+                            <div class="form-group">
+                                <label>Native Language</label>
+                                <b-form-select v-model="formData.nativeLanguage" :options="optionsNativeLanguage" size="md"></b-form-select>
+                            </div> 
+                </template>
+            </registration-form>
         </b-modal> 
-        <div v-if="userData"> <!--change here: if current-view = admin... from select dropdown-->
-            <div class="student-dashboard" v-show="userData.data.role == 'user' || userData.data.role == 'admin'">
+        <div v-if="userData">
+            <div class="student-dashboard" v-show="userData.data.role == 'user' && !userData.data.teacherAppPending">
                 <div>
-                    stuff
+                    {{userData.data}}
                 </div>
             </div>
         <teacher-dashboard v-if="userData.data.role == 'teacher'">
-            <p v-if="userData">{{userData.data}}</p>
+            <p v-if="userData.data.teacherAppPending">{{userData.data}}</p>
         </teacher-dashboard>
         </div>
         <div v-else>
@@ -32,22 +48,23 @@ import axios from 'axios';
 import { required, minLength, email, between } from 'vuelidate/lib/validators'
 import LayoutDefault from './layouts/LayoutDefault';
 import TeacherDashboard from './TeacherDashboard';
-import getUserData from '../assets/scripts/tokenGetter'
-import StudentRegistration from './steps/StudentRegistration.vue';
+import getUserData from '../assets/scripts/tokenGetter';
+import RegistrationForm from './steps/RegistrationForm';
 
 export default {
     async mounted() {
         this.userData = await getUserData();
+        this.userId = this.userData.data._id;
         this.loading = false;
-        
+
         // user has not filled out registration form, so show form
-        if (this.userData.data.learnedLanguages.length == 0 && this.userData.data.learningLanguages.length == 0 && !this.userData.data.region && !this.userData.data.timezone) { 
+        if (this.userData.data.fluentLanguages.length == 0 && this.userData.data.nonFluentLanguages.length == 0 && !this.userData.data.region && !this.userData.data.timezone) { 
             this.showModal();
         }
     },
     components: {
         TeacherDashboard,
-        StudentRegistration
+        RegistrationForm
     },
     name: 'Dashboard',
     async created() {
@@ -55,10 +72,33 @@ export default {
     },
     data() {
         return {
-            userObj: '',
             userData: null,
+            userId: '',
+            formData: {
+                targetLanguage: 'JP',
+                nativeLanguage: 'EN',
+                level: 'C1',
+            },
             host: 'http://localhost:5000/api',
             loading: true,
+            optionsLearningLanguage: [
+                    { value: 'JP', text: 'Japanese' },
+                    { value: null, text: 'Other languages coming soon!', disabled: true }
+                ],
+                optionsLevel: [
+                    { value: 'A2', text: 'Elementary (A2)' },
+                    { value: 'B1', text: 'Intermediate (B1)' },
+                    { value: 'B2', text: 'Upper Intermediate (B2)' },
+                    { value: 'C1', text: 'Advanced (C1)' },
+                    { value: 'C2', text: 'Proficient (C2)' },
+                ],
+                optionsNativeLanguage: [
+                    { value: 'EN', text: 'English' },
+                    { value: 'JP', text: 'Japanese' },
+                    { value: 'CN', text: 'Chinese' },
+                    { value: 'KR', text: 'Korean' },
+                    { value: 'other', text: 'Other' },
+                ],
         }
     },
     methods: {
