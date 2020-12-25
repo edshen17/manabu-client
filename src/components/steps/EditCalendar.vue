@@ -1,10 +1,10 @@
 <template>
   <div class="EditCalendar">
-    <div></div>
-    <kalendar :configuration="calendar_settings" :events.sync="events">
+    <div v-if="isLoaded">
+      <kalendar :configuration="calendar_settings" :events.sync="events">
       <div slot="creating-card" slot-scope="{ event_information }">
         <h4 class="appointment-title" style="text-align: left">
-          Available Time
+          Available
         </h4>
         <span class="time">
           {{parseISOString(event_information.start_time)}}
@@ -17,10 +17,10 @@
         slot-scope="{ event_information }"
         class="details-card"
       >
-        <h4 class="appointment-title" style="text-align: left">
-          Available Time
-        </h4>
-        <span class="time" style="text-align: left"
+        <h5 class="appointment-title" style="text-align: left">
+          Available
+        </h5>
+        <span class="time appointment-title" style="text-align: left"
           >{{parseISOString(event_information.start_time) }} -
           {{parseISOString(event_information.end_time)}}</span
         >
@@ -48,33 +48,43 @@
       <div
         slot="popup-form"
         slot-scope="{ popup_information }"
-        style="display: flex; flex-direction: column"
       >
-        <div class="buttons">
-          <button class="cancel" @click="$kalendar.closePopups();">
-            Cancel
-          </button>
-          <button @click="addEvent(popup_information)">Save</button>
+        <div class="row">
+          <input type="submit" class="app-button" id="btnSearch" value="Save" @click="addEvent(popup_information)">
+          <input type="submit" class="app-button" id="btnClearSearch" value="Cancel" @click="$kalendar.closePopups()">
         </div>
       </div>
     </kalendar>
+    </div>
+    <div v-else class="d-flex justify-content-center my-4">
+        <b-spinner label="Loading..."></b-spinner>
+      </div>
   </div>
 </template>
 <script>
 import { Kalendar } from 'kalendar-vue';
+import moment from 'moment'
+import axios from 'axios'
 
 export default {
     name: 'EditCalendar',
     components: {
         Kalendar
     },
-    // created() {
-    //     Vue.filter('formatToHours', (value, how) => {
-
-    //     });
-    // },
+    props: {
+      userId: String,
+    },
+    mounted() {
+      axios.get(`${this.host}/schedule/${this.userId}/availableTime`).then((res) => {
+        if (res.status == 200) {
+          this.events = res.data;
+          this.isLoaded = true;
+        }
+      })
+    },
     data() {
         return {
+            host: 'http://localhost:5000/api',
             calendar_settings: {
                     style: 'material_design',
                     view_type: 'week',
@@ -87,47 +97,70 @@ export default {
                     overlap: false,
                     past_event_creation: false
                 },
-                events: [
-                {
-                    from: '2021-01-01T18:00:00Z',
-                    to: '2021-01-01T19:00:00Z',
-                    data: 'Event 1',
-                },
-                {
-                    from: '2021-01-01T19:00:00Z',
-                    to: '2021-01-01T21:00:00Z',
-                    data: 'Olive & Friends',
-                },
-            ],
+              isLoaded: false,
+              events: []
         }
     },
     methods: {
-    parseISOString(dateStr) {
-        const parts = dateStr.split('T');
-        const test = parts[1];
-        return parts[1].substring(0,5)
-    },
-        removeEvent(kalendarEvent) {
-            let day = kalendarEvent.start_time.slice(0, 10);
-            this.$kalendar.removeEvent({
-                day,
-                key: kalendarEvent.key,
-                id: kalendarEvent.kalendar_id,
+      parseISOString(dateStr) {
+          const parts = dateStr.split('T');
+          const test = parts[1];
+          return parts[1].substring(0,5)
+      },
+      removeEvent(kalendarEvent) {
+          let day = kalendarEvent.start_time.slice(0, 10);
+          this.$kalendar.removeEvent({
+              day,
+              key: kalendarEvent.key,
+              id: kalendarEvent.kalendar_id,
         })
-        },
-        addEvent(popup_data, form_data) {
+
+        axios.delete(`${this.host}/schedule/availableTime`, {
+            createdBy: this.userId,
+            from: kalendarEvent.start_time,
+            to: kalendarEvent.end_time,
+          }, { headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+          })
+      },
+      addEvent(popup_data, form_data) {
         let payload = {
             from: popup_data.start_time,
             to: popup_data.end_time,
         };
 
-        this.$kalendar.addNewEvent(
+        const payloadTime = new Date(payload.from);
+        const currentTime = new Date(payload.to);
+        const timeDiffMins = moment(currentTime).diff(moment(payloadTime), 'minutes')
+
+        if (payloadTime <= new Date()) { // if date goes into the past
+          alert('You cannot make an appointment in the past.')
+          this.$kalendar.closePopups();
+        }
+
+        else if (timeDiffMins < 30) { // appointment less than 30 mins
+          alert('Your appointments must be at least 30 minutes.')
+          this.$kalendar.closePopups();
+        }
+        
+        else {
+          this.$kalendar.addNewEvent(
             payload,
-        );
-        this.$kalendar.closePopups();
-},
+          );
+          this.$kalendar.closePopups();
+          axios.post(`${this.host}/schedule/availableTime`, {
+            createdBy: this.userId,
+            from: payload.from,
+            to: payload.to,
+          }, { headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+              })
+        }
+      },
     },
-}
+  }
 </script>
 
 <style lang="css">
@@ -135,7 +168,6 @@ export default {
   position: relative !important;
   bottom: 0;
   right: 0 !important;
-  font-size: 1.1em !important;
 }
 
 .details-card button {
@@ -154,5 +186,22 @@ export default {
   width: 18px;
   height: 18px;
   fill: #fff;
+}
+
+.app-button{
+    width: 150px;
+    margin:0 20px;
+    display:inline-block;
+    line-height: 30px;
+}
+.row {
+  text-align:center;
+  /*the same margin which is every button have, it is for small screen, and if you have many buttons.*/
+  margin-left:-20px;
+  margin-right:-20px;
+}
+
+.kalendar-wrapper.gstyle .created-event {
+  width: 100% !important;
 }
 </style>

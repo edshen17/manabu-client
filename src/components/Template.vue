@@ -1,6 +1,5 @@
 <template>
-    <div class ="Dashboard">
-    </div>
+  <div class="Dashboard"></div>
 </template>
 <script>
 import LayoutDefault from './layouts/LayoutDefault';
@@ -18,6 +17,5 @@ export default {
 </script>
 
 <style lang="css">
-@import '../../src/assets/css/styles.css';
-
+@import "../../src/assets/css/styles.css";
 </style>

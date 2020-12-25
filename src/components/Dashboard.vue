@@ -1,90 +1,116 @@
 <template>
-    <div class ="Dashboard">   
-        <b-modal id="reg-form" size="lg" :no-close-on-backdrop="true" :hide-footer="true">
-            <template #modal-title>
-                <div>
-                    Welcome to Manabu! Let us know about you!
-                </div>
-            </template>
-            <div v-if="userData">
-                <registration-form v-on:form-submitted="hideModal"
-                                submitButtonText='Submit' :formData="formData" endpoint="/user" 
-                                v-if="userData.data.role == 'user' && !userData.data.teacherAppPending">
-                                <template v-slot:uniqueSelect>
-                                    <div class="form-group">
-                                                <label>Target Language</label>
-                                                <b-form-select v-model="formData.nonFluentLanguage" :options="optionsPrimaryLanguage" size="md" :userId="userId"></b-form-select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Target Language Level</label>
-                                                <b-form-select v-model="formData.level" :options="optionsLevel" size="md" :select-size="3"></b-form-select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Native Language</label>
-                                                <b-form-select v-model="formData.fluentLanguage" :options="optionsSecondaryLanguage" size="md"></b-form-select>
-                                            </div> 
-                                </template>
-                            </registration-form>
-                            <registration-form v-on:form-submitted="hideModal" 
-                                submitButtonText='Submit' :formData="formData" endpoint="/user" 
-                                v-if="userData.data.teacherAppPending">
-                                <template v-slot:uniqueSelect>
-                                    <div class="form-group">
-                                                <label>I will be teaching</label>
-                                                <b-form-select v-model="formData.fluentLanguage" :options="optionsPrimaryLanguage" size="md" :userId="userId"></b-form-select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>I can also speak</label>
-                                                <b-form-select v-model="formData.nonFluentLanguage" :options="optionsSecondaryLanguage" size="md"></b-form-select>
-                                            </div> 
-                                            <div class="form-group">
-                                                <label>My {{ formData.nonFluentLanguage }} level is</label>
-                                                <b-form-select v-model="formData.level" :options="optionsLevel" size="md" :select-size="3"></b-form-select>
-                                            </div>
-                                </template>
-                            </registration-form>
-                
+  <div class="Dashboard">
+    <b-modal
+      id="reg-form"
+      size="lg"
+      :no-close-on-backdrop="true"
+      :hide-footer="true"
+    >
+      <template #modal-title>
+        <div>Welcome to Manabu! Let us know about you!</div>
+      </template>
+      <div v-if="userData">
+        <registration-form
+          v-on:form-submitted="hideModal"
+          submitButtonText="Submit"
+          :formData="formData"
+          endpoint="/user"
+          v-if="userData.data.role == 'user' && !userData.data.teacherAppPending"
+        >
+          <template v-slot:uniqueSelect>
+            <div class="form-group">
+              <label>Target Language</label>
+              <b-form-select
+                v-model="formData.nonFluentLanguage"
+                :options="optionsPrimaryLanguage"
+                size="md"
+                :userId="userId"
+              ></b-form-select>
             </div>
-        </b-modal> 
-        <div v-if="userData">
-            <div class="student-dashboard" v-show="userData.data.role == 'user' && !userData.data.teacherAppPending">
-                <div>
-                    {{userData.data}}
-                </div>
+            <div class="form-group">
+              <label>Target Language Level</label>
+              <b-form-select
+                v-model="formData.level"
+                :options="optionsLevel"
+                size="md"
+                :select-size="3"
+              ></b-form-select>
             </div>
-        
-        <teacher-dashboard v-if="userData.data.role == 'teacher'">
-            <!-- <p v-if="userData.data.teacherAppPending">{{userData.data}}</p> -->
-        </teacher-dashboard>
-
-        <!-- View for new teachers-->
-        <div v-show="userData.data.role == 'user' && userData.data.teacherAppPending">
-            <edit-calendar></edit-calendar>
-                <!-- <kalendar :configuration="calendar_settings" :events.sync="events">
-                    <div slot="created-card" slot-scope="{ event_information }" class="details-card" @click="reserveSlot()">
-                        <h4 class="appointment-title">hi</h4>
-                        <small>
-                        {{event_information.data.description}}
-                        </small>
-                      
-                    </div>
-                    <div slot="popup-form" style="display: flex; flex-direction: column;">
-                        <h4 style="margin-bottom: 10px">
-                        New Appointment
-                        </h4>
-                    </div>
-                </kalendar> -->
+            <div class="form-group">
+              <label>Native Language</label>
+              <b-form-select
+                v-model="formData.fluentLanguage"
+                :options="optionsSecondaryLanguage"
+                size="md"
+              ></b-form-select>
             </div>
-        
-
-
+          </template>
+        </registration-form>
+        <registration-form
+          v-on:form-submitted="hideModal"
+          submitButtonText="Submit"
+          :formData="formData"
+          endpoint="/user"
+          v-if="userData.data.teacherAppPending"
+        >
+          <template v-slot:uniqueSelect>
+            <div class="form-group">
+              <label>I will be teaching</label>
+              <b-form-select
+                v-model="formData.fluentLanguage"
+                :options="optionsPrimaryLanguage"
+                size="md"
+                :userId="userId"
+              ></b-form-select>
+            </div>
+            <div class="form-group">
+              <label>I can also speak</label>
+              <b-form-select
+                v-model="formData.nonFluentLanguage"
+                :options="optionsSecondaryLanguage"
+                size="md"
+              ></b-form-select>
+            </div>
+            <div class="form-group">
+              <label>My {{ formData.nonFluentLanguage }} level is</label>
+              <b-form-select
+                v-model="formData.level"
+                :options="optionsLevel"
+                size="md"
+                :select-size="3"
+              ></b-form-select>
+            </div>
+          </template>
+        </registration-form>
+      </div>
+    </b-modal>
+    <div v-if="userData">
+      <div
+        class="student-dashboard"
+        v-show="userData.data.role == 'user' && !userData.data.teacherAppPending"
+      >
+        <div>
+          {{userData.data}}
         </div>
-        <div v-else>
-            <div class="d-flex justify-content-center my-4">
-                <b-spinner label="Loading..."></b-spinner>
-            </div>
-        </div>
+      </div>
+
+      <teacher-dashboard v-if="userData.data.role == 'teacher'">
+        <!-- <p v-if="userData.data.teacherAppPending">{{userData.data}}</p> -->
+      </teacher-dashboard>
+
+      <!-- View for new teachers-->
+      <div
+        v-show="userData.data.role == 'user' && userData.data.teacherAppPending"
+      >
+        <edit-calendar :userId="userId"></edit-calendar>
+      </div>
     </div>
+    <div v-else>
+      <div class="d-flex justify-content-center my-4">
+        <b-spinner label="Loading..."></b-spinner>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -101,11 +127,12 @@ import { Kalendar } from 'kalendar-vue';
 export default {
     async mounted() {
         this.userData = await getUserData();
+        console.log(this.userData)
         this.userId = this.userData.data._id;
         this.loading = false;
-        const filledOutForm = !(this.userData.data.fluentLanguages.length == 0 
+        const filledOutForm = !(this.userData.data.fluentLanguages.length == 0
         && this.userData.data.nonFluentLanguages.length == 0 && !this.userData.data.region && !this.userData.data.timezone)
-        
+
         // teacher form
         if (this.userData.data.teacherAppPending && !filledOutForm) {
             this.formData.nonFluentLanguage = 'EN',
@@ -114,7 +141,7 @@ export default {
         }
 
         // user has not filled out registration form, so show form
-        else if (!filledOutForm) { 
+        else if (!filledOutForm) {
             this.showModal();
         }
     },
@@ -167,18 +194,6 @@ export default {
                     overlap: false,
                     past_event_creation: false
                 },
-                events: [
-                {
-                    from: '2021-01-01T18:00:00Z',
-                    to: '2021-01-01T19:00:00Z',
-                    data: 'Event 1',
-                },
-                {
-                    from: '2021-01-01T19:00:00Z',
-                    to: '2021-01-01T21:00:00Z',
-                    data: 'Olive & Friends',
-                },
-            ],
         }
     },
     methods: {
@@ -198,12 +213,11 @@ export default {
 <style lang="css">
 /* @import '../../src/assets/css/styles.css'; */
 .modal-header .close {
-  display:none !important;
+  display: none !important;
 }
 
 .d-flex .spinner-border {
-    height: 3.5rem;
-    width: 3.5rem;
+  height: 3.5rem;
+  width: 3.5rem;
 }
-
 </style>

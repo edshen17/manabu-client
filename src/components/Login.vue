@@ -1,40 +1,76 @@
 <template>
-    <div class="Signup">
-        <div class="container">
-    <div class="row">
-      <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-        <div class="card card-signin my-5">
-          <div class="card-body">
-            <h5 class="card-title text-center">Log in</h5>
-            <form class="form-signin">
-              <div class="form-label-group">
-                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" v-model="email" @keyup.13="login">
-                <label for="inputEmail"></label>
-              </div>
-
-              <div class="form-label-group">
-                <input type="password" id="inputPassword" class="form-control" placeholder="Password" autocomplete="on" v-model="password" @keyup.13="login">
-                <label for="inputPassword"></label>
-              </div>
-            </form>
-            <div class="form-signin">
-                <button class="btn btn-lg btn-dark btn-block text-uppercase sign-up" @click="login">Log in</button>
-                <div v-if="errors.length">
-                    <ul class="list-group mt-4">
-                        <li v-for="(error, i) in errors" :key="i" class="list-group-item list-group-item-danger">{{ error }}</li>
-                    </ul>
+  <div class="Signup">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+          <div class="card card-signin my-5">
+            <div class="card-body">
+              <h5 class="card-title text-center">Log in</h5>
+              <form class="form-signin">
+                <div class="form-label-group">
+                  <input
+                    type="email"
+                    id="inputEmail"
+                    class="form-control"
+                    placeholder="Email address"
+                    v-model="email"
+                    @keyup.13="login"
+                  />
+                  <label for="inputEmail"></label>
                 </div>
-              <hr class="my-4">
-              <button class="btn btn-lg btn-google btn-block text-uppercase" v-google-signin-button="clientId"><i class="fab fa-google mr-2 "></i> Continue with Google</button>
-              <!-- <v-facebook-login class="btn btn-lg btn-facebook btn-block text-uppercase" :app-id="appId" :login-options="{ scope: 'email' }" @login="flogin" v-model="model" @sdk-init="handleSdkInit"></v-facebook-login> -->
-              <p class="mt-4 float-right">Already have an account? <b-link :to="`/signup?teacherSignup=${isTeacherApp}`">Sign up here</b-link></p>
+
+                <div class="form-label-group">
+                  <input
+                    type="password"
+                    id="inputPassword"
+                    class="form-control"
+                    placeholder="Password"
+                    autocomplete="on"
+                    v-model="password"
+                    @keyup.13="login"
+                  />
+                  <label for="inputPassword"></label>
+                </div>
+              </form>
+              <div class="form-signin">
+                <button
+                  class="btn btn-lg btn-dark btn-block text-uppercase sign-up"
+                  @click="login"
+                >
+                  Log in
+                </button>
+                <div v-if="errors.length">
+                  <ul class="list-group mt-4">
+                    <li
+                      v-for="(error, i) in errors"
+                      :key="i"
+                      class="list-group-item list-group-item-danger"
+                    >
+                      {{ error }}
+                    </li>
+                  </ul>
+                </div>
+                <hr class="my-4" />
+                <button
+                  class="btn btn-lg btn-google btn-block text-uppercase"
+                  v-google-signin-button="clientId"
+                >
+                  <i class="fab fa-google mr-2"></i> Continue with Google
+                </button>
+                <!-- <v-facebook-login class="btn btn-lg btn-facebook btn-block text-uppercase" :app-id="appId" :login-options="{ scope: 'email' }" @login="flogin" v-model="model" @sdk-init="handleSdkInit"></v-facebook-login> -->
+                <p class="mt-4 float-right">
+                  Already have an account?
+                  <b-link :to="`/signup?teacherSignup=${isTeacherApp}`"
+                    >Sign up here</b-link
+                  >
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-    </div>
 </template>
 
 <script>
@@ -71,7 +107,7 @@ export default {
         }
     },
     mounted() {
-       
+
     },
     methods: {
         checkForm() {
@@ -79,10 +115,10 @@ export default {
              if (!this.email || !this.password) {
                 this.errors.push('Please fill out all required fields.');
             }
-            
+
             if (this.password && !this.validEmail(this.email)) {
                 this.errors.push('Valid email required.');
-            } 
+            }
         },
         validEmail: function (email) {
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -108,7 +144,7 @@ export default {
         },
         OnGoogleAuthSuccess (idToken) {
             axios.post('http://localhost:5000/api/glogin', {
-                idToken, 
+                idToken,
                 isTeacherApp: this.isTeacherApp,
             }).then((res) =>{
                 if (res.status == 200) {
@@ -139,7 +175,6 @@ export default {
 </script>
 
 <style lang="css">
-@import '../../src/assets/css/forms.css';
-@import '../../src/assets/css/styles.css';
-
+@import "../../src/assets/css/forms.css";
+@import "../../src/assets/css/styles.css";
 </style>

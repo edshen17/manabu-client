@@ -1,32 +1,53 @@
 <template>
-    <div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md">
-                    <div>
-                        <form @submit.prevent="handleSubmit">
-                            <div class="form-group">
-                                 <slot name="uniqueSelect"></slot>
-                            </div>
-                            <div class="form-group">
-                                <label>Country/Region</label>
-                                <b-form-select v-model="defaultData.region" @change="updateTimezone" :options="optionsRegion" size="md"></b-form-select>
-                                <div v-if="submitted && defaultData.region.length == 0" class="invalid">Please provide a region</div>
-                            </div>
-                            <div class="form-group">
-                                <label>Timezone</label>
-                                <b-form-select v-model="defaultData.timezone" :options="optionsTz" size="md"></b-form-select>
-                                <div v-if="submitted && defaultData.timezone.length == 0" class="invalid">Please provide a timezone</div>
-                            </div>
-                            <div class="form-group">
-                                <button class="btn btn-primary" @click="handleSubmit(endpoint)">{{submitButtonText}}</button>
-                            </div>
-                        </form>
-                    </div>
+  <div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md">
+          <div>
+            <form @submit.prevent="handleSubmit">
+              <div class="form-group">
+                <slot name="uniqueSelect"></slot>
+              </div>
+              <div class="form-group">
+                <label>Country/Region</label>
+                <b-form-select
+                  v-model="defaultData.region"
+                  @change="updateTimezone"
+                  :options="optionsRegion"
+                  size="md"
+                ></b-form-select>
+                <div
+                  v-if="submitted && defaultData.region.length == 0"
+                  class="invalid"
+                >
+                  Please provide a region
                 </div>
-            </div>
+              </div>
+              <div class="form-group">
+                <label>Timezone</label>
+                <b-form-select
+                  v-model="defaultData.timezone"
+                  :options="optionsTz"
+                  size="md"
+                ></b-form-select>
+                <div
+                  v-if="submitted && defaultData.timezone.length == 0"
+                  class="invalid"
+                >
+                  Please provide a timezone
+                </div>
+              </div>
+              <div class="form-group">
+                <button class="btn btn-primary" @click="handleSubmit(endpoint)">
+                  {{submitButtonText}}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -59,7 +80,7 @@
             this.optionsRegion.sort(this.compare);
             this.userData = await getUserData();
         },
-     
+
         data() {
             return {
                 host: 'http://localhost:5000/api',
@@ -108,16 +129,13 @@
 </script>
 <style lang="css" scoped>
 .invalid {
-    width: 100%;
-    margin-top: .25rem;
-    font-size:  80%;
-    color: #dc3545;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
 }
 
 .btn {
-    float: right;
+  float: right;
 }
-
-
-
 </style>

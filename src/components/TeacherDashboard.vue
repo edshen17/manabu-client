@@ -1,7 +1,7 @@
 <template>
-    <div class ="TeacherDashboard">
-        <p>sadas</p>
-    </div>
+  <div class="TeacherDashboard">
+    <p>sadas</p>
+  </div>
 </template>
 <script>
 export default {

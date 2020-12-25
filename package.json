@@ -14,6 +14,7 @@
     "countries-and-timezones": "^2.3.1",
     "jwt-decode": "^3.1.2",
     "kalendar-vue": "^2.1.1",
+    "moment": "^2.29.1",
     "portal-vue": "^2.1.7",
     "vue": "^2.6.11",
     "vue-cookies": "^1.7.4",

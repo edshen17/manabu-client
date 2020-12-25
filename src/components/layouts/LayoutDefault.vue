@@ -1,7 +1,10 @@
 <template>
   <div class="LayoutDefault">
     <div>
-      <b-navbar toggleable="lg" class="navbar navbar-expand-lg navbar-light bg-light">
+      <b-navbar
+        toggleable="lg"
+        class="navbar navbar-expand-lg navbar-light bg-light"
+      >
         <b-navbar-brand>
           <b-link to="/" class="navbar-brand d-lg-inline-block">
             MANABU
@@ -10,28 +13,52 @@
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav class="ml-auto">
-            <b-nav-item>
-              <b-link to="/teachers" class="nav-link menu-item" v-show="true" :class=" { active: $route.name == 'Teachers' } ">Find a Teacher</b-link>
+            <b-nav-item v-show="true">
+              <b-link
+                to="/teachers"
+                class="nav-link menu-item"
+                :class=" { active: $route.name == 'Teachers' } "
+                >Find a Teacher</b-link
+              >
             </b-nav-item>
-            <b-nav-item>
-              <b-link to="/apply" class="nav-link menu-item" v-show="this.$route.name != 'Dashboard'" :class=" { active: $route.name == 'Apply' } ">Become a Teacher</b-link>
-            </b-nav-item> 
-            <b-nav-item>
-              <b-link to="/login" class="nav-link menu-item" v-show="!this.isLoggedIn" :class=" { active: $route.name == 'Log In' } ">Log In</b-link>
+            <b-nav-item v-show="this.$route.name != 'Dashboard'">
+              <b-link
+                to="/apply"
+                class="nav-link menu-item"
+                :class=" { active: $route.name == 'Apply' } "
+                >Become a Teacher</b-link
+              >
             </b-nav-item>
-            <b-nav-item>
-              <b-link to="/signup" class="nav-link menu-item" v-show="!this.isLoggedIn" :class=" { active: $route.name == 'Sign Up' } ">Sign Up</b-link>
+            <b-nav-item v-show="!this.isLoggedIn">
+              <b-link
+                to="/login"
+                class="nav-link menu-item"
+                :class=" { active: $route.name == 'Log In' } "
+                >Log In</b-link
+              >
             </b-nav-item>
-            <b-nav-item>
-              <b-link to="/logout" class="nav-link menu-item" v-show="this.isLoggedIn">Logout</b-link>
+            <b-nav-item v-show="!this.isLoggedIn">
+              <b-link
+                to="/signup"
+                class="nav-link menu-item"
+                :class=" { active: $route.name == 'Sign Up' } "
+                >Sign Up</b-link
+              >
+            </b-nav-item>
+            <b-nav-item v-show="this.isLoggedIn">
+              <b-link
+                to="/logout"
+                class="nav-link menu-item"
+                >Logout</b-link
+              >
             </b-nav-item>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
     </div>
-  <main class="LayoutDefault_main">
-    <slot />
-  </main>
+    <main class="LayoutDefault_main">
+      <slot />
+    </main>
   </div>
 </template>
 
@@ -60,5 +87,5 @@ export default {
 </script>
 
 <style lang="css">
-  @import '../../assets/css/styles.css';
+@import "../../assets/css/styles.css";
 </style>
