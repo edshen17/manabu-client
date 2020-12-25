@@ -89,10 +89,10 @@
                 }
             },
             handleSubmit(endpoint) {
-                if (this.formData.targetLanguage && this.formData.nativeLanguage && this.formData.level && this.defaultData.region && this.defaultData.timezone) { // all inputs are filled in
+                if (this.formData.fluentLanguage && this.formData.nonFluentLanguage && this.formData.level && this.defaultData.region && this.defaultData.timezone) { // all inputs are filled in
                     const sendUpdateObj = { ...this.formData, ...this.defaultData } // merge the data from the parent and child
-                    sendUpdateObj.fluentLanguages = [`${sendUpdateObj.nativeLanguage}-C2`]
-                    sendUpdateObj.nonFluentLanguages = [`${sendUpdateObj.targetLanguage}-${sendUpdateObj.level}`]
+                    sendUpdateObj.fluentLanguages = [`${sendUpdateObj.fluentLanguage}-C2`]
+                    sendUpdateObj.nonFluentLanguages = [`${sendUpdateObj.nonFluentLanguage}-${sendUpdateObj.level}`]
                     axios.put(`${this.host}${this.endpoint}/${this.userData.data._id}/updateProfile`, sendUpdateObj, { headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }

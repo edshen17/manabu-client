@@ -23,7 +23,7 @@
               <b-link to="/signup" class="nav-link menu-item" v-show="!this.isLoggedIn" :class=" { active: $route.name == 'Sign Up' } ">Sign Up</b-link>
             </b-nav-item>
             <b-nav-item>
-              <b-link to="/logout" class="nav-link menu-item" v-show="this.isLoggedIn" :class=" { active: $route.name == 'Logout' } ">Logout</b-link>
+              <b-link to="/logout" class="nav-link menu-item" v-show="this.isLoggedIn">Logout</b-link>
             </b-nav-item>
           </b-navbar-nav>
         </b-collapse>

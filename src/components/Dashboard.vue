@@ -1,28 +1,50 @@
 <template>
     <div class ="Dashboard">   
-        <b-modal id="student-reg" size="lg" :no-close-on-backdrop="true" :hide-footer="true">
+        <b-modal id="reg-form" size="lg" :no-close-on-backdrop="true" :hide-footer="true">
             <template #modal-title>
                 <div>
                     Welcome to Manabu! Let us know about you!
                 </div>
             </template>
-            <registration-form v-on:form-submitted="hideModal" 
-                submitButtonText='Submit' :formData="formData" endpoint="/user">
-                <template v-slot:uniqueSelect>
-                    <div class="form-group">
-                                <label>Target Language</label>
-                                <b-form-select v-model="formData.targetLanguage" :options="optionsLearningLanguage" size="md" :userId="userId"></b-form-select>
-                            </div>
-                            <div class="form-group">
-                                <label>Target Language Level</label>
-                                <b-form-select v-model="formData.level" :options="optionsLevel" size="md" :select-size="3"></b-form-select>
-                            </div>
-                            <div class="form-group">
-                                <label>Native Language</label>
-                                <b-form-select v-model="formData.nativeLanguage" :options="optionsNativeLanguage" size="md"></b-form-select>
-                            </div> 
-                </template>
-            </registration-form>
+            <div v-if="userData">
+                <registration-form v-on:form-submitted="hideModal"
+                                submitButtonText='Submit' :formData="formData" endpoint="/user" 
+                                v-if="userData.data.role == 'user' && !userData.data.teacherAppPending">
+                                <template v-slot:uniqueSelect>
+                                    <div class="form-group">
+                                                <label>Target Language</label>
+                                                <b-form-select v-model="formData.nonFluentLanguage" :options="optionsPrimaryLanguage" size="md" :userId="userId"></b-form-select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Target Language Level</label>
+                                                <b-form-select v-model="formData.level" :options="optionsLevel" size="md" :select-size="3"></b-form-select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Native Language</label>
+                                                <b-form-select v-model="formData.fluentLanguage" :options="optionsSecondaryLanguage" size="md"></b-form-select>
+                                            </div> 
+                                </template>
+                            </registration-form>
+                            <registration-form v-on:form-submitted="hideModal" 
+                                submitButtonText='Submit' :formData="formData" endpoint="/user" 
+                                v-if="userData.data.teacherAppPending">
+                                <template v-slot:uniqueSelect>
+                                    <div class="form-group">
+                                                <label>I will be teaching</label>
+                                                <b-form-select v-model="formData.fluentLanguage" :options="optionsPrimaryLanguage" size="md" :userId="userId"></b-form-select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>I can also speak</label>
+                                                <b-form-select v-model="formData.nonFluentLanguage" :options="optionsSecondaryLanguage" size="md"></b-form-select>
+                                            </div> 
+                                            <div class="form-group">
+                                                <label>My {{ formData.nonFluentLanguage }} level is</label>
+                                                <b-form-select v-model="formData.level" :options="optionsLevel" size="md" :select-size="3"></b-form-select>
+                                            </div>
+                                </template>
+                            </registration-form>
+                
+            </div>
         </b-modal> 
         <div v-if="userData">
             <div class="student-dashboard" v-show="userData.data.role == 'user' && !userData.data.teacherAppPending">
@@ -30,9 +52,32 @@
                     {{userData.data}}
                 </div>
             </div>
+        
         <teacher-dashboard v-if="userData.data.role == 'teacher'">
-            <p v-if="userData.data.teacherAppPending">{{userData.data}}</p>
+            <!-- <p v-if="userData.data.teacherAppPending">{{userData.data}}</p> -->
         </teacher-dashboard>
+
+        <!-- View for new teachers-->
+        <div v-show="userData.data.role == 'user' && userData.data.teacherAppPending">
+            <edit-calendar></edit-calendar>
+                <!-- <kalendar :configuration="calendar_settings" :events.sync="events">
+                    <div slot="created-card" slot-scope="{ event_information }" class="details-card" @click="reserveSlot()">
+                        <h4 class="appointment-title">hi</h4>
+                        <small>
+                        {{event_information.data.description}}
+                        </small>
+                      
+                    </div>
+                    <div slot="popup-form" style="display: flex; flex-direction: column;">
+                        <h4 style="margin-bottom: 10px">
+                        New Appointment
+                        </h4>
+                    </div>
+                </kalendar> -->
+            </div>
+        
+
+
         </div>
         <div v-else>
             <div class="d-flex justify-content-center my-4">
@@ -50,21 +95,34 @@ import LayoutDefault from './layouts/LayoutDefault';
 import TeacherDashboard from './TeacherDashboard';
 import getUserData from '../assets/scripts/tokenGetter';
 import RegistrationForm from './steps/RegistrationForm';
+import EditCalendar from './steps/EditCalendar';
+import { Kalendar } from 'kalendar-vue';
 
 export default {
     async mounted() {
         this.userData = await getUserData();
         this.userId = this.userData.data._id;
         this.loading = false;
+        const filledOutForm = !(this.userData.data.fluentLanguages.length == 0 
+        && this.userData.data.nonFluentLanguages.length == 0 && !this.userData.data.region && !this.userData.data.timezone)
+        
+        // teacher form
+        if (this.userData.data.teacherAppPending && !filledOutForm) {
+            this.formData.nonFluentLanguage = 'EN',
+            this.formData.fluentLanguage = 'JP',
+            this.showModal();
+        }
 
         // user has not filled out registration form, so show form
-        if (this.userData.data.fluentLanguages.length == 0 && this.userData.data.nonFluentLanguages.length == 0 && !this.userData.data.region && !this.userData.data.timezone) { 
+        else if (!filledOutForm) { 
             this.showModal();
         }
     },
     components: {
         TeacherDashboard,
-        RegistrationForm
+        RegistrationForm,
+        Kalendar,
+        EditCalendar,
     },
     name: 'Dashboard',
     async created() {
@@ -75,13 +133,13 @@ export default {
             userData: null,
             userId: '',
             formData: {
-                targetLanguage: 'JP',
-                nativeLanguage: 'EN',
-                level: 'C1',
+                nonFluentLanguage: 'JP',
+                fluentLanguage: 'EN',
+                level: 'B2',
             },
             host: 'http://localhost:5000/api',
             loading: true,
-            optionsLearningLanguage: [
+            optionsPrimaryLanguage: [
                     { value: 'JP', text: 'Japanese' },
                     { value: null, text: 'Other languages coming soon!', disabled: true }
                 ],
@@ -92,22 +150,47 @@ export default {
                     { value: 'C1', text: 'Advanced (C1)' },
                     { value: 'C2', text: 'Proficient (C2)' },
                 ],
-                optionsNativeLanguage: [
+                optionsSecondaryLanguage: [
                     { value: 'EN', text: 'English' },
-                    { value: 'JP', text: 'Japanese' },
                     { value: 'CN', text: 'Chinese' },
                     { value: 'KR', text: 'Korean' },
-                    { value: 'other', text: 'Other' },
                 ],
+                calendar_settings: {
+                    style: 'material_design',
+                    view_type: 'week',
+                    cell_height: 10,
+                    scrollToNow: false,
+                    start_day: new Date().toISOString(),
+                    read_only: true,
+                    day_starts_at: 0,
+                    day_ends_at: 24,
+                    overlap: false,
+                    past_event_creation: false
+                },
+                events: [
+                {
+                    from: '2021-01-01T18:00:00Z',
+                    to: '2021-01-01T19:00:00Z',
+                    data: 'Event 1',
+                },
+                {
+                    from: '2021-01-01T19:00:00Z',
+                    to: '2021-01-01T21:00:00Z',
+                    data: 'Olive & Friends',
+                },
+            ],
         }
     },
     methods: {
+    reserveSlot() {
+        alert('revers?')
+    },
     showModal() {
-        this.$bvModal.show('student-reg')
+        this.$bvModal.show('reg-form')
     },
     hideModal() {
-        this.$bvModal.hide('student-reg')
-    }
+        this.$bvModal.hide('reg-form')
+        }
     },
 }
 </script>

@@ -6,6 +6,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import Vuelidate from 'vuelidate'
 import VueCookies from 'vue-cookies'
+import PortalVue from "portal-vue";
+
+Vue.use(PortalVue);
 Vue.use(VueCookies);
 Vue.$cookies.config('1d')
 Vue.use(Vuelidate);
