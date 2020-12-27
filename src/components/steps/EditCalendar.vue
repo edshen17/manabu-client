@@ -44,7 +44,6 @@
           </svg>
         </button>
       </div>
-      <!-- POPUP CARD SLOT -->
       <div
         slot="popup-form"
         slot-scope="{ popup_information }"
@@ -136,12 +135,18 @@ export default {
 
         if (payloadTime <= new Date()) { // if date goes into the past
           alert('You cannot make an appointment in the past.')
-          this.$kalendar.closePopups();
         }
 
         else if (timeDiffMins < 30) { // appointment less than 30 mins
           alert('Your appointments must be at least 30 minutes.')
-          this.$kalendar.closePopups();
+        }
+
+        else if (timeDiffMins % 30 != 0) {
+          alert('Your appointments must be in 30 minute to 1 hour intervals.')
+        }
+
+        else if (payloadTime.getMinutes() != 0 && payloadTime.getMinutes() != 30) {
+          alert('You cannot start your appointments at that time (must be at the start of the hour or 30 minutes in).')
         }
         
         else {

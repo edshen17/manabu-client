@@ -95,14 +95,14 @@
       </div>
 
       <teacher-dashboard v-if="userData.data.role == 'teacher'">
-        <!-- <p v-if="userData.data.teacherAppPending">{{userData.data}}</p> -->
       </teacher-dashboard>
 
       <!-- View for new teachers-->
       <div
         v-show="userData.data.role == 'user' && userData.data.teacherAppPending"
       >
-        <edit-calendar :userId="userId"></edit-calendar>
+        <!-- <edit-calendar :userId="userId"></edit-calendar> -->
+        <view-calendar :userId="userId"></view-calendar>
       </div>
     </div>
     <div v-else>
@@ -122,12 +122,12 @@ import TeacherDashboard from './TeacherDashboard';
 import getUserData from '../assets/scripts/tokenGetter';
 import RegistrationForm from './steps/RegistrationForm';
 import EditCalendar from './steps/EditCalendar';
+import ViewCalendar from './steps/ViewCalendar';
 import { Kalendar } from 'kalendar-vue';
 
 export default {
     async mounted() {
         this.userData = await getUserData();
-        console.log(this.userData)
         this.userId = this.userData.data._id;
         this.loading = false;
         const filledOutForm = !(this.userData.data.fluentLanguages.length == 0
@@ -150,6 +150,7 @@ export default {
         RegistrationForm,
         Kalendar,
         EditCalendar,
+        ViewCalendar,
     },
     name: 'Dashboard',
     async created() {
