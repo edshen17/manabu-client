@@ -8,6 +8,8 @@
         :id="event_information.data.from"
         class="details-card"
         @click="colorSlot(event_information.data.from, event_information.data.to, reservationLength)"
+        @mouseover="hoverSlot(event_information.data.from, event_information.data.to, reservationLength)"
+        @mouseleave="unhoverSlot()"
       > 
         <span class="time appointment-title" style="text-align: left"
           >{{parseISOString(event_information.start_time) }} -
@@ -63,6 +65,35 @@ export default {
         }
     },
     methods: {
+      unhoverSlot() {
+          const hoveredElements = document.getElementsByClassName('on-hover');
+          while(hoveredElements.length > 0){
+              hoveredElements[0].classList.remove('on-hover');
+          }
+      },
+      hoverSlot(startTime, endTime, reservationLength) {
+        this.selected = startTime;
+        let firstColorSlot = document.getElementById(startTime);
+        let secondColorSlot = document.getElementById(endTime);
+        let thirdTimeSlot = moment(endTime).add(30, 'minutes').toISOString();
+        let thirdColorSlot = document.getElementById(thirdTimeSlot);
+        const isFirstColorSlotHovered = firstColorSlot.parentNode.classList.value.split(' ').includes('on-hover')
+        const firstColorSlotParentClasses = firstColorSlot.parentNode.classList;
+        let isInvalidSelection = false;
+
+        this.unhoverSlot()
+
+        if (reservationLength == 30) { // hover only 1 slot
+            firstColorSlot.parentNode.classList.add("on-hover");
+        } else if (reservationLength == 60 && secondColorSlot) { // hover only 2 slots
+            firstColorSlot.parentNode.classList.add("on-hover");
+            secondColorSlot.parentNode.classList.add("on-hover");
+        } else if (reservationLength == 90 && secondColorSlot && thirdColorSlot) { // hover only 3 slots
+            firstColorSlot.parentNode.classList.add("on-hover");
+            secondColorSlot.parentNode.classList.add("on-hover");
+            thirdColorSlot.parentNode.classList.add("on-hover");
+        }
+      },
       colorSlot(startTime, endTime, reservationLength) {
         this.selected = startTime;
         let firstColorSlot = document.getElementById(startTime);
@@ -105,7 +136,7 @@ export default {
               const selectedElements = document.getElementsByClassName("on-select")
 
               for (let i = 0; i < selectedElements.length; i++) { // check if selected box is an "invalid" action (eg. undoing select on middle slots that weren't selected originally)
-              if (selectedElements[i] == firstColorSlot.parentNode && i % 2 == 1) {
+              if (selectedElements[i] == firstColorSlot.parentNode && i % 3 == 1) {
                 isInvalidSelection = true;
               }
             }
@@ -114,9 +145,9 @@ export default {
                 secondColorSlotParentClasses.add("on-select");
                 thirdColorSlotParentClasses.add("on-select");
             } else if (isFirstColorSlotSelected && isSecondColorSlotSelected && isThirdColorSlotSelected && !isInvalidSelection) { // otherwise, check if valid move before removing class
-                firstColorSlotParentClasses.add("on-select");
-                secondColorSlotParentClasses.add("on-select");
-                thirdColorSlotParentClasses.add("on-select");
+                firstColorSlotParentClasses.remove("on-select");
+                secondColorSlotParentClasses.remove("on-select");
+                thirdColorSlotParentClasses.remove("on-select");
             }
         }
       },
@@ -157,6 +188,11 @@ export default {
 </script>
 
 <style lang="css">
+
+.kalendar-cell .on-hover {
+  filter: brightness(90%);
+}
+
 .time {
   position: relative !important;
   bottom: 0;
@@ -208,7 +244,7 @@ export default {
 }
 
 .on-select {
-  background-color: #90ee90 !important;
+  background-color: #00bfbd !important;
 }
 
 .is-past {
