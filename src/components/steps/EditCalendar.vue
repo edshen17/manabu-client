@@ -114,14 +114,20 @@ export default {
               id: kalendarEvent.kalendar_id,
         })
 
-        axios.delete(`${this.host}/schedule/availableTime`, {
+        const deleteObj = {
             createdBy: this.userId,
             from: kalendarEvent.start_time,
             to: kalendarEvent.end_time,
-          }, { headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-          })
+          }
+          
+        axios.delete(`${this.host}/schedule/availableTime`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          data: {
+            deleteObj
+          }
+        });
       },
       addEvent(popup_data, form_data) {
         let payload = {

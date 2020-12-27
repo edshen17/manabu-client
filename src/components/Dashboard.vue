@@ -101,8 +101,8 @@
       <div
         v-show="userData.data.role == 'user' && userData.data.teacherAppPending"
       >
-        <!-- <edit-calendar :userId="userId"></edit-calendar> -->
-        <view-calendar :userId="userId" :reservationLength="60"></view-calendar>
+        <!-- <edit-calendar :userId="userId"></edit-calendar>  -->
+        <view-calendar :userId="userId" :reservationLength="90"></view-calendar>
       </div>
     </div>
     <div v-else>
