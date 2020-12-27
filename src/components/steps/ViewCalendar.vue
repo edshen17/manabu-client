@@ -5,16 +5,24 @@
       <div
         slot="created-card"
         slot-scope="{ event_information }"
-        class="details-card"
         :id="event_information.data.from"
-        @click="colorSlot(event_information.data.from, event_information.data.to, 90)"
+        :class="{ 'details-card': selected != event_information.data.from}"
+        @click="colorSlot(event_information.data.from, event_information.data.to, reservationLength)"
       > 
-        <h5 class="appointment-title" style="text-align: left">
-        </h5>
-        <p> {{ event_information.data.from}}</p>
         <span class="time appointment-title" style="text-align: left"
           >{{parseISOString(event_information.start_time) }} -
           {{parseISOString(event_information.end_time)}}</span>
+
+          <div class="popup-wrapper">
+            <div class="popup-event">
+              <div>
+                <div class="row">
+                  <input type="submit" id="btnSearch" value="Save" class="app-button">
+                  <input type="submit" id="btnClearSearch" value="Cancel" class="app-button">
+                </div>
+              </div>
+            </div>
+          </div>
       </div>
       
       <div
@@ -45,6 +53,7 @@ export default {
     },
     props: {
       userId: String,
+      reservationLength: Number,
     },
     mounted() {
       axios.get(`${this.host}/schedule/${this.userId}/availableTime`).then((res) => {
@@ -70,15 +79,17 @@ export default {
                     day_ends_at: 24,
                 },
               isLoaded: false,
+              selected: null,
               events: []
         }
     },
     methods: {
       colorSlot(startTime, endTime, reservationLength) {
+        this.selected = startTime;
         // remove any classes from the elements (if user clicks on another slot)
-        const elements = document.getElementsByClassName('on-select');
-        while(elements.length > 0){
-          elements[0].classList.remove('on-select');
+        const selected = document.getElementsByClassName('on-select');
+        while(selected.length > 0){
+          selected[0].classList.remove('on-select');
         }
 
         // get all the slots relative to each other, given the kalendar event slot
@@ -86,20 +97,22 @@ export default {
         let secondColorSlot = document.getElementById(endTime);
         let thirdTimeSlot = moment(endTime).add(30, 'minutes').toISOString();
         let thirdColorSlot = document.getElementById(thirdTimeSlot);
-        
-        if (reservationLength == 30 && firstColorSlot) { // reserve only 1 slot
-            firstColorSlot.parentNode.classList.add("on-select");
+
+        if (firstColorSlot) {
+          if (reservationLength == 30) { // reserve only 1 slot and show the popup by adding the details-card class (which was removed)
+            firstColorSlot.parentNode.classList.add("on-select", "details-card");
             return;
-        } else if (reservationLength == 60 && firstColorSlot && secondColorSlot) { // reserve only 2 slots
-            firstColorSlot.parentNode.classList.add("on-select");
-            secondColorSlot.parentNode.classList.add("on-select");
-            return;
-        } else if (reservationLength == 90 && firstColorSlot && secondColorSlot 
-                  && thirdColorSlot) { // reserve only 3 slots
-            firstColorSlot.parentNode.classList.add("on-select");
-            secondColorSlot.parentNode.classList.add("on-select");
-            thirdColorSlot.parentNode.classList.add("on-select");
-            return;
+          } else if (reservationLength == 60 && secondColorSlot) { // reserve only 2 slots
+              firstColorSlot.parentNode.classList.add("on-select", "details-card");
+              secondColorSlot.parentNode.classList.add("on-select");
+              return;
+          } else if (reservationLength == 90 && secondColorSlot 
+                    && thirdColorSlot) { // reserve only 3 slots
+              firstColorSlot.parentNode.classList.add("on-select", "details-card");
+              secondColorSlot.parentNode.classList.add("on-select");
+              thirdColorSlot.parentNode.classList.add("on-select");
+              return;
+          }
         }
       },
       intervals(startString, endString) { // split up any time into 30m intervals
@@ -144,6 +157,16 @@ export default {
   position: relative !important;
   bottom: 0;
   right: 0 !important;
+  margin: 4px 6px !important;
+}
+
+.created-event {
+  display: flex;
+  padding: 0;
+}
+
+.created .details-card {
+  flex: 1;
 }
 
 .details-card button {
