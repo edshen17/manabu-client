@@ -1,25 +1,32 @@
 <template>
   <div class="ViewCalendar">
+    <b-modal id="complete-modal" title="Success!">
+      <p class="my-4">Your reservation has been made! You can cancel or reschedule the appointment up to 24 hours before the meeting begins.</p>
+    </b-modal>
     <div v-if="isLoaded">
+      <h4 class="text-center slots-left" v-if="slotsLeft == 1">{{ slotsLeft }} time slot left to reserve</h4>
+      <h4 class="text-center slots-left" v-else>{{ slotsLeft }} time slots left to reserve</h4>
+      <button @click="showModal" class="add-manual" :class="{ 'enabled-button': slotsLeft != reservationSlotLimit }" :disabled="slotsLeft == reservationSlotLimit"><i class="fas fa-arrow-right"></i></button>
       <kalendar :configuration="calendar_settings" :events.sync="events">
-      <div
-        slot="created-card"
-        slot-scope="{ event_information }"
-        :id="event_information.data.from"
-        class="details-card"
-        @click="colorSlot(event_information.data.from, event_information.data.to, reservationLength)"
-        @mouseover="hoverSlot(event_information.data.from, event_information.data.to, reservationLength)"
-        @mouseleave="unhoverSlot()"
-      > 
-        <span class="time appointment-title" style="text-align: left"
-          >{{parseISOString(event_information.start_time) }} -
-          {{parseISOString(event_information.end_time)}}</span>
-      </div>
-    </kalendar>
+        <div
+          slot="created-card"
+          slot-scope="{ event_information }"
+          :id="event_information.data.from"
+          class="details-card"
+          @click="colorSlot(event_information.data.from, event_information.data.to, reservationLength)"
+          @mouseover="hoverSlot(event_information.data.from, event_information.data.to, reservationLength)"
+          @mouseleave="unhoverSlot()"
+        >
+          <span class="time appointment-title" style="text-align: left"
+            >{{parseISOString(event_information.start_time) }} -
+            {{parseISOString(event_information.end_time)}}</span
+          >
+        </div>
+      </kalendar>
     </div>
     <div v-else class="d-flex justify-content-center my-4">
-        <b-spinner label="Loading..."></b-spinner>
-      </div>
+      <b-spinner label="Loading..."></b-spinner>
+    </div>
   </div>
 </template>
 <script>
@@ -33,11 +40,12 @@ export default {
         Kalendar
     },
     props: {
-      userId: String,
+      teacherId: String,
       reservationLength: Number,
+      reservationSlotLimit: Number,
     },
     mounted() {
-      axios.get(`${this.host}/schedule/${this.userId}/availableTime`).then((res) => {
+      axios.get(`${this.host}/schedule/${this.teacherId}/availableTime`).then((res) => {
         if (res.status == 200) {
           for (let i = 0; i < res.data.length; i++) {
             this.intervals(res.data[i].from, res.data[i].to)
@@ -60,25 +68,29 @@ export default {
                     day_ends_at: 24,
                 },
               isLoaded: false,
-              selected: null,
-              events: []
+              currentlySelected: null,
+              events: [],
+              slotsLeft: this.reservationSlotLimit
         }
     },
     methods: {
+      showModal() {
+        if (this.slotsLeft != this.reservationSlotLimit) {
+          this.$bvModal.show('complete-modal')
+        }
+      },
       unhoverSlot() {
           const hoveredElements = document.getElementsByClassName('on-hover');
           while(hoveredElements.length > 0){
               hoveredElements[0].classList.remove('on-hover');
           }
       },
-      hoverSlot(startTime, endTime, reservationLength) {
-        this.selected = startTime;
+      hoverSlot(startTime, endTime, reservationLength) { // endTime is the end time of the first slot selected
+        this.currentlySelected = startTime;
         let firstColorSlot = document.getElementById(startTime);
         let secondColorSlot = document.getElementById(endTime);
         let thirdTimeSlot = moment(endTime).add(30, 'minutes').toISOString();
         let thirdColorSlot = document.getElementById(thirdTimeSlot);
-        const isFirstColorSlotHovered = firstColorSlot.parentNode.classList.value.split(' ').includes('on-hover')
-        const firstColorSlotParentClasses = firstColorSlot.parentNode.classList;
         let isInvalidSelection = false;
 
         this.unhoverSlot()
@@ -94,8 +106,8 @@ export default {
             thirdColorSlot.parentNode.classList.add("on-hover");
         }
       },
-      colorSlot(startTime, endTime, reservationLength) {
-        this.selected = startTime;
+      colorSlot(startTime, endTime, reservationLength) { // endTime is the end time of the first slot selected
+        this.currentlySelected = startTime;
         let firstColorSlot = document.getElementById(startTime);
         let secondColorSlot = document.getElementById(endTime);
         let thirdTimeSlot = moment(endTime).add(30, 'minutes').toISOString();
@@ -105,28 +117,32 @@ export default {
         let isInvalidSelection = false;
 
         if (reservationLength == 30) { // reserve only 1 slot
-            if (!isFirstColorSlotSelected) {
+            if (!isFirstColorSlotSelected && this.slotsLeft - 1 >= 0) {
               firstColorSlot.parentNode.classList.add("on-select");
-            } else {
+              this.slotsLeft -= 1;
+            } else if (isFirstColorSlotSelected && this.slotsLeft <= this.reservationSlotLimit - 1) {
               firstColorSlot.parentNode.classList.remove("on-select");
+              this.slotsLeft += 1;
             }
-            
+
         } else if (reservationLength == 60 && secondColorSlot) { // reserve only 2 slots
             const isSecondColorSlotSelected = secondColorSlot.parentNode.classList.value.split(' ').includes('on-select')
             const secondColorSlotParentClasses = secondColorSlot.parentNode.classList;
             const selectedElements = document.getElementsByClassName("on-select")
 
             for (let i = 0; i < selectedElements.length; i++) { // check if selected box is an "invalid" action (eg. undoing select on middle slots that weren't selected originally)
-              if (selectedElements[i] == firstColorSlot.parentNode && i % 2 == 1) {
+              if (selectedElements[i] == firstColorSlot.parentNode && i % 2 != 0) {
                 isInvalidSelection = true;
               }
             }
-              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected) { // if not selected, apply selection class
+              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && this.slotsLeft - 1 >= 0) { // if not selected, apply selection class
               firstColorSlotParentClasses.add("on-select");
               secondColorSlotParentClasses.add("on-select");
+              this.slotsLeft -= 1;
             } else if (isFirstColorSlotSelected && isSecondColorSlotSelected && !isInvalidSelection) { // otherwise, check if valid move before removing class
               firstColorSlotParentClasses.remove("on-select");
               secondColorSlotParentClasses.remove("on-select");
+              this.slotsLeft += 1;
             }
         } else if (reservationLength == 90 && secondColorSlot && thirdColorSlot) { // reserve only 3 slots
               const isSecondColorSlotSelected = secondColorSlot.parentNode.classList.value.split(' ').includes('on-select')
@@ -136,18 +152,21 @@ export default {
               const selectedElements = document.getElementsByClassName("on-select")
 
               for (let i = 0; i < selectedElements.length; i++) { // check if selected box is an "invalid" action (eg. undoing select on middle slots that weren't selected originally)
-              if (selectedElements[i] == firstColorSlot.parentNode && i % 3 == 1) {
+              if (selectedElements[i] == firstColorSlot.parentNode && i % 3 != 0) {
                 isInvalidSelection = true;
               }
             }
-              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && !isThirdColorSlotSelected) { // if not selected, apply selection class
+              
+              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && !isThirdColorSlotSelected && this.slotsLeft - 1 >= 0) { // if not selected, apply selection class
                 firstColorSlotParentClasses.add("on-select");
                 secondColorSlotParentClasses.add("on-select");
                 thirdColorSlotParentClasses.add("on-select");
+                this.slotsLeft -= 1;
             } else if (isFirstColorSlotSelected && isSecondColorSlotSelected && isThirdColorSlotSelected && !isInvalidSelection) { // otherwise, check if valid move before removing class
                 firstColorSlotParentClasses.remove("on-select");
                 secondColorSlotParentClasses.remove("on-select");
                 thirdColorSlotParentClasses.remove("on-select");
+                this.slotsLeft += 1;
             }
         }
       },
@@ -188,9 +207,19 @@ export default {
 </script>
 
 <style lang="css">
+.event-card.inspecting {
+  z-index: 0 !important;
+}
+.enabled-button {
+  background-color: #ff554b !important;
+}
+
+.slots-left {
+  margin-top: 2%;
+}
 
 .kalendar-cell .on-hover {
-  filter: brightness(90%);
+  filter: brightness(85%);
 }
 
 .time {
@@ -219,6 +248,10 @@ export default {
   right: 5px;
   cursor: pointer;
   background: transparent;
+}
+
+body {
+  line-height: 1.1 !important;
 }
 
 .details-card button svg {
@@ -253,6 +286,33 @@ export default {
   -khtml-user-select: none;
   -webkit-user-select: none;
   -o-user-select: none;
+}
+
+.kalendar-wrapper.gstyle .created-event, .kalendar-wrapper.gstyle .creating-event {
+  border-radius: 0px !important;
+}
+
+.add-manual {
+  border: none;
+  background-color: #6c757d;
+  color: #fff;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0;
+  width: 60px;
+  height: 60px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 50%;
+  z-index: 2;
 }
 
 </style>
