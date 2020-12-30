@@ -3,11 +3,11 @@
     <b-modal id="complete-modal" title="Success!">
       <p class="my-4">Your reservation has been made! You can cancel or reschedule the appointment up to 24 hours before the meeting begins. Misaki will contact you on LINE.</p>
     </b-modal>
-    <div>
+    <div v-if="isLoaded">
       <h4 class="text-center slots-left" v-if="slotsLeft == 1">{{ slotsLeft }} time slot left to reserve</h4>
       <h4 class="text-center slots-left" v-else>{{ slotsLeft }} time slots left to reserve</h4>
       <button @click="showModal" class="add-manual" :class="{ 'enabled-button': slotsLeft != reservationSlotLimit }" :disabled="slotsLeft == reservationSlotLimit"><i class="fas fa-arrow-right"></i></button>
-      <kalendar :configuration="calendar_settings" :events.sync="events" ref="kalendar" v-show="isLoaded">
+      <kalendar :configuration="calendar_settings" :events.sync="events" ref="kalendar">
         <div
           slot="created-card"
           slot-scope="{ event_information }"
@@ -23,9 +23,9 @@
           >
         </div>
       </kalendar>
-      <div v-show="!isLoaded" class="d-flex justify-content-center my-4">
-      <b-spinner label="Loading..."></b-spinner>
     </div>
+    <div v-else class="d-flex justify-content-center my-4">
+      <b-spinner label="Loading..."></b-spinner>
     </div>
   </div>
 </template>
@@ -57,25 +57,21 @@ export default {
         },
       },
     mounted() {
-      const lastWeeks = moment().subtract(14, 'days');
-      const nextWeeks = moment().add(14, 'days');
-      axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
+      const lastSunday = moment().subtract(2, 'week');
+      const nextMonday = moment().add(2, 'week');
+      axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastSunday.toISOString()}/${nextMonday.toISOString()}`).then((res) => {
         if (res.status == 200) {
           for (let i = 0; i < res.data.length; i++) {
-            this.events = this.intervals(res.data[i].from, res.data[i].to);
+            this.intervals(res.data[i].from, res.data[i].to);
           }
-
-          setTimeout(() => {
-            this.isLoaded = true;
-          }, 500);
-          
+          this.isLoaded = true;
         }
       });
 
       setTimeout(() => {
         this.currentDayLoaded = true;
         this.currentDay = this.$refs.kalendar._data.current_day;
-       }, 500);
+       }, 200);
     },
     data() {
         return {
@@ -100,15 +96,15 @@ export default {
     },
     methods: {
       getWeekData(startDay) {
-        const lastWeeks = moment(startDay).subtract(14, 'days');
-        const nextWeeks = moment(startDay).add(14, 'days');
-        axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
+        const lastSunday = moment(startDay).subtract(14, 'days');
+        const nextMonday = moment(startDay).add(14, 'days');
+        axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastSunday.toISOString()}/${nextMonday.toISOString()}`).then((res) => {
           if (res.status == 200) {
             for (let i = 0; i < res.data.length; i++) {
-              this.events.push(... this.intervals(res.data[i].from, res.data[i].to));
+              this.intervals(res.data[i].from, res.data[i].to)
             }
 
-            const uniqueEvents = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out any duplicates if user goes back and forth
+            const uniqueEvents = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out any duplicates on back/forth
             this.$refs.kalendar.kalendar_events = uniqueEvents;
           }
         });
@@ -235,11 +231,14 @@ export default {
                   to: result[i+1],
                 }
               }
-              formatedDateArr.push(formatedDate);
+              // formatedDateArr.push(formatedDate);
+              this.events.push(formatedDate);
             }
           }
 
-          return formatedDateArr;
+          // this.events = formatedDateArr
+
+          // return formatedDateArr;
       },
       parseISOString(dateStr) {
           const parts = dateStr.split('T');
