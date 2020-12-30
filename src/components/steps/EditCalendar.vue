@@ -3,9 +3,9 @@
     <div v-if="isLoaded">
       <kalendar :configuration="calendar_settings" :events.sync="events">
       <div slot="creating-card" slot-scope="{ event_information }">
-        <h4 class="appointment-title" style="text-align: left">
+        <h5 class="appointment-title">
           Available
-        </h4>
+        </h5>
         <span class="time">
           {{parseISOString(event_information.start_time)}}
           -
@@ -17,10 +17,10 @@
         slot-scope="{ event_information }"
         class="details-card"
       >
-        <h5 class="appointment-title" style="text-align: left">
+        <h5 class="appointment-title">
           Available
         </h5>
-        <span class="time appointment-title" style="text-align: left"
+        <span class="time appointment-title"
           >{{parseISOString(event_information.start_time) }} -
           {{parseISOString(event_information.end_time)}}</span
         >
@@ -73,13 +73,32 @@ export default {
     props: {
       userId: String,
     },
+    watch: {
+        'currentDayLoaded' () { // when DOM is loaded, add the below events on the arrows to get updates in date       
+          document.getElementsByClassName('week-navigator-button')[0].addEventListener('click', () => {
+            this.currentDay = this.$refs.kalendar._data.current_day;
+            this.getWeekData(this.currentDay);
+          })
+          document.getElementsByClassName('week-navigator-button')[1].addEventListener('click', () => {
+            this.currentDay = this.$refs.kalendar._data.current_day;
+            this.getWeekData(this.currentDay);
+          })
+        },
+      },
     mounted() {
-      axios.get(`${this.host}/schedule/${this.userId}/availableTime`).then((res) => {
+      const lastWeeks = moment().subtract(3, 'days')
+      const nextWeeks = moment().add(5, 'days')
+      axios.get(`${this.host}/schedule/${this.userId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
         if (res.status == 200) {
           this.events = res.data;
           this.isLoaded = true;
         }
-      })
+      });
+
+      setTimeout(() => {
+        this.currentDayLoaded = true;
+        this.currentDay = this.$refs.kalendar._data.current_day;
+       }, 200);
     },
     data() {
         return {
@@ -97,13 +116,25 @@ export default {
                     past_event_creation: false
                 },
               isLoaded: false,
-              events: []
+              events: [],
+              currentDayLoaded: false,
         }
     },
     methods: {
+      getWeekData(startDay) {
+        const lastWeeks = moment(startDay).subtract(14, 'days');
+        const nextWeeks = moment(startDay).add(14, 'days');
+        axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
+          if (res.status == 200) {
+            this.events.push(... res.data);
+
+            const uniqueEvents = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out any duplicates if user goes back and forth
+            this.$refs.kalendar.kalendar_events = uniqueEvents;
+          }
+        });
+      },
       parseISOString(dateStr) {
           const parts = dateStr.split('T');
-          const test = parts[1];
           return parts[1].substring(0,5)
       },
       removeEvent(kalendarEvent) {
@@ -207,7 +238,6 @@ export default {
 }
 .row {
   text-align:center;
-  /*the same margin which is every button have, it is for small screen, and if you have many buttons.*/
   margin-left:-20px;
   margin-right:-20px;
 }
