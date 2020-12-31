@@ -152,9 +152,10 @@ export default {
         const isFirstColorSlotSelected = firstColorSlot.parentNode.classList.value.split(' ').includes('on-select')
         const firstColorSlotParentClasses = firstColorSlot.parentNode.classList;
         let isInvalidSelection = false;
+        let isPast = firstColorSlot.parentNode.parentNode.classList.value.split(' ').includes('is-past');
 
         if (reservationLength == 30) { // reserve only 1 slot
-            if (!isFirstColorSlotSelected && this.slotsLeft - 1 >= 0) {
+            if (!isFirstColorSlotSelected && this.slotsLeft - 1 >= 0  && !isPast) {
               firstColorSlot.parentNode.classList.add("on-select");
               this.slotsLeft -= 1;
             } else if (isFirstColorSlotSelected && this.slotsLeft <= this.reservationSlotLimit - 1) {
@@ -172,7 +173,7 @@ export default {
                 isInvalidSelection = true;
               }
             }
-              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && this.slotsLeft - 1 >= 0) { // if not selected, apply selection class
+              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && this.slotsLeft - 1 >= 0 && !isPast) { // if not selected, apply selection class
               firstColorSlotParentClasses.add("on-select");
               secondColorSlotParentClasses.add("on-select");
               this.slotsLeft -= 1;
@@ -194,7 +195,7 @@ export default {
               }
             }
               
-              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && !isThirdColorSlotSelected && this.slotsLeft - 1 >= 0) { // if not selected, apply selection class
+              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && !isThirdColorSlotSelected && this.slotsLeft - 1 >= 0  && !isPast) { // if not selected, apply selection class
                 firstColorSlotParentClasses.add("on-select");
                 secondColorSlotParentClasses.add("on-select");
                 thirdColorSlotParentClasses.add("on-select");
@@ -253,7 +254,7 @@ export default {
 }
 
 .kalendar-cell .event-card.inspecting {
-  z-index: 0 !important;
+  z-index: 10 !important;
 }
 
 .enabled-button {
