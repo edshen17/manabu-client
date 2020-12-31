@@ -57,9 +57,9 @@ export default {
         },
       },
     mounted() {
-      const lastSunday = moment().subtract(2, 'week');
-      const nextMonday = moment().add(2, 'week');
-      axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastSunday.toISOString()}/${nextMonday.toISOString()}`).then((res) => {
+      const lastWeeks = moment().subtract(2, 'week');
+      const nextWeeks = moment().add(2, 'week');
+      axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
         if (res.status == 200) {
           for (let i = 0; i < res.data.length; i++) {
             this.intervals(res.data[i].from, res.data[i].to);
@@ -96,16 +96,18 @@ export default {
     },
     methods: {
       getWeekData(startDay) {
-        const lastSunday = moment(startDay).subtract(14, 'days');
-        const nextMonday = moment(startDay).add(14, 'days');
-        axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastSunday.toISOString()}/${nextMonday.toISOString()}`).then((res) => {
+        const lastWeeks = moment(startDay).subtract(2, 'week');
+        const nextWeeks = moment(startDay).add(2, 'week');
+        axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
           if (res.status == 200) {
             for (let i = 0; i < res.data.length; i++) {
               this.intervals(res.data[i].from, res.data[i].to)
             }
 
-            const uniqueEvents = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out any duplicates on back/forth
+            // filter out any duplicates on back/forth
+            const uniqueEvents = [...new Map(this.events.map(event => [event['from'], event])).values()] 
             this.$refs.kalendar.kalendar_events = uniqueEvents;
+            this.events = uniqueEvents;
           }
         });
       },
@@ -226,19 +228,14 @@ export default {
               const formatedDate = {
                 from: result[i],
                 to: result[i+1],
-                data: { // make a data object to be used later, as Kalendar converts from and to to another date string format...
+                data: { // make a data object to be used later, as Kalendar converts from and to to another date string format
                   from: result[i],
                   to: result[i+1],
                 }
               }
-              // formatedDateArr.push(formatedDate);
               this.events.push(formatedDate);
             }
           }
-
-          // this.events = formatedDateArr
-
-          // return formatedDateArr;
       },
       parseISOString(dateStr) {
           const parts = dateStr.split('T');
@@ -249,9 +246,16 @@ export default {
 </script>
 
 <style lang="css">
-.event-card.inspecting {
+
+.modal-open {
+    padding-right: 0px !important;
+    overflow-y: scroll !important;
+}
+
+.kalendar-cell .event-card.inspecting {
   z-index: 0 !important;
 }
+
 .enabled-button {
   background-color: #ff554b !important;
 }
@@ -290,10 +294,6 @@ export default {
   right: 5px;
   cursor: pointer;
   background: transparent;
-}
-
-body {
-  line-height: 1.1 !important;
 }
 
 .details-card button svg {

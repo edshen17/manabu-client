@@ -1,7 +1,7 @@
 <template>
   <div class="EditCalendar">
     <div v-if="isLoaded">
-      <kalendar :configuration="calendar_settings" :events.sync="events">
+      <kalendar :configuration="calendar_settings" :events.sync="events" ref="kalendar">
       <div slot="creating-card" slot-scope="{ event_information }">
         <h5 class="appointment-title">
           Available
@@ -86,8 +86,8 @@ export default {
         },
       },
     mounted() {
-      const lastWeeks = moment().subtract(3, 'days')
-      const nextWeeks = moment().add(5, 'days')
+      const lastWeeks = moment().subtract(2, 'week')
+      const nextWeeks = moment().add(2, 'week')
       axios.get(`${this.host}/schedule/${this.userId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
         if (res.status == 200) {
           this.events = res.data;
@@ -118,18 +118,19 @@ export default {
               isLoaded: false,
               events: [],
               currentDayLoaded: false,
+              currentDay: '',
         }
     },
     methods: {
       getWeekData(startDay) {
-        const lastWeeks = moment(startDay).subtract(14, 'days');
-        const nextWeeks = moment(startDay).add(14, 'days');
-        axios.get(`${this.host}/schedule/${this.teacherId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
+        const lastWeeks = moment(startDay).subtract(2, 'week');
+        const nextWeeks = moment(startDay).add(2, 'week');
+        axios.get(`${this.host}/schedule/${this.userId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
+          
           if (res.status == 200) {
-            this.events.push(... res.data);
-
-            const uniqueEvents = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out any duplicates if user goes back and forth
-            this.$refs.kalendar.kalendar_events = uniqueEvents;
+            this.events.push(... res.data)
+            this.events = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out any duplicates if user goes back and forth
+            this.$refs.kalendar.kalendar_events = this.events;
           }
         });
       },
@@ -236,6 +237,7 @@ export default {
     display:inline-block;
     line-height: 30px;
 }
+
 .row {
   text-align:center;
   margin-left:-20px;

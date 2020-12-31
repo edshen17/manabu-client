@@ -95,7 +95,7 @@
           <div class="card mb-2">
             <img
               class="card-img-top"
-              src="../assets/images/learning.jpeg"
+              src="../assets/images/1.jpg"
               alt="Card image cap"
             />
             <div class="card-body bg-dark text-white">
