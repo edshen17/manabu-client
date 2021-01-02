@@ -41,7 +41,8 @@
           :id="event_information.data.from"
           class="details-card"
           :class="{'booked-by-self': event_information.data.reservedBy == reservedBy, 
-          'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '' }"
+          'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '',
+          'reserved': event_information.data.reservedBy }"
           @click="colorSlot(event_information.data.from, reservationLength)"
           @mouseover="applySlotClass(event_information.data.from, reservationLength, 'on-hover')"
           @mouseleave="unhoverSlot()"
@@ -224,9 +225,10 @@ export default {
         const isFirstColorSlotSelected = firstColorSlotParentClasses.value.split(' ').includes('on-select')
         let isInvalidSelection = false;
         const isPast = firstColorSlot.parentNode.parentNode.classList.value.split(' ').includes('is-past');
+        const isFirstColorSlotReserved = firstColorSlot.classList.value.split(' ').includes('reserved')
 
         if (reservationLength == 30) { // reserve only 1 slot
-            if (!isFirstColorSlotSelected && this.slotsLeft - 1 >= 0  && !isPast) {
+            if (!isFirstColorSlotSelected && this.slotsLeft - 1 >= 0  && !isPast && !isFirstColorSlotReserved) {
               firstColorSlotParentClasses.add("on-select"); // TODO: replace '' with package id
               this.currentlySelected.push(this.appointmentFactory(this.createdBy, this.reservedBy, '', startTime, endTime));
               this.slotsLeft -= 1;
@@ -237,13 +239,14 @@ export default {
         } else if (reservationLength == 60 && secondColorSlot) { // reserve only 2 slots
             const isSecondColorSlotSelected = secondColorSlot.parentNode.classList.value.split(' ').includes('on-select')
             const secondColorSlotParentClasses = secondColorSlot.parentNode.classList;
-            const selectedElements = document.getElementsByClassName("on-select")
+            const selectedElements = document.getElementsByClassName("on-select");
+            const isSecondColorSlotReserved = secondColorSlot.classList.value.split(' ').includes('reserved')
             for (let i = 0; i < selectedElements.length; i++) { // check if selected box is an "invalid" action (eg. undoing select on middle slots that weren't selected originally)
               if (selectedElements[i] == firstColorSlot.parentNode && i % 2 != 0) {
                 isInvalidSelection = true;
               }
             }
-              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && this.slotsLeft - 1 >= 0 && !isPast) { // if not selected, apply selection class
+              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && this.slotsLeft - 1 >= 0 && !isPast && !isFirstColorSlotReserved && !isSecondColorSlotReserved) { // if not selected, apply selection class
               firstColorSlotParentClasses.add("on-select");
               secondColorSlotParentClasses.add("on-select");
               this.currentlySelected.push(this.appointmentFactory(this.createdBy, this.reservedBy, '', startTime, thirdTimeSlot));
@@ -256,8 +259,10 @@ export default {
             }
         } else if (reservationLength == 90 && secondColorSlot && thirdColorSlot) { // reserve only 3 slots
               const isSecondColorSlotSelected = secondColorSlot.parentNode.classList.value.split(' ').includes('on-select')
+              const isSecondColorSlotReserved = secondColorSlot.classList.value.split(' ').includes('reserved')
               const secondColorSlotParentClasses = secondColorSlot.parentNode.classList;
               const isThirdColorSlotSelected = thirdColorSlot.parentNode.classList.value.split(' ').includes('on-select')
+              const isThirdColorSlotReserved = thirdColorSlot.classList.value.split(' ').includes('reserved')
               const thirdColorSlotParentClasses = thirdColorSlot.parentNode.classList;
               const selectedElements = document.getElementsByClassName("on-select")
 
@@ -267,7 +272,7 @@ export default {
               }
             }
 
-              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && !isThirdColorSlotSelected && this.slotsLeft - 1 >= 0  && !isPast) { // if not selected, apply selection class
+              if (!isFirstColorSlotSelected && !isSecondColorSlotSelected && !isThirdColorSlotSelected && this.slotsLeft - 1 >= 0  && !isPast && !isFirstColorSlotReserved && !isSecondColorSlotReserved && !isThirdColorSlotReserved) { // if not selected, apply selection class
                 firstColorSlotParentClasses.add("on-select");
                 secondColorSlotParentClasses.add("on-select");
                 thirdColorSlotParentClasses.add("on-select");
@@ -328,7 +333,6 @@ export default {
 
 .booked-by-self {
   background-color: #6cf039 !important;
-  pointer-events: none;
 }
 
 .modal-open {
