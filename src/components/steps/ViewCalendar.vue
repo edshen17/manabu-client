@@ -1,16 +1,19 @@
 <template>
   <div class="ViewCalendar">
-    <b-modal id="complete-modal" title="Success!">
-      <p class="my-4" v-show="madeReservation">
-        Your reservation has been made! You can cancel or reschedule the
-        appointment up to 24 hours before the meeting begins. Misaki will
-        contact you on LINE.
+    <b-modal
+      id="complete-modal"
+      title="Success!"
+      :no-close-on-backdrop="true"
+      ok-only
+    >
+      <p class="my-4">
+        Your reservation has been made and is pending confirmation. You can
+        cancel or reschedule the appointment up to 24 hours before the meeting
+        begins. We will contact you soon.
       </p>
-      <p class="my-4" v-show="!madeReservation">
-        Your reservation has been made! You can cancel or reschedule the
-        appointment up to 24 hours before the meeting begins. Misaki will
-        contact you on LINE.
-      </p>
+      <template v-slot:modal-ok @click="this.$bvModal.close('complete-modal');">
+        OK
+      </template>
     </b-modal>
     <div v-if="isLoaded">
       <h4 class="text-center slots-left" v-if="slotsLeft == 1">
@@ -20,7 +23,7 @@
         {{ slotsLeft }} time slots left to reserve
       </h4>
       <button
-        @click="showModal"
+        @click="createAppointments()"
         class="add-manual"
         :class="{ 'enabled-button': slotsLeft != reservationSlotLimit }"
         :disabled="slotsLeft == reservationSlotLimit"
@@ -37,8 +40,10 @@
           slot-scope="{ event_information }"
           :id="event_information.data.from"
           class="details-card"
+          :class="{'booked-by-self': event_information.data.reservedBy == reservedBy, 
+          'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '' }"
           @click="colorSlot(event_information.data.from, reservationLength)"
-          @mouseover="hoverOrSelectSlot(event_information.data.from, reservationLength, true)"
+          @mouseover="applySlotClass(event_information.data.from, reservationLength, 'on-hover')"
           @mouseleave="unhoverSlot()"
         >
           <span class="time appointment-title" style="text-align: left"
@@ -72,22 +77,28 @@ export default {
       watch: {
         'currentDayLoaded' () { // when DOM is loaded, add the below events on the arrows to get updates in date
           document.getElementsByClassName('week-navigator-button')[0].addEventListener('click', () => {
-            this.onChangeWeek()
+            this.onChangeWeek();
           })
           document.getElementsByClassName('week-navigator-button')[1].addEventListener('click', () => {
-            this.onChangeWeek()
+            this.onChangeWeek();
           })
         },
       },
     mounted() {
       const lastWeeks = moment().subtract(2, 'week');
       const nextWeeks = moment().add(2, 'week');
-      axios.get(`${this.host}/schedule/${this.createdBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
-        if (res.status == 200) {
-          for (let i = 0; i < res.data.length; i++) {
-            this.intervals(res.data[i].from, res.data[i].to);
-          }
-          this.isLoaded = true;
+      axios.get(`${this.host}/schedule/${this.createdBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
+        if (resAvailableTimes.status == 200) {
+          axios.get(`${this.host}/schedule/${this.createdBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
+            if (resAppointments.status == 200) {
+              const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
+              for (let i = 0; i < combinedTimeSlots.length; i++) {
+                const reservedBy = combinedTimeSlots[i].reservedBy ? combinedTimeSlots[i].reservedBy : '';
+                this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy);
+              }
+              this.isLoaded = true;
+            }
+          });
         }
       });
 
@@ -119,6 +130,17 @@ export default {
         }
     },
     methods: {
+      createAppointments() {
+        if (this.slotsLeft != this.reservationSlotLimit) {
+          this.$bvModal.show('complete-modal');
+          for (let i = 0; i < this.currentlySelected.length; i++) {
+            axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+            }).catch((err) => { console.log(err) });
+          }
+        }
+      },
       onChangeWeek() { // used when user changes week
         this.currentDay = this.$refs.kalendar._data.current_day;
         this.getWeekData(this.currentDay);
@@ -126,7 +148,7 @@ export default {
             for (let i = 0; i < this.currentlySelected.length; i++) {
               let selectedSlot = document.getElementById(this.currentlySelected[i].from);
               if (selectedSlot) {
-                this.hoverOrSelectSlot(this.currentlySelected[i].from, this.reservationLength, false)
+                this.applySlotClass(this.currentlySelected[i].from, this.reservationLength, 'on-select')
               }
             }
           }, 200);
@@ -134,23 +156,20 @@ export default {
       getWeekData(startDay) { // get 2 week information (used during page refresh)
         const lastWeeks = moment(startDay).subtract(2, 'week');
         const nextWeeks = moment(startDay).add(2, 'week');
-        axios.get(`${this.host}/schedule/${this.createdBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
-          if (res.status == 200) {
-            for (let i = 0; i < res.data.length; i++) {
-              this.intervals(res.data[i].from, res.data[i].to)
-            }
-
-            // filter out any duplicates on back/forth
-            const uniqueEvents = [...new Map(this.events.map(event => [event['from'], event])).values()]
-            this.$refs.kalendar.kalendar_events = uniqueEvents;
-            this.events = uniqueEvents;
+        axios.get(`${this.host}/schedule/${this.createdBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
+          if (resAvailableTimes.status == 200) {
+            axios.get(`${this.host}/schedule/${this.createdBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
+              if (resAppointments.status == 200) {
+                const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
+                for (let i = 0; i < combinedTimeSlots.length; i++) {
+                  const reservedBy = combinedTimeSlots[i].reservedBy ? combinedTimeSlots[i].reservedBy : '';
+                  this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy);
+                }
+                this.$refs.kalendar.kalendar_events = this.events;
+              }
+            });
           }
         });
-      },
-      showModal() {
-        if (this.slotsLeft != this.reservationSlotLimit) {
-          this.$bvModal.show('complete-modal')
-        }
       },
       unhoverSlot() {
           const hoveredElements = document.getElementsByClassName('on-hover');
@@ -158,22 +177,20 @@ export default {
               hoveredElements[0].classList.remove('on-hover');
           }
       },
-      hoverOrSelectSlot(startTime, reservationLength, isHover) { // hover + rendering selected classes (if user changes weeks)
+      applySlotClass(startTime, reservationLength, classToApply) { // hover + rendering selected classes (if user changes weeks). no click logic
         let firstColorSlot = document.getElementById(startTime);
         let secondColorSlot = document.getElementById(moment(startTime).add(30, 'minutes').toISOString());
         let thirdTimeSlot = moment(startTime).add(1, 'hour').toISOString();
         let thirdColorSlot = document.getElementById(thirdTimeSlot);
         let isInvalidSelection = false;
-        const classToApply = isHover ? 'on-hover' : 'on-select';
+        this.unhoverSlot() // remove any applied hover classes
 
-        this.unhoverSlot() // remove any applied classes
-
-        if (reservationLength == 30) { // hover only 1 slot
+        if (reservationLength == 30) { // color only 1 slot
             firstColorSlot.parentNode.classList.add(classToApply);
-        } else if (reservationLength == 60 && secondColorSlot) { // hover only 2 slots
+        } else if (reservationLength == 60 && secondColorSlot) { // color only 2 slots
             firstColorSlot.parentNode.classList.add(classToApply);
             secondColorSlot.parentNode.classList.add(classToApply);
-        } else if (reservationLength == 90 && secondColorSlot && thirdColorSlot) { // hover only 3 slots
+        } else if (reservationLength == 90 && secondColorSlot && thirdColorSlot) { // color only 3 slots
             firstColorSlot.parentNode.classList.add(classToApply);
             secondColorSlot.parentNode.classList.add(classToApply);
             thirdColorSlot.parentNode.classList.add(classToApply);
@@ -203,18 +220,18 @@ export default {
         let secondColorSlot = document.getElementById(moment(startTime).add(30, 'minutes').toISOString());
         let thirdTimeSlot = moment(startTime).add(1, 'hour').toISOString();
         let thirdColorSlot = document.getElementById(thirdTimeSlot);
-        const isFirstColorSlotSelected = firstColorSlot.parentNode.classList.value.split(' ').includes('on-select')
         const firstColorSlotParentClasses = firstColorSlot.parentNode.classList;
+        const isFirstColorSlotSelected = firstColorSlotParentClasses.value.split(' ').includes('on-select')
         let isInvalidSelection = false;
-        let isPast = firstColorSlot.parentNode.parentNode.classList.value.split(' ').includes('is-past');
+        const isPast = firstColorSlot.parentNode.parentNode.classList.value.split(' ').includes('is-past');
 
         if (reservationLength == 30) { // reserve only 1 slot
             if (!isFirstColorSlotSelected && this.slotsLeft - 1 >= 0  && !isPast) {
-              firstColorSlot.parentNode.classList.add("on-select"); // TODO: replace '' with package id
+              firstColorSlotParentClasses.add("on-select"); // TODO: replace '' with package id
               this.currentlySelected.push(this.appointmentFactory(this.createdBy, this.reservedBy, '', startTime, endTime));
               this.slotsLeft -= 1;
             } else if (isFirstColorSlotSelected && this.slotsLeft <= this.reservationSlotLimit - 1) {
-              firstColorSlot.parentNode.classList.remove("on-select");
+              firstColorSlotParentClasses.remove("on-select");
               this.slotsLeft += 1;
             }
         } else if (reservationLength == 60 && secondColorSlot) { // reserve only 2 slots
@@ -265,31 +282,33 @@ export default {
             }
         }
       },
-      intervals(startString, endString) { // split up any time into 30m intervals
+      intervals(startString, endString, reservedBy) { // split up any time into 30m intervals
         const start = moment(startString);
         const end = moment(endString);
         start.minutes(Math.ceil(start.minutes() / 30) * 30);
 
-        const result = [];
+        let intervalArr = [];
 
         const current = moment(start);
 
         while (current <= end) {
-            result.push(current.toISOString());
+            intervalArr.push(current.toISOString());
             current.add(30, 'minutes');
         }
 
-        for (let i = 0; i < result.length; i++) {
-            if (i != result.length - 1) {
+        for (let i = 0; i < intervalArr.length; i++) {
+            if (i != intervalArr.length - 1) {
               const formatedDate = {
-                from: result[i],
-                to: result[i+1],
+                from: intervalArr[i],
+                to: intervalArr[i+1],
                 data: { // make a data object to be used later, as Kalendar converts from and to to another date string format
-                  from: result[i],
-                  to: result[i+1],
+                  from: intervalArr[i],
+                  to: intervalArr[i+1],
+                  reservedBy,
                 }
               }
               this.events.push(formatedDate);
+              this.events = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out duplicates if available times and lessons overlap
             }
           }
       },
@@ -302,14 +321,23 @@ export default {
 </script>
 
 <style lang="css">
+.booked-by-other {
+  background-color: gray !important;
+  pointer-events: none;
+}
+
+.booked-by-self {
+  background-color: #6cf039 !important;
+  pointer-events: none;
+}
 
 .modal-open {
-    padding-right: 0px !important;
-    overflow-y: scroll !important;
+  padding-right: 0px !important;
+  overflow-y: scroll !important;
 }
 
 .kalendar-cell .event-card.inspecting {
-  z-index: 10 !important;
+  z-index: 0 !important;
 }
 
 .enabled-button {
@@ -358,16 +386,16 @@ export default {
   fill: #fff;
 }
 
-.app-button{
-    width: 150px;
-    margin:0 20px;
-    display:inline-block;
-    line-height: 30px;
+.app-button {
+  width: 150px;
+  margin: 0 20px;
+  display: inline-block;
+  line-height: 30px;
 }
 .row {
-  text-align:center;
-  margin-left:-20px;
-  margin-right:-20px;
+  text-align: center;
+  margin-left: -20px;
+  margin-right: -20px;
 }
 
 .kalendar-wrapper.gstyle .created-event {
@@ -386,8 +414,13 @@ export default {
   -o-user-select: none;
 }
 
-.kalendar-wrapper.gstyle .created-event, .kalendar-wrapper.gstyle .creating-event {
+.kalendar-wrapper.gstyle .created-event,
+.kalendar-wrapper.gstyle .creating-event {
   border-radius: 0px !important;
+}
+
+.kalendar-wrapper.gstyle .created-event, .kalendar-wrapper.gstyle .creating-event {
+  border-bottom: none !important;
 }
 
 .add-manual {
@@ -410,6 +443,6 @@ export default {
   bottom: 20px;
   right: 20px;
   border-radius: 50%;
-  z-index: 2;
+  z-index: 100;
 }
 </style>

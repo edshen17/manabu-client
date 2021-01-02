@@ -17,10 +17,10 @@
         slot-scope="{ event_information }"
         class="details-card"
       >
-        <h5 class="appointment-title">
+        <h5 class="appointment-title ml-2">
           Available
         </h5>
-        <span class="time appointment-title"
+        <span class="time appointment-title ml-2"
           >{{parseISOString(event_information.start_time) }} -
           {{parseISOString(event_information.end_time)}}</span
         >
@@ -194,12 +194,12 @@ export default {
           this.$kalendar.closePopups();
           axios.post(`${this.host}/schedule/availableTime`, {
             createdBy: this.userId,
-            from: payload.from,
-            to: payload.to,
+            from: new Date(payload.from).toISOString(),
+            to: new Date(payload.to).toISOString(),
           }, { headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-              })
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+          })
         }
       },
     },
