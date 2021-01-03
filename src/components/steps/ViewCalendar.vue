@@ -11,9 +11,32 @@
         cancel or reschedule the appointment up to 24 hours before the meeting
         begins. We will contact you soon.
       </p>
-      <template v-slot:modal-ok @click="this.$bvModal.close('complete-modal');">
+      <template v-slot:modal-ok>
         OK
       </template>
+    </b-modal>
+    <b-modal
+      id="cancel-modal"
+      title="Cancel this appointment?"
+      :no-close-on-backdrop="true"
+    >
+      <p class="my-4" v-show="!deleteErr">
+        Are you sure you want to cancel this appointment?
+      </p>
+      <p class="my-4" v-show="deleteErr">
+        There was an error processing your request. Please make sure you did not click on reserved timeslots between two appointments.
+      </p>
+      <template #modal-footer>
+        <b-button @click="$bvModal.hide('cancel-modal')" v-show="!deleteErr">
+          <div>Cancel</div>
+      </b-button>
+      <b-button @click="deleteErr = false; $bvModal.hide('cancel-modal')" variant="primary" v-show="deleteErr">
+        <div>OK</div>
+      </b-button>
+      <b-button @click="cancelAppointment(cancelStartTime)" variant="primary" v-show="!deleteErr">
+        <div>Yes</div>
+      </b-button>
+    </template>
     </b-modal>
     <div v-if="isLoaded">
       <h4 class="text-center slots-left" v-if="slotsLeft == 1">
@@ -45,7 +68,7 @@
           'reserved': event_information.data.reservedBy }"
           @click="colorSlot(event_information.data.from, reservationLength)"
           @mouseover="applySlotClass(event_information.data.from, reservationLength, 'on-hover')"
-          @mouseleave="unhoverSlot()"
+          @mouseleave="removeSlotClass('on-hover')"
         >
           <span class="time appointment-title" style="text-align: left"
             >{{ parseISOString(event_information.start_time) }} -
@@ -128,9 +151,35 @@ export default {
               currentDay: '',
               currentDayLoaded: false,
               madeReservation: false,
+              cancelStartTime: '',
+              deleteErr: false,
         }
     },
     methods: {
+      cancelAppointment(startTime) {
+        if (this.deleteErr) this.deleteErr = false;
+        const deleteObj = {
+            createdBy: this.createdBy,
+            from: startTime,
+            reservedBy: this.reservedBy,
+          }
+          
+        axios.delete(`${this.host}/schedule/appointment`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          data: {
+            deleteObj
+          }
+        }
+        ).then(() => {
+           this.$bvModal.hide('cancel-modal');
+           this.removeSlotClassSpecific(startTime, this.reservationLength, 'reserved')
+           this.removeSlotClassSpecific(startTime, this.reservationLength, 'booked-by-self')
+        }).catch((err) => {
+          this.deleteErr = true;
+        });
+      },
       createAppointments() {
         if (this.slotsLeft != this.reservationSlotLimit) {
           this.$bvModal.show('complete-modal');
@@ -139,6 +188,9 @@ export default {
                 'X-Requested-With': 'XMLHttpRequest'
             }
             }).catch((err) => { console.log(err) });
+            this.removeSlotClass('on-select');
+            this.applySlotClass(this.currentlySelected[i].from, this.reservationLength, 'booked-by-self')
+            this.applySlotClass(this.currentlySelected[i].from, this.reservationLength, 'reserved')
           }
         }
       },
@@ -172,11 +224,30 @@ export default {
           }
         });
       },
-      unhoverSlot() {
-          const hoveredElements = document.getElementsByClassName('on-hover');
-          while(hoveredElements.length > 0){
-              hoveredElements[0].classList.remove('on-hover');
+      removeSlotClass(className) {
+          const classElements = document.getElementsByClassName(className);
+          while(classElements.length > 0){
+              classElements[0].classList.remove(className);
           }
+      },
+      removeSlotClassSpecific(startTime, reservationLength, classToRemove) {
+        let firstColorSlot = document.getElementById(startTime);
+        let secondColorSlot = document.getElementById(moment(startTime).add(30, 'minutes').toISOString());
+        let thirdTimeSlot = moment(startTime).add(1, 'hour').toISOString();
+        let thirdColorSlot = document.getElementById(thirdTimeSlot);
+        let isInvalidSelection = false;
+        this.removeSlotClass('on-hover') // remove any applied hover classes
+
+        if (reservationLength == 30) { // color only 1 slot
+            firstColorSlot.parentNode.classList.remove(classToRemove);
+        } else if (reservationLength == 60 && secondColorSlot) { // color only 2 slots
+            firstColorSlot.parentNode.classList.remove(classToRemove);
+            secondColorSlot.parentNode.classList.remove(classToRemove);
+        } else if (reservationLength == 90 && secondColorSlot && thirdColorSlot) { // color only 3 slots
+            firstColorSlot.parentNode.classList.remove(classToRemove);
+            secondColorSlot.parentNode.classList.remove(classToRemove);
+            thirdColorSlot.parentNode.classList.remove(classToRemove);
+        }
       },
       applySlotClass(startTime, reservationLength, classToApply) { // hover + rendering selected classes (if user changes weeks). no click logic
         let firstColorSlot = document.getElementById(startTime);
@@ -184,7 +255,7 @@ export default {
         let thirdTimeSlot = moment(startTime).add(1, 'hour').toISOString();
         let thirdColorSlot = document.getElementById(thirdTimeSlot);
         let isInvalidSelection = false;
-        this.unhoverSlot() // remove any applied hover classes
+        this.removeSlotClass('on-hover') // remove any applied hover classes
 
         if (reservationLength == 30) { // color only 1 slot
             firstColorSlot.parentNode.classList.add(classToApply);
@@ -217,15 +288,25 @@ export default {
         })
       },
       colorSlot(startTime, reservationLength) { // on click logic + coloring
-        let firstColorSlot = document.getElementById(startTime);
-        let secondColorSlot = document.getElementById(moment(startTime).add(30, 'minutes').toISOString());
-        let thirdTimeSlot = moment(startTime).add(1, 'hour').toISOString();
-        let thirdColorSlot = document.getElementById(thirdTimeSlot);
+        const firstColorSlot = document.getElementById(startTime);
+        const secondColorSlot = document.getElementById(moment(startTime).add(30, 'minutes').toISOString());
+        const thirdTimeSlot = moment(startTime).add(1, 'hour').toISOString();
+        const thirdColorSlot = document.getElementById(thirdTimeSlot);
         const firstColorSlotParentClasses = firstColorSlot.parentNode.classList;
         const isFirstColorSlotSelected = firstColorSlotParentClasses.value.split(' ').includes('on-select')
         let isInvalidSelection = false;
         const isPast = firstColorSlot.parentNode.parentNode.classList.value.split(' ').includes('is-past');
-        const isFirstColorSlotReserved = firstColorSlot.classList.value.split(' ').includes('reserved')
+        const isFirstColorSlotReserved = firstColorSlot.classList.value.split(' ').includes('reserved') || firstColorSlot.parentNode.classList.value.split(' ').includes('reserved')
+        let isSecondColorSlotSelected;
+        let secondColorSlotParentClasses;
+        const selectedElements = document.getElementsByClassName("on-select");
+        let isSecondColorSlotReserved;
+
+        if ((reservationLength == 60 || reservationLength == 90) && secondColorSlot) {
+            isSecondColorSlotSelected = secondColorSlot.parentNode.classList.value.split(' ').includes('on-select');
+            secondColorSlotParentClasses = secondColorSlot.parentNode.classList;
+            isSecondColorSlotReserved = secondColorSlot.classList.value.split(' ').includes('reserved') || secondColorSlot.parentNode.classList.value.split(' ').includes('reserved');
+        }
 
         if (reservationLength == 30) { // reserve only 1 slot
             if (!isFirstColorSlotSelected && this.slotsLeft - 1 >= 0  && !isPast && !isFirstColorSlotReserved) {
@@ -237,10 +318,6 @@ export default {
               this.slotsLeft += 1;
             }
         } else if (reservationLength == 60 && secondColorSlot) { // reserve only 2 slots
-            const isSecondColorSlotSelected = secondColorSlot.parentNode.classList.value.split(' ').includes('on-select')
-            const secondColorSlotParentClasses = secondColorSlot.parentNode.classList;
-            const selectedElements = document.getElementsByClassName("on-select");
-            const isSecondColorSlotReserved = secondColorSlot.classList.value.split(' ').includes('reserved')
             for (let i = 0; i < selectedElements.length; i++) { // check if selected box is an "invalid" action (eg. undoing select on middle slots that weren't selected originally)
               if (selectedElements[i] == firstColorSlot.parentNode && i % 2 != 0) {
                 isInvalidSelection = true;
@@ -257,14 +334,14 @@ export default {
               this.removeSelection(startTime);
               this.slotsLeft += 1;
             }
+            else if (isFirstColorSlotReserved && isSecondColorSlotReserved) {
+              this.$bvModal.show('cancel-modal');
+              this.cancelStartTime = startTime;
+            }
         } else if (reservationLength == 90 && secondColorSlot && thirdColorSlot) { // reserve only 3 slots
-              const isSecondColorSlotSelected = secondColorSlot.parentNode.classList.value.split(' ').includes('on-select')
-              const isSecondColorSlotReserved = secondColorSlot.classList.value.split(' ').includes('reserved')
-              const secondColorSlotParentClasses = secondColorSlot.parentNode.classList;
               const isThirdColorSlotSelected = thirdColorSlot.parentNode.classList.value.split(' ').includes('on-select')
-              const isThirdColorSlotReserved = thirdColorSlot.classList.value.split(' ').includes('reserved')
+              const isThirdColorSlotReserved = thirdColorSlot.classList.value.split(' ').includes('reserved') || thirdColorSlot.parentNode.classList.value.split(' ').includes('reserved');
               const thirdColorSlotParentClasses = thirdColorSlot.parentNode.classList;
-              const selectedElements = document.getElementsByClassName("on-select")
 
               for (let i = 0; i < selectedElements.length; i++) { // check if selected box is an "invalid" action (eg. undoing select on middle slots that weren't selected originally)
               if (selectedElements[i] == firstColorSlot.parentNode && i % 3 != 0) {
@@ -306,7 +383,7 @@ export default {
               const formatedDate = {
                 from: intervalArr[i],
                 to: intervalArr[i+1],
-                data: { // make a data object to be used later, as Kalendar converts from and to to another date string format
+                data: { // make a data object to be used later
                   from: intervalArr[i],
                   to: intervalArr[i+1],
                   reservedBy,
@@ -338,10 +415,6 @@ export default {
 .modal-open {
   padding-right: 0px !important;
   overflow-y: scroll !important;
-}
-
-.kalendar-cell .event-card.inspecting {
-  z-index: 0 !important;
 }
 
 .enabled-button {
