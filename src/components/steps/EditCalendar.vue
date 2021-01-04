@@ -147,7 +147,7 @@ export default {
         })
 
         const deleteObj = {
-            createdBy: this.userId,
+            hostedBy: this.userId,
             from: moment(kalendarEvent.start_time).toISOString(),
             to: moment(kalendarEvent.end_time).toISOString(),
           }
@@ -193,7 +193,7 @@ export default {
           );
           this.$kalendar.closePopups();
           axios.post(`${this.host}/schedule/availableTime`, {
-            createdBy: this.userId,
+            hostedBy: this.userId,
             from: new Date(payload.from).toISOString(),
             to: new Date(payload.to).toISOString(),
           }, { headers: {

@@ -101,7 +101,7 @@ export default {
     },
     props: {
       reservedBy: String,
-      createdBy: String,
+      hostedBy: String,
       reservationLength: Number,
       reservationSlotLimit: Number,
     },
@@ -118,9 +118,9 @@ export default {
     mounted() {
       const lastWeeks = moment().subtract(2, 'week');
       const nextWeeks = moment().add(2, 'week');
-      axios.get(`${this.host}/schedule/${this.createdBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
+      axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
         if (resAvailableTimes.status == 200) {
-          axios.get(`${this.host}/schedule/${this.createdBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
+          axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
             if (resAppointments.status == 200) {
               const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
               for (let i = 0; i < combinedTimeSlots.length; i++) {
@@ -165,7 +165,7 @@ export default {
       cancelAppointment(startTime) {
         if (this.deleteErr) this.deleteErr = false;
         const deleteObj = {
-            createdBy: this.createdBy,
+            hostedBy: this.hostedBy,
             from: startTime,
             reservedBy: this.reservedBy,
           }
@@ -217,9 +217,9 @@ export default {
       getWeekData(startDay) { // get 2 week information (used during page refresh)
         const lastWeeks = moment(startDay).subtract(2, 'week');
         const nextWeeks = moment(startDay).add(2, 'week');
-        axios.get(`${this.host}/schedule/${this.createdBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
+        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.createdBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
               if (resAppointments.status == 200) {
                 const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
                 for (let i = 0; i < combinedTimeSlots.length; i++) {
@@ -255,9 +255,9 @@ export default {
           if (slotToColor) slotToColor.parentNode.classList.add(classToApply);
         }
       },
-      appointmentFactory(createdBy, reservedBy, packageId, from, to) { // creates appointment object to send to server
+      appointmentFactory(hostedBy, reservedBy, packageId, from, to) { // creates appointment object to send to server
         const appointment = {
-          createdBy,
+          hostedBy,
           reservedBy,
           from,
           to,
@@ -296,7 +296,7 @@ export default {
 
             if (!isSelected && this.slotsLeft - 1 >= 0  && !isPast && !isSlotReserved && isValidMove && !isAdjSelected) {
               this.removeSelection(startTime) // avoid adding duplicates
-              this.currentlySelected.push(this.appointmentFactory(this.createdBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
+              this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
               slotToColor.classList.add("on-select");
               isApplyingSelect = true;
             } else if (isSelected && this.slotsLeft <= this.reservationSlotLimit - 1 && isClickOnTopSlot) {
