@@ -1,0 +1,179 @@
+.student-reserved {
+    background-color: #6cf039 !important;
+  }
+  
+  .pending{
+    background-color: #6c757d !important;
+  }
+  
+  .event-card {
+    position: initial !important;
+  }
+  
+  .kalendar-wrapper.gstyle .created-event,
+  .kalendar-wrapper.gstyle .creating-event {
+    border: none !important;
+  }
+  
+  
+  .time {
+    position: relative !important;
+    bottom: 0;
+    right: 0 !important;
+  }
+  
+  .details-card button {
+    margin: 0;
+    border: none;
+    color: #4c4b4b;
+    position: absolute;
+    padding-right: 0;
+    top: 0px;
+    right: 5px;
+    cursor: pointer;
+    background: transparent;
+  }
+  
+  .details-card button svg {
+    width: 18px;
+    height: 18px;
+    fill: #fff;
+  }
+  
+  .app-button{
+      width: 150px;
+      margin:0 20px;
+      display:inline-block;
+      line-height: 30px;
+  }
+  
+  .row {
+    text-align:center;
+    margin-left:-20px;
+    margin-right:-20px;
+  }
+  
+  .kalendar-wrapper.gstyle .created-event {
+    width: 100% !important;
+  }
+
+  .booked-by-other {
+    background-color: #6c757d !important;
+    pointer-events: none;
+  }
+  
+  .booked-by-self {
+    background-color: #6cf039 !important;
+  }
+  
+  .modal-open {
+    padding-right: 0px !important;
+    overflow-y: scroll !important;
+  }
+  
+  .enabled-button {
+    background-color: #ff554b !important;
+  }
+  
+  .slots-left {
+    margin-top: 2%;
+  }
+  
+  .kalendar-cell .on-hover {
+    filter: brightness(85%);
+  }
+  
+  .time {
+    position: relative !important;
+    bottom: 0;
+    right: 0 !important;
+    margin: 4px 6px !important;
+  }
+  
+  .created-event {
+    display: flex;
+    padding: 0 !important;
+  }
+  
+  .created .details-card {
+    flex: 1;
+  }
+  
+  .details-card button {
+    margin: 0;
+    border: none;
+    color: #4c4b4b;
+    position: absolute;
+    padding-right: 0;
+    top: 0px;
+    right: 5px;
+    cursor: pointer;
+    background: transparent;
+  }
+  
+  .details-card button svg {
+    width: 18px;
+    height: 18px;
+    fill: #fff;
+  }
+  
+  .app-button {
+    width: 150px;
+    margin: 0 20px;
+    display: inline-block;
+    line-height: 30px;
+  }
+  .row {
+    text-align: center;
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+  
+  .kalendar-wrapper.gstyle .created-event {
+    width: 100% !important;
+  }
+  
+  .on-select {
+    background-color: #00bfbd !important;
+  }
+  
+  .is-past {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+  }
+  
+  .kalendar-wrapper.gstyle .created-event,
+  .kalendar-wrapper.gstyle .creating-event {
+    border-radius: 0px !important;
+  }
+  
+  .kalendar-wrapper.gstyle .created-event,
+  .kalendar-wrapper.gstyle .creating-event {
+    border: none !important;
+  }
+  
+  .add-manual {
+    border: none;
+    background-color: #6c757d;
+    color: #fff;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    padding: 0;
+    width: 60px;
+    height: 60px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 50%;
+    z-index: 100;
+  }

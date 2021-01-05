@@ -1,5 +1,37 @@
 <template>
   <div class="EditCalendar">
+    <b-modal
+      id="confirm-modal"
+      title="Confirm this appointment?"
+      :no-close-on-backdrop="true"
+    >
+      <p class="my-4" v-show="!confirmErr">
+        user info goes here...
+      </p>
+      <p class="my-4" v-show="confirmErr">
+        There was an error processing your request. Please make sure you did not
+        click on reserved timeslots between two appointments.
+      </p>
+      <template #modal-footer>
+        <b-button @click="$bvModal.hide('confirm-modal')" v-show="!confirmErr">
+          <div>Cancel</div>
+        </b-button>
+        <b-button
+          @click="confirmErr = false; $bvModal.hide('confirm-modal')"
+          variant="primary"
+          v-show="confirmErr"
+        >
+          <div>Confirm</div>
+        </b-button>
+        <b-button
+          @click="confirmAppointment(confirmLessonId)"
+          variant="primary"
+          v-show="!confirmErr"
+        >
+          <div>Yes</div>
+        </b-button>
+      </template>
+    </b-modal>
     <div v-if="isLoaded">
       <kalendar :configuration="calendar_settings" :events.sync="events" ref="kalendar">
       <div slot="creating-card" slot-scope="{ event_information }">
@@ -16,15 +48,26 @@
         slot="created-card"
         slot-scope="{ event_information }"
         class="details-card"
+        :class="{'pending': event_information.data && event_information.data.status == 'pending', 
+                'student-reserved': event_information.data && event_information.data.status == 'confirmed', 
+        }"
+        :id="event_information.data._id"
+        @click="onSlotClick(event_information.data)"
       >
-        <h5 class="appointment-title ml-2">
+        <h5 class="appointment-title ml-2" v-if="event_information.data && !event_information.data.reservedBy">
           Available
+        </h5>
+        <h5 class="appointment-title ml-2" v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'confirmed'">
+          Lesson confirmed
+        </h5>
+        <h5 class="appointment-title ml-2" v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'pending'">
+          Lesson pending
         </h5>
         <span class="time appointment-title ml-2"
           >{{parseISOString(event_information.start_time) }} -
           {{parseISOString(event_information.end_time)}}</span
         >
-        <button @click="removeEvent(event_information)" class="remove">
+        <button @click="removeEvent(event_information)" class="remove" v-if="!event_information.data.reservedBy">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -71,7 +114,7 @@ export default {
         Kalendar
     },
     props: {
-      userId: String,
+      hostedBy: String,
     },
     watch: {
         'currentDayLoaded' () { // when DOM is loaded, add the below events on the arrows to get updates in date       
@@ -86,12 +129,43 @@ export default {
         },
       },
     mounted() {
-      const lastWeeks = moment().subtract(2, 'week')
-      const nextWeeks = moment().add(2, 'week')
-      axios.get(`${this.host}/schedule/${this.userId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
-        if (res.status == 200) {
-          this.events = res.data;
-          this.isLoaded = true;
+      const lastWeeks = moment().subtract(2, 'week');
+      const nextWeeks = moment().add(2, 'week');
+      axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
+        if (resAvailableTimes.status == 200) {
+          axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
+            if (resAppointments.status == 200) {
+              const availableTimes = resAvailableTimes.data;
+              const appointments = resAppointments.data;
+              for (let i = 0; i < availableTimes.length; i++) {
+                const formatedTime = {
+                  from: availableTimes[i].from,
+                  to: availableTimes[i].to,
+                  data: {
+                    _id: availableTimes[i]._id,
+                    hostedBy: availableTimes[i].hostedBy,
+                  }
+                }
+                this.events.push(formatedTime);
+              }
+
+              for (let i = 0; i < appointments.length; i++) {
+                const formatedTime = {
+                  from: appointments[i].from,
+                  to: appointments[i].to,
+                  data: {
+                    _id: appointments[i]._id,
+                    hostedBy: appointments[i].hostedBy,
+                    reservedBy: appointments[i].reservedBy,
+                    status: appointments[i].status,
+                  }
+                }
+                this.events.push(formatedTime);
+              }
+              this.isLoaded = true;
+              this.events = [...new Map(this.events.map(event => [event['from'], event])).values()] // remove any duplicates that split view in half
+            }
+          });
         }
       });
 
@@ -115,17 +189,41 @@ export default {
                     overlap: false,
                     past_event_creation: false
                 },
+              confirmErr: false,
               isLoaded: false,
               events: [],
               currentDayLoaded: false,
               currentDay: '',
+              confirmLessonId: '',
         }
     },
     methods: {
+      confirmAppointment(aId) {
+        axios.put(`${this.host}/schedule/appointment/${this.confirmLessonId}`, {status: 'confirmed' }, { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }}).then((res) => {
+              const events = this.$refs.kalendar.events;
+              for (let i = 0; i < events.length; i++) {
+                if (events[i].data._id == aId) {
+                  events[i].data.status = 'confirmed'
+                  console.log(events[i].data.status)
+                }
+              }
+              this.$bvModal.hide('confirm-modal')
+            }).catch((err) => { this.confirmErr = true; });
+      },
+      onSlotClick(eventData) {
+        if (eventData.status == 'pending') {
+          this.confirmLessonId = eventData._id;
+          this.$bvModal.show('confirm-modal');
+        } else if (eventData.status == 'confirmed') {
+          alert('to do')
+        }
+      },
       getWeekData(startDay) {
         const lastWeeks = moment(startDay).subtract(2, 'week');
         const nextWeeks = moment(startDay).add(2, 'week');
-        axios.get(`${this.host}/schedule/${this.userId}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
+        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
           
           if (res.status == 200) {
             this.events.push(... res.data)
@@ -147,7 +245,7 @@ export default {
         })
 
         const deleteObj = {
-            hostedBy: this.userId,
+            hostedBy: this.hostedBy,
             from: moment(kalendarEvent.start_time).toISOString(),
             to: moment(kalendarEvent.end_time).toISOString(),
           }
@@ -165,6 +263,9 @@ export default {
         let payload = {
             from: popup_data.start_time,
             to: popup_data.end_time,
+            data: {
+              hostedBy: this.hostedBy,
+            }
         };
 
         const payloadTime = new Date(payload.from);
@@ -193,7 +294,7 @@ export default {
           );
           this.$kalendar.closePopups();
           axios.post(`${this.host}/schedule/availableTime`, {
-            hostedBy: this.userId,
+            hostedBy: this.hostedBy,
             from: new Date(payload.from).toISOString(),
             to: new Date(payload.to).toISOString(),
           }, { headers: {
@@ -207,44 +308,5 @@ export default {
 </script>
 
 <style lang="css">
-.time {
-  position: relative !important;
-  bottom: 0;
-  right: 0 !important;
-}
-
-.details-card button {
-  margin: 0;
-  border: none;
-  color: #4c4b4b;
-  position: absolute;
-  padding-right: 0;
-  top: 0px;
-  right: 5px;
-  cursor: pointer;
-  background: transparent;
-}
-
-.details-card button svg {
-  width: 18px;
-  height: 18px;
-  fill: #fff;
-}
-
-.app-button{
-    width: 150px;
-    margin:0 20px;
-    display:inline-block;
-    line-height: 30px;
-}
-
-.row {
-  text-align:center;
-  margin-left:-20px;
-  margin-right:-20px;
-}
-
-.kalendar-wrapper.gstyle .created-event {
-  width: 100% !important;
-}
+@import "../../../src/assets/css/kalendar.css";
 </style>
