@@ -66,9 +66,7 @@
       <kalendar :configuration="calendar_settings" :events.sync="events" ref="kalendar">
       <div slot="creating-card" slot-scope="{ event_information }">
         <span class="appointment-title">
-          Available {{parseISOString(event_information.start_time)}}
-          -
-          {{parseISOString(event_information.end_time)}}
+          Available
         </span>
       </div>
       <div
@@ -81,19 +79,17 @@
         :id="event_information.data._id"
         @click="onSlotClick(event_information.data)"
       >
-        <span class="appointment-title ml-2" v-if="event_information.data && !event_information.data.reservedBy">
-          Available ({{parseISOString(event_information.start_time) }} -
-          {{parseISOString(event_information.end_time)}})
-        </span>
+        <!-- <span class="appointment-title ml-2" v-if="event_information.data && !event_information.data.reservedBy">
+          Available
+        </span> -->
         <span class="appointment-title ml-2" v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'confirmed'">
-          Confirmed ({{parseISOString(event_information.start_time) }} -
-          {{parseISOString(event_information.end_time)}})
+          Confirmed
         </span>
         <span class="appointment-title ml-2" v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'pending'">
-          Pending ({{parseISOString(event_information.start_time) }} -
-          {{parseISOString(event_information.end_time)}})
+          Pending
         </span>
-        <button @click="deleteAppointment(event_information)" class="remove" v-if="!event_information.data.reservedBy">
+        <button @click="deleteAppointment(event_information)" class="remove" v-if="!event_information.data.reservedBy && !event_information.data.isDuplicate">
+          {{ event_information.data.isDuplicate}}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -179,7 +175,6 @@ export default {
               }
               
               for (let i = 0; i < availableTimes.length; i++) { // add available times
-                const adjacentSlots = this.events.filter((slot) => {return slot.from == availableTimes[i].from})
                 const formatedTime = {
                   from: availableTimes[i].from,
                   to: availableTimes[i].to,
@@ -188,19 +183,14 @@ export default {
                     _id: availableTimes[i]._id,
                     hostedBy: availableTimes[i].hostedBy,
                   }
-                }
-
-                if (adjacentSlots.length != 0 && formatedTime.from != adjacentSlots[0].to) {
-                  formatedTime.from = adjacentSlots[0].to;
-                }
+                }  
                 
-                this.events.push(formatedTime);
+                this.recursiveSlotEdit(formatedTime);
               }
 
               this.events.sort(function(a,b){return a.data.isAppointment-b.data.isAppointment}); // sort so appointments come first
-              this.isLoaded = true;
-              this.events = [...new Map(this.events.map(event => [event['from'], event])).values()] // remove any duplicates that split view in half
-            }
+              this.isLoaded = true;        
+          }
           });
         }
       });
@@ -236,6 +226,16 @@ export default {
         }
     },
     methods: {
+      recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid split on kalendar)
+        const dupeTimeSlot = this.events.find(timeSlot => timeSlot.from == formatedTime.from);
+        if (dupeTimeSlot) {
+          formatedTime.from = dupeTimeSlot.to;
+          formatedTime.data.isDuplicate = true;
+          this.recursiveSlotEdit(formatedTime)
+        } else {
+          this.events.push(formatedTime)
+        }
+      },
       confirmAppointment(aId) {
         axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, {status: 'confirmed' }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -244,7 +244,7 @@ export default {
               if (slot) {
                 slot.classList.remove('pending');
                 slot.classList.add('student-reserved');
-                slot.childNodes[2].innerHTML = 'Lesson confirmed'; // update span text
+                slot.childNodes[1].innerHTML = 'Lesson confirmed'; // update span text
               }
               this.$bvModal.hide('confirm-modal')
             }).catch((err) => { this.confirmErr = true; });
