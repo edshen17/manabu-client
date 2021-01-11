@@ -70,9 +70,9 @@
           slot-scope="{ event_information }"
           :id="event_information.data.from"
           class="details-card"
-          :class="{'booked-by-self': event_information.data.reservedBy == reservedBy, 
+          :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed', 
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '',
-          'reserved': event_information.data.reservedBy }"
+          'pending': event_information.data.status == 'pending' }"
           @click="colorSlot(event_information.data.from)"
           @mouseover="applySlotClass(event_information.data.from, 'on-hover')"
           @mouseleave="removeSlotClass('on-hover')"
@@ -116,27 +116,7 @@ export default {
         },
       },
     mounted() {
-      const lastWeeks = moment().subtract(2, 'week');
-      const nextWeeks = moment().add(2, 'week');
-      axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
-        if (resAvailableTimes.status == 200) {
-          axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
-            if (resAppointments.status == 200) {
-              const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
-              for (let i = 0; i < combinedTimeSlots.length; i++) {
-                const reservedBy = combinedTimeSlots[i].reservedBy ? combinedTimeSlots[i].reservedBy : '';
-                this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy);
-              }
-              this.isLoaded = true;
-            }
-          });
-        }
-      });
-
-      setTimeout(() => {
-        this.currentDayLoaded = true;
-        this.currentDay = this.$refs.kalendar._data.current_day;
-       }, 200);
+      this.getWeekData(this.currentDay); // current date
     },
     data() {
         return {
@@ -155,7 +135,7 @@ export default {
               currentlySelected: [],
               events: [],
               slotsLeft: this.reservationSlotLimit,
-              currentDay: '',
+              currentDay: new Date().toISOString(),
               currentDayLoaded: false,
               cancelStartTime: '',
               deleteErr: false,
@@ -180,8 +160,8 @@ export default {
         }
         ).then(() => {
            this.$bvModal.hide('cancel-modal');
-           this.removeSlotClassSpecific(startTime, 'reserved')
            this.removeSlotClassSpecific(startTime, 'booked-by-self')
+           this.removeSlotClassSpecific(startTime, 'pending')
            this.slotsLeft += 1;
         }).catch((err) => {
           this.deleteErr = true;
@@ -195,8 +175,7 @@ export default {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).catch((err) => { console.log(err) });
             this.removeSlotClass('on-select');
-            this.applySlotClass(this.currentlySelected[i].from, 'booked-by-self')
-            this.applySlotClass(this.currentlySelected[i].from, 'reserved')
+            this.applySlotClass(this.currentlySelected[i].from, 'pending')
           }
           this.currentlySelected = [];
         }
@@ -223,13 +202,19 @@ export default {
                 const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
                 for (let i = 0; i < combinedTimeSlots.length; i++) {
                   const reservedBy = combinedTimeSlots[i].reservedBy ? combinedTimeSlots[i].reservedBy : '';
-                  this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy);
+                  const status = combinedTimeSlots[i].status ? combinedTimeSlots[i].status : '';
+                  this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy, status);
                 }
-                this.$refs.kalendar.kalendar_events = this.events;
+                this.isLoaded = true;
               }
             });
           }
         });
+
+         setTimeout(() => {
+          this.currentDayLoaded = true;
+          this.currentDay = this.$refs.kalendar._data.current_day;
+        }, 200);
       },
       removeSlotClass(className) { // remove class from all elements with that class
           const classElements = document.getElementsByClassName(className);
@@ -289,8 +274,10 @@ export default {
             const slotToColorParent = slotToColor.parentNode.classList;
             const isSelected = slotToColor.classList.value.split(' ').includes('on-select');
             const isAdjSelected = adjacentSlot.classList.value.split(' ').includes('on-select');
-            const isSlotReserved = slotToColor.classList.value.split(' ').includes('reserved')
-            || slotToColorParent.value.split(' ').includes('reserved');
+            const isSlotReserved = slotToColor.classList.value.split(' ').includes('booked-by-self')
+            || slotToColorParent.value.split(' ').includes('booked-by-self')
+            || slotToColor.classList.value.split(' ').includes('pending')
+            || slotToColorParent.value.split(' ').includes('pending')
             const isPast = slotToColor.parentNode.parentNode.classList.value.split(' ').includes('is-past');
 
             if (!isSelected && this.slotsLeft - 1 >= 0  && !isPast && !isSlotReserved && isValidMove && !isAdjSelected) {
@@ -319,7 +306,7 @@ export default {
           this.slotsLeft += 1;
         }
       },
-      intervals(startString, endString, reservedBy) { // split up any time into 30m intervals
+      intervals(startString, endString, reservedBy, status) { // split up any time into 30m intervals
         const start = moment(startString);
         const end = moment(endString);
         start.minutes(Math.ceil(start.minutes() / 30) * 30);
@@ -342,6 +329,7 @@ export default {
                   from: intervalArr[i],
                   to: intervalArr[i+1],
                   reservedBy,
+                  status,
                 }
               }
               this.events.push(formatedDate);

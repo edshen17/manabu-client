@@ -1,12 +1,16 @@
-.student-reserved {
-    background-color: #6cf039 !important;
+  .student-reserved {
+    background-color: #0E9135 !important;
   }
   
-  .pending{
+  .pending {
+    background-color: #78D393 !important;
+  }
+
+  .pending-teacher {
     background-color: #6c757d !important;
   }
 
-  .student-reserved, .pending {
+  .dotted-border {
     border: 1px dotted white;
   }
   
@@ -67,7 +71,7 @@
   }
   
   .booked-by-self {
-    background-color: #6cf039 !important;
+    background-color: #0E9135 !important;
   }
   
   .modal-open {

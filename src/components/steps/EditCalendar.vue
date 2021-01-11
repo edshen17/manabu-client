@@ -81,8 +81,9 @@
           slot="created-card"
           slot-scope="{ event_information }"
           class="details-card"
-          :class="{'pending': event_information.data && event_information.data.status == 'pending', 
-                'student-reserved': event_information.data && event_information.data.status == 'confirmed', 
+          :class="{'pending-teacher': event_information.data && event_information.data.status == 'pending', 
+                'student-reserved': event_information.data && event_information.data.status == 'confirmed',
+                'dotted-border':  event_information.data && (event_information.data.status == 'pending' || event_information.data.status == 'confirmed')
         }"
           :id="event_information.data._id"
           @click="onSlotClick(event_information.data)"
@@ -193,7 +194,7 @@ export default {
         },
       },
     mounted() {
-      this.getWeekData(this.currentDay);
+      this.getWeekData(this.currentDay); // current date
     },
     data() {
         return {
@@ -215,7 +216,7 @@ export default {
               isLoaded: false,
               events: [],
               currentDayLoaded: false,
-              currentDay: '',
+              currentDay: new Date().toISOString(),
               selectedLessonId: '',
               event_information: null,
               currentlyApproved: [],
@@ -230,7 +231,7 @@ export default {
               let selectedSlot = document.getElementById(this.currentlyApproved[i]);
               const formatedTimeData = this.events.find(event => event.data._id == this.currentlyApproved[i]);
               if (selectedSlot) {
-                selectedSlot.classList.remove('pending');
+                selectedSlot.classList.remove('pending-teacher');
                 selectedSlot.classList.add('student-reserved');
                 selectedSlot.childNodes[3].innerHTML = `Confirmed
                                                 (${moment(formatedTimeData.from).format("HH:mm")}
@@ -252,14 +253,13 @@ export default {
         }
       },
       confirmAppointment(aId) {
-
         axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, {status: 'confirmed' }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
               const slot = document.getElementById(aId);
               const formatedTimeData = this.events.find(event => event.data._id == aId);
               if (slot && formatedTimeData) {
-                slot.classList.remove('pending');
+                slot.classList.remove('pending-teacher');
                 slot.classList.add('student-reserved');
                 slot.childNodes[3].innerHTML = `Confirmed
                                                 (${moment(formatedTimeData.from).format("HH:mm")}
@@ -327,16 +327,6 @@ export default {
         this.currentDayLoaded = true;
         this.currentDay = this.$refs.kalendar._data.current_day;
        }, 200);
-        // const lastWeeks = moment(startDay).subtract(2, 'week');
-        // const nextWeeks = moment(startDay).add(2, 'week');
-        // axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((res) => {
-
-        //   if (res.status == 200) {
-        //     this.events.push(... res.data)
-        //     this.events = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out any duplicates if user goes back and forth
-        //     this.$refs.kalendar.kalendar_events = this.events;
-        //   }
-        // });
       },
       parseISOString(dateStr) {
           const parts = dateStr.split('T');
