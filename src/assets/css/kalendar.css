@@ -5,6 +5,10 @@
   .pending{
     background-color: #6c757d !important;
   }
+
+  .student-reserved, .pending {
+    border: 1px dotted white;
+  }
   
   .event-card {
     position: initial !important;
