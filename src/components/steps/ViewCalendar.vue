@@ -8,8 +8,8 @@
     >
       <p class="my-4">
         Your reservation has been made and is pending confirmation. You can
-        cancel or reschedule the appointment up to 24 hours before the meeting
-        begins. We will contact you soon.
+        cancel or reschedule appointments up to 24 hours before they
+        begin.
       </p>
       <template v-slot:modal-ok> OK </template>
     </b-modal>
@@ -55,7 +55,7 @@
       <button
         @click="createAppointments()"
         class="add-manual"
-        :class="{ 'enabled-button': slotsLeft != reservationSlotLimit }"
+        :class="{ 'enabled-button': slotsLeft < reservationSlotLimit }"
         :disabled="slotsLeft == reservationSlotLimit"
       >
         <i class="fas fa-arrow-right"></i>
@@ -139,11 +139,12 @@ export default {
               currentDayLoaded: false,
               cancelStartTime: '',
               deleteErr: false,
+              appointments: [],
         }
     },
     methods: {
       cancelAppointment(startTime) {
-        if (this.deleteErr) this.deleteErr = false;
+        if (this.deleteErr) this.deleteErr = false; //reset deleteErr
         const deleteObj = {
             hostedBy: this.hostedBy,
             from: startTime,
@@ -163,6 +164,8 @@ export default {
            this.removeSlotClassSpecific(startTime, 'booked-by-self')
            this.removeSlotClassSpecific(startTime, 'pending')
            this.slotsLeft += 1;
+
+           this.appointments = this.appointments.filter(appointment => appointment.from != startTime)
         }).catch((err) => {
           this.deleteErr = true;
         });
@@ -173,9 +176,11 @@ export default {
           for (let i = 0; i < this.currentlySelected.length; i++) {
             axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
-            }}).catch((err) => { console.log(err) });
-            this.removeSlotClass('on-select');
-            this.applySlotClass(this.currentlySelected[i].from, 'pending')
+            }}).then((res)=> {
+              this.appointments.push(res.data);
+            }).catch((err) => { console.log(err) });
+              this.removeSlotClass('on-select');
+              this.applySlotClass(this.currentlySelected[i].from, 'pending');
           }
           this.currentlySelected = [];
         }
@@ -205,6 +210,7 @@ export default {
                   const status = combinedTimeSlots[i].status ? combinedTimeSlots[i].status : '';
                   this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy, status);
                 }
+                this.appointments.push(... resAppointments.data);
                 this.isLoaded = true;
               }
             });
@@ -264,6 +270,8 @@ export default {
         let isRemovingSelect = false;
         let isClickOnTopSlot = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length == 1;
         let isValidMove = true;
+        let isClickTopReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length == 1;
+
 
         for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
           const timeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
@@ -272,15 +280,21 @@ export default {
 
           if (slotToColor && adjacentSlot) {
             const slotToColorParent = slotToColor.parentNode.classList;
+            const adjacentSlotParent = adjacentSlot.parentNode.classList;
             const isSelected = slotToColor.classList.value.split(' ').includes('on-select');
             const isAdjSelected = adjacentSlot.classList.value.split(' ').includes('on-select');
             const isSlotReserved = slotToColor.classList.value.split(' ').includes('booked-by-self')
             || slotToColorParent.value.split(' ').includes('booked-by-self')
             || slotToColor.classList.value.split(' ').includes('pending')
             || slotToColorParent.value.split(' ').includes('pending')
+            const isAdjReserved = adjacentSlot.classList.value.split(' ').includes('booked-by-self')
+            || adjacentSlotParent.value.split(' ').includes('booked-by-self')
+            || adjacentSlot.classList.value.split(' ').includes('pending')
+            || adjacentSlotParent.value.split(' ').includes('pending')            
             const isPast = slotToColor.parentNode.parentNode.classList.value.split(' ').includes('is-past');
 
-            if (!isSelected && this.slotsLeft - 1 >= 0  && !isPast && !isSlotReserved && isValidMove && !isAdjSelected) {
+
+            if (!isSelected && this.slotsLeft - 1 >= 0  && !isPast && !isSlotReserved && isValidMove && !isAdjSelected && !isAdjReserved) {
               this.removeSelection(startTime) // avoid adding duplicates
               this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
               slotToColor.classList.add("on-select");
@@ -291,7 +305,7 @@ export default {
               isRemovingSelect = true;
             }
             else { // prevent user from selecting edge slots/reserved slots
-              if (isSlotReserved) {
+              if (isSlotReserved && isClickTopReserved) {
                 this.$bvModal.show('cancel-modal');
                 this.cancelStartTime = startTime;
               }

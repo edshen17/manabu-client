@@ -90,13 +90,6 @@
         >
           <span
             class="appointment-title ml-2"
-            v-if="event_information.data && !event_information.data.reservedBy"
-          >
-            Available ({{ parseISOString(event_information.start_time) }} -
-            {{ parseISOString(event_information.end_time)}})
-          </span>
-          <span
-            class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'confirmed'"
           >
             Confirmed ({{ parseISOString(event_information.start_time) }} -
@@ -233,7 +226,7 @@ export default {
               if (selectedSlot) {
                 selectedSlot.classList.remove('pending-teacher');
                 selectedSlot.classList.add('student-reserved');
-                selectedSlot.childNodes[3].innerHTML = `Confirmed
+                selectedSlot.childNodes[2].innerHTML = `Confirmed
                                                 (${moment(formatedTimeData.from).format("HH:mm")}
                                                 - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
               }
@@ -261,12 +254,10 @@ export default {
               if (slot && formatedTimeData) {
                 slot.classList.remove('pending-teacher');
                 slot.classList.add('student-reserved');
-                slot.childNodes[3].innerHTML = `Confirmed
+                slot.childNodes[2].innerHTML = `Confirmed
                                                 (${moment(formatedTimeData.from).format("HH:mm")}
                                                 - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
               }
-              this.$bvModal.hide('confirm-modal');
-              this.currentlyApproved.push(aId);
               this.$bvModal.hide('confirm-modal');
               this.currentlyApproved.push(aId);
             }).catch((err) => { this.confirmErr = true; });
