@@ -45,7 +45,7 @@
         </b-button>
       </template>
     </b-modal>
-    <div v-if="isLoaded">
+    <div v-if="isCalendarLoaded">
       <h4 class="text-center slots-left" v-if="slotsLeft == 1">
         {{ slotsLeft }} time slot left to reserve
       </h4>
@@ -72,10 +72,11 @@
           class="details-card"
           :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed', 
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '',
-          'pending': event_information.data.status == 'pending' }"
-          @click="colorSlot(event_information.data.from)"
-          @mouseover="applySlotClass(event_information.data.from, 'on-hover')"
-          @mouseleave="removeSlotClass('on-hover')"
+          'pending': event_information.data.status == 'pending',
+          'on-hover': onHoverClassBind(event_information.data.from) }"
+          @click=""
+          @mouseover="onHover(event_information.data.from)"
+          @mouseleave="currentlyHovered = []"
         >
           <span class="time appointment-title" style="text-align: left"
             >{{ parseISOString(event_information.start_time) }} -
@@ -131,8 +132,9 @@ export default {
                     day_starts_at: 0,
                     day_ends_at: 24,
                 },
-              isLoaded: false,
+              isCalendarLoaded: false,
               currentlySelected: [],
+              currentlyHovered: [],
               events: [],
               slotsLeft: this.reservationSlotLimit,
               currentDay: new Date().toISOString(),
@@ -143,6 +145,19 @@ export default {
         }
     },
     methods: {
+      onHoverClassBind(startTime) { // used in class binding when on hover
+      let isHovering = false;
+      for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
+        let prevTimeSlot = moment(startTime).subtract(i * 30, 'minutes').toISOString();
+        isHovering = isHovering 
+        || (this.currentlyHovered.filter(hoveredStartTime => hoveredStartTime == startTime || hoveredStartTime == prevTimeSlot).length != 0);
+      }
+        return isHovering;
+      },
+      onHover(startTime) { // on hover
+        this.currentlyHovered = [] // reset hovering
+        this.currentlyHovered.push(startTime);
+      },
       cancelAppointment(startTime) {
         if (this.deleteErr) this.deleteErr = false; //reset deleteErr
         const deleteObj = {
@@ -218,7 +233,7 @@ export default {
                   this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy, status);
                 }
                 this.appointments = resAppointments.data;
-                this.isLoaded = true;
+                this.isCalendarLoaded = true;
               }
             });
           }

@@ -1,31 +1,37 @@
 <template>
   <div class="EditCalendar">
-    <b-modal
-      id="confirm-modal"
-      title="Confirm this appointment?"
-      :no-close-on-backdrop="true"
-    >
-      <p class="my-4" v-show="!confirmErr">user info goes here...</p>
+    <b-modal id="confirm-modal" title="Confirm this appointment?">
+      <div class="profile-popup" v-if="selectedReservedBy">
+        <img
+          class="rounded-circle center-image"
+          alt="100x100"
+          :src="selectedReservedBy.profileImage"
+        />
+        <h5 class="text-center mb-2 mt-2">{{selectedReservedBy.name}}</h5>
+        <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(selectedReservedBy.fluentLanguages[0], i)"></span>        
+        <p class="my-4" v-show="!confirmErr">{{selectedReservedBy}}</p>
+      </div>
       <p class="my-4" v-show="confirmErr">
         There was an error processing your request. Please try again.
       </p>
       <template #modal-footer>
         <b-button @click="$bvModal.hide('confirm-modal')" v-show="!confirmErr">
-          <div>Cancel</div>
+          Cancel
         </b-button>
+        <b-button variant="danger" v-show="!confirmErr"> Reject </b-button>
         <b-button
           @click="confirmErr = false; $bvModal.hide('confirm-modal')"
           variant="primary"
           v-show="confirmErr"
         >
-          <div>Confirm</div>
+          Confirm
         </b-button>
         <b-button
           @click="confirmAppointment(selectedLessonId)"
           variant="primary"
           v-show="!confirmErr"
         >
-          <div>Yes</div>
+          Confirm
         </b-button>
       </template>
     </b-modal>
@@ -64,7 +70,7 @@
         </b-button>
       </template>
     </b-modal>
-    <div v-if="isLoaded">
+    <div v-if="isCalendarLoaded">
       <kalendar
         :configuration="calendar_settings"
         :events.sync="events"
@@ -99,7 +105,7 @@
             class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'confirmed'"
           >
-            {{event_information.data.reservedByUserData.data.name}}
+            {{event_information.data.reservedByUserData.name}}
           </span>
           <span
             class="appointment-title ml-2"
@@ -112,7 +118,7 @@
             class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'pending'"
           >
-            {{event_information.data.reservedByUserData.data.name}}
+            {{event_information.data.reservedByUserData.name}}
           </span>
           <button
             @click="deleteAppointment(event_information)"
@@ -206,17 +212,38 @@ export default {
                 },
               confirmErr: false,
               deleteErr: false,
-              isLoaded: false,
+              isCalendarLoaded: false,
+              isModalLoaded: false,
               events: [],
               currentDayLoaded: false,
               currentDay: new Date().toISOString(),
               selectedLessonId: '',
-              selectedReservedBy: '',
+              selectedReservedBy: null,
               event_information: null,
               currentlyApproved: [],
         }
     },
     methods: {
+      languageLevelBars(languageLvl, index) {
+        const languageLvlArr = languageLvl.split('-');
+        const level = languageLvlArr[1];
+        const levelToNumber = {
+          'A1': 0,
+          'A2': 1,
+          'B1': 2,
+          'B2': 3,
+          'C1': 4,
+          'C2': 5
+        }
+
+        if (index >= levelToNumber[level]) {
+          return { 'level-color-1': true }
+        } 
+        
+        else {
+          return { 'level-color-2': true }
+        }
+      },
       fetchUserData(uId) {
         if (uId) {
           return axios.get(`${this.host}/user/${uId}`).catch((err) => { console.log(err) })
@@ -273,6 +300,7 @@ export default {
         const isSlotSelected = slot && slot.classList.contains('student-reserved');
         if (eventData.status == 'pending' && !isSlotSelected) {
           this.selectedLessonId = eventData._id;
+          this.selectedReservedBy = eventData.reservedByUserData;
           this.$bvModal.show('confirm-modal');
         } else if (eventData.status == 'confirmed' || isSlotSelected) {
           alert('to do')
@@ -297,7 +325,7 @@ export default {
                       _id: appointments[i]._id,
                       hostedBy: appointments[i].hostedBy,
                       reservedBy: appointments[i].reservedBy,
-                      reservedByUserData: userData,
+                      reservedByUserData: userData.data,
                       status: appointments[i].status,
                     }
                   }
@@ -316,7 +344,7 @@ export default {
                   }
                   this.recursiveSlotEdit(formatedTime);
                 }
-                this.isLoaded = true;
+                this.isCalendarLoaded = true;
               }
             });
           }
@@ -415,4 +443,6 @@ export default {
 
 <style lang="css">
 @import "../../../src/assets/css/kalendar.css";
+@import "../../../src/assets/css/styles.css";
+
 </style>

@@ -36,6 +36,30 @@
   text-align: center;
 }
 
+.level-color-2 {
+  background-color: rgba(255, 67, 56, 0.5);
+}
+
+.level-color-1 {
+  background-color: hsla(0, 0%, 80%, 0.5);
+}
+
+.level {
+  display: inline-block;
+  width: 2px;
+  height: 10px;
+  margin-left: 2px;
+  border-radius: 1px;
+}
+
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20%;
+  border-radius:50% !important; 
+}
+
 /* Section - Title */
 /**************************/
 #parallax .title {background: white; padding: 60px; margin:0 auto; text-align:center;}

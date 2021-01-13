@@ -87,7 +87,7 @@
     <div v-if="userData">
       <div
         class="student-dashboard"
-        v-show="userData.data.role == 'user' && !userData.data.teacherAppPending"
+        v-if="userData.data.role == 'user' && !userData.data.teacherAppPending"
       >
         <div>
           {{userData.data}}
@@ -99,7 +99,7 @@
 
       <!-- View for new teachers-->
       <div
-        v-show="userData.data.role == 'user' && userData.data.teacherAppPending"
+        v-if="userData.data.role == 'user' && userData.data.teacherAppPending"
       >
         <!-- <edit-calendar hostedBy='5fe4ab8725e273284ca99bd8'></edit-calendar>  -->
         <view-calendar :reservedBy="userId" hostedBy='5fe4ab8725e273284ca99bd8' :reservationLength="60" :reservationSlotLimit="5"></view-calendar>
@@ -172,6 +172,7 @@ export default {
                     { value: null, text: 'Other languages coming soon!', disabled: true }
                 ],
                 optionsLevel: [
+                    { value: 'A1', text: 'Beginner (A1)' },
                     { value: 'A2', text: 'Elementary (A2)' },
                     { value: 'B1', text: 'Intermediate (B1)' },
                     { value: 'B2', text: 'Upper Intermediate (B2)' },
