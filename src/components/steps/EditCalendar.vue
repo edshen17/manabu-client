@@ -99,7 +99,7 @@
             class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'confirmed'"
           >
-            student name goes here
+            {{event_information.data.reservedByUserData.data.name}}
           </span>
           <span
             class="appointment-title ml-2"
@@ -112,7 +112,7 @@
             class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'pending'"
           >
-            student name goes here
+            {{event_information.data.reservedByUserData.data.name}}
           </span>
           <button
             @click="deleteAppointment(event_information)"
@@ -211,11 +211,17 @@ export default {
               currentDayLoaded: false,
               currentDay: new Date().toISOString(),
               selectedLessonId: '',
+              selectedReservedBy: '',
               event_information: null,
               currentlyApproved: [],
         }
     },
     methods: {
+      fetchUserData(uId) {
+        if (uId) {
+          return axios.get(`${this.host}/user/${uId}`).catch((err) => { console.log(err) })
+        }
+      },
       onChangeWeek() {
         this.currentDay = this.$refs.kalendar._data.current_day;
         this.getWeekData(this.currentDay);
@@ -231,7 +237,7 @@ export default {
                                                 - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
               }
             }
-          }, 200);
+          }, 300);
       },
       recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid split on kalendar)
         const dupeTimeSlot = this.events.find(timeSlot => timeSlot.from == formatedTime.from);
@@ -277,11 +283,12 @@ export default {
         const nextWeeks = moment().add(2, 'week');
         axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then(async (resAppointments) => {
               if (resAppointments.status == 200) {
                 const availableTimes = resAvailableTimes.data;
                 const appointments = resAppointments.data;
                 for (let i = 0; i < appointments.length; i++) { // add appointments
+                  const userData = await this.fetchUserData(appointments[i].reservedBy)
                   const formatedTime = {
                     from: appointments[i].from,
                     to: appointments[i].to,
@@ -290,6 +297,7 @@ export default {
                       _id: appointments[i]._id,
                       hostedBy: appointments[i].hostedBy,
                       reservedBy: appointments[i].reservedBy,
+                      reservedByUserData: userData,
                       status: appointments[i].status,
                     }
                   }
@@ -317,7 +325,7 @@ export default {
       setTimeout(() => {
         this.currentDayLoaded = true;
         this.currentDay = this.$refs.kalendar._data.current_day;
-       }, 200);
+       }, 500);
       },
       parseISOString(dateStr) {
           const parts = dateStr.split('T');

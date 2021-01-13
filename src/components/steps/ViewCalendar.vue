@@ -195,6 +195,13 @@ export default {
                 this.applySlotClass(this.currentlySelected[i].from, 'on-select')
               }
             }
+
+            for (let i = 0; i < this.appointments.length; i++) {
+              let reservedSlot = document.getElementById(this.appointments[i].from);
+              if (reservedSlot) {
+                this.applySlotClass(this.appointments[i].from, 'pending')
+              }
+            }
           }, 200);
         },
       getWeekData(startDay) { // get 2 week information (used during page refresh)
@@ -210,7 +217,7 @@ export default {
                   const status = combinedTimeSlots[i].status ? combinedTimeSlots[i].status : '';
                   this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy, status);
                 }
-                this.appointments.push(... resAppointments.data);
+                this.appointments = resAppointments.data;
                 this.isLoaded = true;
               }
             });
@@ -224,7 +231,7 @@ export default {
       },
       removeSlotClass(className) { // remove class from all elements with that class
           const classElements = document.getElementsByClassName(className);
-          while(classElements.length > 0){
+          while(classElements.length > 0) {
               classElements[0].classList.remove(className);
           }
       },
@@ -281,7 +288,7 @@ export default {
           if (slotToColor && adjacentSlot) {
             const slotToColorParent = slotToColor.parentNode.classList;
             const adjacentSlotParent = adjacentSlot.parentNode.classList;
-            const isSelected = slotToColor.classList.value.split(' ').includes('on-select');
+            const isSelected = slotToColor.classList.value.split(' ').includes('on-select') || slotToColorParent.value.split(' ').includes('on-select');
             const isAdjSelected = adjacentSlot.classList.value.split(' ').includes('on-select');
             const isSlotReserved = slotToColor.classList.value.split(' ').includes('booked-by-self')
             || slotToColorParent.value.split(' ').includes('booked-by-self')
@@ -292,14 +299,13 @@ export default {
             || adjacentSlot.classList.value.split(' ').includes('pending')
             || adjacentSlotParent.value.split(' ').includes('pending')            
             const isPast = slotToColor.parentNode.parentNode.classList.value.split(' ').includes('is-past');
-
-
             if (!isSelected && this.slotsLeft - 1 >= 0  && !isPast && !isSlotReserved && isValidMove && !isAdjSelected && !isAdjReserved) {
               this.removeSelection(startTime) // avoid adding duplicates
               this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
               slotToColor.classList.add("on-select");
               isApplyingSelect = true;
             } else if (isSelected && this.slotsLeft <= this.reservationSlotLimit - 1 && isClickOnTopSlot) {
+              console.log('i am remove')
               slotToColor.classList.remove("on-select");
               this.removeSelection(startTime)
               isRemovingSelect = true;
