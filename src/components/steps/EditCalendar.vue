@@ -2,14 +2,25 @@
   <div class="EditCalendar">
     <b-modal id="confirm-modal" title="Confirm this appointment?">
       <div class="profile-popup" v-if="selectedReservedBy">
-        <img
+        <img v-if="selectedReservedBy.profileImage == ''"
+          class="rounded-circle center-image"
+          alt="100x100"
+          src='../../../src/assets/images/no-profile.webp'
+        />
+        <img v-else
           class="rounded-circle center-image"
           alt="100x100"
           :src="selectedReservedBy.profileImage"
         />
         <h5 class="text-center mb-2 mt-2">{{selectedReservedBy.name}}</h5>
-        <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(selectedReservedBy.fluentLanguages[0], i)"></span>        
-        <p class="my-4" v-show="!confirmErr">{{selectedReservedBy}}</p>
+        <div class="text-center">
+          <div v-for="lang in selectedReservedBy.fluentLanguages.concat(selectedReservedBy.nonFluentLanguages)" :key="lang" class="mx-1" style="display: inline">
+          {{lang}}
+          <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(lang, i)"></span>       
+        </div>
+        <p>Region: {{selectedReservedBy.region}} ({{selectedReservedBy.timezone}})</p> 
+        </div>
+        <p class="my-4" v-show="!confirmErr">lesson information goes here</p>
       </div>
       <p class="my-4" v-show="confirmErr">
         There was an error processing your request. Please try again.
@@ -96,27 +107,14 @@
         >
           <span
             class="appointment-title ml-2"
-            v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'confirmed'"
+            v-if="event_information.data && event_information.data.reservedBy"
           >
-            Confirmed ({{ parseISOString(event_information.start_time) }} -
+             {{toTitleCase(event_information.data.status)}} ({{ parseISOString(event_information.start_time) }} -
             {{ parseISOString(event_information.end_time)}})
           </span>
           <span
             class="appointment-title ml-2"
-            v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'confirmed'"
-          >
-            {{event_information.data.reservedByUserData.name}}
-          </span>
-          <span
-            class="appointment-title ml-2"
-            v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'pending'"
-          >
-            Pending ({{ parseISOString(event_information.start_time) }} -
-            {{ parseISOString(event_information.end_time)}})
-          </span>
-          <span
-            class="appointment-title ml-2"
-            v-if="event_information.data && event_information.data.reservedBy && event_information.data.status == 'pending'"
+            v-if="event_information.data && event_information.data.reservedBy"
           >
             {{event_information.data.reservedByUserData.name}}
           </span>
@@ -125,7 +123,7 @@
             class="remove"
             v-if="!event_information.data.reservedBy && !event_information.data.isDuplicate"
           >
-            <svg
+            <svg v-if="new Date() < new Date(event_information.start_time)"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -224,6 +222,14 @@ export default {
         }
     },
     methods: {
+      toTitleCase(str) {
+        return str.replace(
+          /\w\S*/g,
+          function(txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          }
+        );
+      },
       languageLevelBars(languageLvl, index) {
         const languageLvlArr = languageLvl.split('-');
         const level = languageLvlArr[1];
@@ -241,6 +247,7 @@ export default {
         } 
         
         else {
+          if (levelToNumber[level] == 'C2') return { 'level-color-3': true }
           return { 'level-color-2': true }
         }
       },
@@ -279,7 +286,7 @@ export default {
         }
       },
       confirmAppointment(aId) {
-        axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, {status: 'confirmed' }, { headers: {
+        axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'confirmed' }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
               const slot = document.getElementById(aId);
@@ -363,7 +370,7 @@ export default {
         this.$bvModal.show('delete-modal');
         this.event_information = kalendarEvent;
       },
-      removeEvent(kalendarEvent) {
+      removeEvent(kalendarEvent) { // makes delete request to delete appointment in db
         this.event_information = kalendarEvent;
         const deleteObj = {
             hostedBy: this.hostedBy,

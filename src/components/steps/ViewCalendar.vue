@@ -1,17 +1,21 @@
 <template>
   <div class="ViewCalendar">
-    <b-modal
-      id="complete-modal"
-      title="Success!"
-      :no-close-on-backdrop="true"
-      ok-only
-    >
-      <p class="my-4">
+    <b-modal id="complete-modal" title="Success!" :no-close-on-backdrop="true">
+      <p class="my-4" v-show="!reserveErr">
         Your reservation has been made and is pending confirmation. You can
-        cancel or reschedule appointments up to 24 hours before they
-        begin.
+        cancel or reschedule appointments up to 24 hours before they begin.
       </p>
-      <template v-slot:modal-ok> OK </template>
+      <p class="my-4" v-show="reserveErr">
+        There was an error processing your request.
+      </p>
+      <template #modal-footer>
+        <b-button
+          @click="reserveErr = false; $bvModal.hide('complete-modal')"
+          variant="primary"
+        >
+          OK
+        </b-button>
+      </template>
     </b-modal>
     <b-modal
       id="cancel-modal"
@@ -139,6 +143,7 @@ export default {
               currentDayLoaded: false,
               cancelStartTime: '',
               deleteErr: false,
+              reserveErr: false,
               appointments: [],
         }
     },
@@ -172,15 +177,17 @@ export default {
       },
       createAppointments() {
         if (this.slotsLeft != this.reservationSlotLimit) {
-          this.$bvModal.show('complete-modal');
           for (let i = 0; i < this.currentlySelected.length; i++) {
+            const currentlySelectedFrom = this.currentlySelected[i].from
             axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
-            }}).then((res)=> {
+            }}).then(res=> {
+              this.$bvModal.show('complete-modal');
               this.appointments.push(res.data);
-            }).catch((err) => { console.log(err) });
+              this.applySlotClass(currentlySelectedFrom, 'pending');
               this.removeSlotClass('on-select');
-              this.applySlotClass(this.currentlySelected[i].from, 'pending');
+            }).catch((err) => { this.reserveErr = true; });
+
           }
           this.currentlySelected = [];
         }
@@ -302,7 +309,7 @@ export default {
             || adjacentSlot.classList.value.split(' ').includes('pending')
             || adjacentSlotParent.value.split(' ').includes('pending')
             || adjacentSlot.classList.value.split(' ').includes('booked-by-other')
-            || adjacentSlotParent.value.split(' ').includes('booked-by-other')            
+            || adjacentSlotParent.value.split(' ').includes('booked-by-other')
             const isPast = slotToColor.parentNode.parentNode.classList.value.split(' ').includes('is-past');
             if (!isSelected && this.slotsLeft - 1 >= 0  && !isPast && !isSlotReserved && isValidMove && !isAdjSelected && !isAdjReserved) {
               this.removeSelection(startTime) // avoid adding duplicates
@@ -371,6 +378,4 @@ export default {
   }
 </script>
 
-<style lang="css">
-
-</style>
+<style lang="css"></style>

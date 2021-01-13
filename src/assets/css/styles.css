@@ -36,12 +36,16 @@
   text-align: center;
 }
 
+.level-color-1 {
+  background-color: hsla(0, 0%, 80%, 0.5);
+}
+
 .level-color-2 {
   background-color: rgba(255, 67, 56, 0.5);
 }
 
-.level-color-1 {
-  background-color: hsla(0, 0%, 80%, 0.5);
+.level-color-3 {
+  background-color: #ff4338;
 }
 
 .level {
