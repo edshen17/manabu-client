@@ -249,7 +249,10 @@ export default {
         for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
           const timeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
           const slotToColor = document.getElementById(timeSlot);
-          if (slotToColor) slotToColor.parentNode.classList.add(classToApply);
+          if (slotToColor) {
+            slotToColor.parentNode.classList.add(classToApply);
+            slotToColor.classList.add(classToApply);
+          }
         }
       },
       appointmentFactory(hostedBy, reservedBy, packageId, from, to) { // creates appointment object to send to server
@@ -284,7 +287,6 @@ export default {
           const timeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
           const slotToColor = document.getElementById(timeSlot);
           const adjacentSlot = document.getElementById(moment(startTime).add(this.reservationLength - 30, 'minutes').toISOString());
-
           if (slotToColor && adjacentSlot) {
             const slotToColorParent = slotToColor.parentNode.classList;
             const adjacentSlotParent = adjacentSlot.parentNode.classList;
@@ -303,10 +305,11 @@ export default {
               this.removeSelection(startTime) // avoid adding duplicates
               this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
               slotToColor.classList.add("on-select");
+              slotToColor.parentNode.classList.add("on-select");
               isApplyingSelect = true;
             } else if (isSelected && this.slotsLeft <= this.reservationSlotLimit - 1 && isClickOnTopSlot) {
-              console.log('i am remove')
               slotToColor.classList.remove("on-select");
+              slotToColor.parentNode.classList.remove("on-select");
               this.removeSelection(startTime)
               isRemovingSelect = true;
             }
