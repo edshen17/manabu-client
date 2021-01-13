@@ -260,8 +260,8 @@ export default {
                 selectedSlot.classList.remove('pending-teacher');
                 selectedSlot.classList.add('student-reserved');
                 selectedSlot.childNodes[2].innerHTML = `Confirmed
-                                                (${moment(formatedTimeData.from).format("HH:mm")}
-                                                - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
+                  (${moment(formatedTimeData.from).format("HH:mm")}
+                  - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
               }
             }
           }, 300);
@@ -288,8 +288,8 @@ export default {
                 slot.classList.remove('pending-teacher');
                 slot.classList.add('student-reserved');
                 slot.childNodes[2].innerHTML = `Confirmed
-                                                (${moment(formatedTimeData.from).format("HH:mm")}
-                                                - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
+                  (${moment(formatedTimeData.from).format("HH:mm")}
+                  - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
               }
               this.$bvModal.hide('confirm-modal');
               this.currentlyApproved.push(aId);

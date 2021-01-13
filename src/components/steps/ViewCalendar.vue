@@ -45,7 +45,7 @@
         </b-button>
       </template>
     </b-modal>
-    <div v-if="isCalendarLoaded">
+    <div v-if="isLoaded">
       <h4 class="text-center slots-left" v-if="slotsLeft == 1">
         {{ slotsLeft }} time slot left to reserve
       </h4>
@@ -72,11 +72,10 @@
           class="details-card"
           :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed', 
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '',
-          'pending': event_information.data.status == 'pending',
-          'on-hover': onHoverClassBind(event_information.data.from) }"
-          @click=""
-          @mouseover="onHover(event_information.data.from)"
-          @mouseleave="currentlyHovered = []"
+          'pending': event_information.data.status == 'pending' }"
+          @click="colorSlot(event_information.data.from)"
+          @mouseover="applySlotClass(event_information.data.from, 'on-hover')"
+          @mouseleave="removeSlotClass('on-hover')"
         >
           <span class="time appointment-title" style="text-align: left"
             >{{ parseISOString(event_information.start_time) }} -
@@ -132,9 +131,8 @@ export default {
                     day_starts_at: 0,
                     day_ends_at: 24,
                 },
-              isCalendarLoaded: false,
+              isLoaded: false,
               currentlySelected: [],
-              currentlyHovered: [],
               events: [],
               slotsLeft: this.reservationSlotLimit,
               currentDay: new Date().toISOString(),
@@ -145,19 +143,6 @@ export default {
         }
     },
     methods: {
-      onHoverClassBind(startTime) { // used in class binding when on hover
-      let isHovering = false;
-      for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
-        let prevTimeSlot = moment(startTime).subtract(i * 30, 'minutes').toISOString();
-        isHovering = isHovering 
-        || (this.currentlyHovered.filter(hoveredStartTime => hoveredStartTime == startTime || hoveredStartTime == prevTimeSlot).length != 0);
-      }
-        return isHovering;
-      },
-      onHover(startTime) { // on hover
-        this.currentlyHovered = [] // reset hovering
-        this.currentlyHovered.push(startTime);
-      },
       cancelAppointment(startTime) {
         if (this.deleteErr) this.deleteErr = false; //reset deleteErr
         const deleteObj = {
@@ -233,7 +218,7 @@ export default {
                   this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy, status);
                 }
                 this.appointments = resAppointments.data;
-                this.isCalendarLoaded = true;
+                this.isLoaded = true;
               }
             });
           }
@@ -293,10 +278,9 @@ export default {
         const endTime = moment(startTime).add(this.reservationLength, 'minutes').toISOString();
         let isApplyingSelect = false;
         let isRemovingSelect = false;
-        let isClickOnTopSlot = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length == 1;
         let isValidMove = true;
-        let isClickTopReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length == 1;
-
+        const isClickOnTopSlot = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length == 1;
+        const isClickTopReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length == 1;
 
         for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
           const timeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
@@ -311,10 +295,14 @@ export default {
             || slotToColorParent.value.split(' ').includes('booked-by-self')
             || slotToColor.classList.value.split(' ').includes('pending')
             || slotToColorParent.value.split(' ').includes('pending')
+            || slotToColor.classList.value.split(' ').includes('booked-by-other')
+            || slotToColorParent.value.split(' ').includes('booked-by-other')
             const isAdjReserved = adjacentSlot.classList.value.split(' ').includes('booked-by-self')
             || adjacentSlotParent.value.split(' ').includes('booked-by-self')
             || adjacentSlot.classList.value.split(' ').includes('pending')
-            || adjacentSlotParent.value.split(' ').includes('pending')            
+            || adjacentSlotParent.value.split(' ').includes('pending')
+            || adjacentSlot.classList.value.split(' ').includes('booked-by-other')
+            || adjacentSlotParent.value.split(' ').includes('booked-by-other')            
             const isPast = slotToColor.parentNode.parentNode.classList.value.split(' ').includes('is-past');
             if (!isSelected && this.slotsLeft - 1 >= 0  && !isPast && !isSlotReserved && isValidMove && !isAdjSelected && !isAdjReserved) {
               this.removeSelection(startTime) // avoid adding duplicates
