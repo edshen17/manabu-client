@@ -1,6 +1,6 @@
 <template>
   <div class="EditCalendar">
-    <b-modal id="confirm-modal" title="Confirm this appointment?">
+    <b-modal id="update-modal" title="Confirm this appointment?">
       <div class="profile-popup" v-if="selectedReservedBy">
         <img v-if="selectedReservedBy.profileImage == ''"
           class="rounded-circle center-image"
@@ -20,27 +20,27 @@
         </div>
         <p>Region: {{selectedReservedBy.region}} ({{selectedReservedBy.timezone}})</p> 
         </div>
-        <p class="my-4" v-show="!confirmErr">lesson information goes here</p>
+        <p class="my-4" v-show="!updateErr">lesson information goes here</p>
       </div>
-      <p class="my-4" v-show="confirmErr">
+      <p class="my-4" v-show="updateErr">
         There was an error processing your request. Please try again.
       </p>
       <template #modal-footer>
-        <b-button @click="$bvModal.hide('confirm-modal')" v-show="!confirmErr">
+        <b-button @click="$bvModal.hide('update-modal')" v-show="!updateErr">
           Cancel
         </b-button>
-        <b-button variant="danger" v-show="!confirmErr"> Reject </b-button>
+        <b-button variant="danger" v-show="!updateErr" @click="cancelAppointment(selectedLessonId)"> Reject </b-button>
         <b-button
-          @click="confirmErr = false; $bvModal.hide('confirm-modal')"
+          @click="updateErr = false; $bvModal.hide('update-modal')"
           variant="primary"
-          v-show="confirmErr"
+          v-show="updateErr"
         >
-          Confirm
+          OK
         </b-button>
         <b-button
           @click="confirmAppointment(selectedLessonId)"
           variant="primary"
-          v-show="!confirmErr"
+          v-show="!updateErr"
         >
           Confirm
         </b-button>
@@ -61,7 +61,7 @@
       <template #modal-footer>
         <b-button
           @click="$bvModal.hide('delete-modal')"
-          v-show="!confirmErr && !deleteErr"
+          v-show="!updateErr && !deleteErr"
         >
           <div>Cancel</div>
         </b-button>
@@ -81,8 +81,8 @@
         </b-button>
       </template>
     </b-modal>
-    <div v-if="isCalendarLoaded">
-      <kalendar
+    <div>
+      <kalendar v-if="isCalendarLoaded"
         :configuration="calendar_settings"
         :events.sync="events"
         ref="kalendar"
@@ -161,9 +161,9 @@
           </div>
         </div>
       </kalendar>
-    </div>
-    <div v-else class="d-flex justify-content-center my-4">
-      <b-spinner label="Loading..."></b-spinner>
+      <div v-else class="d-flex justify-content-center my-4">
+        <b-spinner label="Loading..."></b-spinner>
+      </div>
     </div>
   </div>
 </template>
@@ -182,16 +182,11 @@ export default {
     },
     watch: {
         'currentDayLoaded' () { // when DOM is loaded, add the below events on the arrows to get updates in date
-          document.getElementsByClassName('week-navigator-button')[0].addEventListener('click', () => {
-            this.onChangeWeek();
-          })
-          document.getElementsByClassName('week-navigator-button')[1].addEventListener('click', () => {
-            this.onChangeWeek();
-          })
+
         },
       },
     mounted() {
-      this.getWeekData(this.currentDay); // current date
+      this.getScheduleData(this.currentDay); // current date
     },
     data() {
         return {
@@ -208,7 +203,7 @@ export default {
                     overlap: false,
                     past_event_creation: false
                 },
-              confirmErr: false,
+              updateErr: false,
               deleteErr: false,
               isCalendarLoaded: false,
               isModalLoaded: false,
@@ -256,23 +251,6 @@ export default {
           return axios.get(`${this.host}/user/${uId}`).catch((err) => { console.log(err) })
         }
       },
-      onChangeWeek() {
-        this.currentDay = this.$refs.kalendar._data.current_day;
-        this.getWeekData(this.currentDay);
-          setTimeout(() => { // set time out to give enough time for page refresh
-            for (let i = 0; i < this.currentlyApproved.length; i++) {
-              let selectedSlot = document.getElementById(this.currentlyApproved[i]);
-              const formatedTimeData = this.events.find(event => event.data._id == this.currentlyApproved[i]);
-              if (selectedSlot) {
-                selectedSlot.classList.remove('pending-teacher');
-                selectedSlot.classList.add('student-reserved');
-                selectedSlot.childNodes[2].innerHTML = `Confirmed
-                  (${moment(formatedTimeData.from).format("HH:mm")}
-                  - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
-              }
-            }
-          }, 300);
-      },
       recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid split on kalendar)
         const dupeTimeSlot = this.events.find(timeSlot => timeSlot.from == formatedTime.from);
         if (dupeTimeSlot) {
@@ -285,22 +263,42 @@ export default {
           }
         }
       },
+      cancelAppointment(aId) {
+        axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'cancelled' }, { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }}).then((res) => {
+              const slot = document.getElementById(aId);
+              if (slot) {
+                slot.classList.remove('pending-teacher');
+                slot.classList.remove('student-reserved');
+                slot.classList.remove('dotted-border');
+                slot.childNodes[1].innerHTML = ''; // update span text
+              }
+              this.$bvModal.hide('update-modal');
+            }).catch((err) => { this.updateErr = true; });
+      },
       confirmAppointment(aId) {
         axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'confirmed' }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
               const slot = document.getElementById(aId);
               const formatedTimeData = this.events.find(event => event.data._id == aId);
-              if (slot && formatedTimeData) {
-                slot.classList.remove('pending-teacher');
-                slot.classList.add('student-reserved');
-                slot.childNodes[2].innerHTML = `Confirmed
-                  (${moment(formatedTimeData.from).format("HH:mm")}
-                  - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
+              if (slot) {
+                const kalendarEvents = this.$refs.kalendar.kalendar_events;
+                for (let i = 0; i < kalendarEvents.length; i++) {
+                  if (kalendarEvents[i].data._id == aId) {
+                    kalendarEvents[i].data.status = 'confirmed';
+                    slot.classList.remove('pending-teacher');
+                    slot.classList.add('student-reserved');
+                    slot.childNodes[0].innerHTML = `Confirmed
+                      (${moment(formatedTimeData.from).format("HH:mm")}
+                      - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
+                  }
+                }
               }
-              this.$bvModal.hide('confirm-modal');
+              this.$bvModal.hide('update-modal');
               this.currentlyApproved.push(aId);
-            }).catch((err) => { this.confirmErr = true; });
+            }).catch((err) => { this.updateErr = true; });
       },
       onSlotClick(eventData) {
         const slot = document.getElementById(eventData._id)
@@ -308,17 +306,18 @@ export default {
         if (eventData.status == 'pending' && !isSlotSelected) {
           this.selectedLessonId = eventData._id;
           this.selectedReservedBy = eventData.reservedByUserData;
-          this.$bvModal.show('confirm-modal');
+          this.$bvModal.show('update-modal');
         } else if (eventData.status == 'confirmed' || isSlotSelected) {
           alert('to do')
         }
       },
-      getWeekData(startDay) {
-        const lastWeeks = moment().subtract(2, 'week');
-        const nextWeeks = moment().add(2, 'week');
-        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
+      getScheduleData(startDay) { // get appointments and available times for the year
+        this.events = [];
+        const from = moment().subtract(1, 'year');
+        const to = moment().add(1, 'year');
+        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then(async (resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
               if (resAppointments.status == 200) {
                 const availableTimes = resAvailableTimes.data;
                 const appointments = resAppointments.data;
@@ -356,11 +355,6 @@ export default {
             });
           }
       });
-
-      setTimeout(() => {
-        this.currentDayLoaded = true;
-        this.currentDay = this.$refs.kalendar._data.current_day;
-       }, 500);
       },
       parseISOString(dateStr) {
           const parts = dateStr.split('T');
