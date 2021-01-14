@@ -1,6 +1,9 @@
 <template>
   <div class="EditCalendar">
-    <b-modal id="update-modal" title="Confirm this appointment?">
+    <b-modal id="update-modal" :no-close-on-backdrop="true">
+      <template #modal-title>
+        {{ modalTitleText }}
+      </template>
       <div class="profile-popup" v-if="selectedReservedBy">
         <img v-if="selectedReservedBy.profileImage == ''"
           class="rounded-circle center-image"
@@ -18,18 +21,33 @@
           {{lang}}
           <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(lang, i)"></span>       
         </div>
-        <p>Region: {{selectedReservedBy.region}} ({{selectedReservedBy.timezone}})</p> 
+        <p>Region: {{selectedReservedBy.region}} ({{ selectedReservedBy.timezone }})</p> 
         </div>
         <p class="my-4" v-show="!updateErr">lesson information goes here</p>
+        <div class="form-group" v-show="!updateErr && isRejecting">
+              <label>Reason for rejecting appointment</label>
+              <b-form-select
+                v-model="cancellationReason"
+                :options="cancellationSelect"
+                size="md"
+              ></b-form-select>
+            </div>
       </div>
       <p class="my-4" v-show="updateErr">
         There was an error processing your request. Please try again.
       </p>
       <template #modal-footer>
-        <b-button @click="$bvModal.hide('update-modal')" v-show="!updateErr">
+        <b-button @click="resetOnCancel" v-show="!updateErr">
           Cancel
         </b-button>
-        <b-button variant="danger" v-show="!updateErr" @click="cancelAppointment(selectedLessonId)"> Reject </b-button>
+        <b-button variant="danger" v-show="!updateErr && !isRejecting" @click="isRejecting = true; cancelAppointment(selectedLessonId)"> Reject </b-button>
+        <b-button
+          @click="isRejectingConfirmation = true; cancelAppointment(selectedLessonId)"
+          variant="danger"
+          v-show="!updateErr && isRejecting"
+        >
+          Yes
+        </b-button>
         <b-button
           @click="updateErr = false; $bvModal.hide('update-modal')"
           variant="primary"
@@ -40,7 +58,7 @@
         <b-button
           @click="confirmAppointment(selectedLessonId)"
           variant="primary"
-          v-show="!updateErr"
+          v-show="!updateErr && !isRejecting"
         >
           Confirm
         </b-button>
@@ -100,10 +118,10 @@
           class="details-card"
           :class="{'pending-teacher': event_information.data && event_information.data.status == 'pending', 
                 'student-reserved': event_information.data && event_information.data.status == 'confirmed',
-                'dotted-border':  event_information.data && (event_information.data.status == 'pending' || event_information.data.status == 'confirmed')
+                'dotted-border':  event_information.data && (event_information.data.status == 'pending' || event_information.data.status == 'confirmed'),
         }"
           :id="event_information.data._id"
-          @click="onSlotClick(event_information.data)"
+          @click="onSlotClick(event_information)"
         >
           <span
             class="appointment-title ml-2"
@@ -214,9 +232,23 @@ export default {
               selectedReservedBy: null,
               event_information: null,
               currentlyApproved: [],
+              cancellationSelect:  [
+                { value: 'schedule change', text: 'Schedule change' },
+                { value: 'student issue', text: 'I am uncomfortable with this student' },
+              ],
+              cancellationReason: 'Schedule change',
+              modalTitleText: 'Confirm this Appointment?',
+              isRejecting: false,
+              isRejectingConfirmation: false,
         }
     },
     methods: {
+      resetOnCancel() {
+        this.isRejecting = false;
+        this.isRejectingConfirmation = false;
+        this.modalTitleText = 'Confirm this Appointment?'
+        this.$bvModal.hide('update-modal'); 
+      },
       toTitleCase(str) {
         return str.replace(
           /\w\S*/g,
@@ -264,18 +296,26 @@ export default {
         }
       },
       cancelAppointment(aId) {
-        axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'cancelled' }, { headers: {
+        this.modalTitleText = 'Are you sure you want to reject the appointment?'
+        if (this.isRejecting && this.isRejectingConfirmation) {
+          axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'cancelled', cancellationReason: this.cancellationReason.toLowerCase() }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
               const slot = document.getElementById(aId);
               if (slot) {
+                const kalendarEvents = this.$refs.kalendar.kalendar_events;
                 slot.classList.remove('pending-teacher');
                 slot.classList.remove('student-reserved');
                 slot.classList.remove('dotted-border');
-                slot.childNodes[1].innerHTML = ''; // update span text
+                slot.childNodes[0].innerHTML = ''; // update span text
+                slot.childNodes[1].innerHTML = '';
+                this.$refs.kalendar.kalendar_events = this.$refs.kalendar.kalendar_events.filter(event => event.data.status != 'cancelled')
               }
               this.$bvModal.hide('update-modal');
+              this.isRejecting = false;
+              this.isRejectingConfirmation = false;
             }).catch((err) => { this.updateErr = true; });
+        }
       },
       confirmAppointment(aId) {
         axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'confirmed' }, { headers: {
@@ -300,21 +340,23 @@ export default {
               this.currentlyApproved.push(aId);
             }).catch((err) => { this.updateErr = true; });
       },
-      onSlotClick(eventData) {
-        const slot = document.getElementById(eventData._id)
+      onSlotClick(event) {
+        const slot = document.getElementById(event.data._id)
         const isSlotSelected = slot && slot.classList.contains('student-reserved');
-        if (eventData.status == 'pending' && !isSlotSelected) {
-          this.selectedLessonId = eventData._id;
-          this.selectedReservedBy = eventData.reservedByUserData;
-          this.$bvModal.show('update-modal');
-        } else if (eventData.status == 'confirmed' || isSlotSelected) {
-          alert('to do')
+        if ((new Date() < new Date(event.start_time))) { // ignore past events
+            if (event.data.status == 'pending' && !isSlotSelected) {
+            this.selectedLessonId = event.data._id;
+            this.selectedReservedBy = event.data.reservedByUserData;
+            this.$bvModal.show('update-modal');
+          } else if (event.data.status == 'confirmed' || isSlotSelected) {
+            alert('to do')
+          }
         }
       },
-      getScheduleData(startDay) { // get appointments and available times for the year
+      getScheduleData(startDay) { // get appointments and available times
         this.events = [];
-        const from = moment().subtract(1, 'year');
-        const to = moment().add(1, 'year');
+        const from = moment().subtract(1, 'month');
+        const to = moment().add(6, 'month');
         axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
             axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
