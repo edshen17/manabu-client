@@ -118,7 +118,8 @@
           class="details-card"
           :class="{'pending-teacher': event_information.data && event_information.data.status == 'pending', 
                 'student-reserved': event_information.data && event_information.data.status == 'confirmed',
-                'dotted-border':  event_information.data && (event_information.data.status == 'pending' || event_information.data.status == 'confirmed'),
+                'dotted-border':  event_information.data && (event_information.data.status == 'pending' 
+                || event_information.data.status == 'confirmed' || event_information.data.status == 'cancelled'),
         }"
           :id="event_information.data._id"
           @click="onSlotClick(event_information)"
@@ -236,7 +237,7 @@ export default {
                 { value: 'schedule change', text: 'Schedule change' },
                 { value: 'student issue', text: 'I am uncomfortable with this student' },
               ],
-              cancellationReason: 'Schedule change',
+              cancellationReason: 'schedule change',
               modalTitleText: 'Confirm this Appointment?',
               isRejecting: false,
               isRejectingConfirmation: false,
@@ -303,18 +304,28 @@ export default {
             }}).then((res) => {
               const slot = document.getElementById(aId);
               if (slot) {
-                const kalendarEvents = this.$refs.kalendar.kalendar_events;
                 slot.classList.remove('pending-teacher');
                 slot.classList.remove('student-reserved');
-                slot.classList.remove('dotted-border');
-                slot.childNodes[0].innerHTML = ''; // update span text
-                slot.childNodes[1].innerHTML = '';
-                this.$refs.kalendar.kalendar_events = this.$refs.kalendar.kalendar_events.filter(event => event.data.status != 'cancelled')
+                const innerHtmlSplit = slot.childNodes[0].innerHTML.split(' ');                
+                if (this.cancellationReason == 'student issue') {
+                  slot.childNodes[0].innerHTML = '';
+                  slot.childNodes[1].innerHTML = '';
+                  slot.classList.remove('dotted-border');
+                } else {
+                  slot.childNodes[0].innerHTML = `Cancelled ${innerHtmlSplit[2]} ${innerHtmlSplit[3]} ${innerHtmlSplit[4]}`; // update span text
+                }
+                
+                for (let i = 0; i < this.$refs.kalendar.kalendar_events.length; i++) {
+                  if (this.$refs.kalendar.kalendar_events[i].data._id == aId) {
+                    this.$refs.kalendar.kalendar_events[i].data.status = 'cancelled';
+                    this.$refs.kalendar.kalendar_events[i].data.cancellationReason = this.cancellationReason.toLowerCase();
+                  }
+                }
               }
               this.$bvModal.hide('update-modal');
               this.isRejecting = false;
               this.isRejectingConfirmation = false;
-            }).catch((err) => { this.updateErr = true; });
+            }).catch((err) => { this.updateErr = true; console.log(err) });
         }
       },
       confirmAppointment(aId) {
@@ -362,7 +373,7 @@ export default {
             axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
               if (resAppointments.status == 200) {
                 const availableTimes = resAvailableTimes.data;
-                const appointments = resAppointments.data;
+                const appointments = resAppointments.data.filter(appointment => appointment.cancellationReason != 'student issue' && appointment.cancellationReason != 'student cancel');
                 for (let i = 0; i < appointments.length; i++) { // add appointments
                   const userData = await this.fetchUserData(appointments[i].reservedBy)
                   const formatedTime = {
@@ -487,5 +498,4 @@ export default {
 <style lang="css">
 @import "../../../src/assets/css/kalendar.css";
 @import "../../../src/assets/css/styles.css";
-
 </style>

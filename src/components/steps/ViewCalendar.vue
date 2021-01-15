@@ -75,8 +75,10 @@
           :id="event_information.data.from"
           class="details-card"
           :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed', 
-          'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '',
-          'pending': event_information.data.status == 'pending' }"
+          'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '' 
+          && event_information.data.status != 'cancelled' && event_information.data.cancellationReason != 'student issue',
+          'pending': event_information.data.status == 'pending',
+          'cancelled': event_information.data.status == 'cancelled' && event_information.data.reservedBy == reservedBy }"
           @click="colorSlot(event_information.data.from)"
           @mouseover="applySlotClass(event_information.data.from, 'on-hover')"
           @mouseleave="removeSlotClass('on-hover')"
@@ -150,20 +152,11 @@ export default {
     methods: {
       cancelAppointment(startTime) {
         if (this.deleteErr) this.deleteErr = false; //reset deleteErr
-        const deleteObj = {
-            hostedBy: this.hostedBy,
-            from: startTime,
-            reservedBy: this.reservedBy,
-          }
-
-        axios.delete(`${this.host}/schedule/appointment`, {
-          headers: {
+        const selectedLessonId = this.events.filter(event => event.from == startTime)[0].data._id;
+   
+        axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'cancelled', cancellationReason: 'student cancel' }, { headers: {
             'X-Requested-With': 'XMLHttpRequest'
-          },
-          data: {
-            deleteObj
-          }
-        }
+          }}
         ).then(() => {
            this.$bvModal.hide('cancel-modal');
            this.removeSlotClassSpecific(startTime, 'booked-by-self')
@@ -172,6 +165,7 @@ export default {
 
            this.appointments = this.appointments.filter(appointment => appointment.from != startTime)
         }).catch((err) => {
+          console.log(err)
           this.deleteErr = true;
         });
       },
@@ -220,9 +214,7 @@ export default {
               if (resAppointments.status == 200) {
                 const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
                 for (let i = 0; i < combinedTimeSlots.length; i++) {
-                  const reservedBy = combinedTimeSlots[i].reservedBy ? combinedTimeSlots[i].reservedBy : '';
-                  const status = combinedTimeSlots[i].status ? combinedTimeSlots[i].status : '';
-                  this.intervals(combinedTimeSlots[i].from, combinedTimeSlots[i].to, reservedBy, status);
+                  this.intervals(combinedTimeSlots[i]);
                 }
                 this.appointments = resAppointments.data;
                 this.isLoaded = true;
@@ -287,7 +279,7 @@ export default {
         let isRemovingSelect = false;
         let isValidMove = true;
         const isClickOnTopSlot = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length == 1;
-        const isClickTopReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length == 1;
+        const isClickTopReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length > 0;
 
         for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
           const timeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
@@ -339,11 +331,12 @@ export default {
           this.slotsLeft += 1;
         }
       },
-      intervals(startString, endString, reservedBy, status) { // split up any time into 30m intervals
-        const start = moment(startString);
-        const end = moment(endString);
+      intervals(slot) { // split up any time into 30m intervals
+        const start = moment(slot.from);
+        const end = moment(slot.to);
+        const reservedBy = slot.reservedBy ? slot.reservedBy : '';
+        const status = slot.status ? slot.status : '';
         start.minutes(Math.ceil(start.minutes() / 30) * 30);
-
         let intervalArr = [];
 
         const current = moment(start);
@@ -363,6 +356,7 @@ export default {
                   to: intervalArr[i+1],
                   reservedBy,
                   status,
+                  _id: slot._id,
                 }
               }
               this.events.push(formatedDate);

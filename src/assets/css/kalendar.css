@@ -69,6 +69,11 @@
     background-color: #6c757d !important;
     pointer-events: none;
   }
+
+  .cancelled {
+    background-color: pink !important;
+    pointer-events: none;
+  }
   
   .booked-by-self {
     background-color: #0E9135 !important;
