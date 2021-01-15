@@ -31,7 +31,7 @@
       </p>
       <template #modal-footer>
         <b-button @click="$bvModal.hide('cancel-modal')" v-show="!deleteErr">
-          <div>Cancel</div>
+          <div>Hide</div>
         </b-button>
         <b-button
           @click="deleteErr = false; $bvModal.hide('cancel-modal')"
@@ -59,8 +59,8 @@
       <button
         @click="createAppointments()"
         class="add-manual"
-        :class="{ 'enabled-button': slotsLeft < reservationSlotLimit }"
-        :disabled="slotsLeft == reservationSlotLimit"
+        :class="{ 'enabled-button': slotsLeft < reservationSlotLimit && currentlySelected.length > 0 }"
+        :disabled="slotsLeft == reservationSlotLimit && currentlySelected.length == 0"
       >
         <i class="fas fa-arrow-right"></i>
       </button>
@@ -77,8 +77,8 @@
           :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed', 
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '' 
           && event_information.data.status != 'cancelled' && event_information.data.cancellationReason != 'student issue',
-          'pending': event_information.data.status == 'pending',
-          'cancelled': event_information.data.status == 'cancelled' && event_information.data.reservedBy == reservedBy }"
+          'pending': event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy,
+          'cancelled': event_information.data.status == 'cancelled' && event_information.data.cancellationReason == 'student issue' }"
           @click="colorSlot(event_information.data.from)"
           @mouseover="applySlotClass(event_information.data.from, 'on-hover')"
           @mouseleave="removeSlotClass('on-hover')"
@@ -278,7 +278,7 @@ export default {
         let isApplyingSelect = false;
         let isRemovingSelect = false;
         let isValidMove = true;
-        const isClickOnTopSlot = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length == 1;
+        const isClickOnTopSlot = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length > 0;
         const isClickTopReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length > 0;
 
         for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
