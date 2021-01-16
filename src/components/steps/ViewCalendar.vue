@@ -77,16 +77,16 @@
           :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed', 
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '' 
           || event_information.data.cancellationReason == 'schedule change',
-          'pending': event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy,
+          'pending': (event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy) 
+                     || onEventClassBind(event_information.data.from, 'sessionPendingLessons'),
           'cancelled': event_information.data.status == 'cancelled' 
             && event_information.data.cancellationReason == 'student issue' 
             && event_information.data.reservedBy == reservedBy,
-          'on-hover': onHoverClassBind(event_information.data.from) }"
-          
-         @click="onClick(event_information.data)"
+          'on-hover': false,
+          'on-select': onEventClassBind(event_information.data.from, 'currentlySelected')  }"
+          @click="onClick(event_information.data)"
           @mouseover="onHover(event_information.data.from)"
         >
-        
           <span class="time appointment-title" style="text-align: left"
             >{{ parseISOString(event_information.start_time) }} -
             {{ parseISOString(event_information.end_time)}}</span
@@ -117,12 +117,6 @@ export default {
     },
       watch: {
         'currentDayLoaded' () { // when DOM is loaded, add the below events on the arrows to get updates in date
-          document.getElementsByClassName('week-navigator-button')[0].addEventListener('click', () => {
-            this.onChangeWeek();
-          })
-          document.getElementsByClassName('week-navigator-button')[1].addEventListener('click', () => {
-            this.onChangeWeek();
-          })
         },
       },
     mounted() {
@@ -152,6 +146,7 @@ export default {
               deleteErr: false,
               reserveErr: false,
               appointments: [],
+              sessionPendingLessons: [],
         }
     },
     methods: {
@@ -159,12 +154,18 @@ export default {
         const startTime = eventData.from;
         const endTime = moment(startTime).add(this.reservationLength, 'minutes').toISOString();
         const isPast = new Date() > new Date(startTime);
+        let duplicate = this.currentlySelected.findIndex(selected => selected.from == startTime);
+              if (duplicate != -1) { // unselecting
+                this.slotsLeft += 1;
+                this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicate);
+                return;
+              }
+
         if (!isPast) {
           let status; // used to keep track of first slot status
           let isValidMove = true;
           let isClickOnTopSlotReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length != 0;
           let isClickTopSlotSelected = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length != 0;
-          
           for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
             const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
             const currentTimeSlotObj = this.events.find(event => event.data.from == currentTimeSlot);
@@ -173,69 +174,72 @@ export default {
               if (i == 0) {
                 status = currentTimeSlotObj.data.status;
               }
-
               const isReservedBySelf = (currentTimeSlotObj.data.status == 'pending' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
                             || (currentTimeSlotObj.data.status == 'confirmed' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
               const unreservedSlot = currentTimeSlotObj.data.status == '';
               const reserverableCancel = currentTimeSlotObj.data.cancellationReason == 'student cancel'
-                            || (currentTimeSlotObj.data.cancellationReason == 'student issue' && 
+                            || (currentTimeSlotObj.data.cancellationReason == 'student issue' &&
                                 currentTimeSlotObj.data.reservedBy != this.reservedBy)
-
+                                
               validMoveCheck = unreservedSlot
                             || isReservedBySelf
                             || reserverableCancel
-                            
+
               if ((currentTimeSlotObj.data.status == 'pending' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
                             || (currentTimeSlotObj.data.status == 'confirmed' && currentTimeSlotObj.data.reservedBy == this.reservedBy)) {
+
                 validMoveCheck = validMoveCheck && (isClickOnTopSlotReserved || isClickTopSlotSelected)
-                            }
-            
-                            
+              }
+
             if ((!currentTimeSlotObj || !validMoveCheck)) { // bad move
               isValidMove = false;
-              console.log('bad move')
             }
             else if (isValidMove && i == (this.reservationLength / 30) - 1 && status == currentTimeSlotObj.data.status ) { // good move
               if (isReservedBySelf) {
                 this.$bvModal.show('cancel-modal');
                 this.cancelStartTime = startTime;
-              } else if (unreservedSlot) { // add to currentlySelected
-
+              } else if (unreservedSlot || reserverableCancel) { // add to currentlySelected
+              const currSelectedArrCopy = [... this.currentlySelected];
               if (this.currentlySelected.length == 0) {
-                  this.removeSelection(startTime) // avoid adding duplicates
+                  this.slotsLeft -= 1;
                   this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
               } else {
                 let isInBetween = false;
-                for (let i = 0; i < this.currentlySelected.length; i++) {
-                  isInBetween = isInBetween 
-                  || moment(startTime).isBetween(moment(this.currentlySelected[i].from), moment(this.currentlySelected[i].to)) 
+                for (let i = 0; i < currSelectedArrCopy.length; i++) {
+                  isInBetween = isInBetween
+                  || moment(startTime).isBetween(moment(this.currentlySelected[i].from), moment(this.currentlySelected[i].to))
                   || moment(endTime).isBetween(moment(this.currentlySelected[i].from), moment(this.currentlySelected[i].to))
-                  if (i == this.currentlySelected.length - 1 && !isInBetween) {
-                      this.removeSelection(startTime) // avoid adding duplicates
-                      this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
-                      // this.slotsLeft -= 1;
-                  }
-
-                  if (this.currentlySelected[i].from == startTime) { // clicking a selected slot
-                    this.removeSelection(startTime);
-                    // this.slotsLeft += 1;
+                  if (!isInBetween && i == this.currentlySelected.length - 1) {
+                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
+                    this.slotsLeft -= 1;
                   }
                 }
-              }             
+              }
               }
             }
           }
         }
         }
       },
-      onClickClassBind(startTime) { // bind classes based on currentlySelected
-
+      onEventClassBind(startTime, eventArrStr) { // bind classes based on currentlySelected
+        let isEventOccuring = false;
+        for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
+          let timeSlot;
+          if (i == 0) {
+            timeSlot = moment(startTime).toISOString();
+          } else {
+            timeSlot = moment(startTime).subtract(i * 30, 'minutes').toISOString(); // previous timeslot
+          }
+          isEventOccuring = isEventOccuring
+          || (this[eventArrStr].filter(eventStartTime => eventStartTime.from == startTime || eventStartTime.from == timeSlot).length != 0);
+        }
+          return isEventOccuring;          
       },
       onHoverClassBind(startTime) { // used in class binding when on hover
       let isHovering = false;
       for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
         let prevTimeSlot = moment(startTime).subtract(i * 30, 'minutes').toISOString();
-        isHovering = isHovering 
+        isHovering = isHovering
         || (this.currentlyHovered.filter(hoveredStartTime => hoveredStartTime == startTime || hoveredStartTime == prevTimeSlot).length != 0);
       }
         return isHovering;
@@ -262,7 +266,6 @@ export default {
 
            this.appointments = this.appointments.filter(appointment => appointment.from != startTime)
         }).catch((err) => {
-          console.log(err)
           this.deleteErr = true;
         });
       },
@@ -280,6 +283,7 @@ export default {
             }).catch((err) => { this.reserveErr = true; });
 
           }
+          this.sessionPendingLessons.push(... this.currentlySelected);
           this.currentlySelected = [];
         }
       },
@@ -374,68 +378,6 @@ export default {
           return selected.from != startTime;
         })
       },
-      colorSlot(startTime) { // on click logic + coloring
-        const isPast = new Date() > new Date(startTime);
-        const endTime = moment(startTime).add(this.reservationLength, 'minutes').toISOString();
-        let isApplyingSelect = false;
-        let isRemovingSelect = false;
-        let isValidMove = true;
-        const isClickOnTopSlot = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length > 0;
-        const isClickTopReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length > 0;
-
-        if (!isPast) {
-          for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
-            const timeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
-            const slotToColor = document.getElementById(timeSlot);
-            const adjacentSlot = document.getElementById(moment(startTime).add(this.reservationLength - 30, 'minutes').toISOString());
-            if (slotToColor && adjacentSlot) {
-              const slotToColorParent = slotToColor.parentNode.classList;
-              const adjacentSlotParent = adjacentSlot.parentNode.classList;
-              const isSelected = slotToColor.classList.value.split(' ').includes('on-select') || slotToColorParent.value.split(' ').includes('on-select');
-              const isAdjSelected = adjacentSlot.classList.value.split(' ').includes('on-select');
-              const isSlotReserved = slotToColor.classList.value.split(' ').includes('booked-by-self')
-              || slotToColorParent.value.split(' ').includes('booked-by-self')
-              || slotToColor.classList.value.split(' ').includes('pending')
-              || slotToColorParent.value.split(' ').includes('pending')
-              || slotToColor.classList.value.split(' ').includes('booked-by-other')
-              || slotToColorParent.value.split(' ').includes('booked-by-other')
-              const isAdjReserved = adjacentSlot.classList.value.split(' ').includes('booked-by-self')
-              || adjacentSlotParent.value.split(' ').includes('booked-by-self')
-              || adjacentSlot.classList.value.split(' ').includes('pending')
-              || adjacentSlotParent.value.split(' ').includes('pending')
-              || adjacentSlot.classList.value.split(' ').includes('booked-by-other')
-              || adjacentSlotParent.value.split(' ').includes('booked-by-other')
-              const isPast = slotToColor.parentNode.parentNode.classList.value.split(' ').includes('is-past');
-              if (!isSelected && this.slotsLeft - 1 >= 0  && !isPast && !isSlotReserved && isValidMove && !isAdjSelected && !isAdjReserved) {
-                this.removeSelection(startTime) // avoid adding duplicates
-                this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
-                slotToColor.classList.add("on-select");
-                slotToColor.parentNode.classList.add("on-select");
-                isApplyingSelect = true;
-              } else if (isSelected && this.slotsLeft <= this.reservationSlotLimit - 1 && isClickOnTopSlot) {
-                slotToColor.classList.remove("on-select");
-                slotToColor.parentNode.classList.remove("on-select");
-                this.removeSelection(startTime)
-                isRemovingSelect = true;
-              }
-              else { // prevent user from selecting edge slots/reserved slots
-                if (isSlotReserved && isClickTopReserved) {
-                  this.$bvModal.show('cancel-modal');
-                  this.cancelStartTime = startTime;
-                }
-                isValidMove = false;
-              }
-            }
-          }
-
-          if (isApplyingSelect) {
-            this.slotsLeft -= 1;
-          } else if (isRemovingSelect) { // on unselect
-            this.slotsLeft += 1;
-          }
-        }
-
-      },
       intervals(slot) { // split up any time into 30m intervals
         const start = moment(slot.from);
         const end = moment(slot.to);
@@ -465,8 +407,11 @@ export default {
                   cancellationReason: slot.cancellationReason || ''
                 }
               }
-              this.events.push(formatedDate);
-              this.events = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out duplicates if available times and lessons overlap
+              const duplicate = this.events.find(event => {event.from == formatedDate.from;});
+              if (!duplicate) {
+                this.events.push(formatedDate);
+                this.events = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out duplicates if available times and lessons overlap
+              }
             }
           }
       },
