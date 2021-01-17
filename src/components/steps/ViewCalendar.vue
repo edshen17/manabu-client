@@ -74,15 +74,17 @@
           slot-scope="{ event_information }"
           :id="event_information.data.from"
           class="details-card"
-          :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed', 
-          'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '' 
-          || event_information.data.cancellationReason == 'schedule change',
+          :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed'
+          && !onEventClassBind(event_information.data.from, sessionCancelledLessons), 
+          'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != ''
+                              && (event_information.data.cancellationReason != 'student issue' 
+                              && event_information.data.cancellationReason != 'student cancel'),
           'pending': ((event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy) 
                      || onEventClassBind(event_information.data.from, sessionPendingLessons)) 
                      && !onEventClassBind(event_information.data.from, sessionCancelledLessons),
-          'cancelled': (event_information.data.status == 'cancelled' 
-            && (event_information.data.cancellationReason == 'student issue' || event_information.data.cancellationReason == 'student cancel') 
-            && event_information.data.reservedBy == reservedBy) || onEventClassBind(event_information.data.from, sessionCancelledLessons),
+          'cancelled': ((event_information.data.status == 'cancelled' 
+            && (event_information.data.cancellationReason == 'student issue' || event_information.data.cancellationReason == 'student cancel' || event_information.data.cancellationReason == 'schedule change') 
+            && event_information.data.reservedBy == reservedBy)) || onEventClassBind(event_information.data.from, sessionCancelledLessons),
           'on-hover': false,
           'on-select': onEventClassBind(event_information.data.from, currentlySelected) }"
           @click="onClick(event_information.data)"
@@ -157,11 +159,11 @@ export default {
         const endTime = moment(startTime).add(this.reservationLength, 'minutes').toISOString();
         const isPast = new Date() > new Date(startTime);
         let duplicate = this.currentlySelected.findIndex(selected => selected.from == startTime);
-              if (duplicate != -1) { // unselecting
-                this.slotsLeft += 1;
-                this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicate);
-                return;
-              }
+        if (duplicate != -1) { // unselecting
+          this.slotsLeft += 1;
+          this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicate);
+          return;
+        }
 
         if (!isPast) {
           let status; // used to keep track of first slot status
@@ -172,7 +174,7 @@ export default {
             const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
             const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
             let validMoveCheck;
-            if (currentTimeSlotObj) {
+            if (currentTimeSlotObj) { // get slot information (if any)
               if (i == 0) {
                 status = currentTimeSlotObj.data.status;
               }
@@ -182,13 +184,24 @@ export default {
                             || (currentTimeSlotObj.data.status == 'confirmed' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
                             || sessionPending;
               const unreservedSlot = currentTimeSlotObj.data.status == '';
-              let reserverableCancel = ((currentTimeSlotObj.data.cancellationReason == 'student issue' 
-                            || currentTimeSlotObj.data.cancellationReason == 'student cancel') 
-                            && currentTimeSlotObj.data.reservedBy != this.reservedBy) 
-                            
-              validMoveCheck = unreservedSlot
+              let reserverableCancel = currentTimeSlotObj.data.status == 'cancelled' 
+                  && currentTimeSlotObj.data.reservedBy != this.reservedBy
+                  && (currentTimeSlotObj.data.cancellationReason != 'schedule change')
+                  || currentTimeSlotObj.data.cancellationReason == 'student cancel'
+                  && !isSessionCancel
+
+                  let cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled' 
+                    && currentTimeSlotObj.data.reservedBy == this.reservedBy;
+
+                    let cancelledByOtherReservable = currentTimeSlotObj.data.status 
+                      == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
+                      && currentTimeSlotObj.data.reservedBy != this.reservedBy;
+
+                  let testReserveCancel = !cancelledBySelf && cancelledByOtherReservable;
+
+                  validMoveCheck = unreservedSlot
                             || isReservedBySelf
-                            || reserverableCancel
+                            || testReserveCancel
 
               if (isReservedBySelf) {
                 if (sessionPending && this.appointments.find(event => event.from == startTime)) { // in session cancel
@@ -199,9 +212,11 @@ export default {
               }
               
             if ((!currentTimeSlotObj || !validMoveCheck)) { // bad move
+              console.log('bad move')
               isValidMove = false;
             }
-            if (isValidMove && i == (this.reservationLength / 30) - 1 && status == currentTimeSlotObj.data.status) { // good move
+
+            if (isValidMove && ((i == (this.reservationLength / 30) - 1))) { // good move
               if (isReservedBySelf) {
                 this.$bvModal.show('cancel-modal');
                 this.cancelStartTime = startTime;
@@ -287,7 +302,7 @@ export default {
               this.$bvModal.show('complete-modal');
               this.appointments.push(res.data);
               if (toUpdateIndex != -1) {
-                this.events[toUpdateIndex] = { //res.data
+                this.events[toUpdateIndex] = {
                   from: res.data.from,
                   to: res.data.to,
                   data: { // make a data object to be used later
