@@ -179,21 +179,21 @@ export default {
                 status = currentTimeSlotObj.data.status;
               }
               const isSessionCancel = this.onEventClassBind(startTime, this.sessionCancelledLessons);
-              const sessionPending = this.onEventClassBind(startTime, this.sessionPendingLessons);            
+              const sessionPending = this.onEventClassBind(startTime, this.sessionPendingLessons);
               const isReservedBySelf = (currentTimeSlotObj.data.status == 'pending' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
                             || (currentTimeSlotObj.data.status == 'confirmed' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
                             || sessionPending;
               const unreservedSlot = currentTimeSlotObj.data.status == '';
-              let reserverableCancel = currentTimeSlotObj.data.status == 'cancelled' 
+              let reserverableCancel = currentTimeSlotObj.data.status == 'cancelled'
                   && currentTimeSlotObj.data.reservedBy != this.reservedBy
                   && (currentTimeSlotObj.data.cancellationReason != 'schedule change')
                   || currentTimeSlotObj.data.cancellationReason == 'student cancel'
                   && !isSessionCancel
 
-                  let cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled' 
+                  let cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled'
                     && currentTimeSlotObj.data.reservedBy == this.reservedBy;
 
-                    let cancelledByOtherReservable = currentTimeSlotObj.data.status 
+                    let cancelledByOtherReservable = currentTimeSlotObj.data.status
                       == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
                       && currentTimeSlotObj.data.reservedBy != this.reservedBy;
 
@@ -210,9 +210,8 @@ export default {
                 }
                 validMoveCheck = validMoveCheck && (isClickOnTopSlotReserved || isClickTopSlotSelected)
               }
-              
+
             if ((!currentTimeSlotObj || !validMoveCheck)) { // bad move
-              console.log('bad move')
               isValidMove = false;
             }
 
@@ -255,7 +254,7 @@ export default {
           isEventOccuring = isEventOccuring
           || (eventArr.filter(eventStartTime => eventStartTime.from == startTime || eventStartTime.from == timeSlot).length != 0);
         }
-          return isEventOccuring;          
+          return isEventOccuring;
       },
       onHoverClassBind(startTime) { // used in class binding when on hover
       let isHovering = false;
@@ -314,7 +313,7 @@ export default {
                   }
                 };
               }
-            }).catch((err) => { 
+            }).catch((err) => {
               this.reserveErr = true; });
           }
           this.sessionPendingLessons.push(...this.currentlySelected);
