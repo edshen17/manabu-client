@@ -77,13 +77,14 @@
           :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed', 
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '' 
           || event_information.data.cancellationReason == 'schedule change',
-          'pending': (event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy) 
-                     || onEventClassBind(event_information.data.from, sessionPendingLessons),
-          'cancelled': event_information.data.status == 'cancelled' 
+          'pending': ((event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy) 
+                     || onEventClassBind(event_information.data.from, sessionPendingLessons)) 
+                     && !onEventClassBind(event_information.data.from, sessionCancelledLessons),
+          'cancelled': (event_information.data.status == 'cancelled' 
             && (event_information.data.cancellationReason == 'student issue' || event_information.data.cancellationReason == 'student cancel') 
-            && event_information.data.reservedBy == reservedBy,
+            && event_information.data.reservedBy == reservedBy) || onEventClassBind(event_information.data.from, sessionCancelledLessons),
           'on-hover': false,
-          'on-select': onEventClassBind(event_information.data.from, currentlySelected)  }"
+          'on-select': onEventClassBind(event_information.data.from, currentlySelected) }"
           @click="onClick(event_information.data)"
           @mouseover="onHover(event_information.data.from)"
         >
@@ -147,6 +148,7 @@ export default {
               reserveErr: false,
               appointments: [],
               sessionPendingLessons: [],
+              sessionCancelledLessons: [],
         }
     },
     methods: {
@@ -168,35 +170,38 @@ export default {
           let isClickTopSlotSelected = this.currentlySelected.filter((selected) => { return selected.from == startTime }).length != 0;
           for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
             const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
-            const currentTimeSlotObj = this.events.find(event => event.data.from == currentTimeSlot);
+            const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
             let validMoveCheck;
             if (currentTimeSlotObj) {
               if (i == 0) {
                 status = currentTimeSlotObj.data.status;
               }
-              const sessionPending = this.sessionPendingLessons.find(event => event.from == startTime);              
+              const isSessionCancel = this.onEventClassBind(startTime, this.sessionCancelledLessons);
+              const sessionPending = this.onEventClassBind(startTime, this.sessionPendingLessons);            
               const isReservedBySelf = (currentTimeSlotObj.data.status == 'pending' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
                             || (currentTimeSlotObj.data.status == 'confirmed' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
                             || sessionPending;
               const unreservedSlot = currentTimeSlotObj.data.status == '';
-              const reserverableCancel = (currentTimeSlotObj.data.cancellationReason == 'student issue' || currentTimeSlotObj.data.cancellationReason == 'student cancel') &&
-                                currentTimeSlotObj.data.reservedBy != this.reservedBy;
-                                
+              let reserverableCancel = ((currentTimeSlotObj.data.cancellationReason == 'student issue' 
+                            || currentTimeSlotObj.data.cancellationReason == 'student cancel') 
+                            && currentTimeSlotObj.data.reservedBy != this.reservedBy) 
+                            
               validMoveCheck = unreservedSlot
                             || isReservedBySelf
                             || reserverableCancel
 
-              if ((currentTimeSlotObj.data.status == 'pending' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
-                            || (currentTimeSlotObj.data.status == 'confirmed' && currentTimeSlotObj.data.reservedBy == this.reservedBy)) {
-
+              if (isReservedBySelf) {
+                if (sessionPending && this.appointments.find(event => event.from == startTime)) { // in session cancel
+                  this.$bvModal.show('cancel-modal');
+                  this.cancelStartTime = startTime;
+                }
                 validMoveCheck = validMoveCheck && (isClickOnTopSlotReserved || isClickTopSlotSelected)
               }
-
+              
             if ((!currentTimeSlotObj || !validMoveCheck)) { // bad move
-              console.log('bad')
               isValidMove = false;
             }
-            else if (isValidMove && i == (this.reservationLength / 30) - 1 && status == currentTimeSlotObj.data.status ) { // good move
+            if (isValidMove && i == (this.reservationLength / 30) - 1 && status == currentTimeSlotObj.data.status) { // good move
               if (isReservedBySelf) {
                 this.$bvModal.show('cancel-modal');
                 this.cancelStartTime = startTime;
@@ -262,57 +267,45 @@ export default {
         ).then((res) => {
           if (res.status == 200) {
             this.$bvModal.hide('cancel-modal');
-            this.removeSlotClassSpecific(startTime, 'booked-by-self')
-            this.removeSlotClassSpecific(startTime, 'pending')
-
-            this.slotsLeft += 1;
             this.appointments = this.appointments.filter(appointment => appointment.from != startTime);
             this.sessionPendingLessons = this.sessionPendingLessons.filter(event => event.from != startTime);
+            this.sessionCancelledLessons.push(res.data);
           }
         }).catch((err) => {
-          console.log(err)
           this.deleteErr = true;
         });
       },
       createAppointments() {
         if (this.slotsLeft != this.reservationSlotLimit) {
           for (let i = 0; i < this.currentlySelected.length; i++) {
-            const currentlySelectedFrom = this.currentlySelected[i].from
+            const currentlySelectedFrom = this.currentlySelected[i].from;
+            const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == currentlySelectedFrom);
+
             axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then(res => {
               this.$bvModal.show('complete-modal');
               this.appointments.push(res.data);
-              this.applySlotClass(currentlySelectedFrom, 'pending');
-              this.removeSlotClass('on-select');
+              if (toUpdateIndex != -1) {
+                this.events[toUpdateIndex] = { //res.data
+                  from: res.data.from,
+                  to: res.data.to,
+                  data: { // make a data object to be used later
+                    from: res.data.from,
+                    to: res.data.to,
+                    reservedBy: res.data.reservedBy,
+                    status: res.data.status,
+                    cancellationReason: ''
+                  }
+                };
+              }
             }).catch((err) => { 
-              console.log(err)
               this.reserveErr = true; });
-
           }
-          this.sessionPendingLessons.push(... this.currentlySelected);
+          this.sessionPendingLessons.push(...this.currentlySelected);
           this.currentlySelected = [];
         }
       },
-      onChangeWeek() { // used when user changes week
-        this.currentDay = this.$refs.kalendar._data.current_day;
-        this.getWeekData(this.currentDay);
-          setTimeout(() => { // set time out to give enough time for page refresh
-            for (let i = 0; i < this.currentlySelected.length; i++) {
-              let selectedSlot = document.getElementById(this.currentlySelected[i].from);
-              if (selectedSlot) {
-                this.applySlotClass(this.currentlySelected[i].from, 'on-select')
-              }
-            }
-
-            for (let i = 0; i < this.appointments.length; i++) {
-              let reservedSlot = document.getElementById(this.appointments[i].from);
-              if (reservedSlot) {
-                this.applySlotClass(this.appointments[i].from, 'pending')
-              }
-            }
-          }, 200);
-        },
       getWeekData(startDay) { // get 2 week information (used during page refresh)
         const lastWeeks = moment(startDay).subtract(2, 'week');
         const nextWeeks = moment(startDay).add(2, 'week');
@@ -335,36 +328,6 @@ export default {
           this.currentDayLoaded = true;
           this.currentDay = this.$refs.kalendar._data.current_day;
         }, 200);
-      },
-      removeSlotClass(className) { // remove class from all elements with that class
-          const classElements = document.getElementsByClassName(className);
-          while(classElements.length > 0) {
-              classElements[0].classList.remove(className);
-          }
-      },
-      removeSlotClassSpecific(startTime, classToRemove) { // remove class from specific slots
-        for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
-          const timeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
-          const slotToColor = document.getElementById(timeSlot);
-          if (slotToColor) {
-            slotToColor.parentNode.classList.remove(classToRemove);
-            slotToColor.classList.remove(classToRemove);
-          }
-        }
-      },
-      applySlotClass(startTime, classToApply) { // hover + rendering selected classes (if user changes weeks). no click logic
-        const isPast = new Date() > new Date(startTime);
-        if (!isPast) {
-        for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
-                  const timeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
-                  const slotToColor = document.getElementById(timeSlot);
-                  if (slotToColor) {
-                    slotToColor.parentNode.classList.add(classToApply);
-                    slotToColor.classList.add(classToApply);
-                  }
-                }
-        }
-
       },
       appointmentFactory(hostedBy, reservedBy, packageId, from, to) { // creates appointment object to send to server
         const appointment = {
