@@ -78,12 +78,12 @@
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != '' 
           || event_information.data.cancellationReason == 'schedule change',
           'pending': (event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy) 
-                     || onEventClassBind(event_information.data.from, 'sessionPendingLessons'),
+                     || onEventClassBind(event_information.data.from, sessionPendingLessons),
           'cancelled': event_information.data.status == 'cancelled' 
-            && event_information.data.cancellationReason == 'student issue' 
+            && (event_information.data.cancellationReason == 'student issue' || event_information.data.cancellationReason == 'student cancel') 
             && event_information.data.reservedBy == reservedBy,
           'on-hover': false,
-          'on-select': onEventClassBind(event_information.data.from, 'currentlySelected')  }"
+          'on-select': onEventClassBind(event_information.data.from, currentlySelected)  }"
           @click="onClick(event_information.data)"
           @mouseover="onHover(event_information.data.from)"
         >
@@ -164,8 +164,8 @@ export default {
         if (!isPast) {
           let status; // used to keep track of first slot status
           let isValidMove = true;
-          let isClickOnTopSlotReserved = this.appointments.filter((appointment) => {return appointment.from == startTime }).length != 0;
-          let isClickTopSlotSelected = this.currentlySelected.filter((selected) => {return selected.from == startTime }).length != 0;
+          let isClickOnTopSlotReserved = this.appointments.filter((appointment) => { return appointment.from == startTime }).length != 0;
+          let isClickTopSlotSelected = this.currentlySelected.filter((selected) => { return selected.from == startTime }).length != 0;
           for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
             const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
             const currentTimeSlotObj = this.events.find(event => event.data.from == currentTimeSlot);
@@ -174,12 +174,13 @@ export default {
               if (i == 0) {
                 status = currentTimeSlotObj.data.status;
               }
+              const sessionPending = this.sessionPendingLessons.find(event => event.from == startTime);              
               const isReservedBySelf = (currentTimeSlotObj.data.status == 'pending' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
                             || (currentTimeSlotObj.data.status == 'confirmed' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
+                            || sessionPending;
               const unreservedSlot = currentTimeSlotObj.data.status == '';
-              const reserverableCancel = currentTimeSlotObj.data.cancellationReason == 'student cancel'
-                            || (currentTimeSlotObj.data.cancellationReason == 'student issue' &&
-                                currentTimeSlotObj.data.reservedBy != this.reservedBy)
+              const reserverableCancel = (currentTimeSlotObj.data.cancellationReason == 'student issue' || currentTimeSlotObj.data.cancellationReason == 'student cancel') &&
+                                currentTimeSlotObj.data.reservedBy != this.reservedBy;
                                 
               validMoveCheck = unreservedSlot
                             || isReservedBySelf
@@ -192,6 +193,7 @@ export default {
               }
 
             if ((!currentTimeSlotObj || !validMoveCheck)) { // bad move
+              console.log('bad')
               isValidMove = false;
             }
             else if (isValidMove && i == (this.reservationLength / 30) - 1 && status == currentTimeSlotObj.data.status ) { // good move
@@ -200,7 +202,7 @@ export default {
                 this.cancelStartTime = startTime;
               } else if (unreservedSlot || reserverableCancel) { // add to currentlySelected
               const currSelectedArrCopy = [... this.currentlySelected];
-              if (this.currentlySelected.length == 0) {
+              if (this.currentlySelected.length == 0) { // if no selected items, create selection
                   this.slotsLeft -= 1;
                   this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
               } else {
@@ -221,7 +223,7 @@ export default {
         }
         }
       },
-      onEventClassBind(startTime, eventArrStr) { // bind classes based on currentlySelected
+      onEventClassBind(startTime, eventArr) { // bind classes based on arrays like currentlySelected/sessionPendingLessons to color slots
         let isEventOccuring = false;
         for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
           let timeSlot;
@@ -231,7 +233,7 @@ export default {
             timeSlot = moment(startTime).subtract(i * 30, 'minutes').toISOString(); // previous timeslot
           }
           isEventOccuring = isEventOccuring
-          || (this[eventArrStr].filter(eventStartTime => eventStartTime.from == startTime || eventStartTime.from == timeSlot).length != 0);
+          || (eventArr.filter(eventStartTime => eventStartTime.from == startTime || eventStartTime.from == timeSlot).length != 0);
         }
           return isEventOccuring;          
       },
@@ -253,19 +255,22 @@ export default {
       },
       cancelAppointment(startTime) {
         if (this.deleteErr) this.deleteErr = false; //reset deleteErr
-        const selectedLessonId = this.events.filter(event => event.from == startTime)[0].data._id;
-
+        const selectedLessonId = this.appointments.find(appointment => appointment.from == startTime)._id;
         axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'cancelled', cancellationReason: 'student cancel' }, { headers: {
             'X-Requested-With': 'XMLHttpRequest'
           }}
-        ).then(() => {
-           this.$bvModal.hide('cancel-modal');
-           this.removeSlotClassSpecific(startTime, 'booked-by-self')
-           this.removeSlotClassSpecific(startTime, 'pending')
-           this.slotsLeft += 1;
+        ).then((res) => {
+          if (res.status == 200) {
+            this.$bvModal.hide('cancel-modal');
+            this.removeSlotClassSpecific(startTime, 'booked-by-self')
+            this.removeSlotClassSpecific(startTime, 'pending')
 
-           this.appointments = this.appointments.filter(appointment => appointment.from != startTime)
+            this.slotsLeft += 1;
+            this.appointments = this.appointments.filter(appointment => appointment.from != startTime);
+            this.sessionPendingLessons = this.sessionPendingLessons.filter(event => event.from != startTime);
+          }
         }).catch((err) => {
+          console.log(err)
           this.deleteErr = true;
         });
       },
@@ -275,12 +280,14 @@ export default {
             const currentlySelectedFrom = this.currentlySelected[i].from
             axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
-            }}).then(res=> {
+            }}).then(res => {
               this.$bvModal.show('complete-modal');
               this.appointments.push(res.data);
               this.applySlotClass(currentlySelectedFrom, 'pending');
               this.removeSlotClass('on-select');
-            }).catch((err) => { this.reserveErr = true; });
+            }).catch((err) => { 
+              console.log(err)
+              this.reserveErr = true; });
 
           }
           this.sessionPendingLessons.push(... this.currentlySelected);
@@ -403,7 +410,6 @@ export default {
                   to: intervalArr[i+1],
                   reservedBy,
                   status,
-                  _id: slot._id,
                   cancellationReason: slot.cancellationReason || ''
                 }
               }
