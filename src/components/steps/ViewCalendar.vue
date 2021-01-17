@@ -118,10 +118,6 @@ export default {
       reservationLength: Number,
       reservationSlotLimit: Number,
     },
-      watch: {
-        'currentDayLoaded' () { // when DOM is loaded, add the below events on the arrows to get updates in date
-        },
-      },
     mounted() {
       this.getWeekData(this.currentDay); // current date
     },
@@ -144,7 +140,6 @@ export default {
               events: [],
               slotsLeft: this.reservationSlotLimit,
               currentDay: new Date().toISOString(),
-              currentDayLoaded: false,
               cancelStartTime: '',
               deleteErr: false,
               reserveErr: false,
@@ -164,12 +159,11 @@ export default {
           this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicate);
           return;
         }
-
         if (!isPast) {
           let status; // used to keep track of first slot status
           let isValidMove = true;
-          let isClickOnTopSlotReserved = this.appointments.filter((appointment) => { return appointment.from == startTime }).length != 0;
-          let isClickTopSlotSelected = this.currentlySelected.filter((selected) => { return selected.from == startTime }).length != 0;
+          let isClickOnTopSlotReserved = this.appointments.filter((appointment) => { return appointment.from == startTime && appointment.reservedBy == this.reservedBy }).length != 0;
+          let isClickTopSlotSelected = this.currentlySelected.filter((selected) => { return selected.from == startTime && appointment.reservedBy == this.reservedBy }).length != 0;
           for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
             const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
             const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
@@ -180,43 +174,38 @@ export default {
               }
               const isSessionCancel = this.onEventClassBind(startTime, this.sessionCancelledLessons);
               const sessionPending = this.onEventClassBind(startTime, this.sessionPendingLessons);
-              const isReservedBySelf = (currentTimeSlotObj.data.status == 'pending' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
-                            || (currentTimeSlotObj.data.status == 'confirmed' && currentTimeSlotObj.data.reservedBy == this.reservedBy)
+              const isReservedBySelf = currentTimeSlotObj.data.reservedBy == this.reservedBy
+                            && (currentTimeSlotObj.data.status == 'pending' || currentTimeSlotObj.data.status == 'confirmed')
                             || sessionPending;
               const unreservedSlot = currentTimeSlotObj.data.status == '';
-              let reserverableCancel = currentTimeSlotObj.data.status == 'cancelled'
-                  && currentTimeSlotObj.data.reservedBy != this.reservedBy
-                  && (currentTimeSlotObj.data.cancellationReason != 'schedule change')
-                  || currentTimeSlotObj.data.cancellationReason == 'student cancel'
-                  && !isSessionCancel
 
-                  let cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled'
+                  const cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled'
                     && currentTimeSlotObj.data.reservedBy == this.reservedBy;
 
-                    let cancelledByOtherReservable = currentTimeSlotObj.data.status
+                    const cancelledByOtherReservable = currentTimeSlotObj.data.status
                       == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
                       && currentTimeSlotObj.data.reservedBy != this.reservedBy;
 
-                  let testReserveCancel = !cancelledBySelf && cancelledByOtherReservable;
+                  const reserverableCancel = !cancelledBySelf && cancelledByOtherReservable;
 
                   validMoveCheck = unreservedSlot
                             || isReservedBySelf
-                            || testReserveCancel
+                            || reserverableCancel
 
               if (isReservedBySelf) {
-                if (sessionPending && this.appointments.find(event => event.from == startTime)) { // in session cancel
+                if (sessionPending && this.appointments.find(event => event.from == startTime && event.reservedBy == this.reservedBy) && status == currentTimeSlotObj.data.status) { // in session cancel
                   this.$bvModal.show('cancel-modal');
                   this.cancelStartTime = startTime;
                 }
                 validMoveCheck = validMoveCheck && (isClickOnTopSlotReserved || isClickTopSlotSelected)
               }
 
-            if ((!currentTimeSlotObj || !validMoveCheck)) { // bad move
+            if ((!currentTimeSlotObj || !validMoveCheck || isSessionCancel)) { // bad move
               isValidMove = false;
             }
 
-            if (isValidMove && ((i == (this.reservationLength / 30) - 1))) { // good move
-              if (isReservedBySelf) {
+            if (isValidMove && ((i == (this.reservationLength / 30) - 1)) && (status == currentTimeSlotObj.data.status || status == '' || currentTimeSlotObj.data.status == '' || status == 'student cancel' || currentTimeSlotObj.data.status == 'student cancel')) { // good move
+              if (isReservedBySelf && isClickOnTopSlotReserved) {
                 this.$bvModal.show('cancel-modal');
                 this.cancelStartTime = startTime;
               } else if (unreservedSlot || reserverableCancel) { // add to currentlySelected
@@ -337,11 +326,6 @@ export default {
             });
           }
         });
-
-         setTimeout(() => {
-          this.currentDayLoaded = true;
-          this.currentDay = this.$refs.kalendar._data.current_day;
-        }, 200);
       },
       appointmentFactory(hostedBy, reservedBy, packageId, from, to) { // creates appointment object to send to server
         const appointment = {
