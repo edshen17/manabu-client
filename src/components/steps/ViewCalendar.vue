@@ -85,10 +85,8 @@
           'cancelled': ((event_information.data.status == 'cancelled' 
             && (event_information.data.cancellationReason == 'student issue' || event_information.data.cancellationReason == 'student cancel' || event_information.data.cancellationReason == 'schedule change') 
             && event_information.data.reservedBy == reservedBy)) || onEventClassBind(event_information.data.from, sessionCancelledLessons),
-          'on-hover': false,
           'on-select': onEventClassBind(event_information.data.from, currentlySelected) }"
           @click="onClick(event_information.data)"
-          @mouseover="onHover(event_information.data.from)"
         >
           <span class="time appointment-title" style="text-align: left"
             >{{ parseISOString(event_information.start_time) }} -
@@ -119,7 +117,7 @@ export default {
       reservationSlotLimit: Number,
     },
     mounted() {
-      this.getWeekData(this.currentDay); // current date
+      this.getScheduleData(this.currentDay); // current date
     },
     data() {
         return {
@@ -179,12 +177,12 @@ export default {
                             || sessionPending;
               const unreservedSlot = currentTimeSlotObj.data.status == '';
 
-                  const cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled'
-                    && currentTimeSlotObj.data.reservedBy == this.reservedBy;
+              const cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled'
+                && currentTimeSlotObj.data.reservedBy == this.reservedBy;
 
-                    const cancelledByOtherReservable = currentTimeSlotObj.data.status
-                      == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
-                      && currentTimeSlotObj.data.reservedBy != this.reservedBy;
+              const cancelledByOtherReservable = currentTimeSlotObj.data.status
+                == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
+                && currentTimeSlotObj.data.reservedBy != this.reservedBy;
 
                   const reserverableCancel = !cancelledBySelf && cancelledByOtherReservable;
 
@@ -204,7 +202,12 @@ export default {
               isValidMove = false;
             }
 
-            if (isValidMove && ((i == (this.reservationLength / 30) - 1)) && (status == currentTimeSlotObj.data.status || status == '' || currentTimeSlotObj.data.status == '' || status == 'student cancel' || currentTimeSlotObj.data.status == 'student cancel')) { // good move
+            if (isValidMove && ((i == (this.reservationLength / 30) - 1)) 
+                && (status == currentTimeSlotObj.data.status // even if status is not the same, make sure they're reservable eg 1 slot "" and 1 slot cancelled
+                || status == '' 
+                || currentTimeSlotObj.data.status == '' 
+                || status == 'student cancel' 
+                || currentTimeSlotObj.data.status == 'student cancel')) { // good move
               if (isReservedBySelf && isClickOnTopSlotReserved) {
                 this.$bvModal.show('cancel-modal');
                 this.cancelStartTime = startTime;
@@ -245,22 +248,6 @@ export default {
         }
           return isEventOccuring;
       },
-      onHoverClassBind(startTime) { // used in class binding when on hover
-      let isHovering = false;
-      for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
-        let prevTimeSlot = moment(startTime).subtract(i * 30, 'minutes').toISOString();
-        isHovering = isHovering
-        || (this.currentlyHovered.filter(hoveredStartTime => hoveredStartTime == startTime || hoveredStartTime == prevTimeSlot).length != 0);
-      }
-        return isHovering;
-      },
-      onHover(startTime) { // on hover
-        const isPast = new Date() > new Date(startTime);
-        if (!isPast) {
-          this.currentlyHovered = [] // reset hovering
-          this.currentlyHovered.push(startTime);
-        }
-      },
       cancelAppointment(startTime) {
         if (this.deleteErr) this.deleteErr = false; //reset deleteErr
         const selectedLessonId = this.appointments.find(appointment => appointment.from == startTime)._id;
@@ -287,20 +274,22 @@ export default {
             axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then(res => {
-              this.$bvModal.show('complete-modal');
-              this.appointments.push(res.data);
-              if (toUpdateIndex != -1) {
-                this.events[toUpdateIndex] = {
-                  from: res.data.from,
-                  to: res.data.to,
-                  data: { // make a data object to be used later
+              if (res.status == 200) {
+                this.$bvModal.show('complete-modal');
+                this.appointments.push(res.data);
+                if (toUpdateIndex != -1) {
+                  this.events[toUpdateIndex] = {
                     from: res.data.from,
                     to: res.data.to,
-                    reservedBy: res.data.reservedBy,
-                    status: res.data.status,
-                    cancellationReason: ''
-                  }
-                };
+                    data: { // make a data object to be used later
+                      from: res.data.from,
+                      to: res.data.to,
+                      reservedBy: res.data.reservedBy,
+                      status: res.data.status,
+                      cancellationReason: ''
+                    }
+                  };
+                }
               }
             }).catch((err) => {
               this.reserveErr = true; });
@@ -309,12 +298,12 @@ export default {
           this.currentlySelected = [];
         }
       },
-      getWeekData(startDay) { // get 2 week information (used during page refresh)
-        const lastWeeks = moment(startDay).subtract(2, 'week');
-        const nextWeeks = moment(startDay).add(2, 'week');
-        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAvailableTimes) => {
+      getScheduleData(startDay) {
+        const from = moment().subtract(1, 'month');
+        const to = moment().add(6, 'month');;
+        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${lastWeeks.toISOString()}/${nextWeeks.toISOString()}`).then((resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then((resAppointments) => {
               if (resAppointments.status == 200) {
                 const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
                 for (let i = 0; i < combinedTimeSlots.length; i++) {

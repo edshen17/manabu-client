@@ -101,8 +101,8 @@
       <div
         v-if="userData.data.role == 'user' && userData.data.teacherAppPending"
       >
-        <!-- <edit-calendar hostedBy='5fe4ab8725e273284ca99bd8'></edit-calendar>  -->
-        <view-calendar :reservedBy="userId" hostedBy='5fe4ab8725e273284ca99bd8' :reservationLength="60" :reservationSlotLimit="100"></view-calendar>
+        <edit-calendar hostedBy='5fe4ab8725e273284ca99bd8'></edit-calendar> 
+        <!-- <view-calendar :reservedBy="userId" hostedBy='5fe4ab8725e273284ca99bd8' :reservationLength="60" :reservationSlotLimit="100"></view-calendar> -->
       </div>
     </div>
     <div v-else>

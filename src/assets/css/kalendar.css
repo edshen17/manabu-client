@@ -1,6 +1,16 @@
   .student-reserved {
     background-color: #0E9135 !important;
   }
+
+  .schedule-change {
+    background-color:pink !important;
+  }
+
+  .student-issue {
+    background-color:#152076 !important; 
+    color: #152076;
+    border: none !important;
+  }
   
   .pending {
     background-color: #78D393 !important;

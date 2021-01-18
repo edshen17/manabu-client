@@ -116,10 +116,15 @@
           slot="created-card"
           slot-scope="{ event_information }"
           class="details-card"
-          :class="{'pending-teacher': event_information.data && event_information.data.status == 'pending', 
-                'student-reserved': event_information.data && event_information.data.status == 'confirmed',
+          :class="{'pending-teacher': (event_information.data && event_information.data.status == 'pending') 
+                  && !onEventClassBind(event_information.data.from, sessionConfirmed) 
+                  && !onEventClassBind(event_information.data.from, sessionScheduleChange)
+                  && !onEventClassBind(event_information.data.from, sessionStudentIssue),
+                'student-reserved': (event_information.data && event_information.data.status == 'confirmed') || onEventClassBind(event_information.data.from, sessionConfirmed),
                 'dotted-border':  event_information.data && (event_information.data.status == 'pending' 
-                || event_information.data.status == 'confirmed' || event_information.data.status == 'cancelled'),
+                || event_information.data.status == 'confirmed' || (event_information.data.status == 'cancelled')),
+                'schedule-change': (event_information.data && event_information.data.cancellationReason == 'schedule change') || onEventClassBind(event_information.data.from, sessionScheduleChange),
+                'student-issue': (event_information.data && event_information.data.cancellationReason == 'student issue') || onEventClassBind(event_information.data.from, sessionStudentIssue),
         }"
           :id="event_information.data._id"
           @click="onSlotClick(event_information)"
@@ -128,7 +133,7 @@
             class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy"
           >
-             {{toTitleCase(event_information.data.status)}} ({{ parseISOString(event_information.start_time) }} -
+             {{ toTitleCase(getEventData(event_information.data.from).data.status) }} ({{ parseISOString(event_information.start_time) }} -
             {{ parseISOString(event_information.end_time)}})
           </span>
           <span
@@ -199,11 +204,6 @@ export default {
     props: {
       hostedBy: String,
     },
-    watch: {
-        'currentDayLoaded' () { // when DOM is loaded, add the below events on the arrows to get updates in date
-
-        },
-      },
     mounted() {
       this.getScheduleData(this.currentDay); // current date
     },
@@ -227,23 +227,28 @@ export default {
               isCalendarLoaded: false,
               isModalLoaded: false,
               events: [],
-              currentDayLoaded: false,
               currentDay: new Date().toISOString(),
               selectedLessonId: '',
               selectedReservedBy: null,
               event_information: null,
-              currentlyApproved: [],
               cancellationSelect:  [
                 { value: 'schedule change', text: 'Schedule change' },
                 { value: 'student issue', text: 'I am uncomfortable with this student' },
               ],
               cancellationReason: 'schedule change',
-              modalTitleText: 'Confirm this Appointment?',
+              modalTitleText: 'Confirm this appointment?',
               isRejecting: false,
               isRejectingConfirmation: false,
+              sessionStudentIssue: [],
+              sessionScheduleChange: [],
+              sessionConfirmed: [],
         }
     },
     methods: {
+      onEventClassBind(startTime, eventArr) { // bind classes based on arrays
+        const isEventOccuring = eventArr.find(event => event.from == startTime) != undefined;
+        return isEventOccuring;
+      },
       resetOnCancel() {
         this.isRejecting = false;
         this.isRejectingConfirmation = false;
@@ -281,7 +286,7 @@ export default {
       },
       fetchUserData(uId) {
         if (uId) {
-          return axios.get(`${this.host}/user/${uId}`).catch((err) => { console.log(err) })
+          return axios.get(`${this.host}/user/${uId}`).catch((err) => {})
         }
       },
       recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid split on kalendar)
@@ -301,59 +306,80 @@ export default {
         if (this.isRejecting && this.isRejectingConfirmation) {
           axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'cancelled', cancellationReason: this.cancellationReason.toLowerCase() }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
-            }}).then((res) => {
-              const slot = document.getElementById(aId);
-              if (slot) {
-                slot.classList.remove('pending-teacher');
-                slot.classList.remove('student-reserved');
-                const innerHtmlSplit = slot.childNodes[0].innerHTML.split(' ');                
-                if (this.cancellationReason == 'student issue') {
-                  slot.childNodes[0].innerHTML = '';
-                  slot.childNodes[1].innerHTML = '';
-                  slot.classList.remove('dotted-border');
-                } else {
-                  slot.childNodes[0].innerHTML = `Cancelled ${innerHtmlSplit[2]} ${innerHtmlSplit[3]} ${innerHtmlSplit[4]}`; // update span text
-                }
-                
-                for (let i = 0; i < this.$refs.kalendar.kalendar_events.length; i++) {
-                  if (this.$refs.kalendar.kalendar_events[i].data._id == aId) {
-                    this.$refs.kalendar.kalendar_events[i].data.status = 'cancelled';
-                    this.$refs.kalendar.kalendar_events[i].data.cancellationReason = this.cancellationReason.toLowerCase();
+            }}).then(async (res) => {
+              if (res.status == 200) {
+                const userData = await this.fetchUserData(res.data.reservedBy)
+                const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == res.data.from);
+                const formatedTime = {
+                    from: res.data.from,
+                    to: res.data.to,
+                    data: {
+                      from: res.data.from,
+                      to: res.data.to,
+                      isAppointment: true,
+                      _id: res.data._id,
+                      hostedBy: res.data.hostedBy,
+                      reservedBy: res.data.reservedBy,
+                      reservedByUserData: userData.data,
+                      status: res.data.status,
+                      cancellationReason: res.data.cancellationReason,
+                    }
                   }
+
+                  if (toUpdateIndex != -1) {
+                    this.events[toUpdateIndex] = formatedTime;
+                  }
+
+                this.$bvModal.hide('update-modal');
+                this.isRejecting = false;
+                this.isRejectingConfirmation = false;
+                if (this.cancellationReason.toLowerCase() == 'student issue') {
+                  this.sessionStudentIssue.push(formatedTime)
+                } else {
+                  this.sessionScheduleChange.push(formatedTime)
                 }
               }
-              this.$bvModal.hide('update-modal');
-              this.isRejecting = false;
-              this.isRejectingConfirmation = false;
-            }).catch((err) => { this.updateErr = true; console.log(err) });
+            }).catch((err) => { this.updateErr = true; });
         }
+      },
+      getEventData(startTime) {
+        const event = this.events.find(event => event.data.from == startTime);
+        return event;
       },
       confirmAppointment(aId) {
         axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'confirmed' }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
-            }}).then((res) => {
-              const slot = document.getElementById(aId);
-              const formatedTimeData = this.events.find(event => event.data._id == aId);
-              if (slot) {
-                const kalendarEvents = this.$refs.kalendar.kalendar_events;
-                for (let i = 0; i < kalendarEvents.length; i++) {
-                  if (kalendarEvents[i].data._id == aId) {
-                    kalendarEvents[i].data.status = 'confirmed';
-                    slot.classList.remove('pending-teacher');
-                    slot.classList.add('student-reserved');
-                    slot.childNodes[0].innerHTML = `Confirmed
-                      (${moment(formatedTimeData.from).format("HH:mm")}
-                      - ${moment(formatedTimeData.to).format("HH:mm")})`; // update span text
+            }}).then(async (res) => {
+              if (res.status == 200) {
+                const userData = await this.fetchUserData(res.data.reservedBy)
+                const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == res.data.from);
+                const formatedTime = {
+                    from: res.data.from,
+                    to: res.data.to,
+                    data: {
+                      from: res.data.from,
+                      to: res.data.to,
+                      isAppointment: true,
+                      _id: res.data._id,
+                      hostedBy: res.data.hostedBy,
+                      reservedBy: res.data.reservedBy,
+                      reservedByUserData: userData.data,
+                      status: res.data.status,
+                      cancellationReason: res.data.cancellationReason,
+                    }
                   }
-                }
+
+                  if (toUpdateIndex != -1) {
+                    this.events[toUpdateIndex] = formatedTime;
+                  }
+                  
+                this.sessionConfirmed.push(res.data);
+                this.$bvModal.hide('update-modal');
               }
-              this.$bvModal.hide('update-modal');
-              this.currentlyApproved.push(aId);
             }).catch((err) => { this.updateErr = true; });
       },
       onSlotClick(event) {
-        const slot = document.getElementById(event.data._id)
-        const isSlotSelected = slot && slot.classList.contains('student-reserved');
+        const isSlotSelected = event.data.status == 'student-reserved'
         if ((new Date() < new Date(event.start_time))) { // ignore past events
             if (event.data.status == 'pending' && !isSlotSelected) {
             this.selectedLessonId = event.data._id;
@@ -380,12 +406,15 @@ export default {
                     from: appointments[i].from,
                     to: appointments[i].to,
                     data: {
+                      from: appointments[i].from,
+                      to: appointments[i].to,
                       isAppointment: true,
                       _id: appointments[i]._id,
                       hostedBy: appointments[i].hostedBy,
                       reservedBy: appointments[i].reservedBy,
                       reservedByUserData: userData.data,
                       status: appointments[i].status,
+                      cancellationReason: appointments[i].cancellationReason,
                     }
                   }
                   this.events.push(formatedTime);
@@ -413,7 +442,7 @@ export default {
           const parts = dateStr.split('T');
           return parts[1].substring(0,5)
       },
-      deleteAppointment(kalendarEvent) { // used to delete an appointment when user presses the x (helper funciton is removeEvent)
+      deleteAppointment(kalendarEvent) { // used to delete an appointment when user presses the x (helper function is removeEvent)
         this.$bvModal.show('delete-modal');
         this.event_information = kalendarEvent;
       },
