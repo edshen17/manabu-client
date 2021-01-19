@@ -195,6 +195,8 @@
 import { Kalendar } from 'kalendar-vue';
 import moment from 'moment'
 import axios from 'axios'
+import languageLevelBars from '../../assets/scripts/languageLevelBars'
+
 
 export default {
     name: 'EditCalendar',
@@ -245,6 +247,7 @@ export default {
         }
     },
     methods: {
+      languageLevelBars,
       onEventClassBind(startTime, eventArr) { // bind classes based on arrays
         const isEventOccuring = eventArr.find(event => event.from == startTime) != undefined;
         return isEventOccuring;
@@ -262,27 +265,6 @@ export default {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
           }
         );
-      },
-      languageLevelBars(languageLvl, index) {
-        const languageLvlArr = languageLvl.split('-');
-        const level = languageLvlArr[1];
-        const levelToNumber = {
-          'A1': 0,
-          'A2': 1,
-          'B1': 2,
-          'B2': 3,
-          'C1': 4,
-          'C2': 5
-        }
-
-        if (index >= levelToNumber[level]) {
-          return { 'level-color-1': true }
-        } 
-        
-        else {
-          if (levelToNumber[level] == 'C2') return { 'level-color-3': true }
-          return { 'level-color-2': true }
-        }
       },
       fetchUserData(uId) {
         if (uId) {

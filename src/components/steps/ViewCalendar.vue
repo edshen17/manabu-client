@@ -3,7 +3,7 @@
     <b-modal id="complete-modal" title="Success!" :no-close-on-backdrop="true">
       <p class="my-4" v-show="!reserveErr">
         Your reservation has been made and is pending confirmation. You can
-        cancel or reschedule appointments up to 24 hours before they begin.
+        reschedule appointments up to 24 hours before they begin and can cancel them anytime before they start.
       </p>
       <p class="my-4" v-show="reserveErr">
         There was an error processing your request.
@@ -17,6 +17,68 @@
         </b-button>
       </template>
     </b-modal>
+
+
+    <b-modal id="update-modal" :no-close-on-backdrop="true">
+      <template #modal-title>
+        {{ modalTitleText }}
+      </template>
+      <div class="profile-popup" v-if="selectedHostedBy">
+        <img v-if="selectedHostedBy.profileImage == ''"
+          class="rounded-circle center-image"
+          alt="100x100"
+          src='../../../src/assets/images/no-profile.webp'
+        />
+        <img v-else
+          class="rounded-circle center-image"
+          alt="100x100"
+          :src="selectedHostedBy.profileImage"
+        />
+        <h5 class="text-center mb-2 mt-2">{{selectedHostedBy.name}}</h5>
+        <div class="text-center">
+          <div v-for="lang in selectedHostedBy.fluentLanguages.concat(selectedHostedBy.nonFluentLanguages)" :key="lang" class="mx-1" style="display: inline">
+          {{lang}}
+          <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(lang, i)"></span>       
+        </div>
+        <p>Region: {{selectedHostedBy.region}} ({{ selectedHostedBy.timezone }})</p> 
+        </div>
+        <p class="my-4" v-show="!updateErr">lesson information goes here</p>
+      </div>
+      <p class="my-4" v-show="updateErr">
+        There was an error processing your request. Please try again.
+      </p>
+      <template #modal-footer>
+        <b-button @click="resetOnCancel" v-show="!updateErr">
+          Hide
+        </b-button>
+        <b-button variant="danger" v-show="!updateErr && !isRescheduling" @click="isRescheduling = true; cancelAppointment(selectedLessonId)"> 
+          Cancel
+        </b-button>
+        <b-button
+          @click="isReschedulingConfirmation = true; cancelAppointment(selectedLessonId)"
+          variant="danger"
+          v-show="!updateErr && isRescheduling"
+        >
+          Reschedule
+        </b-button>
+        <b-button
+          @click="updateErr = false; $bvModal.hide('update-modal')"
+          variant="primary"
+          v-show="updateErr"
+        >
+          OK
+        </b-button>
+        <b-button
+          @click="confirmAppointment(selectedLessonId)"
+          variant="primary"
+          v-show="!updateErr && !isRescheduling"
+        >
+          Reschedule
+        </b-button>
+      </template>
+    </b-modal>
+
+
     <b-modal
       id="cancel-modal"
       title="Cancel this appointment?"
@@ -83,8 +145,8 @@
                      || onEventClassBind(event_information.data.from, sessionPendingLessons)) 
                      && !onEventClassBind(event_information.data.from, sessionCancelledLessons),
           'cancelled': ((event_information.data.status == 'cancelled' 
-            && (event_information.data.cancellationReason == 'student issue' || event_information.data.cancellationReason == 'student cancel' || event_information.data.cancellationReason == 'schedule change') 
-            && event_information.data.reservedBy == reservedBy)) || onEventClassBind(event_information.data.from, sessionCancelledLessons),
+            && event_information.data.reservedBy == reservedBy)) 
+            || onEventClassBind(event_information.data.from, sessionCancelledLessons),
           'on-select': onEventClassBind(event_information.data.from, currentlySelected) }"
           @click="onClick(event_information.data)"
         >
@@ -104,6 +166,8 @@
 import { Kalendar } from 'kalendar-vue';
 import moment from 'moment'
 import axios from 'axios'
+import languageLevelBars from '../../assets/scripts/languageLevelBars'
+
 
 export default {
     name: 'ViewCalendar',
@@ -113,6 +177,7 @@ export default {
     props: {
       reservedBy: String,
       hostedBy: String,
+      rescheduleSlotLimit: Number,
       reservationLength: Number,
       reservationSlotLimit: Number,
     },
@@ -141,12 +206,24 @@ export default {
               cancelStartTime: '',
               deleteErr: false,
               reserveErr: false,
+              updateErr: false,
               appointments: [],
               sessionPendingLessons: [],
               sessionCancelledLessons: [],
+              isRescheduling: false,
+              isReschedulingConfirmation: false,
+              modalTitleText: 'Appointment details',
+              selectedHostedBy: null,
         }
     },
     methods: {
+      resetOnCancel() {
+        this.isRescheduling = false;
+        this.isReschedulingConfirmation = false;
+        this.modalTitleText = 'Appointment details'
+        this.$bvModal.hide('update-modal'); 
+      },
+      languageLevelBars,
       onClick(eventData) { // on click, add items to currentlySelected
         const startTime = eventData.from;
         const endTime = moment(startTime).add(this.reservationLength, 'minutes').toISOString();
@@ -192,7 +269,7 @@ export default {
 
               if (isReservedBySelf) {
                 if (sessionPending && this.appointments.find(event => event.from == startTime && event.reservedBy == this.reservedBy) && status == currentTimeSlotObj.data.status) { // in session cancel
-                  this.$bvModal.show('cancel-modal');
+                  this.$bvModal.show('update-modal');
                   this.cancelStartTime = startTime;
                 }
                 validMoveCheck = validMoveCheck && (isClickOnTopSlotReserved || isClickTopSlotSelected)
@@ -209,10 +286,10 @@ export default {
                 || status == 'student cancel' 
                 || currentTimeSlotObj.data.status == 'student cancel')) { // good move
               if (isReservedBySelf && isClickOnTopSlotReserved) {
-                this.$bvModal.show('cancel-modal');
+                this.$bvModal.show('update-modal');
                 this.cancelStartTime = startTime;
               } else if (unreservedSlot || reserverableCancel) { // add to currentlySelected
-              const currSelectedArrCopy = [... this.currentlySelected];
+                  const currSelectedArrCopy = [... this.currentlySelected];
               if (this.currentlySelected.length == 0) { // if no selected items, create selection
                   this.slotsLeft -= 1;
                   this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
@@ -303,9 +380,11 @@ export default {
         const to = moment().add(6, 'month');;
         axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then((resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
               if (resAppointments.status == 200) {
                 const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
+                const hostedByData = await this.fetchUserData(this.hostedBy);
+                this.selectedHostedBy = hostedByData.data;
                 for (let i = 0; i < combinedTimeSlots.length; i++) {
                   this.intervals(combinedTimeSlots[i]);
                 }
@@ -335,10 +414,16 @@ export default {
           return selected.from != startTime;
         })
       },
+      fetchUserData(uId) {
+        if (uId) {
+          return axios.get(`${this.host}/user/${uId}`).catch((err) => {})
+        }
+      },
       intervals(slot) { // split up any time into 30m intervals
         const start = moment(slot.from);
         const end = moment(slot.to);
         const reservedBy = slot.reservedBy ? slot.reservedBy : '';
+        const hostedBy = slot.hostedBy ? slot.hostedBy : '';
         const status = slot.status ? slot.status : '';
         start.minutes(Math.ceil(start.minutes() / 30) * 30);
         let intervalArr = [];
@@ -352,6 +437,7 @@ export default {
 
         for (let i = 0; i < intervalArr.length; i++) {
             if (i != intervalArr.length - 1) {
+              
               const formatedDate = {
                 from: intervalArr[i],
                 to: intervalArr[i+1],
@@ -359,6 +445,7 @@ export default {
                   from: intervalArr[i],
                   to: intervalArr[i+1],
                   reservedBy,
+                  hostedBy,
                   status,
                   cancellationReason: slot.cancellationReason || ''
                 }
