@@ -53,7 +53,7 @@
 <script>
     import axios from 'axios';
     import ct from 'countries-and-timezones';
-    import { required, minLength } from 'vuelidate/lib/validators';
+    // import { required, minLength } from 'vuelidate/lib/validators';
     import getUserData from '../../assets/scripts/tokenGetter'
 
     export default {

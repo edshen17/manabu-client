@@ -102,7 +102,7 @@
         v-if="userData.data.role == 'user' && userData.data.teacherAppPending"
       >
         <!-- <edit-calendar hostedBy='5fe4ab8725e273284ca99bd8'></edit-calendar>  -->
-        <view-calendar :reservedBy="userId" hostedBy='5fe4ab8725e273284ca99bd8' :reservationLength="60" :reservationSlotLimit="100" :rescheduleSlotLimit="5"></view-calendar>
+        <view-calendar :reservedBy="userId" hostedBy='5fe4ab8725e273284ca99bd8' :reservationLength="60" :reservationSlotLimit="5" :rescheduleSlotLimit="5"></view-calendar>
       </div>
     </div>
     <div v-else>
@@ -114,9 +114,8 @@
 </template>
 
 <script>
-import jwt_decode from 'jwt-decode';
 import axios from 'axios';
-import { required, minLength, email, between } from 'vuelidate/lib/validators'
+// import { required, minLength, email, between } from 'vuelidate/lib/validators'
 import LayoutDefault from './layouts/LayoutDefault';
 import TeacherDashboard from './TeacherDashboard';
 import getUserData from '../assets/scripts/tokenGetter';
