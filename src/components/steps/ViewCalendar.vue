@@ -93,7 +93,7 @@
           OK
         </b-button>
         <b-button
-          @click="rescheduleAppointment"
+          @click="prepareReschedule"
           variant="primary"
           v-show="!updateErr && !isCancelling"
         >
@@ -103,32 +103,31 @@
     </b-modal>
 
     <b-modal
-      id="cancel-modal"
-      title="Cancel this appointment?"
+      id="reschedule-modal"
+      title="Reschedule confirmation"
       :no-close-on-backdrop="true"
     >
-      <p class="my-4" v-show="!deleteErr">
-        Are you sure you want to cancel this appointment?
+      <p class="my-4" v-show="!rescheduleErr">
+        Are you sure you want to reschedule to this timeslot? insert time here
       </p>
-      <p class="my-4" v-show="deleteErr">
-        There was an error processing your request. Please make sure you did not
-        click on reserved timeslots between two appointments.
+      <p class="my-4" v-show="rescheduleErr">
+        There was an error processing your request.
       </p>
       <template #modal-footer>
-        <b-button @click="$bvModal.hide('cancel-modal')" v-show="!deleteErr">
-          <div>Hide</div>
+        <b-button @click="$bvModal.hide('reschedule-modal')" v-show="!rescheduleErr">
+          <div>No</div>
         </b-button>
         <b-button
-          @click="deleteErr = false; $bvModal.hide('cancel-modal')"
+          @click="rescheduleErr = false; $bvModal.hide('reschedule-modal')"
           variant="primary"
-          v-show="deleteErr"
+          v-show="rescheduleErr"
         >
           <div>OK</div>
         </b-button>
         <b-button
-          @click="cancelAppointment(cancelStartTime)"
+          @click="rescheduleAppointment"
           variant="primary"
-          v-show="!deleteErr"
+          v-show="!rescheduleErr"
         >
           <div>Yes</div>
         </b-button>
@@ -160,17 +159,20 @@
           :id="event_information.data.from"
           class="details-card"
           :class="{'booked-by-self': event_information.data.reservedBy == reservedBy && event_information.data.status == 'confirmed'
-          && !onEventClassBind(event_information.data.from, sessionCancelledLessons), 
+          && !onEventClassBind(event_information.data.from, sessionCancelledLessons),
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != ''
                               && (event_information.data.cancellationReason != 'student issue' 
                               && event_information.data.cancellationReason != 'student cancel'),
-          'pending': ((event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy) 
+          'pending': (((event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy) 
                      || onEventClassBind(event_information.data.from, sessionPendingLessons)) 
-                     && !onEventClassBind(event_information.data.from, sessionCancelledLessons),
+                     && !onEventClassBind(event_information.data.from, sessionCancelledLessons))
+                     && !onEventClassBind(event_information.data.from, prevRescheduledLessons),
           'cancelled': ((event_information.data.status == 'cancelled' 
             && event_information.data.reservedBy == reservedBy)) 
             || onEventClassBind(event_information.data.from, sessionCancelledLessons),
-          'on-select': onEventClassBind(event_information.data.from, currentlySelected) }"
+          'on-select': onEventClassBind(event_information.data.from, currentlySelected),
+          
+          }"
           @click="onClick(event_information.data)"
         >
           <span class="time appointment-title" style="text-align: left"
@@ -226,24 +228,53 @@ export default {
               events: [],
               slotsLeft: this.reservationSlotLimit,
               currentDay: new Date().toISOString(),
-              deleteErr: false,
+              rescheduleErr: false,
               reserveErr: false,
               updateErr: false,
               appointments: [],
               sessionPendingLessons: [],
               sessionCancelledLessons: [],
+              sessionRescheduledLessons: [],
+              prevRescheduledLessons: [],
+              currentlyReschedulingLesson: {},
               isCancelling: false,
               isCancellingConfirmation: false,
+              isRescheduling: false,
               modalTitleText: 'Appointment details',
               selectedHostedBy: null,
               selectedEventData: null,
         }
     },
     methods: {
-      rescheduleAppointment() {
-        console.log(this.selectedEventData)
+      rescheduleAppointment() { // used in reschedule modal (when user confirms they want to reschedule the new time)
+       const selectedLessonId = this.currentlyReschedulingLesson._id;
+       axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'pending', 
+          from: this.currentlyReschedulingLesson.from,
+          to: this.currentlyReschedulingLesson.to, }, 
+          { headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }}
+        ).then((res) => {
+          if (res.status == 200) {
+            this.$bvModal.hide('reschedule-modal');
+            // this.appointments = this.appointments.push(res.status) // find index and update
+            this.sessionPendingLessons = this.sessionPendingLessons.filter(event => event.from != startTime);
+            this.sessionRescheduledLessons = [];
+            this.resetOnCancel();
+          }
+        }).catch((err) => {
+        });
+      },
+      prepareReschedule() { // used in update modal (when user presses reschedule)
+        const slotToReschedule = this.appointments.find(appointment => appointment.from == this.selectedEventData.from);
+        this.appointments = this.appointments.filter(appointment => appointment.from == this.selectedEventData.from);
+        this.prevRescheduledLessons.push(slotToReschedule);
+        this.currentlyReschedulingLesson = slotToReschedule;
+        this.isRescheduling = true;
+        this.$bvModal.hide('update-modal');
       },
       resetOnCancel() {
+        this.isRescheduling = false;
         this.isCancelling = false;
         this.isCancellingConfirmation = false;
         this.modalTitleText = 'Appointment details'
@@ -254,10 +285,10 @@ export default {
         const startTime = eventData.from;
         const endTime = moment(startTime).add(this.reservationLength, 'minutes').toISOString();
         const isPast = new Date() > new Date(startTime);
-        let duplicate = this.currentlySelected.findIndex(selected => selected.from == startTime);
-        if (duplicate != -1) { // unselecting
+        let duplicateIndex = this.currentlySelected.findIndex(selected => selected.from == startTime);
+        if (duplicateIndex != -1) { // unselecting
           this.slotsLeft += 1;
-          this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicate);
+          this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicateIndex);
           return;
         }
         if (!isPast) {
@@ -265,13 +296,13 @@ export default {
           let isValidMove = true;
           let isClickOnTopSlotReserved = this.appointments.filter((appointment) => { return appointment.from == startTime && appointment.reservedBy == this.reservedBy }).length != 0;
           let isClickTopSlotSelected = this.currentlySelected.filter((selected) => { return selected.from == startTime && appointment.reservedBy == this.reservedBy }).length != 0;
+          
           for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
             const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
             const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
             let validMoveCheck;
+            
             if (currentTimeSlotObj) { // get slot information (if any)
-
-              this.selectedEventData = currentTimeSlotObj;
               if (i == 0) {
                 status = currentTimeSlotObj.data.status;
               }
@@ -289,13 +320,15 @@ export default {
                 == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
                 && currentTimeSlotObj.data.reservedBy != this.reservedBy;
 
-                  const reserverableCancel = !cancelledBySelf && cancelledByOtherReservable;
+              const reserverableCancel = !cancelledBySelf && cancelledByOtherReservable;
 
-                  validMoveCheck = unreservedSlot
-                            || isReservedBySelf
-                            || reserverableCancel
+              validMoveCheck = unreservedSlot
+                        || isReservedBySelf
+                        || reserverableCancel
 
               if (isReservedBySelf) {
+                this.selectedEventData = eventData;
+
                 if (sessionPending && this.appointments.find(event => event.from == startTime && event.reservedBy == this.reservedBy) && status == currentTimeSlotObj.data.status) { // in session cancel
                   this.$bvModal.show('update-modal');
                   this.cancelStartTime = startTime;
@@ -308,27 +341,33 @@ export default {
             }
 
             if (isValidMove && ((i == (this.reservationLength / 30) - 1))
-                && (status == currentTimeSlotObj.data.status // even if status is not the same, make sure they're reservable eg 1 slot "" and 1 slot cancelled
+                && (status == currentTimeSlotObj.data.status // even if status is not the same, make sure they're reservable eg 1 slot "" and 1 slot student cancelled
                 || status == ''
                 || currentTimeSlotObj.data.status == ''
                 || status == 'student cancel'
                 || currentTimeSlotObj.data.status == 'student cancel')) { // good move
-              if (isReservedBySelf && isClickOnTopSlotReserved) { // cancel non-session slots
+              if (isReservedBySelf && isClickOnTopSlotReserved && !this.isRescheduling) { // cancel non-session slots
                 this.$bvModal.show('update-modal');
                 this.cancelStartTime = startTime;
-              } else if ((unreservedSlot || reserverableCancel) && this.slotsLeft != 0) { // add to currentlySelected
+              } else if (this.isRescheduling) { // on reschedule
+                this.$bvModal.show('reschedule-modal');
+                this.currentlyReschedulingLesson.from = startTime;
+                this.currentlyReschedulingLesson.to = endTime;
+                this.sessionRescheduledLessons.push(this.currentlyReschedulingLesson);
+              }
+              else if ((unreservedSlot || reserverableCancel) && this.slotsLeft != 0 && !this.isRescheduling) { // add to currentlySelected
                   const currSelectedArrCopy = [... this.currentlySelected];
               if (this.currentlySelected.length == 0) { // if no selected items, create selection
                   this.slotsLeft -= 1;
-                  this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
-              } else {
+                  this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', '', startTime, endTime)); // TODO: replace '' with package id
+              } else { // if not first selected item, check that selected item times do not overlap
                 let isInBetween = false;
                 for (let i = 0; i < currSelectedArrCopy.length; i++) {
                   isInBetween = isInBetween
                   || moment(startTime).isBetween(moment(this.currentlySelected[i].from), moment(this.currentlySelected[i].to))
                   || moment(endTime).isBetween(moment(this.currentlySelected[i].from), moment(this.currentlySelected[i].to))
                   if (!isInBetween && i == this.currentlySelected.length - 1) {
-                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', startTime, endTime)); // TODO: replace '' with package id
+                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', '', startTime, endTime)); // TODO: replace '' with package id
                     this.slotsLeft -= 1;
                   }
                 }
@@ -356,7 +395,6 @@ export default {
       cancelAppointment(startTime) { // not using id because some slots have _ids of avail times
         this.modalTitleText = 'Are you sure you want to reject the appointment?'
         const selectedLessonId = this.appointments.find(appointment => appointment.from == startTime)._id;
-        if (this.deleteErr) this.deleteErr = false; //reset deleteErr
         if (this.isCancelling && this.isCancellingConfirmation) {
           axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'cancelled', cancellationReason: 'student cancel' }, { headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -370,7 +408,6 @@ export default {
             this.resetOnCancel();
           }
         }).catch((err) => {
-          this.deleteErr = true;
         });
         }
       },
@@ -427,7 +464,7 @@ export default {
           }
         });
       },
-      appointmentFactory(hostedBy, reservedBy, packageId, from, to) { // creates appointment object to send to server
+      appointmentFactory(hostedBy, reservedBy, aId, packageId, from, to) { // creates appointment object to send to server
         const appointment = {
           hostedBy,
           reservedBy,
@@ -437,6 +474,10 @@ export default {
 
         if (packageId) {
           appointment.packageId = packageId
+        }
+
+        if (aId) {
+          appointment._id = aId;
         }
 
         return appointment;

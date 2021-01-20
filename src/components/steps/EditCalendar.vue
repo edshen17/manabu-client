@@ -133,7 +133,7 @@
             class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy"
           >
-             {{ toTitleCase(getEventData(event_information.data.from).data.status) }} ({{ parseISOString(event_information.start_time) }} -
+             {{ toTitleCase(getEventData(event_information.data._id).data.status) }} ({{ parseISOString(event_information.start_time) }} -
             {{ parseISOString(event_information.end_time)}})
           </span>
           <span
@@ -247,7 +247,7 @@ export default {
         }
     },
     methods: {
-      languageLevelBars,
+      languageLevelBars, // used to render the language bars
       onEventClassBind(startTime, eventArr) { // bind classes based on arrays
         const isEventOccuring = eventArr.find(event => event.from == startTime) != undefined;
         return isEventOccuring;
@@ -271,7 +271,7 @@ export default {
           return axios.get(`${this.host}/user/${uId}`).catch((err) => {})
         }
       },
-      recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid split on kalendar)
+      recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid duplicate split on kalendar)
         const dupeTimeSlot = this.events.find(timeSlot => timeSlot.from == formatedTime.from);
         if (dupeTimeSlot) {
           formatedTime.from = dupeTimeSlot.to;
@@ -324,8 +324,8 @@ export default {
             }).catch((err) => { this.updateErr = true; });
         }
       },
-      getEventData(startTime) {
-        const event = this.events.find(event => event.data.from == startTime);
+      getEventData(aId) {
+        const event = this.events.find(event => event.data._id == aId);
         return event;
       },
       confirmAppointment(aId) {
@@ -361,13 +361,12 @@ export default {
             }).catch((err) => { this.updateErr = true; });
       },
       onSlotClick(event) {
-        const isSlotSelected = event.data.status == 'student-reserved'
         if ((new Date() < new Date(event.start_time))) { // ignore past events
-            if (event.data.status == 'pending' && !isSlotSelected) {
+            if (event.data.status == 'pending') {
             this.selectedLessonId = event.data._id;
             this.selectedReservedBy = event.data.reservedByUserData;
             this.$bvModal.show('update-modal');
-          } else if (event.data.status == 'confirmed' || isSlotSelected) {
+          } else if (event.data.status == 'confirmed') {
             alert('to do')
           }
         }
@@ -458,7 +457,7 @@ export default {
           this.deleteErr = true;
         });
       },
-      addEvent(popup_data, form_data) {
+      addEvent(popup_data, form_data) { // create event on client and serve (when user drags to make a slot and presses save)
         let payload = {
             from: popup_data.start_time,
             to: popup_data.end_time,
