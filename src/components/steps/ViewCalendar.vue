@@ -56,6 +56,7 @@
             Region: {{selectedHostedBy.region}} ({{ selectedHostedBy.timezone
 
 
+
             }})
           </p>
         </div>
@@ -319,7 +320,6 @@ export default {
             const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
             let validMoveCheck;
             if (currentTimeSlotObj) { // get slot information (used to prevent error when clicking last slot)
-            console.log(currentTimeSlotObj)
               if (i == 0) {
                 status = currentTimeSlotObj.data.status;
               }
@@ -362,16 +362,20 @@ export default {
               }
             }
 
+            if (isReservedBySelf && isClickOnTopSlotReserved) { // update non-session slots
+                this.$bvModal.show('update-modal');
+                this.cancelStartTime = startTime;
+              }
+
             if (isValidMove && ((i == (this.reservationLength / 30) - 1))
                 && (status == currentTimeSlotObj.data.status // even if status is not the same, make sure they're reservable eg 1 slot "" and 1 slot student cancelled
                 || status == ''
                 || currentTimeSlotObj.data.status == ''
                 || status == 'student cancel'
-                || currentTimeSlotObj.data.status == 'student cancel')) { // good move
-              if (isReservedBySelf && isClickOnTopSlotReserved) { // update non-session slots
-                this.$bvModal.show('update-modal');
-                this.cancelStartTime = startTime;
-              } else if (this.isRescheduling) { // on reschedule
+                || currentTimeSlotObj.data.status == 'student cancel')
+                && status != 'pending' && status != 'confirmed'
+                && currentTimeSlotObj.data.status != 'pending' && currentTimeSlotObj.data.status != 'confirmed') { // good move
+              if (this.isRescheduling) { // on reschedule
                 this.$bvModal.show('reschedule-modal');
                 this.updatedReschedulingLesson = JSON.parse(JSON.stringify(this.originalReschedulingLesson));
                 this.updatedReschedulingLesson.from = startTime;
