@@ -54,6 +54,7 @@
           </div>
           <p>
             Region: {{selectedHostedBy.region}} ({{ selectedHostedBy.timezone
+
             }})
           </p>
         </div>
@@ -63,13 +64,9 @@
         There was an error processing your request. Please try again.
       </p>
       <template #modal-footer>
-        <b-button @click="resetOnCancel" v-show="!updateErr"> 
-          <span v-show="!isCancelling">
-            Hide 
-          </span>
-          <span v-show="isCancelling">
-            No 
-          </span>
+        <b-button @click="resetOnCancel" v-show="!updateErr">
+          <span v-show="!isCancelling"> Hide </span>
+          <span v-show="isCancelling"> No </span>
         </b-button>
         <b-button
           variant="danger"
@@ -114,7 +111,10 @@
         There was an error processing your request.
       </p>
       <template #modal-footer>
-        <b-button @click="$bvModal.hide('reschedule-modal')" v-show="!rescheduleErr">
+        <b-button
+          @click="$bvModal.hide('reschedule-modal')"
+          v-show="!rescheduleErr"
+        >
           <div>No</div>
         </b-button>
         <b-button
@@ -248,9 +248,9 @@ export default {
     methods: {
       rescheduleAppointment() { // used in reschedule modal (when user confirms they want to reschedule the new time)
        const selectedLessonId = this.currentlyReschedulingLesson._id;
-       axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'pending', 
+       axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'pending',
           from: this.currentlyReschedulingLesson.from,
-          to: this.currentlyReschedulingLesson.to, }, 
+          to: this.currentlyReschedulingLesson.to, },
           { headers: {
             'X-Requested-With': 'XMLHttpRequest'
           }}
@@ -258,10 +258,17 @@ export default {
           if (res.status == 200) {
             this.$bvModal.hide('reschedule-modal');
             this.sessionRescheduledLessons.push(this.currentlyReschedulingLesson);
-            const testIndex = this.appointments.find(appointment => appointment.from == this.currentlyReschedulingLesson.from)
-            this.appointments[testIndex] = res.data;
+            const updateIndex = this.appointments.find(appointment => appointment.from == this.currentlyReschedulingLesson.from)
+            this.appointments[updateIndex] = res.data;
             this.sessionPendingLessons = this.sessionPendingLessons.filter(event => event.from != this.currentlyReschedulingLesson.from);
             this.resetOnCancel();
+            for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
+                  const eventToUpdate = this.events.find(event => event.from != undefined && event.data.from == moment(this.currentlyReschedulingLesson.from).add(30 * i, 'minutes').toISOString());
+                  if (eventToUpdate) {
+                    eventToUpdate.data.reservedBy = res.data.reservedBy;
+                    eventToUpdate.data.status = res.data.status;
+              }
+            }
           }
         }).catch((err) => {
         });
@@ -297,21 +304,20 @@ export default {
           let isValidMove = true;
           let isClickOnTopSlotReserved = this.appointments.filter((appointment) => { return appointment.from == startTime && appointment.reservedBy == this.reservedBy }).length != 0;
           let isClickTopSlotSelected = this.currentlySelected.filter((selected) => { return selected.from == startTime && appointment.reservedBy == this.reservedBy }).length != 0;
-          
+
           for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
             const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
             const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
             let validMoveCheck;
-            
             if (currentTimeSlotObj) { // get slot information (if any)
               if (i == 0) {
                 status = currentTimeSlotObj.data.status;
               }
               const isSessionCancel = this.onEventClassBind(startTime, this.sessionCancelledLessons);
               const sessionPending = this.onEventClassBind(startTime, this.sessionPendingLessons);
-              const isReservedBySelf = currentTimeSlotObj.data.reservedBy == this.reservedBy
+              const isReservedBySelf = (currentTimeSlotObj.data.reservedBy == this.reservedBy
                             && (currentTimeSlotObj.data.status == 'pending' || currentTimeSlotObj.data.status == 'confirmed')
-                            || sessionPending;
+                            || sessionPending);
               const unreservedSlot = currentTimeSlotObj.data.status == '';
 
               const cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled'
@@ -330,16 +336,23 @@ export default {
               if (isReservedBySelf) {
                 this.selectedEventData = eventData;
 
-                if (sessionPending && this.appointments.find(event => event.from == startTime && event.reservedBy == this.reservedBy) && status == currentTimeSlotObj.data.status) { // in session cancel
+                if (sessionPending && this.appointments
+                    .find(event => event.from == startTime && event.reservedBy == this.reservedBy)
+                    && status == currentTimeSlotObj.data.status) { // in session cancel
                   this.$bvModal.show('update-modal');
                   this.cancelStartTime = startTime;
                 }
                 validMoveCheck = validMoveCheck && (isClickOnTopSlotReserved || isClickTopSlotSelected)
               }
 
-            if ((!currentTimeSlotObj || !validMoveCheck || isSessionCancel)) { // bad move
+            if ((!currentTimeSlotObj || !validMoveCheck || isSessionCancel)) { // usually bad move (when not rescheduling)
               isValidMove = false;
+              if (this.isRescheduling && isReservedBySelf) { // if rescheduling
+                isValidMove = true;
+              }
             }
+
+
 
             if (isValidMove && ((i == (this.reservationLength / 30) - 1))
                 && (status == currentTimeSlotObj.data.status // even if status is not the same, make sure they're reservable eg 1 slot "" and 1 slot student cancelled
@@ -354,7 +367,6 @@ export default {
                 this.$bvModal.show('reschedule-modal');
                 this.currentlyReschedulingLesson.from = startTime;
                 this.currentlyReschedulingLesson.to = endTime;
-                
               }
               else if ((unreservedSlot || reserverableCancel) && this.slotsLeft != 0 && !this.isRescheduling) { // add to currentlySelected
                   const currSelectedArrCopy = [... this.currentlySelected];
@@ -407,6 +419,13 @@ export default {
             this.sessionPendingLessons = this.sessionPendingLessons.filter(event => event.from != startTime);
             this.sessionCancelledLessons.push(res.data);
             this.resetOnCancel();
+            for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
+                  const eventToUpdate = this.events.find(event => event.from != undefined && event.data.from == moment(startTime).add(30 * i, 'minutes').toISOString());
+                  if (eventToUpdate) {
+                    eventToUpdate.data.cancellationReason = res.data.cancellationReason;
+                    eventToUpdate.data.status = res.data.status;
+              }
+            }
           }
         }).catch((err) => {
         });
@@ -417,6 +436,7 @@ export default {
           for (let i = 0; i < this.currentlySelected.length; i++) {
             const currentlySelectedFrom = this.currentlySelected[i].from;
             const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == currentlySelectedFrom);
+            const toUpdateTime = this.events.find(event => event.from != undefined && event.data.from == currentlySelectedFrom).data.from;
 
             axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -424,25 +444,23 @@ export default {
               if (res.status == 200) {
                 this.$bvModal.show('complete-modal');
                 this.appointments.push(res.data);
-                if (toUpdateIndex != -1) {
-                  this.events[toUpdateIndex] = {
-                    from: res.data.from,
-                    to: res.data.to,
-                    data: { // make a data object to be used later
-                      from: res.data.from,
-                      to: res.data.to,
-                      reservedBy: res.data.reservedBy,
-                      status: res.data.status,
-                      cancellationReason: ''
+                if (toUpdateTime) {
+                  for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
+                    const eventToUpdate = this.events.find(event => event.from != undefined && event.data.from == moment(toUpdateTime).add(30 * i, 'minutes').toISOString());
+                    if (eventToUpdate) {
+                      eventToUpdate.data.reservedBy = res.data.reservedBy;
+                      eventToUpdate.data.status = res.data.status;
                     }
-                  };
+                  }
                 }
               }
             }).catch((err) => {
+              console.log(err)
               this.reserveErr = true; });
           }
           this.sessionPendingLessons.push(...this.currentlySelected);
           this.currentlySelected = [];
+          const combinedTimeSlots = this.events.concat(this.appointments);
         }
       },
       getScheduleData(startDay) {
