@@ -163,10 +163,10 @@
           'booked-by-other': event_information.data.reservedBy != reservedBy && event_information.data.reservedBy != ''
                               && (event_information.data.cancellationReason != 'student issue' 
                               && event_information.data.cancellationReason != 'student cancel'),
-          'pending': (((event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy) 
-                     || onEventClassBind(event_information.data.from, sessionPendingLessons)) 
-                     && !onEventClassBind(event_information.data.from, sessionCancelledLessons))
-                     && !onEventClassBind(event_information.data.from, prevRescheduledLessons),
+          'pending': (event_information.data.status == 'pending' && event_information.data.reservedBy == reservedBy && !onEventClassBind(event_information.data.from, prevRescheduledLessons)) 
+                     || (onEventClassBind(event_information.data.from, sessionPendingLessons)
+                     && (!onEventClassBind(event_information.data.from, sessionCancelledLessons)))
+                     || onEventClassBind(event_information.data.from, sessionRescheduledLessons),
           'cancelled': ((event_information.data.status == 'cancelled' 
             && event_information.data.reservedBy == reservedBy)) 
             || onEventClassBind(event_information.data.from, sessionCancelledLessons),
@@ -257,9 +257,10 @@ export default {
         ).then((res) => {
           if (res.status == 200) {
             this.$bvModal.hide('reschedule-modal');
-            // this.appointments = this.appointments.push(res.status) // find index and update
-            this.sessionPendingLessons = this.sessionPendingLessons.filter(event => event.from != startTime);
-            this.sessionRescheduledLessons = [];
+            this.sessionRescheduledLessons.push(this.currentlyReschedulingLesson);
+            const testIndex = this.appointments.find(appointment => appointment.from == this.currentlyReschedulingLesson.from)
+            this.appointments[testIndex] = res.data;
+            this.sessionPendingLessons = this.sessionPendingLessons.filter(event => event.from != this.currentlyReschedulingLesson.from);
             this.resetOnCancel();
           }
         }).catch((err) => {
@@ -268,8 +269,8 @@ export default {
       prepareReschedule() { // used in update modal (when user presses reschedule)
         const slotToReschedule = this.appointments.find(appointment => appointment.from == this.selectedEventData.from);
         this.appointments = this.appointments.filter(appointment => appointment.from == this.selectedEventData.from);
-        this.prevRescheduledLessons.push(slotToReschedule);
         this.currentlyReschedulingLesson = slotToReschedule;
+        this.prevRescheduledLessons.push(JSON.parse(JSON.stringify(this.currentlyReschedulingLesson)))
         this.isRescheduling = true;
         this.$bvModal.hide('update-modal');
       },
@@ -353,7 +354,7 @@ export default {
                 this.$bvModal.show('reschedule-modal');
                 this.currentlyReschedulingLesson.from = startTime;
                 this.currentlyReschedulingLesson.to = endTime;
-                this.sessionRescheduledLessons.push(this.currentlyReschedulingLesson);
+                
               }
               else if ((unreservedSlot || reserverableCancel) && this.slotsLeft != 0 && !this.isRescheduling) { // add to currentlySelected
                   const currSelectedArrCopy = [... this.currentlySelected];
