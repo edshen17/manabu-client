@@ -103,7 +103,7 @@
       :no-close-on-backdrop="true"
     >
       <p class="my-4 text-center" v-show="!rescheduleErr">
-        Are you sure you want to reschedule to this timeslot? insert time here
+        Are you sure you want to reschedule to this timeslot?
       </p>
       <p class="my-4 text-center" v-show="rescheduleErr">
         There was an error processing your request. If you are rescheduling, make sure you do it 24 hours before the lesson starts.
@@ -165,9 +165,6 @@
                      || (onEventClassBind(event_information.data.from, sessionPendingLessons)
                      && (!onEventClassBind(event_information.data.from, sessionCancelledLessons)))
                      || onEventClassBind(event_information.data.from, sessionRescheduledLessons),
-          'cancelled': ((event_information.data.status == 'cancelled' 
-            && event_information.data.reservedBy == reservedBy)) 
-            || onEventClassBind(event_information.data.from, sessionCancelledLessons),
           'on-select': onEventClassBind(event_information.data.from, currentlySelected),
           }"
           @click="onClick(event_information.data)"
@@ -220,7 +217,6 @@ export default {
                 },
               isLoaded: false,
               currentlySelected: [],
-              currentlyHovered: [],
               events: [],
               slotsLeft: this.reservationSlotLimit,
               currentDay: new Date().toISOString(),
@@ -236,7 +232,6 @@ export default {
               updatedReschedulingLesson: {},
               isCancelling: false,
               isCancellingConfirmation: false,
-              currentClickedEvent: null,
               isRescheduling: false,
               modalTitleText: 'Appointment details',
               selectedHostedBy: null,
@@ -244,6 +239,9 @@ export default {
         }
     },
     methods: {
+      deepCopy(obj) {
+        return JSON.parse(JSON.stringify(obj));
+      },
       formatAMPM(date) {
         let hours = date.getHours();
         let minutes = date.getMinutes();
@@ -255,9 +253,9 @@ export default {
         return strTime;
       },
       getAppointmentTime() {
-        if (this.currentClickedEvent != null) {          
-          const appointment = this.appointments.find(appointment => appointment._id == this.currentClickedEvent.data._id);
-          if (appointment) {
+        if (this.selectedEventData != null) {
+          const appointment = this.appointments.find(appointment => appointment.from == this.selectedEventData.from);
+          if (appointment != undefined) {
             return `${this.formatAMPM(new Date(appointment.from))} - ${this.formatAMPM(new Date(appointment.to))}`
           }
         }
@@ -273,12 +271,13 @@ export default {
         ).then((res) => {
           if (res.status == 200) {
             this.$bvModal.hide('reschedule-modal');
-            this.prevRescheduledLessons.push(this.originalReschedulingLesson);
-            this.sessionRescheduledLessons.push(this.updatedReschedulingLesson);
+            this.prevRescheduledLessons.push(this.deepCopy(this.originalReschedulingLesson));
+            this.sessionRescheduledLessons.push(this.deepCopy(this.updatedReschedulingLesson));
             const updateIndex = this.appointments.findIndex(appointment => appointment.from == this.originalReschedulingLesson.from)
-            this.appointments[updateIndex] = this.updatedReschedulingLesson;
+            this.appointments[updateIndex] = this.deepCopy(this.updatedReschedulingLesson);
             this.sessionPendingLessons = this.sessionPendingLessons.filter(event => event.from != this.originalReschedulingLesson.from);
             
+            // first reset rescheduled items to ''
             for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
                   const eventToUpdate = this.events.find(event => event.from != undefined && event.data.from == moment(this.originalReschedulingLesson.from).add(30 * i, 'minutes').toISOString());
                   if (eventToUpdate) {
@@ -287,6 +286,7 @@ export default {
               }
             }
             
+            // then go through and update status
             for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
                 const eventToUpdate = this.events.find(event => event.from != undefined && event.data.from == moment(this.updatedReschedulingLesson.from).add(30 * i, 'minutes').toISOString());
                 if (eventToUpdate) {
@@ -294,10 +294,6 @@ export default {
                   eventToUpdate.data.status = res.data.status;
               }
             }
-          }
-
-          for (let i = 0; i < this.prevRescheduledLessons.length; i++) {
-            console.log(this.formatAMPM(new Date(this.prevRescheduledLessons[i].from)))
           }
           this.resetOnCancel('update-modal');
         }).catch((err) => {
@@ -315,7 +311,7 @@ export default {
         const currentDate = new Date();
 
         if (!this.isOnSameDay(appointmentDate, currentDate)) {
-          this.originalReschedulingLesson = JSON.parse(JSON.stringify(slotToReschedule));
+          this.originalReschedulingLesson = this.deepCopy(slotToReschedule);
           this.isRescheduling = true;
           this.$bvModal.hide('update-modal');
         } else {
@@ -338,11 +334,14 @@ export default {
         const isPast = new Date() > new Date(startTime);
         const isOnSameDay =  this.isOnSameDay(new Date(startTime), new Date());
         let duplicateIndex = this.currentlySelected.findIndex(selected => selected.from == startTime);
+        this.selectedEventData = this.deepCopy(eventData);
+        
         if (duplicateIndex != -1) { // unselecting
           this.slotsLeft += 1;
           this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicateIndex);
           return;
         }
+
         if (!isPast) {
           let status; // used to keep track of first slot status
           let isValidMove = true;
@@ -354,7 +353,6 @@ export default {
             const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
             let validMoveCheck;
             if (currentTimeSlotObj) { // get slot information (used to prevent error when clicking last slot)
-              this.currentClickedEvent = currentTimeSlotObj;
               if (i == 0) {
                 status = currentTimeSlotObj.data.status;
               }
@@ -383,8 +381,6 @@ export default {
                     && status == currentTimeSlotObj.data.status
 
               if (isReservedBySelf) {
-                this.selectedEventData = eventData;
-
                 if (inSessionUpdate && !this.isRescheduling) { // in session update
                   this.$bvModal.show('update-modal');
                   this.cancelStartTime = startTime;
@@ -401,7 +397,7 @@ export default {
               }
             }
 
-            if (isReservedBySelf && isClickOnTopSlotReserved && !this.isRescheduling) { // update non-session slots
+            if (isReservedBySelf && isClickOnTopSlotReserved && !this.isRescheduling) { // when user clicks on their reserved slots
                 this.appointments.filter((appointment) => { return appointment.from == startTime && appointment.reservedBy == this.reservedBy })
                 this.$bvModal.show('update-modal');
                 this.cancelStartTime = startTime;
@@ -434,7 +430,7 @@ export default {
                   
                  if ((!isInBetweenOther || isInBetweenCurrent) && this.appointments.findIndex(appointment => appointment.from == startTime) == -1) {
                   this.$bvModal.show('reschedule-modal');
-                  this.updatedReschedulingLesson = JSON.parse(JSON.stringify(this.originalReschedulingLesson));
+                  this.updatedReschedulingLesson = this.deepCopy(this.originalReschedulingLesson);
                   this.updatedReschedulingLesson.from = startTime;
                   this.updatedReschedulingLesson.to = endTime;
                  }
@@ -506,7 +502,6 @@ export default {
         if (this.slotsLeft != this.reservationSlotLimit) {
           for (let i = 0; i < this.currentlySelected.length; i++) {
             const currentlySelectedFrom = this.currentlySelected[i].from;
-            const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == currentlySelectedFrom);
             const toUpdateTime = this.events.find(event => event.from != undefined && event.data.from == currentlySelectedFrom).data.from;
 
             axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
@@ -612,8 +607,8 @@ export default {
                   cancellationReason: slot.cancellationReason || ''
                 }
               }
-              const duplicate = this.events.find(event => {event.from == formatedDate.from;});
-              if (!duplicate) {
+              const duplicate = this.events.findIndex(event => {event.data.from == formatedDate.from;});
+              if (duplicate == -1) {
                 this.events.push(formatedDate);
                 this.events = [...new Map(this.events.map(event => [event['from'], event])).values()] // filter out duplicates if available times and lessons overlap
               }
