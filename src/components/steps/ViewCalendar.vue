@@ -236,7 +236,7 @@ export default {
               updatedReschedulingLesson: {},
               isCancelling: false,
               isCancellingConfirmation: false,
-              currentClickedEvent: {},
+              currentClickedEvent: null,
               isRescheduling: false,
               modalTitleText: 'Appointment details',
               selectedHostedBy: null,
@@ -255,7 +255,7 @@ export default {
         return strTime;
       },
       getAppointmentTime() {
-        if (this.currentClickedEvent.data) {          
+        if (this.currentClickedEvent != null) {          
           const appointment = this.appointments.find(appointment => appointment._id == this.currentClickedEvent.data._id);
           if (appointment) {
             return `${this.formatAMPM(new Date(appointment.from))} - ${this.formatAMPM(new Date(appointment.to))}`
@@ -294,6 +294,10 @@ export default {
                   eventToUpdate.data.status = res.data.status;
               }
             }
+          }
+
+          for (let i = 0; i < this.prevRescheduledLessons.length; i++) {
+            console.log(this.formatAMPM(new Date(this.prevRescheduledLessons[i].from)))
           }
           this.resetOnCancel('update-modal');
         }).catch((err) => {
@@ -381,7 +385,7 @@ export default {
               if (isReservedBySelf) {
                 this.selectedEventData = eventData;
 
-                if (inSessionUpdate) { // in session update
+                if (inSessionUpdate && !this.isRescheduling) { // in session update
                   this.$bvModal.show('update-modal');
                   this.cancelStartTime = startTime;
                 }
@@ -397,8 +401,7 @@ export default {
               }
             }
 
-            if (isReservedBySelf && isClickOnTopSlotReserved) { // update non-session slots
-            console.log('here')
+            if (isReservedBySelf && isClickOnTopSlotReserved && !this.isRescheduling) { // update non-session slots
                 this.appointments.filter((appointment) => { return appointment.from == startTime && appointment.reservedBy == this.reservedBy })
                 this.$bvModal.show('update-modal');
                 this.cancelStartTime = startTime;
@@ -428,7 +431,8 @@ export default {
                     || moment(startTime).isBetween(moment(this.appointments[i].from), moment(this.appointments[i].to))
                     || moment(endTime).isBetween(moment(this.appointments[i].from), moment(this.appointments[i].to))
                   }
-                 if (!isInBetweenOther || isInBetweenCurrent) {
+                  
+                 if ((!isInBetweenOther || isInBetweenCurrent) && this.appointments.findIndex(appointment => appointment.from == startTime) == -1) {
                   this.$bvModal.show('reschedule-modal');
                   this.updatedReschedulingLesson = JSON.parse(JSON.stringify(this.originalReschedulingLesson));
                   this.updatedReschedulingLesson.from = startTime;
@@ -522,7 +526,6 @@ export default {
                 }
               }
             }).catch((err) => {
-              console.log(err)
               this.reserveErr = true; });
           }
           this.sessionPendingLessons.push(...this.currentlySelected);
