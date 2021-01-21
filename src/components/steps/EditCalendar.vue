@@ -374,7 +374,7 @@ export default {
       getScheduleData(startDay) { // get appointments and available times
         this.events = [];
         const from = moment().subtract(1, 'month');
-        const to = moment().add(6, 'month');
+        const to = moment().add(3, 'month');
         axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
             axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
