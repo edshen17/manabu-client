@@ -166,6 +166,9 @@
                      && (!onEventClassBind(event_information.data.from, sessionCancelledLessons)))
                      || onEventClassBind(event_information.data.from, sessionRescheduledLessons),
           'on-select': onEventClassBind(event_information.data.from, currentlySelected),
+          'cancelled': ((event_information.data.status == 'cancelled' 
+            && event_information.data.reservedBy == reservedBy)) 
+            || onEventClassBind(event_information.data.from, sessionCancelledLessons),
           }"
           @click="onClick(event_information.data)"
         >
@@ -335,108 +338,54 @@ export default {
         const isOnSameDay =  this.isOnSameDay(new Date(startTime), new Date());
         let duplicateIndex = this.currentlySelected.findIndex(selected => selected.from == startTime);
         this.selectedEventData = this.deepCopy(eventData);
-        
+        let lastElementIndex = (this.reservationLength / 30) - 1;
+        const lastSlotData = this.events.find(event => event.data.from == moment(startTime).add(30 * lastElementIndex, 'minutes').toISOString());
+
         if (duplicateIndex != -1) { // unselecting
           this.slotsLeft += 1;
           this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicateIndex);
           return;
         }
 
-        if (!isPast) {
-          let status; // used to keep track of first slot status
-          let isValidMove = true;
+        if (!isPast && lastSlotData != undefined) {
+          let status = this.selectedEventData.status; // used to keep track of first slot status
+          let isValidSelect = true;
           let isClickOnTopSlotReserved = this.appointments.filter((appointment) => { return appointment.from == startTime && appointment.reservedBy == this.reservedBy }).length != 0;
           let isClickTopSlotSelected = this.currentlySelected.filter((selected) => { return selected.from == startTime && appointment.reservedBy == this.reservedBy }).length != 0;
+          
+          for (let i = 0; i <= lastElementIndex; i++) {
+              const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
+              const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
+              let validMoveCheck;
 
-          for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
-            const currentTimeSlot = moment(startTime).add(i * 30, 'minutes').toISOString();
-            const currentTimeSlotObj = this.events.find(event => event.from == currentTimeSlot);
-            let validMoveCheck;
-            if (currentTimeSlotObj) { // get slot information (used to prevent error when clicking last slot)
-              if (i == 0) {
-                status = currentTimeSlotObj.data.status;
-              }
-              const isSessionCancel = this.onEventClassBind(startTime, this.sessionCancelledLessons);
-              const sessionPending = this.onEventClassBind(startTime, this.sessionPendingLessons);
-              const isReservedBySelf = (currentTimeSlotObj.data.reservedBy == this.reservedBy
-                            && (currentTimeSlotObj.data.status == 'pending' || currentTimeSlotObj.data.status == 'confirmed')
-                            || sessionPending);
-              const unreservedSlot = currentTimeSlotObj.data.status == '';
-
-              const cancelledBySelf = currentTimeSlotObj.data.status == 'cancelled'
-                && currentTimeSlotObj.data.reservedBy == this.reservedBy;
-
-              const cancelledByOtherReservable = currentTimeSlotObj.data.status
-                == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
-                && currentTimeSlotObj.data.reservedBy != this.reservedBy;
-
-              const reserverableCancel = !cancelledBySelf && cancelledByOtherReservable;
-
-              validMoveCheck = unreservedSlot
-                        || isReservedBySelf
-                        || reserverableCancel;
-
-              const inSessionUpdate = sessionPending && this.appointments
-                    .find(event => event.from == startTime && event.reservedBy == this.reservedBy)
-                    && status == currentTimeSlotObj.data.status
-
-              if (isReservedBySelf) {
-                if (inSessionUpdate && !this.isRescheduling) { // in session update
-                  this.$bvModal.show('update-modal');
-                  this.cancelStartTime = startTime;
-                }
-                if (!this.isRescheduling) {
-                  validMoveCheck = validMoveCheck && (isClickOnTopSlotReserved || isClickTopSlotSelected)
-                } 
-              }
-
-            if ((!currentTimeSlotObj || !validMoveCheck || isSessionCancel)) { // usually bad move (when not rescheduling)
-              isValidMove = false;
-              if (this.isRescheduling && isReservedBySelf) { // if rescheduling, make an exception
-                isValidMove = true;
-              }
-            }
-
-            if (isReservedBySelf && isClickOnTopSlotReserved && !this.isRescheduling) { // when user clicks on their reserved slots
-                this.appointments.filter((appointment) => { return appointment.from == startTime && appointment.reservedBy == this.reservedBy })
-                this.$bvModal.show('update-modal');
-                this.cancelStartTime = startTime;
-            }
-
-              let validStatus = ((i == (this.reservationLength / 30) - 1))
-                && (status == currentTimeSlotObj.data.status // even if status is not the same, make sure they're reservable eg 1 slot "" and 1 slot student cancelled
-                || status == ''
-                || currentTimeSlotObj.data.status == ''
-                || status == 'student cancel'
-                || currentTimeSlotObj.data.status == 'student cancel');
-
-                if (!this.isRescheduling) {
-                  validStatus = validStatus && status != 'pending' && status != 'confirmed'
-                  && currentTimeSlotObj.data.status != 'pending' && currentTimeSlotObj.data.status != 'confirmed' 
-                  && status != 'pending' && status != 'confirmed'
-                }
-
-            if (isValidMove && validStatus && !isOnSameDay) { // good move
-              if (this.isRescheduling) { // on reschedule
-              let isInBetweenCurrent = moment(startTime).isBetween(moment(this.originalReschedulingLesson.from), moment(this.originalReschedulingLesson.to))
-                || moment(endTime).isBetween(moment(this.originalReschedulingLesson.from), moment(this.originalReschedulingLesson.to))
-              let isInBetweenOther;
-
-              for (let i = 0; i < this.appointments.length; i++) { // make sure users can reschedule on a current slot but not another reserved slot
-                    isInBetweenOther = isInBetweenOther
-                    || moment(startTime).isBetween(moment(this.appointments[i].from), moment(this.appointments[i].to))
-                    || moment(endTime).isBetween(moment(this.appointments[i].from), moment(this.appointments[i].to))
+              if (currentTimeSlotObj != undefined) {
+                const isCancelledBySelf = currentTimeSlotObj.data.status == 'cancelled' && currentTimeSlotObj.data.reservedBy == this.reservedBy;
+                const isReservedBySelf = (currentTimeSlotObj.data.status == 'pending' || currentTimeSlotObj.data.status == 'confirmed') && currentTimeSlotObj.data.reservedBy == this.reservedBy;
+                let reserverableSlot = currentTimeSlotObj.data.status == ''  
+                  || (currentTimeSlotObj.data.status
+                  == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
+                  && currentTimeSlotObj.data.reservedBy != this.reservedBy)
+                  && !isCancelledBySelf;
+                validMoveCheck = reserverableSlot || isReservedBySelf;
+                
+                if (!this.isRescheduling) { // not reschedule
+                  isValidSelect = isValidSelect && !isReservedBySelf && reserverableSlot && validMoveCheck;
+                   if (isReservedBySelf && isClickOnTopSlotReserved) { // in session update
+                    this.$bvModal.show('update-modal');
+                    this.cancelStartTime = startTime;
                   }
-                  
-                 if ((!isInBetweenOther || isInBetweenCurrent) && this.appointments.findIndex(appointment => appointment.from == startTime) == -1) {
-                  this.$bvModal.show('reschedule-modal');
-                  this.updatedReschedulingLesson = this.deepCopy(this.originalReschedulingLesson);
-                  this.updatedReschedulingLesson.from = startTime;
-                  this.updatedReschedulingLesson.to = endTime;
-                 }
+                } else { // on reschedule, change rules to be more lax
+                  isValidSelect = currentTimeSlotObj.data.status == ''  
+                  || (currentTimeSlotObj.data.status
+                  == 'cancelled' && currentTimeSlotObj.data.cancellationReason != 'schedule change'
+                  && currentTimeSlotObj.data.reservedBy != this.reservedBy)
+                  || (isReservedBySelf);
+                }
               }
-              else if ((unreservedSlot || reserverableCancel) && this.slotsLeft != 0 && !this.isRescheduling) { // add to currentlySelected
-                  const currSelectedArrCopy = [... this.currentlySelected];
+          }
+          
+          if (isValidSelect && !this.isRescheduling && this.slotsLeft != 0) {
+             const currSelectedArrCopy = [... this.currentlySelected];
                 if (this.currentlySelected.length == 0) { // if no selected items, create selection
                     this.slotsLeft -= 1;
                     this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', '', startTime, endTime)); // TODO: replace '' with package id
@@ -452,10 +401,24 @@ export default {
                     }
                   }
                 }
+          } else if (isValidSelect && this.isRescheduling) {
+              let isInBetweenCurrent = moment(startTime).isBetween(moment(this.originalReschedulingLesson.from), moment(this.originalReschedulingLesson.to))
+                || moment(endTime).isBetween(moment(this.originalReschedulingLesson.from), moment(this.originalReschedulingLesson.to))
+              let isInBetweenOther;
+
+              for (let i = 0; i < this.appointments.length; i++) { // make sure users can reschedule on a current slot but not another reserved slot
+                    isInBetweenOther = isInBetweenOther
+                    || moment(startTime).isBetween(moment(this.appointments[i].from), moment(this.appointments[i].to))
+                    || moment(endTime).isBetween(moment(this.appointments[i].from), moment(this.appointments[i].to))
+                  }
+                  
+              if ((!isInBetweenOther || isInBetweenCurrent) && this.appointments.findIndex(appointment => appointment.from == startTime) == -1) {
+                this.$bvModal.show('reschedule-modal');
+                this.updatedReschedulingLesson = this.deepCopy(this.originalReschedulingLesson);
+                this.updatedReschedulingLesson.from = startTime;
+                this.updatedReschedulingLesson.to = endTime;
               }
-            }
           }
-        }
         }
       },
       onEventClassBind(startTime, eventArr) { // bind classes based on arrays like currentlySelected/sessionPendingLessons to color slots
