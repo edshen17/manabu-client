@@ -59,7 +59,7 @@
                 </button>
                 <!-- <v-facebook-login class="btn btn-lg btn-facebook btn-block text-uppercase" :app-id="appId" :login-options="{ scope: 'email' }" @login="flogin" v-model="model" @sdk-init="handleSdkInit"></v-facebook-login> -->
                 <p class="mt-4 float-right">
-                  Already have an account?
+                  Don't have an account?
                   <b-link :to="`/signup?teacherSignup=${isTeacherApp}`"
                     >Sign up here</b-link
                   >

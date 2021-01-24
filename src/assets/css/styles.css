@@ -56,11 +56,31 @@
   border-radius: 1px;
 }
 
-.center-image {
+
+.confirmed-card {
+  border-left: 4px solid #0E9135 !important;
+}
+
+.pending-card {
+  border-left: 4px solid #78D393 !important;
+}
+
+.cancelled-card {
+  border-left: 4px solid pink !important;
+}
+
+
+.mini-image {
+  float: right;
+  width: 8%;
+  border-radius:50% !important; 
+}
+
+#dashboard-profile {
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 20%;
+  width: 30%;
   border-radius:50% !important; 
 }
 

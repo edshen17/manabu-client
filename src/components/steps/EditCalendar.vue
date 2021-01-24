@@ -38,7 +38,7 @@
       </p>
       <template #modal-footer>
         <b-button @click="resetOnCancel" v-show="!updateErr">
-          Cancel
+          Exit
         </b-button>
         <b-button variant="danger" v-show="!updateErr && !isRejecting" @click="isRejecting = true; cancelAppointment(selectedLessonId)"> Reject </b-button>
         <b-button
@@ -193,9 +193,10 @@
 </template>
 <script>
 import { Kalendar } from 'kalendar-vue';
-import moment from 'moment'
+import dayjs from 'dayjs'
 import axios from 'axios'
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
+import fetchUserData from '../../assets/scripts/fetchUserData'
 
 
 export default {
@@ -247,6 +248,7 @@ export default {
         }
     },
     methods: {
+      fetchUserData,
       languageLevelBars, // used to render the language bars
       onEventClassBind(startTime, eventArr) { // bind classes based on arrays
         const isEventOccuring = eventArr.find(event => event.from == startTime) != undefined;
@@ -265,11 +267,6 @@ export default {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
           }
         );
-      },
-      fetchUserData(uId) {
-        if (uId) {
-          return axios.get(`${this.host}/user/${uId}`).catch((err) => {})
-        }
       },
       recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid duplicate split on kalendar)
         const dupeTimeSlot = this.events.find(timeSlot => timeSlot.from == formatedTime.from);
@@ -290,7 +287,7 @@ export default {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then(async (res) => {
               if (res.status == 200) {
-                const userData = await this.fetchUserData(res.data.reservedBy)
+                const userData = await fetchUserData(res.data.reservedBy)
                 const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == res.data.from);
                 const formatedTime = {
                     from: res.data.from,
@@ -302,7 +299,7 @@ export default {
                       _id: res.data._id,
                       hostedBy: res.data.hostedBy,
                       reservedBy: res.data.reservedBy,
-                      reservedByUserData: userData.data,
+                      reservedByUserData: userData,
                       status: res.data.status,
                       cancellationReason: res.data.cancellationReason,
                     }
@@ -333,7 +330,7 @@ export default {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then(async (res) => {
               if (res.status == 200) {
-                const userData = await this.fetchUserData(res.data.reservedBy)
+                const userData = await fetchUserData(res.data.reservedBy)
                 const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == res.data.from);
                 const formatedTime = {
                     from: res.data.from,
@@ -345,7 +342,7 @@ export default {
                       _id: res.data._id,
                       hostedBy: res.data.hostedBy,
                       reservedBy: res.data.reservedBy,
-                      reservedByUserData: userData.data,
+                      reservedByUserData: userData,
                       status: res.data.status,
                       cancellationReason: res.data.cancellationReason,
                     }
@@ -361,7 +358,8 @@ export default {
             }).catch((err) => { this.updateErr = true; });
       },
       onSlotClick(event) {
-        if ((new Date() < new Date(event.start_time))) { // ignore past events
+        const isPast = (new Date() < new Date(event.start_time))
+        if (isPast) { // ignore past events
             if (event.data.status == 'pending') {
             this.selectedLessonId = event.data._id;
             this.selectedReservedBy = event.data.reservedByUserData;
@@ -373,8 +371,8 @@ export default {
       },
       getScheduleData(startDay) { // get appointments and available times
         this.events = [];
-        const from = moment().subtract(1, 'month');
-        const to = moment().add(3, 'month');
+        const from = dayjs().subtract(1, 'month');
+        const to = dayjs().add(3, 'month');
         axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
             axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
@@ -382,7 +380,7 @@ export default {
                 const availableTimes = resAvailableTimes.data;
                 const appointments = resAppointments.data.filter(appointment => appointment.cancellationReason != 'student issue' && appointment.cancellationReason != 'student cancel');
                 for (let i = 0; i < appointments.length; i++) { // add appointments
-                  const userData = await this.fetchUserData(appointments[i].reservedBy)
+                  const userData = await fetchUserData(appointments[i].reservedBy)
                   const formatedTime = {
                     from: appointments[i].from,
                     to: appointments[i].to,
@@ -393,7 +391,7 @@ export default {
                       _id: appointments[i]._id,
                       hostedBy: appointments[i].hostedBy,
                       reservedBy: appointments[i].reservedBy,
-                      reservedByUserData: userData.data,
+                      reservedByUserData: userData,
                       status: appointments[i].status,
                       cancellationReason: appointments[i].cancellationReason,
                     }
@@ -431,8 +429,8 @@ export default {
         this.event_information = kalendarEvent;
         const deleteObj = {
             hostedBy: this.hostedBy,
-            from: moment(kalendarEvent.start_time).toISOString(),
-            to: moment(kalendarEvent.end_time).toISOString(),
+            from: dayjs(kalendarEvent.start_time).toISOString(),
+            to: dayjs(kalendarEvent.end_time).toISOString(),
           }
 
         axios.delete(`${this.host}/schedule/availableTime`, {
@@ -468,7 +466,7 @@ export default {
 
         const payloadTime = new Date(payload.from);
         const currentTime = new Date(payload.to);
-        const timeDiffMins = moment(currentTime).diff(moment(payloadTime), 'minutes')
+        const timeDiffMins = dayjs(currentTime).diff(dayjs(payloadTime), 'minutes')
 
         if (payloadTime <= new Date()) { // if date goes into the past
           alert('You cannot make an appointment in the past.')
