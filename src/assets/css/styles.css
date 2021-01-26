@@ -56,6 +56,13 @@
   border-radius: 1px;
 }
 
+.profile-edit-icon {
+  cursor: pointer;
+  position: absolute;
+  top: 30%;
+  left: 50.3%;
+  transform: translate(-50%, -50%);
+}
 
 .confirmed-card {
   border-left: 4px solid #0E9135 !important;
@@ -76,12 +83,22 @@
   border-radius:50% !important; 
 }
 
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20%;
+  border-radius:50% !important; 
+  cursor: pointer;
+}
+
 #dashboard-profile {
   display: block;
   margin-left: auto;
   margin-right: auto;
   width: 30%;
   border-radius:50% !important; 
+  cursor: pointer;
 }
 
 /* Section - Title */

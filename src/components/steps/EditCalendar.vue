@@ -5,15 +5,10 @@
         {{ modalTitleText }}
       </template>
       <div class="profile-popup" v-if="selectedReservedBy">
-        <img v-if="selectedReservedBy.profileImage == ''"
+        <img
           class="rounded-circle center-image"
           alt="100x100"
-          src='../../../src/assets/images/no-profile.webp'
-        />
-        <img v-else
-          class="rounded-circle center-image"
-          alt="100x100"
-          :src="selectedReservedBy.profileImage"
+          :src="imageSourceEdit(selectedReservedBy.profileImage, '/img/no-profile.849c29fe.webp')"
         />
         <h5 class="text-center mb-2 mt-2">{{selectedReservedBy.name}}</h5>
         <div class="text-center">
@@ -197,6 +192,7 @@ import dayjs from 'dayjs'
 import axios from 'axios'
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
 import fetchUserData from '../../assets/scripts/fetchUserData'
+import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
 
 
 export default {
@@ -248,6 +244,7 @@ export default {
         }
     },
     methods: {
+      imageSourceEdit,
       fetchUserData,
       languageLevelBars, // used to render the language bars
       onEventClassBind(startTime, eventArr) { // bind classes based on arrays

@@ -25,16 +25,9 @@
       </template>
       <div class="profile-popup" v-if="selectedHostedBy">
         <img
-          v-if="selectedHostedBy.profileImage == ''"
           class="rounded-circle center-image"
           alt="100x100"
-          src="../../../src/assets/images/no-profile.webp"
-        />
-        <img
-          v-else
-          class="rounded-circle center-image"
-          alt="100x100"
-          :src="selectedHostedBy.profileImage"
+          :src="imageSourceEdit(selectedHostedBy.profileImage, '/img/no-profile.849c29fe.webp')"
         />
         <h5 class="text-center mb-2 mt-2">{{selectedHostedBy.name}}</h5>
         <div class="text-center">
@@ -206,6 +199,7 @@ import isBetween from 'dayjs/plugin/isBetween'
 import axios from 'axios'
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
 import fetchUserData from '../../assets/scripts/fetchUserData'
+import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
 dayjs.extend(isBetween);
 
 export default {
@@ -260,6 +254,7 @@ export default {
         }
     },
     methods: {
+      imageSourceEdit,
       fetchUserData,
       deepCopy(obj) {
         return JSON.parse(JSON.stringify(obj));

@@ -1,6 +1,28 @@
 <template>
   <div class="Dashboard">
     <b-modal
+      id="edit-pic"
+      size="lg"
+      :no-close-on-backdrop="true"
+      v-if="userData"
+    >
+      <!-- <img :src="userData.profileImage"/> -->
+      <cropper
+        class="cropper"
+        stencil-component="circle-stencil"
+        minWidth="1000"
+        maxWidth="1000"
+        :stencil-props="{
+          handlers: {},
+          movable: false,
+          scalable: false,
+          aspectRatio: 1,
+        }"
+        image-restriction="stencil"
+        :src="img"
+      />
+    </b-modal>
+    <b-modal
       id="reg-form"
       size="lg"
       :no-close-on-backdrop="true"
@@ -72,7 +94,11 @@
               ></b-form-select>
             </div>
             <div class="form-group">
-              <label>My {{ languageCodeToText(formData.nonFluentLanguage, optionsSecondaryLanguage) }} level is</label>
+              <label
+                >My
+                {{ languageCodeToText(formData.nonFluentLanguage, optionsSecondaryLanguage) }}
+                level is</label
+              >
               <b-form-select
                 v-model="formData.level"
                 :options="optionsLevel"
@@ -85,69 +111,87 @@
       </div>
     </b-modal>
     <div v-if="!loading" class="mt-5">
- <b-row>
-   <b-col sm="2"></b-col>
-    <b-col sm="3">
-        <div class="card">
-        <div class="card-body">
-         <img v-if="userData.profileImage == ''"
-          class="rounded-circle"
-          id="dashboard-profile"
-          alt="100x100"
-          src='../../src/assets/images/no-profile.webp'
-        />
-        <img v-else
-          id="dashboard-profile"
-          class="rounded-circle"
-          alt="100x100"
-          :src="userData.profileImage"
-        />
-        <div class="text-center mt-2">
-          <h5>{{ this.userData.name}}</h5>
-          <div v-for="lang in userData.fluentLanguages.concat(userData.nonFluentLanguages)" :key="lang" class="mx-1" style="display: inline">
-            {{ lang }}
-            <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(lang, i)"></span>       
+      <b-row>
+        <b-col sm="2"></b-col>
+        <b-col sm="3">
+          <div class="card profile-card">
+            <div class="card-body">
+              <div class="picture-container">
+                <i class="fas fa-edit profile-edit-icon" v-show="isHoveringPic"
+                @mouseover="isHoveringPic = true" @mouseleave="isHoveringPic = false"
+                @click="editProfile"></i>
+                <img
+                  id="dashboard-profile"
+                  alt="100x100"
+                  :src="imageSourceEdit(userData.profileImage, '/img/no-profile.849c29fe.webp')"
+                  @mouseover="isHoveringPic = true" @mouseleave="isHoveringPic = false"
+                  @click="editProfile"
+                />
+                 <input
+                  type="file"
+                  ref="file"
+                  class="hide"
+                  @change="selectImage($event)"
+                  accept="image/*"
+                />
+              </div>
+              <div class="text-center mt-2">
+                <h5>{{ this.userData.name}}</h5>
+                <div
+                  v-for="lang in userData.fluentLanguages.concat(userData.nonFluentLanguages)"
+                  :key="lang"
+                  class="mx-1"
+                  style="display: inline"
+                >
+                  {{ lang }}
+                  <span
+                    v-for="(n, i) in 5"
+                    :key="i"
+                    class="level"
+                    :class="languageLevelBars(lang, i)"
+                  ></span>
+                </div>
+              </div>
+              <p class="mt-2">{{this.userData.profileBio}} Goals/etc here</p>
+            </div>
           </div>
-        </div>
-        <!-- {{this.userData}} -->
-        </div>
-      </div>
-    </b-col>
-    <b-col sm="5">
-      <div v-if="appointments.length > 0">
-        <div class="card mb-3" v-for="apt in appointments" :key="apt._id" :class="apt.status + '-card'">
-          <div class="card-header">
-            <span class="mt-2">Appointment with {{ apt.userData.name }} -- {{apt.status}}</span>
+        </b-col>
+        <b-col sm="5">
+          <div v-if="appointments.length > 0">
+            <div
+              class="card mb-3"
+              v-for="apt in appointments"
+              :key="apt._id"
+              :class="apt.status + '-card'"
+            >
+              <div class="card-header">
+                <span class="mt-2"
+                  >Appointment with {{ apt.userData.name }} --
+                  {{apt.status}}</span
+                >
+              </div>
+              <div class="card-body">
+                <img
+                  class="mini-image"
+                  alt="100x100"
+                  :src="imageSourceEdit(apt.userData.profileImage, '/img/no-profile.849c29fe.webp')"
+                />
+                <p>
+                  {{formatDate(apt.from, 'MMM DD @ h:mma')
+                  }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
+                </p>
+                <p>Lesson plan:</p>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <img v-if="apt.userData.profileImage == ''"
-                class="mini-image"
-                alt="100x100"
-                src='../../src/assets/images/no-profile.webp'
-              />
-              <img v-else
-                class="mini-image"
-                alt="100x100"
-                :src="userData.profileImage"
-              />
-            <p>{{formatDate(apt.from, 'MMM DD @ h:mma')}}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)</p>
-            <p>Lesson plan:</p>
-          </div>
-        </div>
-      </div>
-      <div v-else>
-        no appointments yet, find a teacher
-      </div>
-    
+          <div v-else>no appointments yet, find a teacher</div>
+        </b-col>
+        <b-col sm="2"></b-col>
+      </b-row>
 
-    </b-col>
-    <b-col sm="2"></b-col>
-        
-  </b-row>
-      
       <div>
-        <edit-calendar hostedBy='5fe4ab8725e273284ca99bd8'></edit-calendar> 
-        <!-- <view-calendar :reservedBy="userId" hostedBy='5fe4ab8725e273284ca99bd8' :reservationLength="60" :reservationSlotLimit="5" :rescheduleSlotLimit="5"></view-calendar> -->
+        <!-- <edit-calendar hostedBy="5fe4ab8725e273284ca99bd8"></edit-calendar> -->
+        <view-calendar :reservedBy="userId" hostedBy='5fe4ab8725e273284ca99bd8' :reservationLength="60" :reservationSlotLimit="5" :rescheduleSlotLimit="5"></view-calendar>
       </div>
     </div>
     <div v-else>
@@ -163,7 +207,6 @@
 // import { required, minLength, email, between } from 'vuelidate/lib/validators'
 import dayjs from 'dayjs'
 import LayoutDefault from './layouts/LayoutDefault';
-import TeacherDashboard from './TeacherDashboard';
 import getUserData from '../assets/scripts/tokenGetter';
 import getAppointments from '../assets/scripts/getAppointments';
 import RegistrationForm from './steps/RegistrationForm';
@@ -171,23 +214,44 @@ import EditCalendar from './steps/EditCalendar';
 import ViewCalendar from './steps/ViewCalendar';
 import languageLevelBars from '../assets/scripts/languageLevelBars'
 import fetchUserData from '../assets/scripts/fetchUserData'
-
+import imageSourceEdit from '../assets/scripts/imageSourceEdit'
+import { Cropper } from "vue-advanced-cropper";
+import firebase from 'firebase/app';
+import 'firebase/storage';
+const firebaseConfig = {
+  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
+  authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.VUE_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VUE_APP_FIREBASE_APP_ID,
+};
+const app = firebase.initializeApp(firebaseConfig) 
 
 export default {
     async mounted() {
+      
+        const storage = app.storage();
+        const ref = storage.ref('path')
+        console.log(ref)
+
         const user = await getUserData();
         const from = dayjs().toISOString()
         const to = dayjs().add(1, 'week').toISOString();
         this.userData = user.data;
         this.userId = this.userData._id;
         const isStudent = this.userData.role == 'user' && this.userData.teacherAppPending != true;
+        const isTeacher = this.userData.role == 'teacher';
         this.appointments = await getAppointments(this.userId, isStudent, from, to);
         for (let i = 0; i < this.appointments.length; i++) {
           this.loading = true;
           if (isStudent) {
             this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
-          } else {
+          } else if (isTeacher) {
             this.appointments[i].userData = await fetchUserData(this.appointments[i].reservedBy);
+          } else {
+            this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
           }
         }
         this.loading = false;
@@ -207,7 +271,7 @@ export default {
         }
     },
     components: {
-        TeacherDashboard,
+        Cropper,
         RegistrationForm,
         EditCalendar,
         ViewCalendar,
@@ -218,6 +282,10 @@ export default {
     },
     data() {
         return {
+            img: 'https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg',
+            isEditingImage: false,
+            image: null,
+            isHoveringPic: false,
             userData: null,
             userId: '',
             appointments: [],
@@ -248,6 +316,10 @@ export default {
         }
     },
     methods: {
+    editProfile() {
+      this.$bvModal.show('edit-pic');
+    },
+    imageSourceEdit,
     formatDate(dateStr, format){
       return dayjs(dateStr).format(format);
     },
@@ -264,13 +336,33 @@ export default {
     },
     hideModal() {
         this.$bvModal.hide('reg-form')
-        }
+        },
+    selectImage(event) {
+      // Reference to the DOM input element
+      const input = event.target;
+      // Ensure that you have a file before attempting to read it
+      if (input.files && input.files[0]) {
+        // create a new FileReader to read this image and convert to base64 format
+        const reader = new FileReader();
+        // Define a callback function to run, when FileReader finishes its job
+        reader.onload = (e) => {
+          // Read image as base64 and set to imageData
+          this.image = e.target.result;
+        };
+        // Start the reader job - read file as a data url (base64 format)
+        reader.readAsDataURL(input.files[0]);
+      }
+
+      // this.$refs.file.value = "";
+      // this.isEditingImage = !this.isEditingImage;
+      // this.image = null;
+    },
     },
 }
 </script>
 
 <style lang="css">
-@import '../../src/assets/css/styles.css';
+@import "../../src/assets/css/styles.css";
 
 .modal-header .close {
   display: none !important;
@@ -281,4 +373,8 @@ export default {
   width: 3.5rem;
 }
 
+.cropper {
+  height: 500px;
+	background: #DDD;
+}
 </style>

@@ -6,6 +6,7 @@ import Signup from '@/components/Signup';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
 import TeacherSignup from '@/components/TeacherSignup';
+import Test from '@/components/Test';
 
 Vue.use(Router);
 const host = 'http://localhost:5000/api';
@@ -36,14 +37,14 @@ const router = new Router({
         }
       },
     },
-    // {
-    //   path: '/teachers',
-    //   name: 'Teachers',
-    //   component: ,
-    //   meta: {
-    //     title: 'Teachers',
-    //   },
-    // },
+    {
+      path: '/test',
+      name: 'Teachers',
+      component: Test,
+      meta: {
+        title: 'Teachers',
+      },
+    },
     {
       path: '/apply',
       name: 'Apply',
