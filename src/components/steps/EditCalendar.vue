@@ -8,7 +8,7 @@
         <img
           class="rounded-circle center-image"
           alt="100x100"
-          :src="imageSourceEdit(selectedReservedBy.profileImage, '/img/no-profile.849c29fe.webp')"
+          :src="imageSourceEdit(selectedReservedBy.profileImage)"
         />
         <h5 class="text-center mb-2 mt-2">{{selectedReservedBy.name}}</h5>
         <div class="text-center">

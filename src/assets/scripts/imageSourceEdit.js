@@ -1,8 +1,6 @@
-// image src is original img src, while target src can be the relative file of the blank profile image
-function imageSourceEdit(imgSrc, targetSrc) {
+function imageSourceEdit(imgSrc) {
    if (imgSrc == '') {
-    return targetSrc;
-       
+    return require('../images/no-profile.webp');
    } else {
     return imgSrc;
    }

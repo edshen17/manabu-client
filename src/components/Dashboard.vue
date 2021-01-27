@@ -5,22 +5,48 @@
       size="lg"
       :no-close-on-backdrop="true"
       v-if="userData"
+      title="Edit profile image"
     >
-      <!-- <img :src="userData.profileImage"/> -->
-      <cropper
-        class="cropper"
-        stencil-component="circle-stencil"
-        minWidth="1000"
-        maxWidth="1000"
-        :stencil-props="{
-          handlers: {},
-          movable: false,
-          scalable: false,
-          aspectRatio: 1,
-        }"
-        image-restriction="stencil"
-        :src="img"
+      <img
+        v-show="!isEditingImage"
+        class="dashboard-profile no-cursor"
+        alt="100x100"
+        :src="imageSourceEdit(userData.profileImage)"
       />
+      <preview
+        class="no-cursor preview"
+        v-show="isEditingImage"
+        :width="200"
+        :height="200"
+        :image="profileImage.previewCropperImage.image"
+        :coordinates="profileImage.previewCropperImage.coordinates"
+      />
+      <cropper
+        v-show="isEditingImage"
+        class="cropper mt-4"
+        :debounce="false"
+        stencil-component="circle-stencil"
+        :src="profileImage.cropperImage"
+        @change="change"
+      />
+      <template #modal-footer>
+        <b-button @click="resetCanvas"> Exit </b-button>
+        <label
+          class="btn btn-primary"
+          v-show="!isEditingImage"
+        >
+          <i class="fa fa-image"></i> Upload image
+          <input
+            type="file"
+            style="display: none"
+            name="image"
+            ref="file"
+            @change="selectImage($event)"
+            accept="image/*"
+          />
+        </label>
+        <b-button variant="primary" v-show="isEditingImage" @click="saveProfileImage"> Save </b-button>
+      </template>
     </b-modal>
     <b-modal
       id="reg-form"
@@ -117,22 +143,20 @@
           <div class="card profile-card">
             <div class="card-body">
               <div class="picture-container">
-                <i class="fas fa-edit profile-edit-icon" v-show="isHoveringPic"
-                @mouseover="isHoveringPic = true" @mouseleave="isHoveringPic = false"
-                @click="editProfile"></i>
-                <img
-                  id="dashboard-profile"
-                  alt="100x100"
-                  :src="imageSourceEdit(userData.profileImage, '/img/no-profile.849c29fe.webp')"
-                  @mouseover="isHoveringPic = true" @mouseleave="isHoveringPic = false"
+                <i
+                  class="fas fa-edit profile-edit-icon"
+                  v-show="isHoveringPic"
+                  @mouseover="isHoveringPic = true"
+                  @mouseleave="isHoveringPic = false"
                   @click="editProfile"
-                />
-                 <input
-                  type="file"
-                  ref="file"
-                  class="hide"
-                  @change="selectImage($event)"
-                  accept="image/*"
+                ></i>
+                <img
+                  class="dashboard-profile"
+                  alt="100x100"
+                  :src="imageSourceEdit(userData.profileImage)"
+                  @mouseover="isHoveringPic = true"
+                  @mouseleave="isHoveringPic = false"
+                  @click="editProfile"
                 />
               </div>
               <div class="text-center mt-2">
@@ -174,10 +198,11 @@
                 <img
                   class="mini-image"
                   alt="100x100"
-                  :src="imageSourceEdit(apt.userData.profileImage, '/img/no-profile.849c29fe.webp')"
+                  :src="imageSourceEdit(userData.profileImage)"
                 />
                 <p>
                   {{formatDate(apt.from, 'MMM DD @ h:mma')
+
                   }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
                 </p>
                 <p>Lesson plan:</p>
@@ -191,7 +216,13 @@
 
       <div>
         <!-- <edit-calendar hostedBy="5fe4ab8725e273284ca99bd8"></edit-calendar> -->
-        <view-calendar :reservedBy="userId" hostedBy='5fe4ab8725e273284ca99bd8' :reservationLength="60" :reservationSlotLimit="5" :rescheduleSlotLimit="5"></view-calendar>
+        <view-calendar
+          :reservedBy="userId"
+          hostedBy="5fe4ab8725e273284ca99bd8"
+          :reservationLength="60"
+          :reservationSlotLimit="5"
+          :rescheduleSlotLimit="5"
+        ></view-calendar>
       </div>
     </div>
     <div v-else>
@@ -203,7 +234,7 @@
 </template>
 
 <script>
-// import axios from 'axios';
+import axios from 'axios';
 // import { required, minLength, email, between } from 'vuelidate/lib/validators'
 import dayjs from 'dayjs'
 import LayoutDefault from './layouts/LayoutDefault';
@@ -215,7 +246,7 @@ import ViewCalendar from './steps/ViewCalendar';
 import languageLevelBars from '../assets/scripts/languageLevelBars'
 import fetchUserData from '../assets/scripts/fetchUserData'
 import imageSourceEdit from '../assets/scripts/imageSourceEdit'
-import { Cropper } from "vue-advanced-cropper";
+import { Cropper, Preview } from "vue-advanced-cropper";
 import firebase from 'firebase/app';
 import 'firebase/storage';
 const firebaseConfig = {
@@ -227,51 +258,12 @@ const firebaseConfig = {
   messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 };
-const app = firebase.initializeApp(firebaseConfig) 
+const app = firebase.initializeApp(firebaseConfig)
 
 export default {
-    async mounted() {
-      
-        const storage = app.storage();
-        const ref = storage.ref('path')
-        console.log(ref)
-
-        const user = await getUserData();
-        const from = dayjs().toISOString()
-        const to = dayjs().add(1, 'week').toISOString();
-        this.userData = user.data;
-        this.userId = this.userData._id;
-        const isStudent = this.userData.role == 'user' && this.userData.teacherAppPending != true;
-        const isTeacher = this.userData.role == 'teacher';
-        this.appointments = await getAppointments(this.userId, isStudent, from, to);
-        for (let i = 0; i < this.appointments.length; i++) {
-          this.loading = true;
-          if (isStudent) {
-            this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
-          } else if (isTeacher) {
-            this.appointments[i].userData = await fetchUserData(this.appointments[i].reservedBy);
-          } else {
-            this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
-          }
-        }
-        this.loading = false;
-        const filledOutForm = !(this.userData.fluentLanguages.length == 0
-        && this.userData.nonFluentLanguages.length == 0 && !this.userData.region && !this.userData.timezone);
-
-        // teacher form
-        if (this.userData.teacherAppPending && !filledOutForm) {
-            this.formData.nonFluentLanguage = 'EN',
-            this.formData.fluentLanguage = 'JP',
-            this.showModal();
-        }
-
-        // user has not filled out registration form, so show form
-        else if (!filledOutForm) {
-            this.showModal();
-        }
-    },
-    components: {
+      components: {
         Cropper,
+        Preview,
         RegistrationForm,
         EditCalendar,
         ViewCalendar,
@@ -280,11 +272,18 @@ export default {
     async created() {
         this.$emit('update:layout', LayoutDefault);
     },
-    data() {
+   data() {
         return {
-            img: 'https://images.pexels.com/photos/4323307/pexels-photo-4323307.jpeg',
+            profileImage: {
+              original: null,
+              updated: null,
+              cropperImage: null,
+              previewCropperImage: {
+                image: null,
+                canvas: null,
+              },
+            },
             isEditingImage: false,
-            image: null,
             isHoveringPic: false,
             userData: null,
             userId: '',
@@ -315,48 +314,131 @@ export default {
                 ],
         }
     },
-    methods: {
-    editProfile() {
-      this.$bvModal.show('edit-pic');
-    },
-    imageSourceEdit,
-    formatDate(dateStr, format){
-      return dayjs(dateStr).format(format);
-    },
-    fetchUserData,
-    languageLevelBars,
-    languageCodeToText(lc, optionArr) {
-      const language = optionArr.find(code => code.value == lc);
-      if (language != undefined) {
-        return language.text;
-      }
-    },
-    showModal() {
-        this.$bvModal.show('reg-form')
-    },
-    hideModal() {
-        this.$bvModal.hide('reg-form')
-        },
-    selectImage(event) {
-      // Reference to the DOM input element
-      const input = event.target;
-      // Ensure that you have a file before attempting to read it
-      if (input.files && input.files[0]) {
-        // create a new FileReader to read this image and convert to base64 format
-        const reader = new FileReader();
-        // Define a callback function to run, when FileReader finishes its job
-        reader.onload = (e) => {
-          // Read image as base64 and set to imageData
-          this.image = e.target.result;
-        };
-        // Start the reader job - read file as a data url (base64 format)
-        reader.readAsDataURL(input.files[0]);
-      }
+    async mounted() {
+        const user = await getUserData();
+        const from = dayjs().toISOString()
+        const to = dayjs().add(1, 'week').toISOString();
+        this.userData = user.data;
+        this.userId = this.userData._id;
+        this.profileImage.original = this.userData.profileImage;
+        const isStudent = this.userData.role == 'user' && this.userData.teacherAppPending != true;
+        const isTeacher = this.userData.role == 'teacher';
+        this.appointments = await getAppointments(this.userId, isStudent, from, to);
+        for (let i = 0; i < this.appointments.length; i++) {
+          if (isStudent) {
+            this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
+          } else if (isTeacher) {
+            this.appointments[i].userData = await fetchUserData(this.appointments[i].reservedBy);
+          } else { // teacher pending
+            this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
+          }
+        }
+        this.loading = false;
+        const filledOutForm = !(this.userData.fluentLanguages.length == 0
+        && this.userData.nonFluentLanguages.length == 0 && !this.userData.region && !this.userData.timezone);
 
-      // this.$refs.file.value = "";
-      // this.isEditingImage = !this.isEditingImage;
-      // this.image = null;
+        // teacher form
+        if (this.userData.teacherAppPending && !filledOutForm) {
+            this.formData.nonFluentLanguage = 'EN',
+            this.formData.fluentLanguage = 'JP',
+            this.showModal();
+        }
+        // user has not filled out registration form, so show form
+        else if (!filledOutForm) {
+            this.showModal();
+        }
     },
+
+    methods: {
+      saveProfileImage() {
+        this.$bvModal.hide('edit-pic');
+        this.isEditingImage = false;
+        try {
+          const metaData = {
+            contentType: "image/png",
+          };
+          const storageRef = app.storage().ref();
+          const imageRef = storageRef.child(
+            `images/${this.userData._id}_profilePic.png`
+          );
+          this.canvas.toBlob(async (blob) => {
+            await imageRef.put(blob, metaData);
+            const downloadUrl = await imageRef.getDownloadURL();
+            axios
+              .put(
+                `http://localhost:5000/api/user/${this.userData._id}/updateProfile`,
+                { profileImage: downloadUrl }
+              )
+              .then((res) => {
+                if (res.status == 200) {
+                  this.userData.profileImage = downloadUrl;
+                }
+              })
+              .catch((err) => {
+                // if err, alert
+                console.log(err);
+              });
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      },
+      resetCanvas() {
+        this.canvas = null;
+        this.profileImage.previewCropperImage.image = { width: 0, height: 0};
+        this.profileImage.previewCropperImage.canvas = null;
+        this.profileImage.cropperImage = null;
+        this.$bvModal.hide('edit-pic');
+        this.isEditingImage = false;
+      },
+      change({ coordinates, image, canvas }) {
+        this.canvas = canvas;
+        this.profileImage.previewCropperImage = {
+          coordinates,
+          image,
+        }
+      },
+      editProfile() {
+        this.$bvModal.show('edit-pic');
+      },
+      imageSourceEdit,
+      formatDate(dateStr, format){
+        return dayjs(dateStr).format(format);
+      },
+      fetchUserData,
+      languageLevelBars,
+      languageCodeToText(lc, optionArr) {
+        const language = optionArr.find(code => code.value == lc);
+        if (language != undefined) {
+          return language.text;
+        }
+      },
+      showModal() {
+          this.$bvModal.show('reg-form')
+      },
+      hideModal() {
+          this.$bvModal.hide('reg-form')
+          },
+      selectImage(event) {
+        // Reference to the DOM input element
+        const input = event.target;
+        // Ensure that you have a file before attempting to read it
+        if (input.files && input.files[0]) {
+          // create a new FileReader to read this image and convert to base64 format
+          const reader = new FileReader();
+          // Define a callback function to run, when FileReader finishes its job
+          reader.onload = (e) => {
+            // Read image as base64 and set to imageData
+            this.profileImage.cropperImage = e.target.result;
+          };
+          // Start the reader job - read file as a data url (base64 format)
+          reader.readAsDataURL(input.files[0]);
+        }
+
+        // this.$refs.file.value = "";
+        this.isEditingImage = !this.isEditingImage;
+        // this.image = null;
+      },
     },
 }
 </script>
@@ -375,6 +457,6 @@ export default {
 
 .cropper {
   height: 500px;
-	background: #DDD;
+  background: #ddd;
 }
 </style>

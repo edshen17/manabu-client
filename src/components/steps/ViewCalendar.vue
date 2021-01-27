@@ -27,7 +27,7 @@
         <img
           class="rounded-circle center-image"
           alt="100x100"
-          :src="imageSourceEdit(selectedHostedBy.profileImage, '/img/no-profile.849c29fe.webp')"
+          :src="imageSourceEdit(selectedHostedBy.profileImage)"
         />
         <h5 class="text-center mb-2 mt-2">{{selectedHostedBy.name}}</h5>
         <div class="text-center">

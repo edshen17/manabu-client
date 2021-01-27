@@ -92,13 +92,25 @@
   cursor: pointer;
 }
 
-#dashboard-profile {
+.dashboard-profile {
   display: block;
   margin-left: auto;
   margin-right: auto;
   width: 30%;
   border-radius:50% !important; 
   cursor: pointer;
+}
+
+.preview {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius:50% !important; 
+  cursor: pointer;
+}
+
+.no-cursor {
+  cursor: auto;
 }
 
 /* Section - Title */
