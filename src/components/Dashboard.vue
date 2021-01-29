@@ -28,6 +28,10 @@
         stencil-component="circle-stencil"
         :src="profileImage.cropperImage"
         @change="change"
+        :stencil-size="{
+          width: 170,
+          height: 170
+        }"
       />
       <template #modal-footer>
         <b-button @click="resetCanvas"> Exit </b-button>
@@ -138,18 +142,11 @@
     </b-modal>
     <div v-if="!loading" class="mt-5">
       <b-row>
-        <b-col sm="2"></b-col>
-        <b-col sm="3">
+        <b-col md="2"></b-col>
+        <b-col md="3">
           <div class="card profile-card">
             <div class="card-body">
               <div class="picture-container">
-                <i
-                  class="fas fa-edit profile-edit-icon"
-                  v-show="isHoveringPic"
-                  @mouseover="isHoveringPic = true"
-                  @mouseleave="isHoveringPic = false"
-                  @click="editProfile"
-                ></i>
                 <img
                   class="dashboard-profile"
                   alt="100x100"
@@ -176,11 +173,24 @@
                   ></span>
                 </div>
               </div>
-              <p class="mt-2">{{this.userData.profileBio}} Goals/etc here</p>
+              <p class="mt-2" v-show="!isEditingBio" style="cursor: pointer" @click="startEditBio">{{ formatBio(userData.profileBio)}}</p>
+                <b-form-textarea
+                  ref="textarea"
+                  class="mt-2"
+                  v-show="isEditingBio"
+                  @input="ensureMaxChars"
+                  v-model="editedBio"
+                  placeholder="You can write about yourself or your goals. Teachers will be able to get to know you better!"
+                  rows="5"
+                  max-rows="10"
+                >
+                </b-form-textarea>
+                <b-button variant="primary" class="float-right mt-3" v-show="isEditingBio" @click="saveBio"> Save </b-button>
+                <b-button variant="secondary" class="mr-2 float-right mt-3" v-show="isEditingBio" @click="cancelBio"> Cancel </b-button>
             </div>
           </div>
         </b-col>
-        <b-col sm="5">
+        <b-col md="5">
           <div v-if="appointments.length > 0">
             <div
               class="card mb-3"
@@ -198,7 +208,7 @@
                 <img
                   class="mini-image"
                   alt="100x100"
-                  :src="imageSourceEdit(userData.profileImage)"
+                  :src="imageSourceEdit(apt.userData.profileImage)"
                 />
                 <p>
                   {{formatDate(apt.from, 'MMM DD @ h:mma')
@@ -211,7 +221,7 @@
           </div>
           <div v-else>no appointments yet, find a teacher</div>
         </b-col>
-        <b-col sm="2"></b-col>
+        <b-col md="2"></b-col>
       </b-row>
 
       <div>
@@ -284,6 +294,8 @@ export default {
               },
             },
             isEditingImage: false,
+            isEditingBio: false,
+            editedBio: '',
             isHoveringPic: false,
             userData: null,
             userId: '',
@@ -295,6 +307,7 @@ export default {
             },
             host: 'http://localhost:5000/api',
             loading: true,
+            maxInputLength: 500,
             optionsPrimaryLanguage: [
                     { value: 'JP', text: 'Japanese' },
                     { value: null, text: 'Other languages coming soon!', disabled: true }
@@ -321,6 +334,7 @@ export default {
         this.userData = user.data;
         this.userId = this.userData._id;
         this.profileImage.original = this.userData.profileImage;
+        this.editedBio = this.userData.profileBio;
         const isStudent = this.userData.role == 'user' && this.userData.teacherAppPending != true;
         const isTeacher = this.userData.role == 'teacher';
         this.appointments = await getAppointments(this.userId, isStudent, from, to);
@@ -350,6 +364,49 @@ export default {
     },
 
     methods: {
+      ensureMaxChars() {
+        if (this.editedBio.length > this.maxInputLength) {
+          this.editedBio = this.editedBio.substring(0, this.maxInputLength - 1);
+        }
+      },
+      // used when user clicks on their profile
+      startEditBio() {
+        this.isEditingBio = true;
+        setTimeout(() => {
+          this.$refs.textarea.focus();
+        })
+        
+      },
+      cancelBio() {
+        this.isEditingBio = false;
+        this.editedBio = this.userData.profileBio;
+      },
+      saveBio() {
+        if (this.editedBio) {
+          axios
+            .put(
+              `http://localhost:5000/api/user/${this.userData._id}/updateProfile`,
+              { profileBio: this.editedBio }
+            )
+            .then((res) => {
+              if (res.status == 200) {
+                this.isEditingBio = false;
+                this.userData.profileBio = this.editedBio;
+              }
+            })
+            .catch((err) => {
+              // if err, alert
+              console.log(err);
+            });
+        }
+      },
+      formatBio(bio) {
+        if (!bio) {
+          return 'You can write about yourself or your goals. Teachers will be able to get to know you better!';
+        } else {
+          return bio;
+        }
+      },
       saveProfileImage() {
         this.$bvModal.hide('edit-pic');
         this.isEditingImage = false;
