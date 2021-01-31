@@ -144,7 +144,7 @@
       <b-row>
         <b-col md="2"></b-col>
         <b-col md="3">
-          <div class="card profile-card">
+          <div class="card profile-card" v-if="userData">
             <div class="card-body">
               <div class="picture-container">
                 <img
@@ -157,7 +157,7 @@
                 />
               </div>
               <div class="text-center mt-2">
-                <h5>{{ this.userData.name}}</h5>
+                  <h5>{{ this.userData.name}}</h5>
                 <div
                   v-for="lang in userData.fluentLanguages.concat(userData.nonFluentLanguages)"
                   :key="lang"
@@ -173,18 +173,20 @@
                   ></span>
                 </div>
               </div>
-              <p class="mt-2" v-show="!isEditingBio" style="cursor: pointer" @click="startEditBio">{{ formatBio(userData.profileBio)}}</p>
+              <p class="mt-2 mb-0" v-show="!isEditingBio" style="cursor: pointer" @click="startEditBio">{{ formatBio(userData.profileBio)}}</p>
                 <b-form-textarea
                   ref="textarea"
-                  class="mt-2"
+                  class="mt-3"
                   v-show="isEditingBio"
-                  @input="ensureMaxChars"
+                  :formatter="ensureMaxChars"
                   v-model="editedBio"
-                  placeholder="You can write about yourself or your goals. Teachers will be able to get to know you better!"
                   rows="5"
                   max-rows="10"
                 >
                 </b-form-textarea>
+                <span v-show="isEditingBio" :class="{ danger: this.maxInputLength - this.editedBio.length == 0 }">
+                  {{this.maxInputLength - this.editedBio.length}} characters remaining
+                </span>
                 <b-button variant="primary" class="float-right mt-3" v-show="isEditingBio" @click="saveBio"> Save </b-button>
                 <b-button variant="secondary" class="mr-2 float-right mt-3" v-show="isEditingBio" @click="cancelBio"> Cancel </b-button>
             </div>
@@ -225,14 +227,8 @@
       </b-row>
 
       <div>
-        <!-- <edit-calendar hostedBy="5fe4ab8725e273284ca99bd8"></edit-calendar> -->
-        <view-calendar
-          :reservedBy="userId"
-          hostedBy="5fe4ab8725e273284ca99bd8"
-          :reservationLength="60"
-          :reservationSlotLimit="5"
-          :rescheduleSlotLimit="5"
-        ></view-calendar>
+        <edit-calendar hostedBy="5fe4ab8725e273284ca99bd8"></edit-calendar>
+        <!-- <view-calendar :reservedBy="userId" hostedBy="5fe4ab8725e273284ca99bd8" :reservationLength="60" :reservationSlotLimit="5" :rescheduleSlotLimit="5"></view-calendar> -->
       </div>
     </div>
     <div v-else>
@@ -307,7 +303,7 @@ export default {
             },
             host: 'http://localhost:5000/api',
             loading: true,
-            maxInputLength: 500,
+            maxInputLength: 700,
             optionsPrimaryLanguage: [
                     { value: 'JP', text: 'Japanese' },
                     { value: null, text: 'Other languages coming soon!', disabled: true }
@@ -334,7 +330,7 @@ export default {
         this.userData = user.data;
         this.userId = this.userData._id;
         this.profileImage.original = this.userData.profileImage;
-        this.editedBio = this.userData.profileBio;
+        this.editedBio = this.userData.profileBio.trim();
         const isStudent = this.userData.role == 'user' && this.userData.teacherAppPending != true;
         const isTeacher = this.userData.role == 'teacher';
         this.appointments = await getAppointments(this.userId, isStudent, from, to);
@@ -364,9 +360,13 @@ export default {
     },
 
     methods: {
-      ensureMaxChars() {
-        if (this.editedBio.length > this.maxInputLength) {
-          this.editedBio = this.editedBio.substring(0, this.maxInputLength - 1);
+      ensureMaxChars(inputStr) {
+        if (inputStr.length > this.maxInputLength) {
+          let tempStr = inputStr;
+          tempStr = tempStr.substring(0, this.maxInputLength);
+          return tempStr;
+        } else {
+          return inputStr;
         }
       },
       // used when user clicks on their profile
@@ -382,27 +382,25 @@ export default {
         this.editedBio = this.userData.profileBio;
       },
       saveBio() {
-        if (this.editedBio) {
-          axios
+        axios
             .put(
               `http://localhost:5000/api/user/${this.userData._id}/updateProfile`,
-              { profileBio: this.editedBio }
+              { profileBio: this.editedBio.trim() }
             )
             .then((res) => {
               if (res.status == 200) {
                 this.isEditingBio = false;
-                this.userData.profileBio = this.editedBio;
+                this.userData.profileBio = this.editedBio.trim();
               }
             })
             .catch((err) => {
               // if err, alert
               console.log(err);
             });
-        }
       },
       formatBio(bio) {
         if (!bio) {
-          return 'You can write about yourself or your goals. Teachers will be able to get to know you better!';
+          return 'Click here to write about yourself or your goals. Teachers will be able to get to know you better!';
         } else {
           return bio;
         }

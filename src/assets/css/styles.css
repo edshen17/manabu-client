@@ -56,6 +56,10 @@
   border-radius: 1px;
 }
 
+.danger {
+  color: red;
+}
+
 .confirmed-card {
   border-left: 4px solid #0E9135 !important;
 }
@@ -100,6 +104,12 @@
   border-radius:50% !important; 
   cursor: pointer;
 }
+
+.profile-link {
+  color: black;
+  text-decoration: none;
+}
+
 
 .no-cursor {
   cursor: auto;

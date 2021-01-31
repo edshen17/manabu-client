@@ -6,7 +6,8 @@ import Signup from '@/components/Signup';
 import Login from '@/components/Login';
 import Dashboard from '@/components/Dashboard';
 import TeacherSignup from '@/components/TeacherSignup';
-import Test from '@/components/Test';
+import NotFound from '@/components/NotFound';
+import UserProfile from '@/components/UserProfile';
 
 Vue.use(Router);
 const host = 'http://localhost:5000/api';
@@ -35,14 +36,6 @@ const router = new Router({
         }  else {
           next()
         }
-      },
-    },
-    {
-      path: '/test',
-      name: 'Teachers',
-      component: Test,
-      meta: {
-        title: 'Teachers',
       },
     },
     {
@@ -109,8 +102,20 @@ const router = new Router({
         next('/')
       },
     },
+    {
+      path: '/user/:uId',
+      name: 'UserProfile',
+      component: UserProfile,
+    },
+    {
+      path: '/404',
+      name: 'NotFound',
+      component: NotFound,
+    },
+    { path: '*', redirect: '/404' }
   ],
 });
+
 
 
 export default router;

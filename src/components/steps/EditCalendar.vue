@@ -10,7 +10,9 @@
           alt="100x100"
           :src="imageSourceEdit(selectedReservedBy.profileImage)"
         />
-        <h5 class="text-center mb-2 mt-2">{{selectedReservedBy.name}}</h5>
+        <b-link :to="`/user/${selectedReservedBy._id}`" class="profile-link">
+          <h5 class="text-center mb-2 mt-2">{{selectedReservedBy.name}}</h5>
+        </b-link>
         <div class="text-center">
           <div v-for="lang in selectedReservedBy.fluentLanguages.concat(selectedReservedBy.nonFluentLanguages)" :key="lang" class="mx-1" style="display: inline">
           {{lang}}
