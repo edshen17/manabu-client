@@ -8,6 +8,7 @@ import Dashboard from '@/components/Dashboard';
 import TeacherSignup from '@/components/TeacherSignup';
 import NotFound from '@/components/NotFound';
 import UserProfile from '@/components/UserProfile';
+import ViewCalendar from '@/components/steps/ViewCalendar';
 
 Vue.use(Router);
 const host = 'http://localhost:5000/api';
@@ -106,6 +107,11 @@ const router = new Router({
       path: '/user/:uId',
       name: 'UserProfile',
       component: UserProfile,
+    },
+    {
+      path: '/calendar',
+      name: 'ViewCalendar',
+      component: ViewCalendar,
     },
     {
       path: '/404',

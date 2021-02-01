@@ -12,6 +12,7 @@
                     type="email"
                     id="inputEmail"
                     class="form-control"
+                    ref="email"
                     placeholder="Email address"
                     v-model="email"
                     @keyup.13="login"
@@ -95,7 +96,7 @@ export default {
     data() {
         return {
             isTeacherApp: this.$route.query.teacherSignup == 'true',
-            clientId: '406805009852-i2g9ccjm8frj23098sp678qnrjn5bmdk.apps.googleusercontent.com',
+            clientId: process.env.VUE_APP_G_CLIENTID,
             appId: '202539034881612',
             errors: [],
             email: '',
@@ -107,7 +108,7 @@ export default {
         }
     },
     mounted() {
-
+      this.$refs.email.focus();
     },
     methods: {
         checkForm() {

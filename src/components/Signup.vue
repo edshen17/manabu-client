@@ -10,11 +10,11 @@
                 <div class="form-label-group">
                   <div class="form-label-group">
                     <input
+                      ref="name"
                       type="name"
                       id="inputName"
                       class="form-control"
                       placeholder="Name"
-                      autofocus
                       v-model="name"
                       @keyup.13="signUp"
                     />
@@ -111,7 +111,7 @@ export default {
     },
     data() {
         return {
-            clientId: '406805009852-i2g9ccjm8frj23098sp678qnrjn5bmdk.apps.googleusercontent.com',
+            clientId: process.env.VUE_APP_G_CLIENTID,
             showPassword: false,
             name: '',
             email: '',
@@ -119,6 +119,9 @@ export default {
             isTeacherApp: this.$route.query.teacherSignup == 'true',
             errors: [],
         }
+    },
+    mounted() {
+      this.$refs.name.focus();
     },
     methods: {
         switchVisibility() {

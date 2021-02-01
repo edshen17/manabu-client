@@ -137,17 +137,17 @@
       </template>
     </b-modal>
     <div v-if="isLoaded">
-      <h4 class="text-center slots-left" v-if="slotsLeft == 1">
-        {{ slotsLeft }} time slot left to reserve
+      <h4 class="text-center slots-left" v-if="reservationSlotLimit == 1">
+        {{ reservationSlotLimit }} time slot left to reserve
       </h4>
       <h4 class="text-center slots-left" v-else>
-        {{ slotsLeft }} time slots left to reserve
+        {{ reservationSlotLimit }} time slots left to reserve
       </h4>
       <button
         @click="createAppointments()"
         class="add-manual"
-        :class="{ 'enabled-button': slotsLeft < reservationSlotLimit && currentlySelected.length > 0 }"
-        :disabled="slotsLeft == reservationSlotLimit && currentlySelected.length == 0"
+        :class="{ 'enabled-button': reservationSlotLimit <= reservationSlotLimit && currentlySelected.length > 0 }"
+        :disabled="reservationSlotLimit == reservationSlotLimit && currentlySelected.length == 0"
       >
         <i class="fas fa-arrow-right"></i>
       </button>
@@ -208,18 +208,23 @@ export default {
         Kalendar
     },
     props: {
-      reservedBy: String,
-      hostedBy: String,
-      rescheduleSlotLimit: Number,
-      reservationLength: Number,
-      reservationSlotLimit: Number,
+      
     },
     mounted() {
+      console.log(this.$route.params)
+      this.hostedBy = this.$route.params.hostedBy;
+      this.reservedBy = this.$route.params.reservedBy;
+      this.rescheduleSlotLimit = parseInt(this.$route.params.rescheduleSlotLimit),
+      this.reservationLength = parseInt(this.$route.params.reservationLength),
       this.getScheduleData(); // current date
     },
     data() {
         return {
             host: 'http://localhost:5000/api',
+            reservedBy: '',
+            hostedBy: '',
+            reservationLength: null,
+            rescheduleSlotLimit: null,
             calendar_settings: {
                     style: 'material_design',
                     view_type: 'week',
@@ -233,7 +238,7 @@ export default {
               isLoaded: false,
               currentlySelected: [],
               events: [],
-              slotsLeft: this.reservationSlotLimit,
+              reservationSlotLimit: parseInt(this.$route.params.reservationSlotLimit),
               currentDay: new Date().toISOString(),
               rescheduleErr: false,
               reserveErr: false,
@@ -362,7 +367,7 @@ export default {
         const lastSlotData = this.events.find(event => event.data.from == dayjs(startTime).add(30 * lastElementIndex, 'minutes').toISOString());
 
         if (duplicateIndex != -1) { // unselecting
-          this.slotsLeft += 1;
+          this.reservationSlotLimit += 1;
           this.currentlySelected = this.currentlySelected.filter((selected, i) => i !== duplicateIndex);
           return;
         }
@@ -402,10 +407,10 @@ export default {
               }
           }
 
-          if (isValidSelect && !this.isRescheduling && this.slotsLeft != 0 && !isOnSameDay) {
+          if (isValidSelect && !this.isRescheduling && this.reservationSlotLimit != 0 && !isOnSameDay) {
              const currSelectedArrCopy = [... this.currentlySelected];
                 if (this.currentlySelected.length == 0) { // if no selected items, create selection
-                    this.slotsLeft -= 1;
+                    this.reservationSlotLimit -= 1;
                     this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', '', startTime, endTime)); // TODO: replace '' with package id
                 } else { // if not first selected item, check that selected item times do not overlap
                   let isInBetween = false;
@@ -415,7 +420,7 @@ export default {
                     || dayjs(endTime).isBetween(dayjs(this.currentlySelected[i].from), dayjs(this.currentlySelected[i].to))
                     if (!isInBetween && i == this.currentlySelected.length - 1) {
                       this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', '', startTime, endTime)); // TODO: replace '' with package id
-                      this.slotsLeft -= 1;
+                      this.reservationSlotLimit -= 1;
                     }
                   }
                 }
@@ -480,8 +485,7 @@ export default {
         }
       },
       createAppointments() {
-        if (this.slotsLeft != this.reservationSlotLimit) {
-          for (let i = 0; i < this.currentlySelected.length; i++) {
+        for (let i = 0; i < this.currentlySelected.length; i++) {
             const currentlySelectedFrom = this.currentlySelected[i].from;
             const toUpdateTime = this.events.find(event => event.from != undefined && event.data.from == currentlySelectedFrom).data.from;
 
@@ -507,7 +511,6 @@ export default {
           }
           this.sessionPendingLessons.push(...this.currentlySelected);
           this.currentlySelected = [];
-        }
       },
       getScheduleData() {
         const from = dayjs().subtract(1, 'month');

@@ -193,47 +193,59 @@
           </div>
         </b-col>
         <b-col md="5">
-          <div v-if="appointments.length > 0">
-            <div
-              class="card mb-3"
-              v-for="apt in appointments"
-              :key="apt._id"
-              :class="apt.status + '-card'"
-            >
+          <div v-if="userData.teacherAppPending">
+            <div class="card mb-3">
               <div class="card-header">
-                <span class="mt-2"
-                  >Appointment with {{ apt.userData.name }} --
-                  {{apt.status}}</span
-                >
+                <span class="mt-2" >
+                  To get approved for teaching, make an 1 hour appointment with Misaki
+                </span>
               </div>
               <div class="card-body">
-                <img
-                  class="mini-image"
-                  alt="100x100"
-                  :src="imageSourceEdit(apt.userData.profileImage)"
-                />
                 <p>
-                  {{formatDate(apt.from, 'MMM DD @ h:mma')
-
-                  }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
+                  Misaki will be interviewing you about your experience in teaching Japanese, etc.
                 </p>
-                <p>Lesson plan:</p>
+                <router-link :to="{ name: 'ViewCalendar', 
+                  params: { hostedBy: '5fe4ab8725e273284ca99bd8', reservedBy: userId, reservationLength: 60, reservationSlotLimit: 1, rescheduleSlotLimit: 0 } }"><b-button variant="info">Schedule appointment</b-button></router-link>
               </div>
             </div>
           </div>
-          <div v-else>no appointments yet, find a teacher</div>
+            <div v-if="appointments.length > 0">
+              <div
+                class="card mb-3"
+                v-for="apt in appointments"
+                :key="apt._id"
+                :class="apt.status + '-card'"
+              >
+                <div class="card-header">
+                  <span class="mt-2" >Appointment with {{ apt.userData.name }} --
+                    {{apt.status}}
+                  </span>
+                </div>
+                <div class="card-body">
+                  <img
+                    class="mini-image"
+                    alt="100x100"
+                    :src="imageSourceEdit(apt.userData.profileImage)"
+                  />
+                  <p>
+                    {{formatDate(apt.from, 'MMM DD @ h:mma')
+
+                    }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
+                  </p>
+                  <p>Appointment agenda:</p>
+                </div>
+              </div>
+            </div>
+            <div v-else>
+              no appointments yet, find teacher
+            </div>
         </b-col>
         <b-col md="2"></b-col>
       </b-row>
 
       <div>
-        <edit-calendar hostedBy="5fe4ab8725e273284ca99bd8"></edit-calendar>
+        <edit-calendar :hostedBy="userData._id" v-if="userData.role == 'teacher'"></edit-calendar>
         <!-- <view-calendar :reservedBy="userId" hostedBy="5fe4ab8725e273284ca99bd8" :reservationLength="60" :reservationSlotLimit="5" :rescheduleSlotLimit="5"></view-calendar> -->
-      </div>
-    </div>
-    <div v-else>
-      <div class="d-flex justify-content-center my-4">
-        <b-spinner label="Loading..."></b-spinner>
       </div>
     </div>
   </div>
@@ -241,10 +253,9 @@
 
 <script>
 import axios from 'axios';
-// import { required, minLength, email, between } from 'vuelidate/lib/validators'
 import dayjs from 'dayjs'
 import LayoutDefault from './layouts/LayoutDefault';
-import getUserData from '../assets/scripts/tokenGetter';
+import myUserData from '../assets/scripts/tokenGetter';
 import getAppointments from '../assets/scripts/getAppointments';
 import RegistrationForm from './steps/RegistrationForm';
 import EditCalendar from './steps/EditCalendar';
@@ -324,14 +335,14 @@ export default {
         }
     },
     async mounted() {
-        const user = await getUserData();
+        const user = await myUserData();
         const from = dayjs().toISOString()
         const to = dayjs().add(1, 'week').toISOString();
         this.userData = user.data;
         this.userId = this.userData._id;
         this.profileImage.original = this.userData.profileImage;
         this.editedBio = this.userData.profileBio.trim();
-        const isStudent = this.userData.role == 'user' && this.userData.teacherAppPending != true;
+        const isStudent = this.userData.role == 'user';
         const isTeacher = this.userData.role == 'teacher';
         this.appointments = await getAppointments(this.userId, isStudent, from, to);
         for (let i = 0; i < this.appointments.length; i++) {
@@ -385,7 +396,10 @@ export default {
         axios
             .put(
               `http://localhost:5000/api/user/${this.userData._id}/updateProfile`,
-              { profileBio: this.editedBio.trim() }
+              { profileBio: this.editedBio.trim() },
+              { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              }}
             )
             .then((res) => {
               if (res.status == 200) {
@@ -400,7 +414,11 @@ export default {
       },
       formatBio(bio) {
         if (!bio) {
-          return 'Click here to write about yourself or your goals. Teachers will be able to get to know you better!';
+          if (this.userData.role == 'teacher' || this.userData.teacherAppPending) {
+            return 'Click here to write about yourself and your qualifications/experience teaching.'
+          } else {
+            return 'Click here to write about yourself or your goals.';
+          }
         } else {
           return bio;
         }
@@ -422,7 +440,10 @@ export default {
             axios
               .put(
                 `http://localhost:5000/api/user/${this.userData._id}/updateProfile`,
-                { profileImage: downloadUrl }
+                { profileImage: downloadUrl },
+                { headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+                }}
               )
               .then((res) => {
                 if (res.status == 200) {
@@ -489,10 +510,7 @@ export default {
           // Start the reader job - read file as a data url (base64 format)
           reader.readAsDataURL(input.files[0]);
         }
-
-        // this.$refs.file.value = "";
         this.isEditingImage = !this.isEditingImage;
-        // this.image = null;
       },
     },
 }
