@@ -28,10 +28,6 @@
         stencil-component="circle-stencil"
         :src="profileImage.cropperImage"
         @change="change"
-        :stencil-size="{
-          width: 170,
-          height: 170
-        }"
       />
       <template #modal-footer>
         <b-button @click="resetCanvas"> Exit </b-button>
@@ -144,7 +140,7 @@
       <b-row>
         <b-col md="2"></b-col>
         <b-col md="3">
-          <div class="card profile-card" v-if="userData">
+          <div class="card profile-card mb-3" v-if="userData">
             <div class="card-body">
               <div class="picture-container">
                 <img
@@ -204,8 +200,7 @@
                 <p>
                   Misaki will be interviewing you about your experience in teaching Japanese, etc.
                 </p>
-                <router-link :to="{ name: 'ViewCalendar', 
-                  params: { hostedBy: '5fe4ab8725e273284ca99bd8', reservedBy: userId, reservationLength: 60, reservationSlotLimit: 1, rescheduleSlotLimit: 0 } }"><b-button variant="info">Schedule appointment</b-button></router-link>
+                <b-button variant="info" @click="adminTeacherTrans">Schedule appointment</b-button>
               </div>
             </div>
           </div>
@@ -248,6 +243,9 @@
         <!-- <view-calendar :reservedBy="userId" hostedBy="5fe4ab8725e273284ca99bd8" :reservationLength="60" :reservationSlotLimit="5" :rescheduleSlotLimit="5"></view-calendar> -->
       </div>
     </div>
+    <div v-else class="d-flex justify-content-center my-4">
+      <b-spinner label="Loading..."></b-spinner>
+    </div>
   </div>
 </template>
 
@@ -264,6 +262,7 @@ import languageLevelBars from '../assets/scripts/languageLevelBars'
 import fetchUserData from '../assets/scripts/fetchUserData'
 import imageSourceEdit from '../assets/scripts/imageSourceEdit'
 import { Cropper, Preview } from "vue-advanced-cropper";
+import 'vue-advanced-cropper/dist/style.css';
 import firebase from 'firebase/app';
 import 'firebase/storage';
 const firebaseConfig = {
@@ -300,6 +299,8 @@ export default {
                 canvas: null,
               },
             },
+            adminToTeacherPkgId: '601b440caa3c3a4380857080',
+            adminId: '5ffd141ad1948a0e6c7de492',
             isEditingImage: false,
             isEditingBio: false,
             editedBio: '',
@@ -314,7 +315,7 @@ export default {
             },
             host: 'http://localhost:5000/api',
             loading: true,
-            maxInputLength: 700,
+            maxInputLength: 2000,
             optionsPrimaryLanguage: [
                     { value: 'JP', text: 'Japanese' },
                     { value: null, text: 'Other languages coming soon!', disabled: true }
@@ -395,7 +396,7 @@ export default {
       saveBio() {
         axios
             .put(
-              `http://localhost:5000/api/user/${this.userData._id}/updateProfile`,
+              `${this.host}/user/${this.userData._id}/updateProfile`,
               { profileBio: this.editedBio.trim() },
               { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -439,7 +440,7 @@ export default {
             const downloadUrl = await imageRef.getDownloadURL();
             axios
               .put(
-                `http://localhost:5000/api/user/${this.userData._id}/updateProfile`,
+                `${this.host}/user/${this.userData._id}/updateProfile`,
                 { profileImage: downloadUrl },
                 { headers: {
                   'X-Requested-With': 'XMLHttpRequest'
@@ -512,6 +513,27 @@ export default {
         }
         this.isEditingImage = !this.isEditingImage;
       },
+      // create transaction between admin and teacher
+      adminTeacherTrans() {
+        const adminToTeacher = {
+          hostedBy: this.adminId,
+          packageId: this.adminToTeacherPkgId,
+          reservedBy: this.userData._id,
+          terminationDate: dayjs().add(1, 'month').toDate(),
+          remainingLessons: 1,
+          remainingReschedules: 5,
+        }
+        axios.post(`${this.host}/transaction/createPackageTransaction`, adminToTeacher, { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }}).then((res) => {
+              if (res.status == 200) {
+                this.$router.push(`/calendar/${res.data.packageId}`);
+              }
+            }).catch((err) => {
+              console.log(err)
+            })
+      },
+
     },
 }
 </script>

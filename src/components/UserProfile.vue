@@ -100,7 +100,7 @@ export default {
             console.log(err);
           })
 
-          axios.put(`${this.host}/teacher/${uId}/updateProfile`, { isApproved: true, },
+          axios.put(`${this.host}/teacher/${uId}/updateProfile`, { isApproved: true, dateApproved: new Date(), },
             { headers: {
               'X-Requested-With': 'XMLHttpRequest'
             }
