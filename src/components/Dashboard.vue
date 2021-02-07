@@ -239,7 +239,7 @@
       </b-row>
 
       <div>
-        <edit-calendar :hostedBy="userData._id" v-if="userData.role == 'teacher' || userData.role == 'admin'"></edit-calendar>
+        <edit-calendar :hostedBy="userData._id" v-if="userData.role == 'teacher' || userData.role == 'admin'" id="edit-calendar"></edit-calendar>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center my-4">

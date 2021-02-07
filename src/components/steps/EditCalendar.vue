@@ -37,7 +37,7 @@
         <b-button @click="resetOnCancel" v-show="!updateErr">
           Exit
         </b-button>
-        <b-button variant="danger" v-show="!updateErr && !isRejecting" @click="isRejecting = true; cancelAppointment(selectedLessonId)"> Reject </b-button>
+        <b-button variant="danger" v-show="!updateErr && !isRejecting" @click="isRejecting = true; cancelAppointment(selectedLessonId)"> Cancel </b-button>
         <b-button
           @click="isRejectingConfirmation = true; cancelAppointment(selectedLessonId)"
           variant="danger"
@@ -280,42 +280,56 @@ export default {
         }
       },
       cancelAppointment(aId) {
-        this.modalTitleText = 'Are you sure you want to reject the appointment?'
+        this.modalTitleText = 'Are you sure you want to cancel the appointment?'
         if (this.isRejecting && this.isRejectingConfirmation) {
           axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'cancelled', cancellationReason: this.cancellationReason.toLowerCase() }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
-            }}).then(async (res) => {
+            }}).then((res) => {
               if (res.status == 200) {
-                const userData = await fetchUserData(res.data.reservedBy)
-                const toUpdateIndex = this.events.findIndex(event => event._id == aId);
-                const formatedTime = {
-                    from: res.data.from,
-                    to: res.data.to,
-                    data: {
-                      from: res.data.from,
-                      to: res.data.to,
-                      isAppointment: true,
-                      _id: res.data._id,
-                      hostedBy: res.data.hostedBy,
-                      reservedBy: res.data.reservedBy,
-                      reservedByUserData: userData,
-                      status: res.data.status,
-                      cancellationReason: res.data.cancellationReason,
-                    }
-                  }
+                const appointment = res.data;
+                axios.get(`${this.host}/transaction/packageTransaction/${appointment.packageTransactionId}`, { headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+                }}).then((res) => {
+                  if (res.status == 200) {
+                    const packageTransaction = res.data;
+                    axios.put(`${this.host}/transaction/packageTransaction/${appointment.packageTransactionId}`, {remainingAppointments: packageTransaction.remainingAppointments + 1 }, { headers: {
+                      'X-Requested-With': 'XMLHttpRequest'
+                    }}).then(async (res) => {
+                      if (res.status == 200) {
+                        const userData = await fetchUserData(appointment.reservedBy)
+                        const toUpdateIndex = this.events.findIndex(event => event.data._id == aId);
+                        const formatedTime = {
+                            from: appointment.from,
+                            to: appointment.to,
+                            data: {
+                              from: appointment.from,
+                              to: appointment.to,
+                              isAppointment: true,
+                              _id: appointment._id,
+                              hostedBy: appointment.hostedBy,
+                              reservedBy: appointment.reservedBy,
+                              reservedByUserData: userData,
+                              status: appointment.status,
+                              cancellationReason: appointment.cancellationReason,
+                            }
+                          }
+                          
+                          if (toUpdateIndex != -1) {
+                            this.events[toUpdateIndex] = formatedTime;
+                          }
 
-                  if (toUpdateIndex != -1) {
-                    this.events[toUpdateIndex] = formatedTime;
+                        this.$bvModal.hide('update-modal');
+                        this.isRejecting = false;
+                        this.isRejectingConfirmation = false;
+                        if (this.cancellationReason.toLowerCase() == 'student issue') {
+                          this.sessionStudentIssue.push(formatedTime)
+                        } else {
+                          this.sessionScheduleChange.push(formatedTime)
+                        }
+                      }
+                    })
                   }
-
-                this.$bvModal.hide('update-modal');
-                this.isRejecting = false;
-                this.isRejectingConfirmation = false;
-                if (this.cancellationReason.toLowerCase() == 'student issue') {
-                  this.sessionStudentIssue.push(formatedTime)
-                } else {
-                  this.sessionScheduleChange.push(formatedTime)
-                }
+                })
               }
             }).catch((err) => { this.updateErr = true; });
         }
@@ -330,7 +344,7 @@ export default {
             }}).then(async (res) => {
               if (res.status == 200) {
                 const userData = await fetchUserData(res.data.reservedBy)
-                const toUpdateIndex = this.events.findIndex(event => event._id == aId);
+                const toUpdateIndex = this.events.findIndex(event => event.data._id == aId);
                 const formatedTime = {
                     from: res.data.from,
                     to: res.data.to,
@@ -357,14 +371,12 @@ export default {
             }).catch((err) => { this.updateErr = true; });
       },
       onSlotClick(event) {
-        const isNotPast = (new Date() < new Date(event.start_time))
-        if (isNotPast && event.data.hostedBy == this.hostedBy ) { // ignore past events and slots not under user's permission
-            if (event.data.status == 'pending') {
+        const isPast = (new Date() > new Date(event.start_time))
+        if (!isPast && event.data.hostedBy == this.hostedBy) {
+            if (event.data.status == 'pending' || event.data.status == 'confirmed') {
             this.selectedLessonId = event.data._id;
             this.selectedReservedBy = event.data.reservedByUserData;
             this.$bvModal.show('update-modal');
-          } else if (event.data.status == 'confirmed') {
-            alert('to do')
           }
         }
       },

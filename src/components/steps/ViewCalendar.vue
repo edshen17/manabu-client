@@ -3,8 +3,8 @@
     <b-modal id="complete-modal" title="Success!" :no-close-on-backdrop="true">
       <p class="my-4" v-show="!reserveErr">
         Your reservation has been made and is pending confirmation. You can
-        reschedule appointments before they begin and can cancel
-        them anytime before they start.
+        reschedule appointments before they begin and can cancel them anytime
+        before they start.
       </p>
       <p class="my-4" v-show="reserveErr">
         There was an error processing your request. Please try again.
@@ -47,6 +47,7 @@
           </div>
           <p>
             Region: {{ selectedHostedBy.region }} [{{ selectedHostedBy.timezone
+
             }}]
           </p>
         </div>
@@ -100,7 +101,8 @@
       :no-close-on-backdrop="true"
     >
       <p class="my-4" v-show="!rescheduleErr">
-          Are you sure you want to reschedule the appointment to {{ getRescheduleTime() }}?
+        Are you sure you want to reschedule the appointment to
+        {{ getRescheduleTime() }}?
       </p>
       <p class="my-4" v-show="rescheduleErr">
         There was an error processing your request. If you are rescheduling,
@@ -139,13 +141,12 @@
     <div v-if="isLoaded">
       <div v-if="!isRescheduling">
         <h4 class="text-center slots-left">
-          Remaining timeslots: {{ reservationSlotLimit }}. Remaining reschedules: {{ rescheduleSlotLimit }}
+          Remaining timeslots: {{ reservationSlotLimit }}. Remaining
+          reschedules: {{ rescheduleSlotLimit }}
         </h4>
       </div>
       <div v-else>
-        <h4 class="text-center slots-left">
-          Click a slot to reschedule
-        </h4>
+        <h4 class="text-center slots-left">Click a slot to reschedule</h4>
       </div>
       <button
         @click="createAppointments()"
@@ -228,7 +229,7 @@ export default {
       }).catch((err) => {
         console.log(err);
       })
-      
+
     },
     data() {
         return {
@@ -429,7 +430,7 @@ export default {
              const currSelectedArrCopy = [... this.currentlySelected];
                 if (this.currentlySelected.length == 0) { // if no selected items, create selection
                     this.reservationSlotLimit -= 1;
-                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', '', startTime, endTime)); // TODO: replace '' with package id
+                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime)); // TODO: replace '' with package id
                 } else { // if not first selected item, check that selected item times do not overlap
                   let isInBetween = false;
                   for (let i = 0; i < currSelectedArrCopy.length; i++) {
@@ -437,7 +438,7 @@ export default {
                     || dayjs(startTime).isBetween(dayjs(this.currentlySelected[i].from), dayjs(this.currentlySelected[i].to))
                     || dayjs(endTime).isBetween(dayjs(this.currentlySelected[i].from), dayjs(this.currentlySelected[i].to))
                     if (!isInBetween && i == this.currentlySelected.length - 1) {
-                      this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, '', '', startTime, endTime)); // TODO: replace '' with package id
+                      this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime)); // TODO: replace '' with package id
                       this.reservationSlotLimit -= 1;
                     }
                   }
@@ -523,19 +524,23 @@ export default {
                         }
                       }
                     }
+                axios.put(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, {remainingAppointments: this.reservationSlotLimit }, { headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+                }}).then((res) => {
+                  if (res.status == 200) {
+                    this.sessionPendingLessons.push(...this.currentlySelected);
+                    this.currentlySelected = [];
+                  }
+                }).catch((err) => {
+                  console.log(err);
+                })
               }
             }).catch((err) => {
-              this.reserveErr = true; 
+              this.reserveErr = true;
               return;
             });
           }
-          this.sessionPendingLessons.push(...this.currentlySelected);
-          this.currentlySelected = [];
-          axios.put(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, {remainingAppointments: this.reservationSlotLimit }, { headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }}).catch((err) => {
-            console.log(err);
-          })
+
       },
       getScheduleData() {
         const from = dayjs().subtract(1, 'month');
@@ -557,22 +562,14 @@ export default {
           }
         });
       },
-      appointmentFactory(hostedBy, reservedBy, aId, packageId, from, to) { // creates appointment object to send to server
+      appointmentFactory(hostedBy, reservedBy, packageTransactionId, from, to) { // creates appointment object to send to server
         const appointment = {
           hostedBy,
           reservedBy,
           from,
           to,
+          packageTransactionId
         }
-
-        if (packageId) {
-          appointment.packageId = packageId
-        }
-
-        if (aId) {
-          appointment._id = aId;
-        }
-
         return appointment;
       },
       removeSelection(startTime) { // remove selected item from currentlySelected array

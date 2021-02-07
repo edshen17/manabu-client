@@ -31,7 +31,7 @@
                 </div>
               </div>
               <p class="mt-2 mb-0">{{ formatBio(viewingUserData.profileBio) }}</p>
-              <div v-if="myUserData.role == 'admin' && viewingUserData.teacherAppPending">
+              <div v-if="myUserData.role == 'admin' && viewingUserData.teacherAppPending && !this.isApproved">
                 <b-button class="mt-3 float-right" variant="success" @click="approveTeacher(viewingUserData._id)">Approve application</b-button>
               </div>
             </div>
@@ -66,6 +66,7 @@ export default {
             myUserData: null,
             viewingUserData: null,
             loading: true,
+            isApproved: false,
             host: 'http://localhost:5000/api',
         }
     },
@@ -96,18 +97,26 @@ export default {
               'X-Requested-With': 'XMLHttpRequest'
             }
           }
-          ).catch((err) => {
+          ).then((res) => {
+            if (res.status == 200) {
+              axios.put(`${this.host}/teacher/${uId}/updateProfile`, { isApproved: true, dateApproved: new Date(), },
+              { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              }
+              }
+            ).catch((err) => {
+              console.log(err);
+              })
+            }
+          }).then((res) => {
+            if (res.status == 200) {
+              this.isApproved = true;
+            }
+          }).catch((err) => {
             console.log(err);
           })
 
-          axios.put(`${this.host}/teacher/${uId}/updateProfile`, { isApproved: true, dateApproved: new Date(), },
-            { headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }
-          }
-          ).catch((err) => {
-            console.log(err);
-          })
+          
         }
     },
 }
