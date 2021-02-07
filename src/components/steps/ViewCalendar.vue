@@ -87,7 +87,7 @@
         <b-button
           @click="prepareReschedule"
           variant="primary"
-          v-show="!updateErr && !isCancelling"
+          v-show="!updateErr && !isCancelling && rescheduleSlotLimit > 0"
         >
           Reschedule
         </b-button>
@@ -137,12 +137,16 @@
       </template>
     </b-modal>
     <div v-if="isLoaded">
-      <h4 class="text-center slots-left" v-if="reservationSlotLimit == 1">
-        {{ reservationSlotLimit }} time slot left to reserve
-      </h4>
-      <h4 class="text-center slots-left" v-else>
-        {{ reservationSlotLimit }} time slots left to reserve
-      </h4>
+      <div v-if="!isRescheduling">
+        <h4 class="text-center slots-left">
+          Remaining timeslots: {{ reservationSlotLimit }}. Remaining reschedules: {{ rescheduleSlotLimit }}
+        </h4>
+      </div>
+      <div v-else>
+        <h4 class="text-center slots-left">
+          Click a slot to reschedule
+        </h4>
+      </div>
       <button
         @click="createAppointments()"
         class="add-manual"
@@ -197,6 +201,7 @@ import { Kalendar } from 'kalendar-vue';
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
 import axios from 'axios'
+import LayoutDefault from '../layouts/LayoutDefault';
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
 import fetchUserData from '../../assets/scripts/fetchUserData'
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
@@ -207,16 +212,23 @@ export default {
     components: {
         Kalendar
     },
-    props: {
-      
+    created() {
+        this.$emit('update:layout', LayoutDefault);
     },
     mounted() {
-      console.log(this.$route.params)
-      this.hostedBy = this.$route.params.hostedBy;
-      this.reservedBy = this.$route.params.reservedBy;
-      this.rescheduleSlotLimit = parseInt(this.$route.params.rescheduleSlotLimit),
-      this.reservationLength = parseInt(this.$route.params.reservationLength),
-      this.getScheduleData(); // current date
+      axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`).then((res) => {
+        if (res.status == 200) {
+          this.hostedBy = res.data.hostedBy;
+          this.reservedBy = res.data.reservedBy;
+          this.reservationSlotLimit = res.data.remainingAppointments;
+          this.rescheduleSlotLimit = res.data.remainingReschedules;
+          this.reservationLength = res.data.reservationLength;
+          this.getScheduleData();
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+      
     },
     data() {
         return {
@@ -238,7 +250,7 @@ export default {
               isLoaded: false,
               currentlySelected: [],
               events: [],
-              reservationSlotLimit: parseInt(this.$route.params.reservationSlotLimit),
+              reservationSlotLimit: null,
               currentDay: new Date().toISOString(),
               rescheduleErr: false,
               reserveErr: false,
@@ -298,6 +310,12 @@ export default {
           }}
         ).then((res) => {
           if (res.status == 200) {
+            this.rescheduleSlotLimit--;
+            axios.put(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, {remainingReschedules: this.rescheduleSlotLimit }, { headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }}).catch((err) => {
+              console.log(err);
+            })
             this.$bvModal.hide('reschedule-modal');
             this.prevRescheduledLessons.push(this.deepCopy(this.originalReschedulingLesson));
             this.sessionRescheduledLessons.push(this.deepCopy(this.updatedReschedulingLesson));
@@ -325,7 +343,7 @@ export default {
           }
           this.resetOnCancel('update-modal');
         }).catch((err) => {
-
+          console.log(err);
         });
       },
       isOnSameDay(firstDate, secondDate) {
@@ -352,7 +370,7 @@ export default {
         this.isCancellingConfirmation = false;
         this.originalReschedulingLesson = {};
         this.updatedReschedulingLesson = {};
-        this.modalTitleText = 'Appointment details'
+        this.modalTitleText = 'Appointment details';
         this.$bvModal.hide(modalName);
       },
       languageLevelBars,
@@ -459,7 +477,7 @@ export default {
           return isEventOccuring;
       },
       cancelAppointment(startTime) { // not using id because some slots have _ids of avail times
-        this.modalTitleText = 'Are you sure you want to reject the appointment?'
+        this.modalTitleText = 'Are you sure you want to cancel the appointment?'
         const selectedLessonId = this.appointments.find(appointment => appointment.from == startTime)._id;
         if (this.isCancelling && this.isCancellingConfirmation) {
           axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'cancelled', cancellationReason: 'student cancel' }, { headers: {
@@ -481,6 +499,7 @@ export default {
             }
           }
         }).catch((err) => {
+          console.log(err);
         });
         }
       },
@@ -494,23 +513,29 @@ export default {
             }}).then(res => {
               if (res.status == 200) {
                 this.$bvModal.show('complete-modal');
-                this.appointments.push(res.data);
-                if (toUpdateTime) {
-                  for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
-                    const eventToUpdate = this.events.find(event => event.from != undefined && event.data.from == dayjs(toUpdateTime).add(30 * i, 'minutes').toISOString());
-                    if (eventToUpdate) {
-                      eventToUpdate.data.reservedBy = res.data.reservedBy;
-                      eventToUpdate.data.status = res.data.status;
+                    this.appointments.push(res.data);
+                    if (toUpdateTime) {
+                      for (let i = 0; i <= (this.reservationLength / 30) - 1; i++) {
+                        const eventToUpdate = this.events.find(event => event.from != undefined && event.data.from == dayjs(toUpdateTime).add(30 * i, 'minutes').toISOString());
+                        if (eventToUpdate) {
+                          eventToUpdate.data.reservedBy = res.data.reservedBy;
+                          eventToUpdate.data.status = res.data.status;
+                        }
+                      }
                     }
-                  }
-                }
               }
             }).catch((err) => {
               this.reserveErr = true; 
+              return;
             });
           }
           this.sessionPendingLessons.push(...this.currentlySelected);
           this.currentlySelected = [];
+          axios.put(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, {remainingAppointments: this.reservationSlotLimit }, { headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }}).catch((err) => {
+            console.log(err);
+          })
       },
       getScheduleData() {
         const from = dayjs().subtract(1, 'month');
@@ -572,7 +597,6 @@ export default {
 
         for (let i = 0; i < intervalArr.length; i++) {
             if (i != intervalArr.length - 1) {
-
               const formatedDate = {
                 from: intervalArr[i],
                 to: intervalArr[i+1],

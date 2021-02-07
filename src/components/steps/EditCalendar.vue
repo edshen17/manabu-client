@@ -6,7 +6,7 @@
       </template>
       <div class="profile-popup" v-if="selectedReservedBy">
         <img
-          class="rounded-circle center-image"
+          class="rounded-circle center-image no-cursor"
           alt="100x100"
           :src="imageSourceEdit(selectedReservedBy.profileImage)"
         />
@@ -206,7 +206,7 @@ export default {
       hostedBy: String,
     },
     mounted() {
-      this.getScheduleData(this.currentDay); // current date
+      this.getScheduleData();
     },
     data() {
         return {
@@ -287,7 +287,7 @@ export default {
             }}).then(async (res) => {
               if (res.status == 200) {
                 const userData = await fetchUserData(res.data.reservedBy)
-                const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == res.data.from);
+                const toUpdateIndex = this.events.findIndex(event => event._id == aId);
                 const formatedTime = {
                     from: res.data.from,
                     to: res.data.to,
@@ -330,7 +330,7 @@ export default {
             }}).then(async (res) => {
               if (res.status == 200) {
                 const userData = await fetchUserData(res.data.reservedBy)
-                const toUpdateIndex = this.events.findIndex(event => event.from != undefined && event.data.from == res.data.from);
+                const toUpdateIndex = this.events.findIndex(event => event._id == aId);
                 const formatedTime = {
                     from: res.data.from,
                     to: res.data.to,
@@ -357,8 +357,8 @@ export default {
             }).catch((err) => { this.updateErr = true; });
       },
       onSlotClick(event) {
-        const isPast = (new Date() < new Date(event.start_time))
-        if (isPast) { // ignore past events
+        const isNotPast = (new Date() < new Date(event.start_time))
+        if (isNotPast && event.data.hostedBy == this.hostedBy ) { // ignore past events and slots not under user's permission
             if (event.data.status == 'pending') {
             this.selectedLessonId = event.data._id;
             this.selectedReservedBy = event.data.reservedByUserData;
@@ -368,7 +368,7 @@ export default {
           }
         }
       },
-      getScheduleData(startDay) { // get appointments and available times
+      getScheduleData() { // get appointments and available times
         this.events = [];
         const from = dayjs().subtract(1, 'month');
         const to = dayjs().add(3, 'month');
@@ -379,7 +379,10 @@ export default {
                 const availableTimes = resAvailableTimes.data;
                 const appointments = resAppointments.data.filter(appointment => appointment.cancellationReason != 'student issue' && appointment.cancellationReason != 'student cancel');
                 for (let i = 0; i < appointments.length; i++) { // add appointments
-                  const userData = await fetchUserData(appointments[i].reservedBy)
+                  let userData = await fetchUserData(appointments[i].reservedBy)
+                  if (appointments[i].reservedBy == this.hostedBy) { // for certain role reservations (eg teacher/teacher or teacher/admin)
+                    userData = await fetchUserData(appointments[i].hostedBy)
+                  }
                   const formatedTime = {
                     from: appointments[i].from,
                     to: appointments[i].to,

@@ -239,8 +239,7 @@
       </b-row>
 
       <div>
-        <edit-calendar :hostedBy="userData._id" v-if="userData.role == 'teacher'"></edit-calendar>
-        <!-- <view-calendar :reservedBy="userId" hostedBy="5fe4ab8725e273284ca99bd8" :reservationLength="60" :reservationSlotLimit="5" :rescheduleSlotLimit="5"></view-calendar> -->
+        <edit-calendar :hostedBy="userData._id" v-if="userData.role == 'teacher' || userData.role == 'admin'"></edit-calendar>
       </div>
     </div>
     <div v-else class="d-flex justify-content-center my-4">
@@ -285,7 +284,7 @@ export default {
         ViewCalendar,
     },
     name: 'Dashboard',
-    async created() {
+    created() {
         this.$emit('update:layout', LayoutDefault);
     },
    data() {
@@ -343,18 +342,15 @@ export default {
         this.userId = this.userData._id;
         this.profileImage.original = this.userData.profileImage;
         this.editedBio = this.userData.profileBio.trim();
-        const isStudent = this.userData.role == 'user';
-        const isTeacher = this.userData.role == 'teacher';
-        this.appointments = await getAppointments(this.userId, isStudent, from, to);
+        this.appointments = await getAppointments(this.userId, from, to);
         for (let i = 0; i < this.appointments.length; i++) {
-          if (isStudent) {
-            this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
-          } else if (isTeacher) {
+          if (this.appointments[i].hostedBy == this.userId) {
             this.appointments[i].userData = await fetchUserData(this.appointments[i].reservedBy);
-          } else { // teacher pending
+          } else {
             this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
           }
         }
+        
         this.loading = false;
         const filledOutForm = !(this.userData.fluentLanguages.length == 0
         && this.userData.nonFluentLanguages.length == 0 && !this.userData.region && !this.userData.timezone);
@@ -520,14 +516,15 @@ export default {
           packageId: this.adminToTeacherPkgId,
           reservedBy: this.userData._id,
           terminationDate: dayjs().add(1, 'month').toDate(),
-          remainingLessons: 1,
+          remainingAppointments: 1,
           remainingReschedules: 5,
+          reservationLength: 60,
         }
         axios.post(`${this.host}/transaction/createPackageTransaction`, adminToTeacher, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
               if (res.status == 200) {
-                this.$router.push(`/calendar/${res.data.packageId}`);
+                this.$router.push(`/calendar/${res.data._id}`);
               }
             }).catch((err) => {
               console.log(err)
