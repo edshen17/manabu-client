@@ -187,6 +187,14 @@
                 <b-button variant="secondary" class="mr-2 float-right mt-3" v-show="isEditingBio" @click="cancelBio"> Cancel </b-button>
             </div>
           </div>
+          <div class="card profile-card mb-3" v-if="userData">
+            <div class="card-body">
+              <ul class="list-group list-group-flush profile-list">
+                <li class="list-group-item"><b-link v-scroll-to="'#edit-calendar'">My calendar</b-link></li>
+                <li class="list-group-item"><b-link :to="`/user/${this.userId}`">View public profile</b-link></li>
+              </ul>
+            </div>
+          </div>
         </b-col>
         <b-col md="5">
           <div v-if="userData.teacherAppPending">
@@ -417,7 +425,8 @@ export default {
             return 'Click here to write about yourself or your goals.';
           }
         } else {
-          return bio;
+            if (bio.length < 350) return bio;
+            return `${bio.substring(0, 350)}...`;
         }
       },
       saveProfileImage() {
@@ -524,7 +533,7 @@ export default {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
               if (res.status == 200) {
-                this.$router.push(`/calendar/${res.data._id}`);
+                this.$router.push(`/calendar/${adminToTeacher.hostedBy}/${res.data._id}`);
               }
             }).catch((err) => {
               console.log(err)

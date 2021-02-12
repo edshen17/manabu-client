@@ -140,9 +140,9 @@
     </b-modal>
     <div v-if="isLoaded">
       <div v-if="!isRescheduling">
-        <h4 class="text-center slots-left">
-          Remaining timeslots: {{ reservationSlotLimit }}. Remaining
-          reschedules: {{ rescheduleSlotLimit }}
+        <h4 class="text-center slots-left" v-if="!nonReservableCalendar">
+          Remaining timeslots: {{ reservationSlotLimit }}. Reschedules: {{ rescheduleSlotLimit }}.
+          Appointments left until free lesson: {{ (reservationLength / 5) - (minuteBank / 5) }}
         </h4>
       </div>
       <div v-else>
@@ -181,7 +181,7 @@
             || onEventClassBind(event_information.data.from, sessionCancelledLessons),
           'restricted': (new Date() > new Date(event_information.data.from) 
             || isOnSameDay(new Date(), new Date(event_information.data.from)))
-            && reservedBy != event_information.data.reservedBy,
+            && (reservedBy != event_information.data.reservedBy || reservedBy == ''),
           }"
           @click="onClick(event_information.data)"
         >
@@ -206,6 +206,7 @@ import LayoutDefault from '../layouts/LayoutDefault';
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
 import fetchUserData from '../../assets/scripts/fetchUserData'
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
+import myUserData from '../../assets/scripts/tokenGetter';
 dayjs.extend(isBetween);
 
 export default {
@@ -216,20 +217,34 @@ export default {
     created() {
         this.$emit('update:layout', LayoutDefault);
     },
-    mounted() {
-      axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`).then((res) => {
-        if (res.status == 200) {
-          this.hostedBy = res.data.hostedBy;
-          this.reservedBy = res.data.reservedBy;
-          this.reservationSlotLimit = res.data.remainingAppointments;
-          this.rescheduleSlotLimit = res.data.remainingReschedules;
-          this.reservationLength = res.data.reservationLength;
+    async mounted() {
+      const user = await myUserData();
+      this.hostedBy = this.$route.params.hostedBy;
+      if (this.$route.params.hostedBy && this.$route.params.packageTransactionId) {
+        axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`).then((res) => {
+          if (res.status == 200 && res.data.reservedBy == user.data._id) {
+            this.reservedBy = res.data.reservedBy;
+            this.reservationSlotLimit = res.data.remainingAppointments;
+            this.rescheduleSlotLimit = res.data.remainingReschedules;
+            this.reservationLength = res.data.reservationLength;
+            axios.get(`${this.host}/transaction/minuteBank/${this.hostedBy}/${this.reservedBy}`).then((res) => {
+              if (res.status == 200) {
+                this.minuteBank = res.data.minuteBank;
+                this.getScheduleData();
+              }
+            })
+          }
+        }).catch((err) => {
+          console.log(err);
+        })
+      } else if (this.$route.params.hostedBy && !this.$route.params.packageTransactionId) {
+          this.reservedBy = '';
+          this.reservationSlotLimit = 0;
+          this.rescheduleSlotLimit = 0;
+          this.reservationLength = 60;
+          this.nonReservableCalendar = true;
           this.getScheduleData();
-        }
-      }).catch((err) => {
-        console.log(err);
-      })
-
+      }
     },
     data() {
         return {
@@ -248,11 +263,12 @@ export default {
                     day_starts_at: 0,
                     day_ends_at: 24,
                 },
+              nonReservableCalendar: false,
               isLoaded: false,
               currentlySelected: [],
               events: [],
               reservationSlotLimit: null,
-              currentDay: new Date().toISOString(),
+              minuteBank: null,
               rescheduleErr: false,
               reserveErr: false,
               updateErr: false,
@@ -430,7 +446,7 @@ export default {
              const currSelectedArrCopy = [... this.currentlySelected];
                 if (this.currentlySelected.length == 0) { // if no selected items, create selection
                     this.reservationSlotLimit -= 1;
-                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime)); // TODO: replace '' with package id
+                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime)); 
                 } else { // if not first selected item, check that selected item times do not overlap
                   let isInBetween = false;
                   for (let i = 0; i < currSelectedArrCopy.length; i++) {
@@ -438,7 +454,7 @@ export default {
                     || dayjs(startTime).isBetween(dayjs(this.currentlySelected[i].from), dayjs(this.currentlySelected[i].to))
                     || dayjs(endTime).isBetween(dayjs(this.currentlySelected[i].from), dayjs(this.currentlySelected[i].to))
                     if (!isInBetween && i == this.currentlySelected.length - 1) {
-                      this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime)); // TODO: replace '' with package id
+                      this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime)); 
                       this.reservationSlotLimit -= 1;
                     }
                   }
@@ -542,16 +558,16 @@ export default {
           }
 
       },
-      getScheduleData() {
+      async getScheduleData() {
         const from = dayjs().subtract(1, 'month');
-        const to = dayjs().add(3, 'month');;
+        const to = dayjs().add(3, 'month');
+        const hostedByData = await fetchUserData(this.hostedBy);
+        this.selectedHostedBy = hostedByData;
         axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then((resAppointments) => {
               if (resAppointments.status == 200) {
-                const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
-                const hostedByData = await fetchUserData(this.hostedBy);
-                this.selectedHostedBy = hostedByData;
+                const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data); 
                 for (let i = 0; i < combinedTimeSlots.length; i++) {
                   this.intervals(combinedTimeSlots[i]);
                 }
@@ -559,7 +575,7 @@ export default {
                 this.isLoaded = true;
               }
             });
-          }
+          } 
         });
       },
       appointmentFactory(hostedBy, reservedBy, packageTransactionId, from, to) { // creates appointment object to send to server

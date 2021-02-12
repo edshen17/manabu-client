@@ -7,11 +7,13 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import Vuelidate from 'vuelidate'
 import VueCookies from 'vue-cookies'
 import PortalVue from "portal-vue";
+import VueScrollTo from 'vue-scrollto';
 
 Vue.use(PortalVue);
 Vue.use(VueCookies);
 Vue.$cookies.config('1d')
 Vue.use(Vuelidate);
+Vue.use(VueScrollTo)
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue);

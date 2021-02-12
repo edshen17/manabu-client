@@ -23,6 +23,7 @@
     "vue-facebook-login-component": "^3.0.0",
     "vue-google-signin-button-directive": "^1.0.3",
     "vue-router": "^3.4.9",
+    "vue-scrollto": "^2.20.0",
     "vuelidate": "^0.7.6"
   },
   "devDependencies": {

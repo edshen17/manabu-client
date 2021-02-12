@@ -110,6 +110,10 @@
   text-decoration: none;
 }
 
+.profile-list li {
+  font-size: 1em;
+}
+
 
 .no-cursor {
   cursor: auto;
@@ -131,6 +135,7 @@
 /* Extras */
 /**************************/
 #parallax .line-break {border-bottom:1px solid black; width: 150px; margin:0 auto;}
+
 
 /* Media Queries */
 /**************************/

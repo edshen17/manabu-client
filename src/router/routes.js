@@ -109,7 +109,7 @@ const router = new Router({
       component: UserProfile,
     },
     {
-      path: '/calendar/:packageTransactionId',
+      path: '/calendar/:hostedBy/:packageTransactionId?',
       name: 'ViewCalendar',
       component: ViewCalendar,
     },

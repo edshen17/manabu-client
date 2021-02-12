@@ -1,10 +1,20 @@
 <template>
   <div class="user-profile" v-if="viewingUserData">
-        <div v-if="!loading" class="mt-5">
+    <div v-if="!loading" class="mt-5">
       <b-row>
-        <b-col md="2"></b-col>
-        <b-col md="3">
-          <div class="card profile-card">
+        <b-col></b-col>
+        <b-col md="5" style="padding: 0 0 0 0 !important;">
+          <div class="card mb-3">
+            <div class="embed-responsive embed-responsive-16by9">
+              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/fV3Fu5csdcA" allowfullscreen></iframe>
+            </div>
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+              </div>
+    </div>
+          <!-- <div class="card profile-card">
             <div class="card-body">
               <div class="picture-container">
                 <img
@@ -35,11 +45,16 @@
                 <b-button class="mt-3 float-right" variant="success" @click="approveTeacher(viewingUserData._id)">Approve application</b-button>
               </div>
             </div>
+          </div> -->
+        </b-col>
+        <b-col md="3">
+          <div class="card profile-card mb-3">
+            <div class="card-body">
+              sadadas
+            </div>
           </div>
         </b-col>
-        <b-col md="5">
-        </b-col>
-        <b-col md="2"></b-col>
+        <b-col></b-col>
       </b-row>
     </div>
     <div v-else>
