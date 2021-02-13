@@ -41,7 +41,7 @@
             style="display: none"
             name="image"
             ref="file"
-            @change="selectImage($event)"
+            @change="selectFile($event, 'img')"
             accept="image/*"
           />
         </label>
@@ -59,7 +59,7 @@
       </template>
       <div v-if="userData">
         <registration-form
-          v-on:form-submitted="hideModal"
+          v-on:form-submitted="onFormSubmit"
           submitButtonText="Submit"
           :formData="formData"
           endpoint="/user"
@@ -95,13 +95,25 @@
           </template>
         </registration-form>
         <registration-form
-          v-on:form-submitted="hideModal"
+          v-on:form-submitted="onFormSubmit"
           submitButtonText="Submit"
           :formData="formData"
           endpoint="/user"
           v-if="userData.teacherAppPending"
         >
           <template v-slot:uniqueSelect>
+            <div class="form-group">
+              <label>I am a</label>
+              <b-form-select
+                v-model="formData.teacherType"
+                :options="optionsTeacherType"
+                size="md"
+              ></b-form-select>
+            </div>
+             <div class="form-group" v-show="formData.teacherType == 'licensed'">
+              <label for="license">Upload a PDF of your teaching license (if you cannot find it now, email it to us).</label>
+              <input type="file" class="form-control-file" id="license" accept="application/pdf" @change="selectFile($event, 'pdf')">
+            </div>
             <div class="form-group">
               <label>I will be teaching</label>
               <b-form-select
@@ -169,19 +181,15 @@
                   ></span>
                 </div>
               </div>
-              <p class="mt-2 mb-0" v-show="!isEditingBio" style="cursor: pointer" @click="startEditBio">{{ formatBio(userData.profileBio)}}</p>
-                <b-form-textarea
-                  ref="textarea"
-                  class="mt-3"
+              <div class="mt-2 mb-0" v-show="!isEditingBio" style="cursor: pointer" @click="startEditBio" v-html="formatBio(userData.profileBio)"></div>
+                <quill-editor ref="quillEditor"
+                  class="my-3"
                   v-show="isEditingBio"
-                  :formatter="ensureMaxChars"
                   v-model="editedBio"
-                  rows="5"
-                  max-rows="10"
-                >
-                </b-form-textarea>
-                <span v-show="isEditingBio" :class="{ danger: this.maxInputLength - this.editedBio.length == 0 }">
-                  {{this.maxInputLength - this.editedBio.length}} characters remaining
+                  @change="ensureMaxChars($event)"
+                  ></quill-editor>
+                <span v-show="isEditingBio" :class="{ danger: this.maxInputLength - this.editedBio.replace(/<[^>]*>?/gm, '').length == 0 }">
+                  {{this.maxInputLength - this.editedBio.replace(/<[^>]*>?/gm, '').length }} characters remaining
                 </span>
                 <b-button variant="primary" class="float-right mt-3" v-show="isEditingBio" @click="saveBio"> Save </b-button>
                 <b-button variant="secondary" class="mr-2 float-right mt-3" v-show="isEditingBio" @click="cancelBio"> Cancel </b-button>
@@ -319,6 +327,8 @@ export default {
                 nonFluentLanguage: 'JP',
                 fluentLanguage: 'EN',
                 level: 'B2',
+                teacherType: 'unlicensed',
+                license: null,
             },
             host: 'http://localhost:5000/api',
             loading: true,
@@ -339,6 +349,10 @@ export default {
                     { value: 'EN', text: 'English' },
                     { value: 'CN', text: 'Chinese' },
                     { value: 'KR', text: 'Korean' },
+                ],
+                optionsTeacherType: [
+                    { value: 'unlicensed', text: 'unlicensed teacher' },
+                    { value: 'licensed', text: 'licensed/professional teacher' },
                 ],
         }
     },
@@ -376,20 +390,18 @@ export default {
     },
 
     methods: {
-      ensureMaxChars(inputStr) {
-        if (inputStr.length > this.maxInputLength) {
-          let tempStr = inputStr;
-          tempStr = tempStr.substring(0, this.maxInputLength);
-          return tempStr;
-        } else {
-          return inputStr;
+      ensureMaxChars({ text }) {
+        if (text.length > this.maxInputLength) {
+          const quillRef = this.$refs.quillEditor.quill
+          quillRef.deleteText(this.maxInputLength, quillRef.getLength());
         }
       },
       // used when user clicks on their profile
       startEditBio() {
         this.isEditingBio = true;
-        setTimeout(() => {
-          this.$refs.textarea.focus();
+        setTimeout(() => { 
+          const quillRef = this.$refs.quillEditor.quill
+          quillRef.setSelection(quillRef.getLength());
         })
         
       },
@@ -419,14 +431,19 @@ export default {
       },
       formatBio(bio) {
         if (!bio) {
+          let defaultBio = '';
           if (this.userData.role == 'teacher' || this.userData.teacherAppPending) {
-            return 'Click here to write about yourself and your qualifications/experience teaching.'
+            
+            defaultBio = `<p><strong>About Me</strong></p><ul><li>Where are you from? Your hobbies?</li></ul><p><strong>My qualifications</strong></p><ul><li>How long have you been teaching for? What are your qualifications/do you have a teaching license?</li></ul><p><strong>How I teach</strong></p><ul><li>How do you teach students?</li></ul>`
+            this.editedBio = defaultBio;
           } else {
-            return 'Click here to write about yourself or your goals.';
+            defaultBio = 'Click here to write about yourself or your goals.';
           }
+          this.userData.profileBio = defaultBio;
+          return defaultBio
         } else {
             if (bio.length < 350) return bio;
-            return `${bio.substring(0, 350)}...`;
+            return `${bio.substring(0, 350)}<em>...</em>`;
         }
       },
       saveProfileImage() {
@@ -498,25 +515,51 @@ export default {
       showModal() {
           this.$bvModal.show('reg-form')
       },
-      hideModal() {
-          this.$bvModal.hide('reg-form')
-          },
-      selectImage(event) {
+      async onFormSubmit(license) {
+          this.$bvModal.hide('reg-form');
+          if (license != null) {
+            const storageRef = app.storage().ref();
+            const fileRef = storageRef.child(
+              `teachingLicenses/${this.userData._id}_license.png`
+            );
+
+            await fileRef.put(this.formData.license);
+            const downloadUrl = await fileRef.getDownloadURL();
+            axios
+              .put(
+                `${this.host}/teacher/${this.userData._id}/updateProfile`,
+                { licensePath: downloadUrl },
+                { headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+                }}
+              )
+              .catch((err) => {
+                // if err, alert
+                console.log(err);
+              });
+          }
+      },
+      selectFile(event, fileType) {
         // Reference to the DOM input element
         const input = event.target;
         // Ensure that you have a file before attempting to read it
         if (input.files && input.files[0]) {
-          // create a new FileReader to read this image and convert to base64 format
-          const reader = new FileReader();
-          // Define a callback function to run, when FileReader finishes its job
-          reader.onload = (e) => {
-            // Read image as base64 and set to imageData
-            this.profileImage.cropperImage = e.target.result;
-          };
-          // Start the reader job - read file as a data url (base64 format)
-          reader.readAsDataURL(input.files[0]);
+          if (fileType == 'img') {
+            // create a new FileReader to read this image and convert to base64 format
+            const reader = new FileReader();
+            // Define a callback function to run, when FileReader finishes its job
+            reader.onload = (e) => {
+              // Read image as base64 and set to imageData
+              this.profileImage.cropperImage = e.target.result;
+            };
+            // Start the reader job - read file as a data url (base64 format)
+            reader.readAsDataURL(input.files[0]);
+            this.isEditingImage = !this.isEditingImage;
+          }
+           else if (fileType == 'pdf') {
+            this.formData.license = input.files[0];
+          }
         }
-        this.isEditingImage = !this.isEditingImage;
       },
       // create transaction between admin and teacher
       adminTeacherTrans() {

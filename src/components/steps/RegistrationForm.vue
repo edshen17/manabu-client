@@ -38,7 +38,7 @@
                 </div>
               </div>
               <div class="form-group">
-                <button class="btn btn-primary" @click="handleSubmit(endpoint)">
+                <button class="btn btn-primary" @click="handleSubmit()">
                   {{submitButtonText}}
                 </button>
               </div>
@@ -106,8 +106,8 @@
                     this.optionsTz.push(`${tz[i].name} (UTC${tz[i].utcOffsetStr})`)
                 }
             },
-            handleSubmit(endpoint) {
-                if (this.formData.fluentLanguage && this.formData.nonFluentLanguage && this.formData.level && this.defaultData.region && this.defaultData.timezone) { // all inputs are filled in
+            handleSubmit() {
+                if (this.formData.fluentLanguage && this.formData.nonFluentLanguage && this.formData.level && this.defaultData.region && this.defaultData.timezone) { // all required inputs are filled in
                     const sendUpdateObj = { ...this.formData, ...this.defaultData } // merge the data from the parent and child
                     sendUpdateObj.fluentLanguages = [`${sendUpdateObj.fluentLanguage}-C2`]
                     sendUpdateObj.nonFluentLanguages = [`${sendUpdateObj.nonFluentLanguage}-${sendUpdateObj.level}`]
@@ -115,7 +115,7 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                     }).then(() => {
-                        this.$emit('form-submitted', true);
+                        this.$emit('form-submitted', this.formData.license);
                     }).catch((err) => {
                         console.log(err);
                     })

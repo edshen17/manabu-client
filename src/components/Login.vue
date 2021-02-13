@@ -78,7 +78,7 @@
 import axios from 'axios';
 import LayoutDefault from './layouts/LayoutDefault';
 import GoogleSignInButton from 'vue-google-signin-button-directive'
-import VFacebookLogin from 'vue-facebook-login-component'
+// import VFacebookLogin from 'vue-facebook-login-component'
 
 axios.defaults.withCredentials = true;
 
@@ -91,7 +91,7 @@ export default {
     this.$emit('update:layout', LayoutDefault);
     },
     components: {
-        VFacebookLogin
+        // VFacebookLogin
     },
     data() {
         return {
@@ -165,12 +165,12 @@ export default {
         this.scope = scope
       },
 
-       flogin(res){ // for facebook logins. finish this.fb once https enabled...
-            console.log(res)
-            this.FB.api('/me', function(response) {
-                console.log(JSON.stringify(response));
-            });
-        },
+      //  flogin(res){ // for facebook logins. finish this.fb once https enabled...
+      //       console.log(res)
+      //       this.FB.api('/me', function(response) {
+      //           console.log(JSON.stringify(response));
+      //       });
+      //   },
     }
 }
 </script>
