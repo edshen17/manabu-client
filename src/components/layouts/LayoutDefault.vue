@@ -63,20 +63,14 @@
 </template>
 
 <script>
-import axios from 'axios';
 import getUserData from '../../assets/scripts/tokenGetter'
+import { storeMethods } from '../../store/store'
 
 export default {
   name: 'LayoutDefault',
   async mounted() {
-    let userData = await getUserData();
-    this.isLoggedIn = (userData != null);
-  },
-  watch: {
-    async '$route' () { // if route changes, update variables to avoid mutation errors
-      let userData = await getUserData();
-      this.isLoggedIn = (userData != null);
-    }
+    let userData = storeMethods.getStore().userData; 
+    this.isLoggedIn = (Object.keys(userData).length == 0); // for some reason, storeMethod.isStoreEmpty() returns true if at '/', regardless of data
   },
   data() {
     return {

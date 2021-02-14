@@ -9,15 +9,26 @@ import TeacherSignup from '@/components/TeacherSignup';
 import NotFound from '@/components/NotFound';
 import UserProfile from '@/components/UserProfile';
 import ViewCalendar from '@/components/steps/ViewCalendar';
+import myUserData from '../assets/scripts/tokenGetter';
+import { store, storeMethods } from '../store/store';
 
 Vue.use(Router);
 const host = 'http://localhost:5000/api';
 // use token to get user info
-const getUserData = async () => {
-  let res = await axios.get(`${host}/me`, {withCredentials: true, headers: {
-    'X-Requested-With': 'XMLHttpRequest'
-  } }).catch((err) => {});
-  return res;
+const setUserStore = async () => {
+  const user = await myUserData();
+  if (user) {
+    storeMethods.setUserData(user.data)
+  }
+}
+setUserStore();
+
+const beforeEnterCheck = (route, next) => {
+  if (!storeMethods.isStoreEmpty()) {
+    next(route)
+  } else {
+    next()
+  }
 }
 
 const router = new Router({
@@ -31,8 +42,8 @@ const router = new Router({
         title: 'Manabu',
       },
       async beforeEnter(to, from, next) {
-        const data = await getUserData();
-        if (data && data.data.email) {
+        console.log(store.getUserData())
+        if (Object.keys(storeMethods.getStore().userData).length != 0) {
           next('/dashboard');
         }  else {
           next()
@@ -55,12 +66,7 @@ const router = new Router({
         title: 'Sign Up',
       },
       async beforeEnter(to, from, next) {
-        const data = await getUserData();
-        if (data && data.data.email) { // if logged in, redirect to dashboard
-          next('/dashboard');
-        }  else {
-          next();
-        }
+        beforeEnterCheck('/dashboard', next)
       },
     },
     {
@@ -71,12 +77,7 @@ const router = new Router({
         title: 'Log In',
       },
       async beforeEnter(to, from, next) {
-        const data = await getUserData();
-        if (data && data.data.email) {
-          next('/dashboard');
-        }  else {
-          next()
-        }
+        beforeEnterCheck('/dashboard', next)
       },
     },
     {
@@ -87,11 +88,8 @@ const router = new Router({
         title: 'Dashboard',
       },
       async beforeEnter(to, from, next) {
-        const data = await getUserData();
-        if (!data) { 
-          next('/login');
-        } else {
-          next()
+        if (to != '/') {
+          next();
         }
       },
     },
@@ -100,6 +98,7 @@ const router = new Router({
       name: 'Logout',
       async beforeEnter(to, from, next) {
         Vue.$cookies.set('hp', '').set('sig', '');
+        storeMethods.setUserData({})
         next('/')
       },
     },

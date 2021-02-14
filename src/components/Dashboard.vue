@@ -276,6 +276,7 @@ import ViewCalendar from './steps/ViewCalendar';
 import languageLevelBars from '../assets/scripts/languageLevelBars'
 import fetchUserData from '../assets/scripts/fetchUserData'
 import imageSourceEdit from '../assets/scripts/imageSourceEdit'
+import { store, storeMethods } from '../store/store'
 import { Cropper, Preview } from "vue-advanced-cropper";
 import 'vue-advanced-cropper/dist/style.css';
 import firebase from 'firebase/app';
@@ -357,6 +358,9 @@ export default {
         }
     },
     async mounted() {
+      setTimeout(() => {
+        console.log(store.userData, "dashboard")
+      }, 500)
         const user = await myUserData();
         const from = dayjs().toISOString()
         const to = dayjs().add(1, 'week').toISOString();
@@ -515,9 +519,9 @@ export default {
       showModal() {
           this.$bvModal.show('reg-form')
       },
-      async onFormSubmit(license) {
+      async onFormSubmit() {
           this.$bvModal.hide('reg-form');
-          if (license != null) {
+          if (this.formData.license != null) {
             const storageRef = app.storage().ref();
             const fileRef = storageRef.child(
               `teachingLicenses/${this.userData._id}_license.png`
@@ -528,7 +532,7 @@ export default {
             axios
               .put(
                 `${this.host}/teacher/${this.userData._id}/updateProfile`,
-                { licensePath: downloadUrl },
+                { licensePath: downloadUrl, teacherType: 'licensed' },
                 { headers: {
                   'X-Requested-With': 'XMLHttpRequest'
                 }}

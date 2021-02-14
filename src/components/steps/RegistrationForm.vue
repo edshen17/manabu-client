@@ -115,7 +115,7 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                     }).then(() => {
-                        this.$emit('form-submitted', this.formData.license);
+                        this.$emit('form-submitted');
                     }).catch((err) => {
                         console.log(err);
                     })

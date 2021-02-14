@@ -97,7 +97,7 @@ export default {
         return {
             isTeacherApp: this.$route.query.teacherSignup == 'true',
             clientId: process.env.VUE_APP_G_CLIENTID,
-            appId: '202539034881612',
+            appId: process.env.VUE_APP_FACEBOOK_APPID,
             errors: [],
             email: '',
             password: '',
