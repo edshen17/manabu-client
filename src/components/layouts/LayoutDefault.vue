@@ -63,19 +63,19 @@
 </template>
 
 <script>
-import getUserData from '../../assets/scripts/tokenGetter'
-import { storeMethods } from '../../store/store'
+import store from '../../store/store'
 
 export default {
   name: 'LayoutDefault',
-  async mounted() {
-    let userData = storeMethods.getStore().userData; 
-    this.isLoggedIn = (Object.keys(userData).length == 0); // for some reason, storeMethod.isStoreEmpty() returns true if at '/', regardless of data
-  },
-  data() {
-    return {
-      isLoggedIn: false,
-    };
+  computed: {
+    isLoggedIn: function () {
+      return store.getters.isLoggedIn;
+    }
+},
+  watch: {
+    isLoggedIn(value) { // watch in case of mutations
+      this.isLoggedIn = value;
+    }
   },
 };
 </script>

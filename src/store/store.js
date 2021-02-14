@@ -1,19 +1,31 @@
-import Vue from "vue";
+import Vue from 'vue'
+import Vuex from 'vuex'
+Vue.use(Vuex);
 
-export const store = Vue.observable({
-  userData: {},  
-});
+//init store
+const store = new Vuex.Store({
+    state: {
+        user: {
+            data: null,
+            isLoggedIn: false,
+        }
+     },
+     mutations: {
+         setUserData(state, userData) {
+             state.user.data = userData;
+         },
+         setLoggedIn(state, loggedIn) {
+          state.user.isLoggedIn = loggedIn;
+        }
+     },
+     getters: {
+      userData: state => {
+        return state.user.data;
+      },
+      isLoggedIn: state => {
+        return state.user.isLoggedIn;
+      },
+    }
+})
 
-export const storeMethods = {
-  setUserData(userData) {
-    store.userData = userData;
-  },
-
-  getStore() {
-    return store;
-  },
-
-  isStoreEmpty() {
-    return Object.keys(store.userData).length == 0;
-  }
-};
+export default store

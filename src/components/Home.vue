@@ -138,15 +138,11 @@
 
 <script>
 import LayoutDefault from './layouts/LayoutDefault';
-import { storeMethods } from '../store/store'
 export default {
   name: 'Home',
   created() {
     this.$emit('update:layout', LayoutDefault);
   },
-  mounted() {
-    console.log(storeMethods.getStore().userData)
-  }
 };
 </script>
 

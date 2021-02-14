@@ -9,25 +9,32 @@ import TeacherSignup from '@/components/TeacherSignup';
 import NotFound from '@/components/NotFound';
 import UserProfile from '@/components/UserProfile';
 import ViewCalendar from '@/components/steps/ViewCalendar';
-import myUserData from '../assets/scripts/tokenGetter';
-import { store, storeMethods } from '../store/store';
+import store  from '../store/store';
 
 Vue.use(Router);
 const host = 'http://localhost:5000/api';
 // use token to get user info
-const setUserStore = async () => {
-  const user = await myUserData();
-  if (user) {
-    storeMethods.setUserData(user.data)
-  }
+const getUserData = async () => {
+  let res = await axios.get(`${host}/me`, {withCredentials: true, headers: {
+    'X-Requested-With': 'XMLHttpRequest'
+  } }).catch((err) => { res = null; store.commit('setLoggedIn', false); });
+  return res;
 }
-setUserStore();
 
-const beforeEnterCheck = (route, next) => {
-  if (!storeMethods.isStoreEmpty()) {
+async function beforeEnterCheck (route, next) {
+  if (store.getters.isLoggedIn) {
+    store.commit('setLoggedIn', true);
     next(route)
   } else {
-    next()
+    const res = await getUserData();
+    if (res) {
+      store.commit('setUserData', res.data);
+      store.commit('setLoggedIn', true);
+      next(route)
+    } else {
+      store.commit('setLoggedIn', false);
+      next()
+    }
   }
 }
 
@@ -42,12 +49,8 @@ const router = new Router({
         title: 'Manabu',
       },
       async beforeEnter(to, from, next) {
-        console.log(store.getUserData())
-        if (Object.keys(storeMethods.getStore().userData).length != 0) {
-          next('/dashboard');
-        }  else {
-          next()
-        }
+        beforeEnterCheck('/dashboard', next)
+        // next()
       },
     },
     {
@@ -98,7 +101,9 @@ const router = new Router({
       name: 'Logout',
       async beforeEnter(to, from, next) {
         Vue.$cookies.set('hp', '').set('sig', '');
-        storeMethods.setUserData({})
+        store.commit('setUserData', null);
+        store.commit('setLoggedIn', false);
+        console.log(store.getters.isLoggedIn)
         next('/')
       },
     },

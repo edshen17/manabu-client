@@ -358,9 +358,6 @@ export default {
         }
     },
     async mounted() {
-      setTimeout(() => {
-        console.log(store.userData, "dashboard")
-      }, 500)
         const user = await myUserData();
         const from = dayjs().toISOString()
         const to = dayjs().add(1, 'week').toISOString();
