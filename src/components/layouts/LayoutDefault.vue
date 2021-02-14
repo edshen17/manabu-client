@@ -68,8 +68,13 @@ import store from '../../store/store'
 export default {
   name: 'LayoutDefault',
   computed: {
-    isLoggedIn: function () {
-      return store.getters.isLoggedIn;
+    isLoggedIn: {
+      get() {
+        return store.getters.isLoggedIn;
+      },
+      set(isLoggedIn) {
+        return isLoggedIn;
+      }
     }
 },
   watch: {

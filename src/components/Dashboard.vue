@@ -268,7 +268,6 @@
 import axios from 'axios';
 import dayjs from 'dayjs'
 import LayoutDefault from './layouts/LayoutDefault';
-import myUserData from '../assets/scripts/tokenGetter';
 import getAppointments from '../assets/scripts/getAppointments';
 import RegistrationForm from './steps/RegistrationForm';
 import EditCalendar from './steps/EditCalendar';
@@ -276,7 +275,7 @@ import ViewCalendar from './steps/ViewCalendar';
 import languageLevelBars from '../assets/scripts/languageLevelBars'
 import fetchUserData from '../assets/scripts/fetchUserData'
 import imageSourceEdit from '../assets/scripts/imageSourceEdit'
-import { store, storeMethods } from '../store/store'
+import store from '../store/store'
 import { Cropper, Preview } from "vue-advanced-cropper";
 import 'vue-advanced-cropper/dist/style.css';
 import firebase from 'firebase/app';
@@ -304,6 +303,17 @@ export default {
     created() {
         this.$emit('update:layout', LayoutDefault);
     },
+    computed: {
+    storeUserData: {
+      get() {
+        return store.getters.userData;
+      },
+      set(userData) {
+        return userData;
+      }
+      }
+    },
+
    data() {
         return {
             profileImage: {
@@ -358,10 +368,9 @@ export default {
         }
     },
     async mounted() {
-        const user = await myUserData();
         const from = dayjs().toISOString()
         const to = dayjs().add(1, 'week').toISOString();
-        this.userData = user.data;
+        this.userData = this.storeUserData;
         this.userId = this.userData._id;
         this.profileImage.original = this.userData.profileImage;
         this.editedBio = this.userData.profileBio.trim();

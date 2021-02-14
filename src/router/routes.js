@@ -92,7 +92,7 @@ const router = new Router({
       },
       async beforeEnter(to, from, next) {
         if (to != '/') {
-          next();
+          beforeEnterCheck(undefined, next)
         }
       },
     },

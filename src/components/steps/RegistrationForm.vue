@@ -54,7 +54,6 @@
     import axios from 'axios';
     import ct from 'countries-and-timezones';
     // import { required, minLength } from 'vuelidate/lib/validators';
-    import getUserData from '../../assets/scripts/tokenGetter'
 
     export default {
         name: 'RegistrationForm1',
@@ -64,6 +63,16 @@
             endpoint: String,
             userId: String,
         },
+        computed: {
+          storeUserData: {
+            get() {
+              return store.getters.userData;
+            },
+            set(userData) {
+              return userData;
+            }
+            }
+          },
         async mounted() {
             const countries = ct.getAllCountries();
             for (const countryCode in countries) {
@@ -75,7 +84,7 @@
             }
 
             this.optionsRegion.sort(this.compare);
-            this.userData = await getUserData();
+            this.userData = this.storeUserData;
         },
 
         data() {

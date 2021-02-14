@@ -206,7 +206,7 @@ import LayoutDefault from '../layouts/LayoutDefault';
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
 import fetchUserData from '../../assets/scripts/fetchUserData'
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
-import myUserData from '../../assets/scripts/tokenGetter';
+import store from '../../store/store';
 dayjs.extend(isBetween);
 
 export default {
@@ -217,12 +217,17 @@ export default {
     created() {
         this.$emit('update:layout', LayoutDefault);
     },
+    computed: {
+    storeUserData: function () {
+      return store.getters.userData;
+      }
+    },
     async mounted() {
-      const user = await myUserData();
+      const user = this.storeUserData;
       this.hostedBy = this.$route.params.hostedBy;
       if (this.$route.params.hostedBy && this.$route.params.packageTransactionId) {
         axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`).then((res) => {
-          if (res.status == 200 && res.data.reservedBy == user.data._id) {
+          if (res.status == 200 && res.data.reservedBy == user._id) {
             this.reservedBy = res.data.reservedBy;
             this.reservationSlotLimit = res.data.remainingAppointments;
             this.rescheduleSlotLimit = res.data.remainingReschedules;

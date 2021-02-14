@@ -66,15 +66,25 @@
 </template>
 <script>
 import LayoutDefault from './layouts/LayoutDefault';
-import myUserData from '../assets/scripts/tokenGetter';
 import imageSourceEdit from '../assets/scripts/imageSourceEdit';
 import fetchUserData from '../assets/scripts/fetchUserData';
+import store from '../store/store';
 import languageLevelBars from '../assets/scripts/languageLevelBars';
 import axios from 'axios';
 export default {
     name: 'UserProfile',
     created() {
         this.$emit('update:layout', LayoutDefault);
+    },
+    computed: {
+      storeUserData: {
+        get() {
+          return store.getters.userData;
+        },
+        set(userData) {
+          return userData;
+        }
+        }
     },
     data() {
         return {
@@ -87,8 +97,7 @@ export default {
     },
     async mounted() {
         try {
-            const myUser = await myUserData();
-            this.myUserData = myUser.data;
+            this.myUserData = this.storeUserData;
             this.viewingUserData = await fetchUserData(this.$route.params.uId);
             this.loading = false;
         } catch (e) {
