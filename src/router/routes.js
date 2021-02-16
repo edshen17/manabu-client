@@ -27,7 +27,7 @@ async function beforeEnterCheck (route, next) {
     next(route)
   } else {
     const res = await getUserData();
-    if (res) {
+    if (res != null && res.data) {
       store.commit('setUserData', res.data);
       store.commit('setLoggedIn', true);
       next(route)
@@ -50,7 +50,6 @@ const router = new Router({
       },
       async beforeEnter(to, from, next) {
         beforeEnterCheck('/dashboard', next)
-        // next()
       },
     },
     {
@@ -91,8 +90,10 @@ const router = new Router({
         title: 'Dashboard',
       },
       async beforeEnter(to, from, next) {
-        if (to != '/') {
-          beforeEnterCheck(undefined, next)
+        if (to != '/' && store.getters.isLoggedIn) {
+          beforeEnterCheck(undefined, next) // undefined to prevent infinite loop
+        } else {
+          next('/')
         }
       },
     },
@@ -103,7 +104,6 @@ const router = new Router({
         Vue.$cookies.set('hp', '').set('sig', '');
         store.commit('setUserData', null);
         store.commit('setLoggedIn', false);
-        console.log(store.getters.isLoggedIn)
         next('/')
       },
     },

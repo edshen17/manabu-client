@@ -54,6 +54,7 @@
     import axios from 'axios';
     import ct from 'countries-and-timezones';
     // import { required, minLength } from 'vuelidate/lib/validators';
+    import store from '../../store/store';
 
     export default {
         name: 'RegistrationForm1',
@@ -120,7 +121,7 @@
                     const sendUpdateObj = { ...this.formData, ...this.defaultData } // merge the data from the parent and child
                     sendUpdateObj.fluentLanguages = [`${sendUpdateObj.fluentLanguage}-C2`]
                     sendUpdateObj.nonFluentLanguages = [`${sendUpdateObj.nonFluentLanguage}-${sendUpdateObj.level}`]
-                    axios.put(`${this.host}${this.endpoint}/${this.userData.data._id}/updateProfile`, sendUpdateObj, { headers: {
+                    axios.put(`${this.host}${this.endpoint}/${this.userData._id}/updateProfile`, sendUpdateObj, { headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                     }).then(() => {
