@@ -453,7 +453,7 @@ export default {
           return defaultBio
         } else {
             if (bio.length < 350) return bio;
-            return `${bio.substring(0, 350)}<em>...</em>`;
+            return `${bio.substring(0, 350)}...`;
         }
       },
       saveProfileImage() {

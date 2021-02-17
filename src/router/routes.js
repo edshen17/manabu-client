@@ -111,11 +111,15 @@ const router = new Router({
       path: '/user/:uId',
       name: 'UserProfile',
       component: UserProfile,
+      // before enter in here
     },
     {
       path: '/calendar/:hostedBy/:packageTransactionId?',
       name: 'ViewCalendar',
       component: ViewCalendar,
+      async beforeEnter(to, from, next) {
+        beforeEnterCheck(undefined, next)
+      },
     },
     {
       path: '/404',

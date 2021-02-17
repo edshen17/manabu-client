@@ -218,16 +218,27 @@ export default {
         this.$emit('update:layout', LayoutDefault);
     },
     computed: {
-    storeUserData: function () {
-      return store.getters.userData;
+      storeUserData: {
+      get() {
+        return store.getters.userData;
+      },
+      set(userData) {
+        return userData;
       }
     },
+    },
+    watch: {
+    storeUserData(userData) { // watch in case of mutations
+      this.user = userData;
+    }
+  },
     async mounted() {
-      const user = this.storeUserData;
+
+      this.user = this.storeUserData;
       this.hostedBy = this.$route.params.hostedBy;
       if (this.$route.params.hostedBy && this.$route.params.packageTransactionId) {
         axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`).then((res) => {
-          if (res.status == 200 && res.data.reservedBy == user._id) {
+          if (res.status == 200 && res.data.reservedBy == this.user._id) {
             this.reservedBy = res.data.reservedBy;
             this.reservationSlotLimit = res.data.remainingAppointments;
             this.rescheduleSlotLimit = res.data.remainingReschedules;
@@ -253,6 +264,7 @@ export default {
     },
     data() {
         return {
+            user: null,
             host: 'http://localhost:5000/api',
             reservedBy: '',
             hostedBy: '',
