@@ -59,6 +59,9 @@ const router = new Router({
       meta: {
         title: 'Become a Teacher',
       },
+      async beforeEnter(to, from, next) {
+        beforeEnterCheck(undefined, next)
+      },
     },
     {
       path: '/signup',
@@ -111,7 +114,9 @@ const router = new Router({
       path: '/user/:uId',
       name: 'UserProfile',
       component: UserProfile,
-      // before enter in here
+      async beforeEnter(to, from, next) {
+        beforeEnterCheck(undefined, next)
+      },
     },
     {
       path: '/calendar/:hostedBy/:packageTransactionId?',
@@ -126,7 +131,9 @@ const router = new Router({
       name: 'NotFound',
       component: NotFound,
     },
-    { path: '*', redirect: '/404' }
+    { path: '*', redirect: '/404', async beforeEnter(to, from, next) {
+      beforeEnterCheck(undefined, next)
+    }, }
   ],
 });
 

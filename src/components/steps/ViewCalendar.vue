@@ -233,7 +233,6 @@ export default {
     }
   },
     async mounted() {
-
       this.user = this.storeUserData;
       this.hostedBy = this.$route.params.hostedBy;
       if (this.$route.params.hostedBy && this.$route.params.packageTransactionId) {
@@ -578,8 +577,7 @@ export default {
       async getScheduleData() {
         const from = dayjs().subtract(1, 'month');
         const to = dayjs().add(3, 'month');
-        const hostedByData = await fetchUserData(this.hostedBy);
-        this.selectedHostedBy = hostedByData;
+        this.selectedHostedBy = await fetchUserData(this.hostedBy);
         axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
             axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then((resAppointments) => {

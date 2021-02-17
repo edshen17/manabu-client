@@ -18,7 +18,7 @@ export default {
     },
     methods: {
         redirect() {
-            this.$router.push('/signup?teacherSignup=true')
+            this.$router.push('/signup?teacherSignup=true').catch((err) => {})
         }
     },
 }

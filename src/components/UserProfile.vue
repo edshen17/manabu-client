@@ -99,10 +99,10 @@ export default {
         try {
             this.myUserData = this.storeUserData;
             this.viewingUserData = await fetchUserData(this.$route.params.uId);
-            console.log(this.viewingUserData)
             this.loading = false;
         } catch (err) {
-            this.$router.push('/404');
+          console.log()
+            this.$router.push('/404').catch(err => {});
         }
     },
     methods: {
