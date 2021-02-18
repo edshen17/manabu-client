@@ -60,6 +60,13 @@ p {
   border-radius: 1px;
 }
 
+.patch-icon {
+  display: inline; 
+  color: #152076;
+  width: 22px;
+  height: 22px;
+}
+
 .danger {
   color: red;
 }

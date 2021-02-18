@@ -13,17 +13,46 @@
           </div>
           <div class="card-body">
             <b-row>
-              <b-col md="10">
+              <b-col md="12">
                 <div class="my-2">
-                  <h3>{{ this.userData.name }}</h3>
+                  <span>
+                    <h3 style="display: inline">
+                      {{ this.viewingUserData.name }}
+                    </h3>
+                    <b-icon-patch-check-fll
+                      v-if="this.viewingUserData.teacherData.isApproved || this.isApproved"
+                      class="ml-2 patch-icon"
+                      title="Manabu Verified Teacher"
+                    >
+                    </b-icon-patch-check-fll>
+                    <b-icon-patch-minus-fll
+                      v-else
+                      class="ml-2 patch-icon"
+                      title="Teacher application pending"
+                    >
+                    </b-icon-patch-minus-fll>
+                    <p class="card-text">
+                      <small class="text-muted">Last online 1 hour ago</small>
+                    </p>
+                    <div
+                      v-if="myUserData.role == 'admin' && viewingUserData.teacherAppPending && !this.isApproved"
+                    >
+                      <b-button
+                        class="mt-3 float-right"
+                        variant="success"
+                        @click="approveTeacher(viewingUserData._id)"
+                        >Approve application</b-button
+                      >
+                    </div>
+                  </span>
                   <div class="text-muted font-weight-light">
                     <div>
                       <span style="font-size: 1.1rem">
-                        {{ formatString(this.userData.teacherData.teacherType, 
+                        {{ formatString(this.viewingUserData.teacherData.teacherType, 
                     ['licensed', 'unlicensed'], 
                     ['Licensed Teacher --', 'Unlicensed Teacher --']) }}
                         <div
-                          v-for="lang in userData.fluentLanguages"
+                          v-for="lang in viewingUserData.fluentLanguages"
                           :key="lang"
                           style="display: inline"
                           class="mr-1"
@@ -37,7 +66,7 @@
                           ></span>
                         </div>
                         <div
-                          v-for="lang in userData.nonFluentLanguages"
+                          v-for="lang in viewingUserData.nonFluentLanguages"
                           :key="lang"
                           style="display: inline"
                         >
@@ -52,13 +81,11 @@
                       </span>
                     </div>
                   </div>
-                  <div v-html="this.userData.profileBio" class="mt-3"></div>
+                  <div
+                    v-html="this.viewingUserData.profileBio"
+                    class="mt-3"
+                  ></div>
                 </div>
-              </b-col>
-              <b-col md="2">
-                <p class="card-text">
-                  <small class="text-muted">Last online 1 hour ago</small>
-                </p>
               </b-col>
             </b-row>
           </div>
@@ -78,23 +105,53 @@ import imageSourceEdit from '../../assets/scripts/imageSourceEdit';
 import languageLevelBars from '../../assets/scripts/languageLevelBars';
 import languageCodeToText from '../../assets/scripts/languageCodeToText';
 import formatString from '../../assets/scripts/formatString';
+import axios from 'axios';
 export default {
     name: 'TeacherProfile',
     data() {
         return {
+            isApproved: false,
+            host: 'http://localhost:5000/api',
         }
     },
     props: {
-        userData: Object,
+        viewingUserData: Object,
+        myUserData: Object,
     },
     methods: {
         languageCodeToText,
         imageSourceEdit,
         languageLevelBars,
-        formatString
+        formatString,
+         approveTeacher(uId) {
+          axios.put(`${this.host}/user/${uId}/updateProfile`, { role: 'teacher', },
+            { headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          }
+          ).then((res) => {
+            if (res.status == 200) {
+              axios.put(`${this.host}/teacher/${uId}/updateProfile`, { isApproved: true, dateApproved: new Date(), },
+              { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              }
+              }
+            ).then((res) => {
+            if (res.status == 200) {
+              this.isApproved = true;
+            }
+          }).catch((err) => {
+              console.log(err);
+              })
+            }
+          }).catch((err) => {
+            console.log(err);
+          })
+
+
+        }
     },
     mounted() {
-        console.log(this.userData)
     }
 }
 </script>

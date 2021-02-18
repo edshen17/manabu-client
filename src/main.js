@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router/routes';
-import BootstrapVue from 'bootstrap-vue';
+import { BootstrapVue, BIconPatchCheckFll, BIconPatchMinusFll } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import Vuelidate from 'vuelidate'
@@ -26,6 +26,8 @@ var toolbarOptions = {
 
 Vue.use(PortalVue);
 Vue.use(VueCookies);
+Vue.component('BIconPatchCheckFll', BIconPatchCheckFll)
+Vue.component('BIconPatchMinusFll', BIconPatchMinusFll)
 Vue.$cookies.config('1d')
 Vue.use(Vuelidate);
 Vue.use(VueScrollTo)

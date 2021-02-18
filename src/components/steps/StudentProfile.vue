@@ -65,7 +65,8 @@ export default {
         }
     },
     props: {
-        userData: Object,
+        viewingUserData: Object,
+        myUserData: Object,
     },
     methods: {},
 }
