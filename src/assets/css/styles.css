@@ -19,7 +19,11 @@
 }
 
 .navbar-nav li {
-  font-size: .9rem;
+  font-size: 1rem;
+}
+
+p {
+  font-size: 1rem;
 }
 
 .Home .card-img-top {
@@ -50,8 +54,8 @@
 
 .level {
   display: inline-block;
-  width: 2px;
-  height: 10px;
+  width: 3px;
+  height: 13px;
   margin-left: 2px;
   border-radius: 1px;
 }

@@ -172,7 +172,7 @@
                   class="mx-1"
                   style="display: inline"
                 >
-                  {{ lang }}
+                  {{ languageCodeToText(lang) }}
                   <span
                     v-for="(n, i) in 5"
                     :key="i"
@@ -275,6 +275,7 @@ import ViewCalendar from './steps/ViewCalendar';
 import languageLevelBars from '../assets/scripts/languageLevelBars'
 import fetchUserData from '../assets/scripts/fetchUserData'
 import imageSourceEdit from '../assets/scripts/imageSourceEdit'
+import languageCodeToText from '../assets/scripts/languageCodeToText'
 import store from '../store/store'
 import { Cropper, Preview } from "vue-advanced-cropper";
 import 'vue-advanced-cropper/dist/style.css';
@@ -400,6 +401,7 @@ export default {
     },
 
     methods: {
+      languageCodeToText,
       ensureMaxChars({ text }) {
         if (text.length > this.maxInputLength) {
           const quillRef = this.$refs.quillEditor.quill
@@ -442,8 +444,7 @@ export default {
       formatBio(bio) {
         if (!bio) {
           let defaultBio = '';
-          if (this.userData.role == 'teacher' || this.userData.teacherAppPending) {
-            
+          if ((this.userData.role == 'teacher' || this.userData.teacherAppPending)) {
             defaultBio = `<p><strong>About Me</strong></p><ul><li>Where are you from? Your hobbies?</li></ul><p><strong>My qualifications</strong></p><ul><li>How long have you been teaching for? What are your qualifications/do you have a teaching license?</li></ul><p><strong>How I teach</strong></p><ul><li>How do you teach students?</li></ul>`
             this.editedBio = defaultBio;
           } else {
@@ -516,12 +517,6 @@ export default {
       },
       fetchUserData,
       languageLevelBars,
-      languageCodeToText(lc, optionArr) {
-        const language = optionArr.find(code => code.value == lc);
-        if (language != undefined) {
-          return language.text;
-        }
-      },
       showModal() {
           this.$bvModal.show('reg-form')
       },
