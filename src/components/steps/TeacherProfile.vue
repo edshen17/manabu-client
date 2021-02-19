@@ -31,19 +31,30 @@
                       title="Teacher application pending"
                     >
                     </b-icon-patch-minus-fll>
+                    <b-dropdown size="lg" variant="transparent" toggle-class="text-decoration-none" no-caret class="float-right no-padding">
+                      <template #button-content>
+                        <i class="fas fa-ellipsis-v"></i>
+                      </template>
+                      <div v-if="myUserData.role == 'admin'">
+                        <b-dropdown-item
+                          v-if="viewingUserData.teacherAppPending 
+                          && !this.isApproved" 
+                          @click="approveTeacher(viewingUserData._id)">
+                            Approve application
+                        </b-dropdown-item>
+                        <b-dropdown-item v-if="viewingUserData.teacherData.licensePath 
+                          && viewingUserData.teacherData.teacherType == 'licensed'" :href="viewingUserData.teacherData.licensePath"
+                          target="_blank">
+                            View professional license
+                        </b-dropdown-item>
+                        <b-dropdown-divider v-if="!viewingUserData.teacherData.isApproved"></b-dropdown-divider>
+                      </div>
+                      <b-dropdown-item>Report</b-dropdown-item>
+                      <b-dropdown-item>Block</b-dropdown-item>
+                    </b-dropdown>
                     <p class="card-text">
-                      <small class="text-muted">Last online 1 hour ago</small>
+                      <small class="text-muted">Last online {{ formatDate(viewingUserData.lastOnline, 'fromNow') }}</small>
                     </p>
-                    <div
-                      v-if="myUserData.role == 'admin' && viewingUserData.teacherAppPending && !this.isApproved"
-                    >
-                      <b-button
-                        class="mt-3 float-right"
-                        variant="success"
-                        @click="approveTeacher(viewingUserData._id)"
-                        >Approve application</b-button
-                      >
-                    </div>
                   </span>
                   <div class="text-muted font-weight-light">
                     <div>
@@ -105,7 +116,9 @@ import imageSourceEdit from '../../assets/scripts/imageSourceEdit';
 import languageLevelBars from '../../assets/scripts/languageLevelBars';
 import languageCodeToText from '../../assets/scripts/languageCodeToText';
 import formatString from '../../assets/scripts/formatString';
+import formatDate from '../../assets/scripts/formatDate';
 import axios from 'axios';
+
 export default {
     name: 'TeacherProfile',
     data() {
@@ -119,6 +132,7 @@ export default {
         myUserData: Object,
     },
     methods: {
+        formatDate,
         languageCodeToText,
         imageSourceEdit,
         languageLevelBars,

@@ -239,7 +239,7 @@
                     :src="imageSourceEdit(apt.userData.profileImage)"
                   />
                   <p>
-                    {{formatDate(apt.from, 'MMM DD @ h:mma')
+                    {{ formatDate(apt.from, 'MMM DD @ h:mma')
 
                     }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
                   </p>
@@ -266,7 +266,7 @@
 
 <script>
 import axios from 'axios';
-import dayjs from 'dayjs'
+import dayjs from 'dayjs';
 import LayoutDefault from './layouts/LayoutDefault';
 import getAppointments from '../assets/scripts/getAppointments';
 import RegistrationForm from './steps/RegistrationForm';
@@ -276,6 +276,7 @@ import languageLevelBars from '../assets/scripts/languageLevelBars'
 import fetchUserData from '../assets/scripts/fetchUserData'
 import imageSourceEdit from '../assets/scripts/imageSourceEdit'
 import languageCodeToText from '../assets/scripts/languageCodeToText'
+import formatDate from '../assets/scripts/formatDate'
 import store from '../store/store'
 import { Cropper, Preview } from "vue-advanced-cropper";
 import 'vue-advanced-cropper/dist/style.css';
@@ -512,9 +513,7 @@ export default {
         this.$bvModal.show('edit-pic');
       },
       imageSourceEdit,
-      formatDate(dateStr, format){
-        return dayjs(dateStr).format(format);
-      },
+      formatDate,
       fetchUserData,
       languageLevelBars,
       showModal() {

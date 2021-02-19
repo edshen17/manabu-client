@@ -33,6 +33,7 @@ async function beforeEnterCheck (route, next) {
       next(route)
     } else {
       store.commit('setLoggedIn', false);
+      store.commit('setUserData', {});
       next()
     }
   }
