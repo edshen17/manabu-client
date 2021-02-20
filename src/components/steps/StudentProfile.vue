@@ -5,7 +5,7 @@
         <b-col md="5" style="padding: 0 0 0 0 !important;">
           <div class="card mb-3">
             <div class="embed-responsive embed-responsive-16by9">
-              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/fV3Fu5csdcA" allowfullscreen></iframe>
+              <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/NpEaa2P7qZI" allowfullscreen></iframe>
             </div>
               <div class="card-body">
                 <h5 class="card-title">Card title</h5>
@@ -49,7 +49,7 @@
         <b-col md="3">
           <div class="card profile-card mb-3">
             <div class="card-body">
-              sadadas
+              Pricing goes here
             </div>
           </div>
         </b-col>

@@ -7,7 +7,7 @@
           <div class="embed-responsive embed-responsive-16by9">
             <iframe
               class="embed-responsive-item"
-              src="https://www.youtube.com/embed/fV3Fu5csdcA"
+              :src="this.viewingUserData.teacherData.introductionVideo"
               allowfullscreen
             ></iframe>
           </div>
@@ -31,7 +31,9 @@
                       title="Teacher application pending"
                     >
                     </b-icon-patch-minus-fll>
-                    <b-dropdown size="lg" variant="transparent" toggle-class="text-decoration-none" no-caret class="float-right no-padding">
+                    <b-dropdown size="lg" variant="transparent" 
+                      toggle-class="text-decoration-none" no-caret class="float-right no-padding"
+                      v-if="viewingUserData._id != myUserData._id && myUserData._id">
                       <template #button-content>
                         <i class="fas fa-ellipsis-v"></i>
                       </template>
@@ -47,7 +49,6 @@
                           target="_blank">
                             View professional license
                         </b-dropdown-item>
-                        <b-dropdown-divider v-if="!viewingUserData.teacherData.isApproved"></b-dropdown-divider>
                       </div>
                       <b-dropdown-item>Report</b-dropdown-item>
                       <b-dropdown-item>Block</b-dropdown-item>
@@ -104,7 +105,7 @@
       </b-col>
       <b-col md="3">
         <div class="card profile-card mb-3">
-          <div class="card-body">sadadas</div>
+          <div class="card-body">Pricing goes here</div>
         </div>
       </b-col>
       <b-col></b-col>

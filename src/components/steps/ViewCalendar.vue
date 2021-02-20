@@ -25,11 +25,14 @@
       </template>
       <div class="profile-popup" v-if="selectedHostedBy">
         <img
-          class="rounded-circle center-image"
+          class="rounded-circle center-image no-cursor"
           alt="100x100"
           :src="imageSourceEdit(selectedHostedBy.profileImage)"
         />
-        <h5 class="text-center mb-2 mt-2">{{selectedHostedBy.name}}</h5>
+        <b-link :to="`/user/${selectedHostedBy._id}`" class="profile-link">
+          <h5 class="text-center mb-2 mt-2">{{selectedHostedBy.name}}</h5>
+        </b-link>
+        
         <div class="text-center">
           <div
             v-for="lang in selectedHostedBy.fluentLanguages.concat(selectedHostedBy.nonFluentLanguages)"
