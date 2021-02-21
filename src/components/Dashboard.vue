@@ -161,81 +161,132 @@
       </div>
     </b-modal>
     <b-modal id="my-packages" size="xl">
-      
-<div>
-  
-  <b-input-group class="mb-4">
-  <b-input-group-prepend>
-       <b-dropdown id="dropdown-1">
-        <b-dropdown-item @click="hourlyRate.selectedCurrency = 'USD'">$ USD</b-dropdown-item>
-        <b-dropdown-item @click="hourlyRate.selectedCurrency = 'SGD'">$ SGD</b-dropdown-item>
-        <b-dropdown-item @click="hourlyRate.selectedCurrency = 'JPY'">¥ JPY</b-dropdown-item>
-    </b-dropdown>
-    <div class="input-group-prepend">
-    <span class="input-group-text">{{ hourlyRate.selectedCurrency }}</span>
-  </div>
-    </b-input-group-prepend>  
-
-    <b-form-input type="number" min="0.00" v-model="hourlyRate.myRate" placeholder="Hourly rate" ref="hourlyRate"></b-form-input>
-  </b-input-group>
-</div>
+      <div>
+        <b-input-group class="mb-4">
+          <b-input-group-prepend>
+            <b-dropdown id="dropdown-1">
+              <b-dropdown-item @click="hourlyRate.selectedCurrency = 'USD'"
+                >$ USD</b-dropdown-item
+              >
+              <b-dropdown-item @click="hourlyRate.selectedCurrency = 'SGD'"
+                >$ SGD</b-dropdown-item
+              >
+              <b-dropdown-item @click="hourlyRate.selectedCurrency = 'JPY'"
+                >¥ JPY</b-dropdown-item
+              >
+            </b-dropdown>
+            <div class="input-group-prepend">
+              <span
+                class="input-group-text"
+                >{{ hourlyRate.selectedCurrency }}</span
+              >
+            </div>
+          </b-input-group-prepend>
+          <b-form-input
+            type="number"
+            min="0.00"
+            v-model="$v.hourlyRate.myRate.$model"
+            :state="validateState('myRate')"
+            placeholder="My hourly rate"
+            ref="hourlyRate"
+          ></b-form-input>
+        </b-input-group>
+      </div>
       <template #modal-title> My packages </template>
       <div>
         <b-card-group deck>
           <b-card header-tag="header" footer-tag="footer">
             <template #header>
-              <h6 class="mb-0">Vigorous plan - $/month</h6>
+              <h6 class="mb-0">
+                Vigorous plan - {{ hourlyRate.currencyIcon
+                }}{{ (Math.round((hourlyRate.myRate * 21) * 2) / 2).toFixed(1)
+                }}/month
+              </h6>
             </template>
             <div>
-              Students will have 21 lessons with you every month. This is about 5 lessons every week.
+              Students will have 21 lessons with you every month. This is about
+              5 lessons every week.
             </div>
-            
+
             <template #footer>
               <div class="form-check float-right">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
-              <label class="form-check-label">
-                Offer
-              </label>
-            </div>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="vigorous"
+                  id="flexCheckDefault"
+                  checked
+                  v-model="hourlyRate.offering"
+                />
+                <label class="form-check-label"> Offer </label>
+              </div>
             </template>
           </b-card>
           <b-card header-tag="header" footer-tag="footer">
             <template #header>
-              <h6 class="mb-0">Moderate plan - $/month</h6>
+              <h6 class="mb-0">
+                Moderate plan - {{ hourlyRate.currencyIcon
+                }}{{ (Math.round((hourlyRate.myRate * 12) * 2) / 2).toFixed(1)
+                }}/month
+              </h6>
             </template>
             <div>
-              Students will have 12 lessons with you every month. This is about 3 lessons every week.
+              Students will have 12 lessons with you every month. This is about
+              3 lessons every week.
             </div>
-            
+
             <template #footer>
               <div class="form-check float-right">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
-              <label class="form-check-label">
-                Offer
-              </label>
-            </div>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="moderate"
+                  id="flexCheckDefault"
+                  v-model="hourlyRate.offering"
+                  checked
+                />
+                <label class="form-check-label"> Offer </label>
+              </div>
             </template>
           </b-card>
 
           <b-card header-tag="header" footer-tag="footer">
             <template #header>
-              <h6 class="mb-0">Light plan - $/month</h6>
+              <h6 class="mb-0">
+                Light plan - {{ hourlyRate.currencyIcon
+                }}{{ (Math.round((hourlyRate.myRate * 5) * 2) / 2).toFixed(1)
+                }}/month
+              </h6>
             </template>
             <div>
-              Students will have 5 lessons with you every month. This is about 1 lessons every week.
+              Students will have 5 lessons with you every month. This is about 1
+              lessons every week.
             </div>
-            
+
             <template #footer>
               <div class="form-check float-right">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
-              <label class="form-check-label">
-                Offer
-              </label>
-            </div>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value="light"
+                  id="flexCheckDefault"
+                  v-model="hourlyRate.offering"
+                  checked
+                />
+                <label class="form-check-label"> Offer </label>
+              </div>
             </template>
           </b-card>
         </b-card-group>
       </div>
+      <template #modal-footer>
+        <b-button
+          @click="updatePackages"
+          variant="primary"
+        >
+          Save
+        </b-button>
+      </template>
     </b-modal>
     <div v-if="!loading" class="mt-5">
       <b-row>
@@ -283,7 +334,7 @@
                 <span v-show="isEditingBio">
                   <b-form-input
                     v-model="userData.teacherData.introductionVideo"
-                    placeholder="Youtube link"
+                    placeholder="Youtube link of self-introduction video"
                     class="mt-4"
                   ></b-form-input>
                 </span>
@@ -386,6 +437,7 @@
                   {{ formatDate(apt.from, 'MMM DD @ h:mma')
 
 
+
                   }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
                 </p>
                 <p>Appointment agenda:</p>
@@ -414,6 +466,9 @@
 <script>
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { Cropper, Preview } from "vue-advanced-cropper";
+import { validationMixin } from "vuelidate";
+import { required, between } from "vuelidate/lib/validators";
 import LayoutDefault from './layouts/LayoutDefault';
 import getAppointments from '../assets/scripts/getAppointments';
 import RegistrationForm from './steps/RegistrationForm';
@@ -423,13 +478,14 @@ import languageLevelBars from '../assets/scripts/languageLevelBars';
 import fetchUserData from '../assets/scripts/fetchUserData';
 import imageSourceEdit from '../assets/scripts/imageSourceEdit';
 import languageCodeToText from '../assets/scripts/languageCodeToText';
+import formatString from '../assets/scripts/formatString';
 import validateYoutube from '../assets/scripts/validateYoutube';
 import formatDate from '../assets/scripts/formatDate';
 import store from '../store/store';
-import { Cropper, Preview } from "vue-advanced-cropper";
 import 'vue-advanced-cropper/dist/style.css';
 import firebase from 'firebase/app';
 import 'firebase/storage';
+
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
@@ -442,6 +498,7 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig)
 
 export default {
+    mixins: [validationMixin],
       components: {
         Cropper,
         Preview,
@@ -463,7 +520,14 @@ export default {
       }
       }
     },
-
+    validations: {
+        hourlyRate: {
+          myRate: {
+            required,
+            between: between(0, 10000)
+          },
+        }
+      },
    data() {
         return {
             profileImage: {
@@ -478,6 +542,8 @@ export default {
             hourlyRate: {
               selectedCurrency: 'SGD',
               myRate: 0,
+              currencyIcon: '$',
+              offering: [],
             },
             adminToTeacherPkgId: process.env.VUE_APP_ADMIN_TO_TEACHER_PKG_ID,
             adminId: process.env.VUE_APP_ADMIN_ID,
@@ -521,12 +587,23 @@ export default {
                 ],
         }
     },
+    watch: {
+      hourlyRate: {
+      handler(updatedObj){ // update currency icon when user changes currency
+          this.hourlyRate.currencyIcon = this.formatString(updatedObj.selectedCurrency,
+                    ['SGD', 'USD', 'JPY'],
+                    ['$', '$', '¥'])
+        },
+        deep: true
+      }
+    },
     async mounted() {
         const from = dayjs().toISOString()
         const to = dayjs().add(1, 'week').toISOString();
         this.userData = this.storeUserData;
         this.hourlyRate.selectedCurrency = this.userData.teacherData.hourlyRate.currency;
         this.hourlyRate.myRate = this.userData.teacherData.hourlyRate.amount;
+
         this.userId = this.userData._id;
         this.profileImage.original = this.userData.profileImage;
         this.editedBio = this.userData.profileBio.trim();
@@ -556,6 +633,27 @@ export default {
     },
 
     methods: {
+      updatePackages() { // from https://codesandbox.io/s/lzq6p?file=/App.vue:2183-2265
+        this.$v.hourlyRate.$touch();
+        if (this.$v.hourlyRate.$anyError || this.hourlyRate.offering.length == 0) {
+          alert('Please offer at least one plan!')
+          return;
+        } else {
+          axios
+            .post(
+              `${this.host}/transaction/package`,
+              { teacherPackages: this.hourlyRate.offering, teacherId: this.userId, price: this.hourlyRate.myRate, currency: this.hourlyRate.selectedCurrency },
+              { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              }}
+            )
+        }
+      },
+      validateState(name) {
+        const { $dirty, $error } = this.$v.hourlyRate[name];
+        return $dirty ? !$error : null;
+      },
+      formatString,
       validateYoutube,
       languageCodeToText,
       ensureMaxChars({ text }) {
@@ -745,7 +843,7 @@ export default {
           remainingReschedules: 5,
           reservationLength: 60,
         }
-        axios.post(`${this.host}/transaction/createPackageTransaction`, adminToTeacher, { headers: {
+        axios.post(`${this.host}/transaction/packageTransaction`, adminToTeacher, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
               if (res.status == 200) {

@@ -4,7 +4,7 @@ dayjs.extend(relativeTime)
 
 const formatDate = (dateStr, format) => {
     if (format == 'fromNow') {
-        return dayjs().fromNow();
+        return dayjs(dateStr).fromNow();
     } else {
         return dayjs(dateStr).format(format);
     }

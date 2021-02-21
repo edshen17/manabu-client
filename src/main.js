@@ -4,7 +4,6 @@ import router from './router/routes';
 import { BootstrapVue, BIconPatchCheckFll, BIconPatchMinusFll } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
-import Vuelidate from 'vuelidate'
 import VueCookies from 'vue-cookies'
 import PortalVue from "portal-vue";
 import VueScrollTo from 'vue-scrollto';
@@ -28,8 +27,7 @@ Vue.use(PortalVue);
 Vue.use(VueCookies);
 Vue.component('BIconPatchCheckFll', BIconPatchCheckFll)
 Vue.component('BIconPatchMinusFll', BIconPatchMinusFll)
-Vue.$cookies.config('1d')
-Vue.use(Vuelidate);
+Vue.$cookies.config('1d');
 Vue.use(VueScrollTo)
 Vue.use(VueQuillEditor, toolbarOptions)
 Vue.config.productionTip = false
