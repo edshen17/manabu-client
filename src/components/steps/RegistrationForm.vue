@@ -90,7 +90,7 @@
 
         data() {
             return {
-                host: 'http://localhost:5000/api',
+                host: 'api',
                 optionsRegion: [],
                 optionsTz: ['Asia/Singapore (UTC+08:00)'],
                 defaultData: {

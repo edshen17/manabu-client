@@ -270,7 +270,7 @@ export default {
     data() {
         return {
             user: null,
-            host: 'http://localhost:5000/api',
+            host: 'api',
             reservedBy: '',
             hostedBy: '',
             reservationLength: null,

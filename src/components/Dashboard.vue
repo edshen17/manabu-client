@@ -569,7 +569,7 @@ export default {
                 teacherType: 'unlicensed',
                 license: null,
             },
-            host: 'http://localhost:5000/api',
+            host: 'api',
             loading: true,
             maxInputLength: 2000,
             optionsPrimaryLanguage: [
@@ -729,7 +729,7 @@ export default {
         if (!bio) {
           let defaultBio = '';
           if ((this.userData.role == 'teacher' || this.userData.teacherAppPending)) {
-            defaultBio = `<p><strong>About Me</strong></p><ul><li>Where are you from? Your hobbies?</li></ul><p><strong>My qualifications</strong></p><ul><li>How long have you been teaching for? What are your qualifications/do you have a teaching license?</li></ul><p><strong>How I teach</strong></p><ul><li>How do you teach students?</li></ul>`
+            defaultBio = `<p><strong>About me</strong></p><ul><li>Where are you from? Your hobbies?</li></ul><p><strong>My qualifications</strong></p><ul><li>How long have you been teaching for? What are your qualifications/do you have a teaching license?</li></ul><p><strong>How I teach</strong></p><ul><li>How do you teach students?</li></ul>`
             this.editedBio = defaultBio;
           } else {
             defaultBio = 'Click here to write about yourself or your goals.';

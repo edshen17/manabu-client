@@ -101,7 +101,7 @@ export default {
             errors: [],
             email: '',
             password: '',
-            host: 'http://localhost:5000/api',
+            host: 'api',
             FB: {},
             model: {},
             scope: {}
@@ -130,7 +130,7 @@ export default {
             this.checkForm()
 
             if (!this.errors.length) { // everything is good
-                axios.post('http://localhost:5000/api/login', {
+                axios.post('api/login', {
                     email: this.email,
                     password: this.password,
                     isTeacherApp: this.isTeacherApp,
@@ -144,7 +144,7 @@ export default {
             }
         },
         OnGoogleAuthSuccess (idToken) {
-            axios.post('http://localhost:5000/api/glogin', {
+            axios.post('api/glogin', {
                 idToken,
                 isTeacherApp: this.isTeacherApp,
             }).then((res) =>{

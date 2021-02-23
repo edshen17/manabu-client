@@ -1,5 +1,15 @@
 <template>
   <div class="settings mt-4">
+    <b-alert
+      :show="dismissCountDown"
+      dismissible
+      variant="success"
+      @dismissed="dismissCountDown=0"
+      @dismiss-count-down="countDownChanged"
+      class="mx-5"
+    >
+      Profile updated successfully!
+    </b-alert>
     <b-row>
       <b-col md="2"></b-col>
       <b-col md="3">
@@ -22,39 +32,13 @@
             <div class="form-group">
               <div v-show="viewingCard == 'General'">
                 <div class="form-group">
-                  <label>Target Language</label>
+                  <label><b>Currency</b></label>
                   <b-form-select
                     v-model="selected.currency"
                     :options="options.currency"
                     size="md"
                     class="mt-1"
-                  ></b-form-select>
-                </div>
-                <div class="form-group">
-                  <label>Fluent Language</label>
-                  <b-form-select
-                    v-model="selected.currency"
-                    :options="options.currency"
-                    size="md"
-                    class="mt-1"
-                  ></b-form-select>
-                </div>
-                <div class="form-group">
-                  <label>Currency</label>
-                  <b-form-select
-                    v-model="selected.currency"
-                    :options="options.currency"
-                    size="md"
-                    class="mt-1"
-                  ></b-form-select>
-                </div>
-                <div class="form-group">
-                  <label>Region/Timezone</label>
-                  <b-form-select
-                    v-model="selected.currency"
-                    :options="options.currency"
-                    size="md"
-                    class="mt-1"
+                    @change="updateSettings"
                   ></b-form-select>
                 </div>
               </div>
@@ -68,7 +52,9 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
 import LayoutDefault from './layouts/LayoutDefault';
+import formatString from '../assets/scripts/formatString';
 import store from '../store/store';
 export default {
     name: 'Settings',
@@ -87,6 +73,9 @@ export default {
     },
     data() {
         return {
+          dismissSecs: 2,
+        dismissCountDown: 0,
+            host: 'api',
             userData: null,
             viewingCard: 'General',
             options: {
@@ -112,22 +101,40 @@ export default {
                 { value: 'd', text: 'This one is disabled', disabled: true }
                 ],
                 currency: [
-                { value: null, text: 'Please select an option' },
-                { value: 'a', text: 'This is First option' },
-                { value: 'b', text: 'Selected Option' },
-                { value: { C: '3PO' }, text: 'This is an option with object value' },
-                { value: 'd', text: 'This one is disabled', disabled: true }
+                { value: 'SGD', text: '$ SGD' },
+                { value: 'USD', text: '$ USD' },
+                { value: 'JPY', text: '¥ JPY' },
                 ]
             },
             selected: {
                 timezone: null,
-                currency: null,
+                currency: 'SGD',
             }
         }
     },
-    methods: {},
+    methods: {
+      updateSettings() {
+        const updatedSettings = {
+          currency: this.selected.currency,
+        }
+        axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, { settings: updatedSettings }, { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              }}).then((res) => {
+                if (res.status == 200) {
+                  this.showAlert()
+                }
+              }).catch((err) => { console.log(err) })
+      },
+      countDownChanged(dismissCountDown) {
+        this.dismissCountDown = dismissCountDown
+      },
+      showAlert() {
+        this.dismissCountDown = this.dismissSecs
+      }
+    },
     mounted() {
         this.userData = this.storeUserData;
+        this.selected.currency = this.userData.settings.currency || 'SGD'
     },
 }
 </script>

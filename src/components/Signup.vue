@@ -165,7 +165,7 @@ export default {
             this.checkForm()
 
             if (!this.errors.length) { // everything is good
-                axios.post('http://localhost:5000/api/register', {
+                axios.post('api/register', {
                     name: this.name,
                     email: this.email,
                     password: this.password,
@@ -182,7 +182,7 @@ export default {
             }
         },
            OnGoogleAuthSuccess (idToken) {
-            axios.post('http://localhost:5000/api/glogin', {
+            axios.post('api/glogin', {
                 idToken,
                 isTeacherApp: this.isTeacherApp,
             }).then((res) =>{

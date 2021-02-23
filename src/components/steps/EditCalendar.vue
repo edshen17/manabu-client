@@ -210,7 +210,7 @@ export default {
     },
     data() {
         return {
-            host: 'http://localhost:5000/api',
+            host: 'api',
             calendar_settings: {
                     style: 'material_design',
                     view_type: 'week',
