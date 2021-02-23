@@ -62,7 +62,7 @@
                       <span style="font-size: 1.1rem">
                         {{ formatString(this.viewingUserData.teacherData.teacherType, 
                     ['licensed', 'unlicensed'], 
-                    ['Licensed Teacher --', 'Unlicensed Teacher --']) }}
+                    ['Professional Teacher --', 'Community Teacher --']) }}
                         <div
                           v-for="lang in viewingUserData.fluentLanguages"
                           :key="lang"
@@ -105,7 +105,14 @@
       </b-col>
       <b-col md="3">
         <div class="card profile-card mb-3">
-          <div class="card-body">Pricing goes here</div>
+          <div class="card-body">{{viewingUserData.teacherData.hourlyRate}}</div>
+        </div>
+        <div class="card profile-card mb-3">
+          <b-button variant="dark" class="mx-3 my-3" @click="showCalendar = !showCalendar">
+            <span v-show="!showCalendar">View</span> 
+            <span v-show="showCalendar">Hide</span> 
+            Calendar</b-button>
+          <view-calendar :hostedByProp="viewingUserData._id" v-show="showCalendar" class="mt-2"></view-calendar>
         </div>
       </b-col>
       <b-col></b-col>
@@ -114,6 +121,7 @@
 </template>
 <script>
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit';
+import ViewCalendar from './ViewCalendar';
 import languageLevelBars from '../../assets/scripts/languageLevelBars';
 import languageCodeToText from '../../assets/scripts/languageCodeToText';
 import formatString from '../../assets/scripts/formatString';
@@ -126,7 +134,12 @@ export default {
         return {
             isApproved: false,
             host: 'http://localhost:5000/api',
+            showCalendar: false,
+            minimumPkgPrice: 0,
         }
+    },
+    components: {
+      ViewCalendar,
     },
     props: {
         viewingUserData: Object,

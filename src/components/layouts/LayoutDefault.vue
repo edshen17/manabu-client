@@ -21,7 +21,7 @@
                 >Find a Teacher</b-link
               >
             </b-nav-item>
-            <b-nav-item v-show="this.$route.name != 'Dashboard'">
+            <b-nav-item v-show="this.$route.name != 'Dashboard' && this.$route.name != 'Settings'">
               <b-link
                 to="/apply"
                 class="nav-link menu-item"

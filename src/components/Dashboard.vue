@@ -3,7 +3,6 @@
     <b-modal
       id="edit-pic"
       size="lg"
-      :no-close-on-backdrop="true"
       v-if="userData"
       title="Edit profile image"
     >
@@ -30,7 +29,7 @@
         @change="change"
       />
       <template #modal-footer>
-        <b-button @click="resetCanvas"> Exit </b-button>
+        <b-button @click="resetCanvas"> Cancel </b-button>
         <label class="btn btn-primary" v-show="!isEditingImage">
           <i class="fa fa-image"></i> Upload image
           <input
@@ -281,6 +280,12 @@
       </div>
       <template #modal-footer>
         <b-button
+          @click="$bvModal.hide('my-packages')"
+          variant="secondary"
+        >
+          Cancel
+        </b-button>
+        <b-button
           @click="updatePackages"
           variant="primary"
         >
@@ -292,7 +297,7 @@
       <b-row>
         <b-col md="2"></b-col>
         <b-col md="3">
-          <div class="card profile-card mb-3" v-if="userData">
+          <div class="card mb-3" v-if="userData">
             <div class="card-body">
               <div class="picture-container">
                 <img
@@ -371,7 +376,7 @@
               </b-button>
             </div>
           </div>
-          <div class="card profile-card mb-3" v-if="userData">
+          <div class="card mb-3" v-if="userData">
             <div class="card-body">
               <ul class="list-group list-group-flush profile-list">
                 <li class="list-group-item">
@@ -381,9 +386,12 @@
                   class="list-group-item"
                   v-if="userData.role == 'teacher' || userData.teacherAppPending"
                 >
-                  <b-link @click="$bvModal.show('my-packages');"
+                  <b-link @click="$bvModal.show('my-packages');" 
                     >My packages</b-link
                   >
+                </li>
+                <li class="list-group-item">
+                  <b-link to="/settings">Settings</b-link>
                 </li>
                 <li class="list-group-item">
                   <b-link :to="`/user/${this.userId}`"
@@ -601,9 +609,13 @@ export default {
         const from = dayjs().toISOString()
         const to = dayjs().add(1, 'week').toISOString();
         this.userData = this.storeUserData;
-        this.hourlyRate.selectedCurrency = this.userData.teacherData.hourlyRate.currency;
-        this.hourlyRate.myRate = this.userData.teacherData.hourlyRate.amount;
-
+        if (this.userData.role == 'teacher' || this.userData.teacherAppPending) {
+          this.hourlyRate.selectedCurrency = this.userData.teacherData.hourlyRate.currency;
+          this.hourlyRate.myRate = this.userData.teacherData.hourlyRate.amount;
+          this.userData.teacherData.packages.forEach((pkg) => {
+            this.hourlyRate.offering.push(pkg.packageType)
+          })
+        }
         this.userId = this.userData._id;
         this.profileImage.original = this.userData.profileImage;
         this.editedBio = this.userData.profileBio.trim();
@@ -646,7 +658,11 @@ export default {
               { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
               }}
-            )
+            ).then((res) => {
+              if (res.status == 200) {
+                this.$bvModal.hide('my-packages')
+              }
+            })
         }
       },
       validateState(name) {

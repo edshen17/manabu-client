@@ -4,6 +4,7 @@ import Router from 'vue-router';
 import Home from '@/components/Home';
 import Signup from '@/components/Signup';
 import Login from '@/components/Login';
+import Settings from '@/components/Settings';
 import Dashboard from '@/components/Dashboard';
 import TeacherSignup from '@/components/TeacherSignup';
 import NotFound from '@/components/NotFound';
@@ -49,7 +50,7 @@ const router = new Router({
       meta: {
         title: 'Manabu',
       },
-      async beforeEnter(to, from, next) {
+      beforeEnter(to, from, next) {
         beforeEnterCheck('/dashboard', next)
       },
     },
@@ -60,7 +61,7 @@ const router = new Router({
       meta: {
         title: 'Become a Teacher',
       },
-      async beforeEnter(to, from, next) {
+      beforeEnter(to, from, next) {
         beforeEnterCheck(undefined, next)
       },
     },
@@ -71,7 +72,7 @@ const router = new Router({
       meta: {
         title: 'Sign Up',
       },
-      async beforeEnter(to, from, next) {
+      beforeEnter(to, from, next) {
         beforeEnterCheck('/dashboard', next)
       },
     },
@@ -82,7 +83,7 @@ const router = new Router({
       meta: {
         title: 'Log In',
       },
-      async beforeEnter(to, from, next) {
+      beforeEnter(to, from, next) {
         beforeEnterCheck('/dashboard', next)
       },
     },
@@ -93,7 +94,7 @@ const router = new Router({
       meta: {
         title: 'Dashboard',
       },
-      async beforeEnter(to, from, next) {
+      beforeEnter(to, from, next) {
         if (to != '/' && store.getters.isLoggedIn) {
           beforeEnterCheck(undefined, next) // undefined to prevent infinite loop
         } else {
@@ -104,7 +105,7 @@ const router = new Router({
     {
       path: '/logout',
       name: 'Logout',
-      async beforeEnter(to, from, next) {
+      beforeEnter(to, from, next) {
         Vue.$cookies.set('hp', '').set('sig', '');
         store.commit('setUserData', null);
         store.commit('setLoggedIn', false);
@@ -115,7 +116,7 @@ const router = new Router({
       path: '/user/:uId',
       name: 'UserProfile',
       component: UserProfile,
-      async beforeEnter(to, from, next) {
+      beforeEnter(to, from, next) {
         beforeEnterCheck(undefined, next)
       },
     },
@@ -123,8 +124,20 @@ const router = new Router({
       path: '/calendar/:hostedBy/:packageTransactionId?',
       name: 'ViewCalendar',
       component: ViewCalendar,
-      async beforeEnter(to, from, next) {
+      beforeEnter(to, from, next) {
         beforeEnterCheck(undefined, next)
+      },
+    },
+    {
+      path: '/settings/:page?',
+      name: 'Settings',
+      component: Settings,
+      beforeEnter(to, from, next) {
+        if (to != '/' && store.getters.isLoggedIn) {
+          beforeEnterCheck(undefined, next) // undefined to prevent infinite loop
+        } else {
+          next('/')
+        }
       },
     },
     {

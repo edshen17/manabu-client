@@ -220,6 +220,9 @@ export default {
     created() {
         this.$emit('update:layout', LayoutDefault);
     },
+    props: {
+      hostedByProp: String,
+    },
     computed: {
       storeUserData: {
       get() {
@@ -237,7 +240,7 @@ export default {
   },
     async mounted() {
       this.user = this.storeUserData;
-      this.hostedBy = this.$route.params.hostedBy;
+      this.hostedBy = this.$route.params.hostedBy || this.hostedByProp;
       if (this.$route.params.hostedBy && this.$route.params.packageTransactionId) {
         axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`).then((res) => {
           if (res.status == 200 && res.data.reservedBy == this.user._id) {
@@ -255,7 +258,7 @@ export default {
         }).catch((err) => {
           console.log(err);
         })
-      } else if (this.$route.params.hostedBy && !this.$route.params.packageTransactionId) {
+      } else if ((this.$route.params.hostedBy || this.hostedByProp) && !this.$route.params.packageTransactionId) {
           this.reservedBy = '';
           this.reservationSlotLimit = 0;
           this.rescheduleSlotLimit = 0;
