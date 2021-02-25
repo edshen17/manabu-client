@@ -270,7 +270,7 @@ export default {
     data() {
         return {
             user: null,
-            host: 'api',
+            host: '/api',
             reservedBy: '',
             hostedBy: '',
             reservationLength: null,

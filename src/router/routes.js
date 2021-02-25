@@ -13,7 +13,7 @@ import ViewCalendar from '@/components/steps/ViewCalendar';
 import store  from '../store/store';
 
 Vue.use(Router);
-const host = 'api';
+const host = '/api';
 // use token to get user info
 const getUserData = async () => {
   let res = await axios.get(`${host}/me`, {withCredentials: true, headers: {

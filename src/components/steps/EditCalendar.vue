@@ -1,6 +1,6 @@
 <template>
   <div class="EditCalendar">
-    <b-modal id="update-modal" :no-close-on-backdrop="true">
+    <b-modal id="update-modal">
       <template #modal-title>
         {{ modalTitleText }}
       </template>
@@ -70,8 +70,7 @@
         Are you sure you want to delete this timeslot?
       </p>
       <p class="my-4" v-show="deleteErr">
-        There was an error processing your request. Please make sure you are not
-        deleting a timeslot containing reserved lessons.
+        There was an error processing your request.
       </p>
       <template #modal-footer>
         <b-button
@@ -139,6 +138,8 @@
           >
             {{event_information.data.reservedByUserData.name}}
           </span>
+          <span v-else class="appointment-title ml-2">Available ({{ parseISOString(event_information.start_time) }} -
+            {{ parseISOString(event_information.end_time)}})</span>
           <button
             @click="deleteAppointment(event_information)"
             class="remove"
@@ -210,7 +211,7 @@ export default {
     },
     data() {
         return {
-            host: 'api',
+            host: '/api',
             calendar_settings: {
                     style: 'material_design',
                     view_type: 'week',
@@ -423,7 +424,8 @@ export default {
                       hostedBy: availableTimes[i].hostedBy,
                     }
                   }
-                  this.recursiveSlotEdit(formatedTime);
+                  // this.recursiveSlotEdit(formatedTime);
+                  this.events.push(formatedTime);
                 }
                 this.isCalendarLoaded = true;
               }

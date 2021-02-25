@@ -133,7 +133,7 @@ export default {
     data() {
         return {
             isApproved: false,
-            host: 'api',
+            host: '/api',
             showCalendar: false,
             minimumPkgPrice: 0,
         }
