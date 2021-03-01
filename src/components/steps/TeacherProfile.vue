@@ -102,6 +102,22 @@
             </b-row>
           </div>
         </div>
+        <div class="card profile-card mb-3">
+          <div class="card-body">
+            <h3 class="mb-3">Package offerings</h3>
+            <div v-for="pkg in packages" :key="pkg._id">
+              <div class="card profile-card mb-3" v-if="pkg.isOffering">
+                <div class="card-body">
+                  <h5 class="text-muted font-weight-light">{{ toTitleCase(pkg.packageType) }} plan</h5>
+                  <p>{{ formatString(pkg.packageType, ['light', 'moderate', 'vigorous'], 
+                    ['This plan is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.', 'This plan is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.', 'This plan is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 21 personalized lessons every month or about 5 lessons every week.'])}}
+                  </p>
+                  <span class="badge badge-pill badge-primary" style="font-size: .9rem">{{convertMoney(pkg.priceDetails.price, pkg.priceDetails.currency, myUserData.settings.currency).toLocaleString()}} {{myUserData.settings.currency}}</span>  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </b-col>
       <b-col md="3">
         <div class="card profile-card mb-3">
@@ -126,7 +142,9 @@ import languageLevelBars from '../../assets/scripts/languageLevelBars';
 import languageCodeToText from '../../assets/scripts/languageCodeToText';
 import formatString from '../../assets/scripts/formatString';
 import formatDate from '../../assets/scripts/formatDate';
+import toTitleCase from '../../assets/scripts/toTitleCase';
 import axios from 'axios';
+import fx from 'money';
 
 export default {
     name: 'TeacherProfile',
@@ -135,7 +153,7 @@ export default {
             isApproved: false,
             host: '/api',
             showCalendar: false,
-            minimumPkgPrice: 0,
+            teacherPackages: null,
         }
     },
     components: {
@@ -144,42 +162,53 @@ export default {
     props: {
         viewingUserData: Object,
         myUserData: Object,
+        exchangeRates: Object,
+        packages: Array,
     },
     methods: {
+        toTitleCase,
         formatDate,
         languageCodeToText,
         imageSourceEdit,
         languageLevelBars,
         formatString,
-         approveTeacher(uId) {
-          axios.put(`${this.host}/user/${uId}/updateProfile`, { role: 'teacher', },
+        approveTeacher(uId) {
+        axios.put(`${this.host}/user/${uId}/updateProfile`, { role: 'teacher', },
+          { headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        }
+        ).then((res) => {
+          if (res.status == 200) {
+            axios.put(`${this.host}/teacher/${uId}/updateProfile`, { isApproved: true, dateApproved: new Date(), },
             { headers: {
               'X-Requested-With': 'XMLHttpRequest'
             }
-          }
+            }
           ).then((res) => {
-            if (res.status == 200) {
-              axios.put(`${this.host}/teacher/${uId}/updateProfile`, { isApproved: true, dateApproved: new Date(), },
-              { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-              }
-              }
-            ).then((res) => {
-            if (res.status == 200) {
-              this.isApproved = true;
-            }
-          }).catch((err) => {
-              console.log(err);
-              })
-            }
-          }).catch((err) => {
+          if (res.status == 200) {
+            this.isApproved = true;
+          }
+        }).catch((err) => {
             console.log(err);
-          })
-
-
+            })
+          }
+        }).catch((err) => {
+          console.log(err);
+        })
+      },
+      convertMoney(amnt, from, to) {
+        if (!from || !to) {
+          from = 'SGD';
+          to = 'SGD';
         }
+        fx.rates = this.exchangeRates;
+        return Math.round(fx.convert(amnt, { from, to }));
+      },
     },
-    mounted() {
+    mounted() {      
+      // console.log(this.exchangeRates)
+      // console.log(this.storeUserData)
     }
 }
 </script>

@@ -29,6 +29,9 @@
     border: none !important;
   }
   
+  .ViewCalendar .kalendar-wrapper.gstyle .created-event {
+    width: 100% !important;
+  }
   
   .time {
     position: relative !important;
@@ -53,17 +56,15 @@
     height: 18px;
     fill: #fff;
   }
-  
+  .event-card.inspecting {
+    z-index: 0 !important;
+  }
   .app-button{
       width: 150px;
       margin:0 20px;
       display:inline-block;
       line-height: 30px;
   }
-
-  /* .kalendar-wrapper.gstyle .created-event {
-    width: 100% !important;
-  } */
 
   .booked-by-other {
     background-color: #6c757d !important;

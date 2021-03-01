@@ -133,8 +133,8 @@ const router = new Router({
       name: 'Settings',
       component: Settings,
       beforeEnter(to, from, next) {
-        if (to != '/' && store.getters.isLoggedIn) {
-          beforeEnterCheck(undefined, next) // undefined to prevent infinite loop
+        if (store.getters.isLoggedIn) {
+          next()
         } else {
           next('/')
         }

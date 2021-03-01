@@ -75,7 +75,7 @@ export default {
       set(isLoggedIn) {
         return isLoggedIn;
       }
-    }
+    },
 },
   watch: {
     isLoggedIn(value) { // watch in case of mutations

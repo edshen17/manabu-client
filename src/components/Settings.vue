@@ -54,7 +54,6 @@
 <script>
 import axios from 'axios';
 import LayoutDefault from './layouts/LayoutDefault';
-import formatString from '../assets/scripts/formatString';
 import store from '../store/store';
 export default {
     name: 'Settings',
@@ -73,7 +72,7 @@ export default {
     },
     data() {
         return {
-          dismissSecs: 2,
+        dismissSecs: 2,
         dismissCountDown: 0,
             host: 'api',
             userData: null,
@@ -121,7 +120,8 @@ export default {
                 'X-Requested-With': 'XMLHttpRequest'
               }}).then((res) => {
                 if (res.status == 200) {
-                  this.showAlert()
+                  this.showAlert();
+                  store.commit('setUserData', res.data);
                 }
               }).catch((err) => { console.log(err) })
       },

@@ -1,7 +1,7 @@
 <template>
   <div class="user-profile" v-if="viewingUserData">
     <div v-if="!loading" class="mt-5">
-        <teacher-profile :viewingUserData="viewingUserData" :myUserData="myUserData" v-if="viewingUserData.teacherData"></teacher-profile>
+        <teacher-profile :viewingUserData="viewingUserData" :myUserData="myUserData" :packages="packages" :exchangeRates="exchangeRates" v-if="viewingUserData.teacherData"></teacher-profile>
         <student-profile :viewingUserData="viewingUserData" :myUserData="myUserData" v-else></student-profile>
     </div>
     <div v-else>
@@ -17,8 +17,11 @@ import TeacherProfile from './steps/TeacherProfile';
 import StudentProfile from './steps/StudentProfile';
 import imageSourceEdit from '../assets/scripts/imageSourceEdit';
 import fetchUserData from '../assets/scripts/fetchUserData';
+import fetchPackageData from '../assets/scripts/fetchPackageData';
 import store from '../store/store';
 import languageLevelBars from '../assets/scripts/languageLevelBars';
+import fetchExchangeRates from '../assets/scripts/fetchExchangeRates';
+
 export default {
     name: 'UserProfile',
     created() {
@@ -42,6 +45,7 @@ export default {
         return {
             myUserData: null,
             viewingUserData: null,
+            packages: null,
             loading: true,
         }
     },
@@ -49,12 +53,16 @@ export default {
         try {
             this.viewingUserData = await fetchUserData(this.$route.params.uId);
             this.myUserData = this.storeUserData;
+            this.packages = await fetchPackageData(this.myUserData._id)
+            this.exchangeRates = await fetchExchangeRates();
             this.loading = false;
         } catch (err) {
             this.$router.push('/404').catch(err => {});
         }
     },
     methods: {
+        fetchExchangeRates,
+        fetchPackageData,
         fetchUserData,
         imageSourceEdit,
         languageLevelBars,

@@ -196,6 +196,7 @@ import axios from 'axios'
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
 import fetchUserData from '../../assets/scripts/fetchUserData'
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
+import toTitleCase from '../../assets/scripts/toTitleCase'
 
 
 export default {
@@ -260,14 +261,7 @@ export default {
         this.modalTitleText = 'Confirm this Appointment?'
         this.$bvModal.hide('update-modal'); 
       },
-      toTitleCase(str) {
-        return str.replace(
-          /\w\S*/g,
-          function(txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-          }
-        );
-      },
+      toTitleCase,
       recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid duplicate split on kalendar)
         const dupeTimeSlot = this.events.find(timeSlot => timeSlot.from == formatedTime.from);
         if (dupeTimeSlot) {
