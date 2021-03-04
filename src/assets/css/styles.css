@@ -134,6 +134,15 @@ p {
   cursor: auto;
 }
 
+.teacher-profile .sticky-top {
+  align-self: flex-start;
+  top: 1rem !important;
+}
+
+.manabu-blue {
+  background-color: #152076 !important;
+}
+
 /* Section - Title */
 /**************************/
 #parallax .title {background: white; padding: 60px; margin:0 auto; text-align:center;}

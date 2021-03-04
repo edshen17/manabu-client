@@ -106,6 +106,9 @@ import GoogleSignInButton from 'vue-google-signin-button-directive'
 
 export default {
     name: 'Signup',
+    directives: {
+        GoogleSignInButton,
+    },
     created() {
     this.$emit('update:layout', LayoutDefault);
     },

@@ -1,11 +1,6 @@
 <template>
   <div class="Dashboard">
-    <b-modal
-      id="edit-pic"
-      size="lg"
-      v-if="userData"
-      title="Edit profile image"
-    >
+    <b-modal id="edit-pic" size="lg" v-if="userData" title="Edit profile image">
       <img
         v-show="!isEditingImage"
         class="dashboard-profile no-cursor"
@@ -194,110 +189,55 @@
       <template #modal-title> My packages </template>
       <div>
         <b-card-group deck>
-          <b-card header-tag="header" footer-tag="footer">
-            <template #header>
+        <b-card v-for="pkg in defaultPackageInfo" :key="pkg.type" header-tag="header" footer-tag="footer">
+          <template #header>
               <h6 class="mb-0">
-                Vigorous plan - {{ hourlyRate.currencyIcon
-                }}{{ (Math.round((hourlyRate.myRate * 21) * 2) / 2).toFixed(1)
+                {{toTitleCase(pkg.type)}} plan -
+                {{ hourlyRate.currencyIcon
+
+                }}{{ (Math.round((hourlyRate.myRate * pkg.monthlyAmount) * 2) / 2).toFixed(1)
+
                 }}/month
               </h6>
             </template>
             <div>
-              Students will have 21 lessons with you every month. This is about
-              5 lessons every week.
+              Students will have {{ pkg.monthlyAmount }} lessons with you every month. This is about
+              {{ pkg.weeklyAmount }} lessons every week.
             </div>
-
             <template #footer>
-              <div class="form-check float-right">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="vigorous"
-                  id="flexCheckDefault"
-                  checked
+              <div>
+                <b-form-checkbox
                   v-model="hourlyRate.offering"
-                />
-                <label class="form-check-label"> Offer </label>
+                  :value="pkg.type"
+                >
+                  Offer
+                </b-form-checkbox>
+                <b-form-group label="Duration:" v-slot="{ ariaDescribedby }" class="mt-2" v-show="hourlyRate.offering.includes(pkg.type)">
+                  <b-form-checkbox-group
+                    id="checkbox-group-1"
+                    v-model="selected"
+                    :options="optionsTime"
+                    :aria-describedby="ariaDescribedby"
+                    name="flavour-1"
+                  ></b-form-checkbox-group>
+                </b-form-group>
               </div>
             </template>
-          </b-card>
-          <b-card header-tag="header" footer-tag="footer">
-            <template #header>
-              <h6 class="mb-0">
-                Moderate plan - {{ hourlyRate.currencyIcon
-                }}{{ (Math.round((hourlyRate.myRate * 12) * 2) / 2).toFixed(1)
-                }}/month
-              </h6>
-            </template>
-            <div>
-              Students will have 12 lessons with you every month. This is about
-              3 lessons every week.
-            </div>
-
-            <template #footer>
-              <div class="form-check float-right">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="moderate"
-                  id="flexCheckDefault"
-                  v-model="hourlyRate.offering"
-                  checked
-                />
-                <label class="form-check-label"> Offer </label>
-              </div>
-            </template>
-          </b-card>
-
-          <b-card header-tag="header" footer-tag="footer">
-            <template #header>
-              <h6 class="mb-0">
-                Light plan - {{ hourlyRate.currencyIcon
-                }}{{ (Math.round((hourlyRate.myRate * 5) * 2) / 2).toFixed(1)
-                }}/month
-              </h6>
-            </template>
-            <div>
-              Students will have 5 lessons with you every month. This is about 1
-              lessons every week.
-            </div>
-
-            <template #footer>
-              <div class="form-check float-right">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value="light"
-                  id="flexCheckDefault"
-                  v-model="hourlyRate.offering"
-                  checked
-                />
-                <label class="form-check-label"> Offer </label>
-              </div>
-            </template>
-          </b-card>
+        </b-card>
         </b-card-group>
       </div>
       <template #modal-footer>
-        <b-button
-          @click="$bvModal.hide('my-packages')"
-          variant="secondary"
-        >
+        <b-button @click="$bvModal.hide('my-packages')" variant="secondary">
           Cancel
         </b-button>
-        <b-button
-          @click="updatePackages"
-          variant="primary"
-        >
-          Save
-        </b-button>
+        <b-button @click="updatePackages" variant="primary"> Save </b-button>
       </template>
     </b-modal>
     <div v-if="!loading" class="mt-5">
       <b-row>
         <b-col md="2"></b-col>
         <b-col md="3">
-          <div class="card mb-3" v-if="userData">
+          <div class="card mb-3 shadow border-0" v-if="userData">
             <div class="card-body">
               <div class="picture-container">
                 <img
@@ -376,7 +316,7 @@
               </b-button>
             </div>
           </div>
-          <div class="card mb-3" v-if="userData">
+          <div class="card mb-3 shadow border-0" v-if="userData">
             <div class="card-body">
               <ul class="list-group list-group-flush profile-list">
                 <li class="list-group-item">
@@ -386,7 +326,7 @@
                   class="list-group-item"
                   v-if="userData.role == 'teacher' || userData.teacherAppPending"
                 >
-                  <b-link @click="$bvModal.show('my-packages');" 
+                  <b-link @click="$bvModal.show('my-packages');"
                     >My packages</b-link
                   >
                 </li>
@@ -446,6 +386,7 @@
 
 
 
+
                   }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
                 </p>
                 <p>Appointment agenda:</p>
@@ -479,6 +420,7 @@ import { validationMixin } from "vuelidate";
 import { required, between } from "vuelidate/lib/validators";
 import LayoutDefault from './layouts/LayoutDefault';
 import getAppointments from '../assets/scripts/getAppointments';
+import toTitleCase from '../assets/scripts/toTitleCase';
 import RegistrationForm from './steps/RegistrationForm';
 import EditCalendar from './steps/EditCalendar';
 import ViewCalendar from './steps/ViewCalendar';
@@ -572,6 +514,23 @@ export default {
             host: 'api',
             loading: true,
             maxInputLength: 2000,
+            defaultPackageInfo: [
+              {
+                type: 'vigorous',
+                monthlyAmount: 21,
+                weeklyAmount: 5,
+              },
+              {
+                type: 'moderate',
+                monthlyAmount: 12,
+                weeklyAmount: 3,
+              },
+              {
+                type: 'light',
+                monthlyAmount: 5,
+                weeklyAmount: 1,
+              },
+            ],
             optionsPrimaryLanguage: [
                     { value: 'JP', text: 'Japanese' },
                     { value: null, text: 'Other languages coming soon!', disabled: true }
@@ -593,6 +552,11 @@ export default {
                     { value: 'unlicensed', text: 'unlicensed teacher' },
                     { value: 'licensed', text: 'licensed/professional teacher' },
                 ],
+                optionsTime: [
+                  { text: '30 minutes', value: '30' },
+                  { text: '60 minutes', value: '60' },
+                  { text: '90 minutes', value: '90' },
+                ]
         }
     },
     watch: {
@@ -613,7 +577,9 @@ export default {
           this.hourlyRate.selectedCurrency = this.userData.teacherData.hourlyRate.currency;
           this.hourlyRate.myRate = this.userData.teacherData.hourlyRate.amount;
           this.userData.teacherData.packages.forEach((pkg) => {
-            this.hourlyRate.offering.push(pkg.packageType)
+            if (pkg.isOffering) {
+              this.hourlyRate.offering.push(pkg.packageType)
+            }
           })
         }
         this.userId = this.userData._id;
@@ -645,6 +611,7 @@ export default {
     },
 
     methods: {
+      toTitleCase,
       updatePackages() { // from https://codesandbox.io/s/lzq6p?file=/App.vue:2183-2265
         this.$v.hourlyRate.$touch();
         if (this.$v.hourlyRate.$anyError || this.hourlyRate.offering.length == 0) {
