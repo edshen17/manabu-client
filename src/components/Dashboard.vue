@@ -212,14 +212,15 @@
                 >
                   Offer
                 </b-form-checkbox>
-                <b-form-group label="Duration:" v-slot="{ ariaDescribedby }" class="mt-2" v-show="hourlyRate.offering.includes(pkg.type)">
+                <b-form-group label="Duration:" v-slot="{ ariaDescribedby }" v-show="hourlyRate.offering.includes(pkg.type)">
                   <b-form-checkbox-group
-                    id="checkbox-group-1"
-                    v-model="selected"
-                    :options="optionsTime"
+                    v-model="hourlyRate.packageDurations"
                     :aria-describedby="ariaDescribedby"
-                    name="flavour-1"
-                  ></b-form-checkbox-group>
+                  >
+                    <b-form-checkbox :value="`${pkg.type}-30`">30 minutes</b-form-checkbox>
+                    <b-form-checkbox :value="`${pkg.type}-60`">60 minutes</b-form-checkbox>
+                    <b-form-checkbox :value="`${pkg.type}-90`">90 minutes</b-form-checkbox>
+                  </b-form-checkbox-group>
                 </b-form-group>
               </div>
             </template>
@@ -234,169 +235,171 @@
       </template>
     </b-modal>
     <div v-if="!loading" class="mt-5">
-      <b-row>
-        <b-col md="2"></b-col>
-        <b-col md="3">
-          <div class="card mb-3 shadow border-0" v-if="userData">
-            <div class="card-body">
-              <div class="picture-container">
-                <img
-                  class="dashboard-profile"
-                  alt="100x100"
-                  :src="imageSourceEdit(userData.profileImage)"
-                  @mouseover="isHoveringPic = true"
-                  @mouseleave="isHoveringPic = false"
-                  @click="editProfile"
-                />
-              </div>
-              <div class="text-center mt-2">
-                <h5>{{ this.userData.name}}</h5>
-                <div
-                  v-for="lang in userData.fluentLanguages.concat(userData.nonFluentLanguages)"
-                  :key="lang"
-                  class="mx-1"
-                  style="display: inline"
-                >
-                  {{ languageCodeToText(lang) }}
-                  <span
-                    v-for="(n, i) in 5"
-                    :key="i"
-                    class="level"
-                    :class="languageLevelBars(lang, i)"
-                  ></span>
+      <b-container fluid>
+        <b-row>
+          <b-col md="2"></b-col>
+          <b-col md="3">
+            <div class="card mb-3 shadow border-0" v-if="userData">
+              <div class="card-body">
+                <div class="picture-container">
+                  <img
+                    class="dashboard-profile"
+                    alt="100x100"
+                    :src="imageSourceEdit(userData.profileImage)"
+                    @mouseover="isHoveringPic = true"
+                    @mouseleave="isHoveringPic = false"
+                    @click="editProfile"
+                  />
                 </div>
-              </div>
-              <div
-                class="mt-2 mb-0"
-                v-show="!isEditingBio"
-                style="cursor: pointer"
-                @click="startEditBio"
-                v-html="formatBio(userData.profileBio)"
-              ></div>
-              <div
-                v-if="userData.role == 'teacher' || userData.teacherAppPending"
-              >
-                <span v-show="isEditingBio">
-                  <b-form-input
-                    v-model="userData.teacherData.introductionVideo"
-                    placeholder="Youtube link of self-introduction video"
-                    class="mt-4"
-                  ></b-form-input>
-                </span>
-              </div>
-              <quill-editor
-                ref="quillEditor"
-                class="my-3"
-                v-show="isEditingBio"
-                v-model="editedBio"
-                @change="ensureMaxChars($event)"
-              ></quill-editor>
-              <span
-                v-show="isEditingBio"
-                :class="{ danger: this.maxInputLength - this.editedBio.replace(/<[^>]*>?/gm, '').length == 0 }"
-              >
-                {{this.maxInputLength - this.editedBio.replace(/<[^>]*>?/gm, '').length }}
-                characters remaining
-              </span>
-              <b-button
-                variant="primary"
-                class="float-right mt-3"
-                v-show="isEditingBio"
-                @click="saveBio"
-              >
-                Save
-              </b-button>
-              <b-button
-                variant="secondary"
-                class="mr-2 float-right mt-3"
-                v-show="isEditingBio"
-                @click="cancelBio"
-              >
-                Cancel
-              </b-button>
-            </div>
-          </div>
-          <div class="card mb-3 shadow border-0" v-if="userData">
-            <div class="card-body">
-              <ul class="list-group list-group-flush profile-list">
-                <li class="list-group-item">
-                  <b-link v-scroll-to="'#edit-calendar'">My calendar</b-link>
-                </li>
-                <li
-                  class="list-group-item"
+                <div class="text-center mt-2">
+                  <h5>{{ this.userData.name}}</h5>
+                  <div
+                    v-for="lang in userData.fluentLanguages.concat(userData.nonFluentLanguages)"
+                    :key="lang"
+                    class="mx-1"
+                    style="display: inline"
+                  >
+                    {{ languageCodeToText(lang) }}
+                    <span
+                      v-for="(n, i) in 5"
+                      :key="i"
+                      class="level"
+                      :class="languageLevelBars(lang, i)"
+                    ></span>
+                  </div>
+                </div>
+                <div
+                  class="mt-2 mb-0"
+                  v-show="!isEditingBio"
+                  style="cursor: pointer"
+                  @click="startEditBio"
+                  v-html="formatBio(userData.profileBio)"
+                ></div>
+                <div
                   v-if="userData.role == 'teacher' || userData.teacherAppPending"
                 >
-                  <b-link @click="$bvModal.show('my-packages');"
-                    >My packages</b-link
-                  >
-                </li>
-                <li class="list-group-item">
-                  <b-link to="/settings">Settings</b-link>
-                </li>
-                <li class="list-group-item">
-                  <b-link :to="`/user/${this.userId}`"
-                    >View public profile</b-link
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-        </b-col>
-        <b-col md="5">
-          <div v-if="userData.teacherAppPending">
-            <div class="card mb-3">
-              <div class="card-header">
-                <span class="mt-2">
-                  To get approved for teaching, make an 1 hour appointment with
-                  Misaki
-                </span>
-              </div>
-              <div class="card-body">
-                <p>
-                  Misaki will be interviewing you about your experience in
-                  teaching Japanese, etc.
-                </p>
-                <b-button variant="info" @click="adminTeacherTrans"
-                  >Schedule appointment</b-button
+                  <span v-show="isEditingBio">
+                    <b-form-input
+                      v-model="userData.teacherData.introductionVideo"
+                      placeholder="Youtube link of self-introduction video"
+                      class="mt-4"
+                    ></b-form-input>
+                  </span>
+                </div>
+                <quill-editor
+                  ref="quillEditor"
+                  class="my-3"
+                  v-show="isEditingBio"
+                  v-model="editedBio"
+                  @change="ensureMaxChars($event)"
+                ></quill-editor>
+                <span
+                  v-show="isEditingBio"
+                  :class="{ danger: this.maxInputLength - this.editedBio.replace(/<[^>]*>?/gm, '').length == 0 }"
                 >
-              </div>
-            </div>
-          </div>
-          <div v-if="appointments.length > 0">
-            <div
-              class="card mb-3"
-              v-for="apt in appointments"
-              :key="apt._id"
-              :class="apt.status + '-card'"
-            >
-              <div class="card-header">
-                <span class="mt-2"
-                  >Appointment with {{ apt.userData.name }} --
-                  {{apt.status}}
+                  {{this.maxInputLength - this.editedBio.replace(/<[^>]*>?/gm, '').length }}
+                  characters remaining
                 </span>
-              </div>
-              <div class="card-body">
-                <img
-                  class="mini-image"
-                  alt="100x100"
-                  :src="imageSourceEdit(apt.userData.profileImage)"
-                />
-                <p>
-                  {{ formatDate(apt.from, 'MMM DD @ h:mma')
-
-
-
-
-                  }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
-                </p>
-                <p>Appointment agenda:</p>
+                <b-button
+                  variant="primary"
+                  class="float-right mt-3"
+                  v-show="isEditingBio"
+                  @click="saveBio"
+                >
+                  Save
+                </b-button>
+                <b-button
+                  variant="secondary"
+                  class="mr-2 float-right mt-3"
+                  v-show="isEditingBio"
+                  @click="cancelBio"
+                >
+                  Cancel
+                </b-button>
               </div>
             </div>
-          </div>
-          <div v-else>no appointments yet, find teacher</div>
-        </b-col>
-        <b-col md="2"></b-col>
-      </b-row>
+            <div class="card mb-3 shadow border-0" v-if="userData">
+              <div class="card-body">
+                <ul class="list-group list-group-flush profile-list">
+                  <li class="list-group-item">
+                    <b-link v-scroll-to="'#edit-calendar'">My calendar</b-link>
+                  </li>
+                  <li
+                    class="list-group-item"
+                    v-if="userData.role == 'teacher' || userData.teacherAppPending"
+                  >
+                    <b-link @click="$bvModal.show('my-packages');"
+                      >My packages</b-link
+                    >
+                  </li>
+                  <li class="list-group-item">
+                    <b-link to="/settings">Settings</b-link>
+                  </li>
+                  <li class="list-group-item">
+                    <b-link :to="`/user/${this.userId}`"
+                      >View public profile</b-link
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </b-col>
+          <b-col md="5">
+            <div v-if="userData.teacherAppPending">
+              <div class="card mb-3">
+                <div class="card-header">
+                  <span class="mt-2">
+                    To get approved for teaching, make an 1 hour appointment with
+                    Misaki
+                  </span>
+                </div>
+                <div class="card-body">
+                  <p>
+                    Misaki will be interviewing you about your experience in
+                    teaching Japanese, etc.
+                  </p>
+                  <b-button variant="info" @click="adminTeacherTrans"
+                    >Schedule appointment</b-button
+                  >
+                </div>
+              </div>
+            </div>
+            <div v-if="appointments.length > 0">
+              <div
+                class="card mb-3"
+                v-for="apt in appointments"
+                :key="apt._id"
+                :class="apt.status + '-card'"
+              >
+                <div class="card-header">
+                  <span class="mt-2"
+                    >Appointment with {{ apt.userData.name }} --
+                    {{apt.status}}
+                  </span>
+                </div>
+                <div class="card-body">
+                  <img
+                    class="mini-image"
+                    alt="100x100"
+                    :src="imageSourceEdit(apt.userData.profileImage)"
+                  />
+                  <p>
+                    {{ formatDate(apt.from, 'MMM DD @ h:mma')
+
+
+
+
+                    }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
+                  </p>
+                  <p>Appointment agenda:</p>
+                </div>
+              </div>
+            </div>
+            <div v-else>no appointments yet, find teacher</div>
+          </b-col>
+          <b-col md="2"></b-col>
+        </b-row>
+      </b-container>
 
       <div>
         <edit-calendar
@@ -476,6 +479,9 @@ export default {
             required,
             between: between(0, 10000)
           },
+          packageDurations: {
+            required,
+          },
         }
       },
    data() {
@@ -494,6 +500,7 @@ export default {
               myRate: 0,
               currencyIcon: '$',
               offering: [],
+              packageDurations: [],
             },
             adminToTeacherPkgId: process.env.VUE_APP_ADMIN_TO_TEACHER_PKG_ID,
             adminId: process.env.VUE_APP_ADMIN_ID,
@@ -552,11 +559,6 @@ export default {
                     { value: 'unlicensed', text: 'unlicensed teacher' },
                     { value: 'licensed', text: 'licensed/professional teacher' },
                 ],
-                optionsTime: [
-                  { text: '30 minutes', value: '30' },
-                  { text: '60 minutes', value: '60' },
-                  { text: '90 minutes', value: '90' },
-                ]
         }
     },
     watch: {
@@ -579,6 +581,9 @@ export default {
           this.userData.teacherData.packages.forEach((pkg) => {
             if (pkg.isOffering) {
               this.hourlyRate.offering.push(pkg.packageType)
+              pkg.packageDurations.forEach((duration) => {
+                this.hourlyRate.packageDurations.push(`${pkg.packageType}-${duration}`)
+              })
             }
           })
         }
@@ -612,24 +617,35 @@ export default {
 
     methods: {
       toTitleCase,
-      updatePackages() { // from https://codesandbox.io/s/lzq6p?file=/App.vue:2183-2265
+      updatePackages() { // vuelidate from https://codesandbox.io/s/lzq6p?file=/App.vue:2183-2265 example
         this.$v.hourlyRate.$touch();
         if (this.$v.hourlyRate.$anyError || this.hourlyRate.offering.length == 0) {
-          alert('Please offer at least one plan!')
-          return;
+          alert('Please offer at least one plan and make sure to check the duration boxes')
         } else {
-          axios
-            .post(
-              `${this.host}/transaction/package`,
-              { teacherPackages: this.hourlyRate.offering, teacherId: this.userId, price: this.hourlyRate.myRate, currency: this.hourlyRate.selectedCurrency },
-              { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-              }}
-            ).then((res) => {
-              if (res.status == 200) {
-                this.$bvModal.hide('my-packages')
+          let hasErr = false;
+          if (this.hourlyRate.packageDurations.length > 0) {
+            this.hourlyRate.offering.forEach((offering) => {
+              const filterDurations = this.hourlyRate.packageDurations.filter((pkg) => { return pkg.includes(offering)})
+              if (filterDurations.length == 0) {
+                alert(`Make sure you check at least one duration checkbox for the ${toTitleCase(offering)} plan`)
+                hasErr = true;
               }
             })
+          }
+          if (!hasErr) {
+            axios
+              .post(
+                `${this.host}/transaction/package`,
+                { teacherPackages: this.hourlyRate.offering, teacherId: this.userId, price: this.hourlyRate.myRate, currency: this.hourlyRate.selectedCurrency, packageDurations: this.hourlyRate.packageDurations },
+                { headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+                }}
+              ).then((res) => {
+                if (res.status == 200) {
+                  this.$bvModal.hide('my-packages')
+                }
+              })
+          }
         }
       },
       validateState(name) {

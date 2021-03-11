@@ -13,7 +13,7 @@
     <b-row>
       <b-col md="2"></b-col>
       <b-col md="3">
-        <div class="card mb-3" v-if="userData">
+        <div class="card mb-3 shadow border-0" v-if="userData">
           <div class="card-body">
             <ul class="list-group list-group-flush profile-list">
               <li class="list-group-item">
@@ -27,7 +27,7 @@
         </div>
       </b-col>
       <b-col md="5">
-        <div class="card mb-3" v-if="userData">
+        <div class="card mb-3 shadow border-0" v-if="userData">
           <div class="card-body">
             <div class="form-group">
               <div v-show="viewingCard == 'General'">

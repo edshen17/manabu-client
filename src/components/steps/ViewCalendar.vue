@@ -156,6 +156,7 @@
         class="add-manual"
         :class="{ 'enabled-button': reservationSlotLimit <= reservationSlotLimit && currentlySelected.length > 0 }"
         :disabled="reservationSlotLimit == reservationSlotLimit && currentlySelected.length == 0"
+        v-show="reservedBy"
       >
         <i class="fas fa-arrow-right"></i>
       </button>

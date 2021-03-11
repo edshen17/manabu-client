@@ -1,139 +1,144 @@
 <template>
   <div class="teacher-profile">
-    <b-row>
-      <b-col></b-col>
-      <b-col lg="5" style="padding: 0 0 0 0 !important">
-        <div class="card mb-3 shadow border-0">
-          <div class="embed-responsive embed-responsive-16by9">
-            <iframe
-              class="embed-responsive-item"
-              :src="this.viewingUserData.teacherData.introductionVideo"
-              allowfullscreen
-            ></iframe>
-          </div>
-          <div class="card-body">
-            <b-row>
-              <b-col lg="12">
-                <div class="my-2">
-                  <span>
-                    <h3 style="display: inline">
-                      {{ this.viewingUserData.name }}
-                    </h3>
-                    <b-icon-patch-check-fll
-                      v-if="this.viewingUserData.teacherData.isApproved || this.isApproved"
-                      class="ml-2 patch-icon"
-                      title="Manabu Verified Teacher"
-                    >
-                    </b-icon-patch-check-fll>
-                    <b-icon-patch-minus-fll
-                      v-else
-                      class="ml-2 patch-icon"
-                      title="Teacher application pending"
-                    >
-                    </b-icon-patch-minus-fll>
-                    <b-dropdown size="lg" variant="transparent" 
-                      toggle-class="text-decoration-none" no-caret class="float-right no-padding"
-                      v-if="viewingUserData._id != myUserData._id && myUserData._id">
-                      <template #button-content>
-                        <i class="fas fa-ellipsis-v"></i>
-                      </template>
-                      <div v-if="myUserData.role == 'admin'">
-                        <b-dropdown-item
-                          v-if="viewingUserData.teacherAppPending 
-                          && !this.isApproved" 
-                          @click="approveTeacher(viewingUserData._id)">
-                            Approve application
-                        </b-dropdown-item>
-                        <b-dropdown-item v-if="viewingUserData.teacherData.licensePath 
-                          && viewingUserData.teacherData.teacherType == 'licensed'" :href="viewingUserData.teacherData.licensePath"
-                          target="_blank">
-                            View professional license
-                        </b-dropdown-item>
-                      </div>
-                      <b-dropdown-item>Report</b-dropdown-item>
-                      <b-dropdown-item>Block</b-dropdown-item>
-                    </b-dropdown>
-                    <p class="card-text">
-                      <small class="text-muted">Last online {{ formatDate(viewingUserData.lastOnline, 'fromNow') }}</small>
-                    </p>
-                  </span>
-                  <div class="text-muted font-weight-light">
-                    <div>
-                      <span style="font-size: 1.1rem">
-                        {{ formatString(this.viewingUserData.teacherData.teacherType, 
-                    ['licensed', 'unlicensed'], 
-                    ['Professional Teacher --', 'Community Teacher --']) }}
-                        <div
-                          v-for="lang in viewingUserData.fluentLanguages"
-                          :key="lang"
-                          style="display: inline"
-                          class="mr-1"
+    <b-container fluid>
+      <b-row>
+        <b-col lg="2"></b-col>
+        <b-col lg="5" style="z-index: 100;">
+          <div class="card mb-3 shadow border-0">
+            <div class="embed-responsive embed-responsive-16by9">
+              <iframe
+                class="embed-responsive-item"
+                :src="this.viewingUserData.teacherData.introductionVideo"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="card-body">
+              <b-container>
+                <b-row>
+                  <b-col lg="12">
+                    <div class="my-2">
+                      <span>
+                        <h3 style="display: inline">
+                          {{ this.viewingUserData.name }}
+                        </h3>
+                        <b-icon-patch-check-fll
+                          v-if="this.viewingUserData.teacherData.isApproved || this.isApproved"
+                          class="ml-2 patch-icon"
+                          :title="`Manabu Verified Teacher since ${formatDate(viewingUserData.teacherData.dateApproved, 'MMMM YYYY')}`"
                         >
-                          {{ languageCodeToText(lang) }}
-                          <span
-                            v-for="(n, i) in 5"
-                            :key="i"
-                            class="level"
-                            :class="languageLevelBars(lang, i)"
-                          ></span>
-                        </div>
-                        <div
-                          v-for="lang in viewingUserData.nonFluentLanguages"
-                          :key="lang"
-                          style="display: inline"
+                        </b-icon-patch-check-fll>
+                        <b-icon-patch-minus-fll
+                          v-else
+                          class="ml-2 patch-icon"
+                          title="Teacher application pending"
                         >
-                          {{ languageCodeToText(lang) }}
-                          <span
-                            v-for="(n, i) in 5"
-                            :key="i"
-                            class="level"
-                            :class="languageLevelBars(lang, i)"
-                          ></span>
+                        </b-icon-patch-minus-fll>
+                        <b-dropdown size="lg" variant="transparent" 
+                          toggle-class="text-decoration-none" no-caret class="float-right no-padding"
+                          v-if="viewingUserData._id != myUserData._id && myUserData._id">
+                          <template #button-content>
+                            <i class="fas fa-ellipsis-v"></i>
+                          </template>
+                          <div v-if="myUserData.role == 'admin'">
+                            <b-dropdown-item
+                              v-if="viewingUserData.teacherAppPending 
+                              && !this.isApproved" 
+                              @click="approveTeacher(viewingUserData._id)">
+                                Approve application
+                            </b-dropdown-item>
+                            <b-dropdown-item v-if="viewingUserData.teacherData.licensePath 
+                              && viewingUserData.teacherData.teacherType == 'licensed'" :href="viewingUserData.teacherData.licensePath"
+                              target="_blank">
+                                View professional license
+                            </b-dropdown-item>
+                          </div>
+                          <b-dropdown-item>Report</b-dropdown-item>
+                          <b-dropdown-item>Block</b-dropdown-item>
+                        </b-dropdown>
+                        <div class="card-text">
+                          <small class="text-muted">Last online {{ formatDate(viewingUserData.lastOnline, 'fromNow') }}</small>
                         </div>
                       </span>
+                      <div class="text-muted font-weight-light">
+                        <div>
+                          <span style="font-size: 1.1rem">
+                            {{ formatString(this.viewingUserData.teacherData.teacherType, 
+                        ['licensed', 'unlicensed'], 
+                        ['Professional Teacher --', 'Community Teacher --']) }}
+                            <div
+                              v-for="lang in viewingUserData.fluentLanguages"
+                              :key="lang"
+                              style="display: inline"
+                              class="mr-1"
+                            >
+                              {{ languageCodeToText(lang) }}
+                              <span
+                                v-for="(n, i) in 5"
+                                :key="i"
+                                class="level"
+                                :class="languageLevelBars(lang, i)"
+                              ></span>
+                            </div>
+                            <div
+                              v-for="lang in viewingUserData.nonFluentLanguages"
+                              :key="lang"
+                              style="display: inline"
+                            >
+                              {{ languageCodeToText(lang) }}
+                              <span
+                                v-for="(n, i) in 5"
+                                :key="i"
+                                class="level"
+                                :class="languageLevelBars(lang, i)"
+                              ></span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                      <div
+                        v-html="this.viewingUserData.profileBio"
+                        class="mt-3"
+                      ></div>
                     </div>
-                  </div>
-                  <div
-                    v-html="this.viewingUserData.profileBio"
-                    class="mt-3"
-                  ></div>
-                </div>
-              </b-col>
-            </b-row>
+                  </b-col>
+                </b-row>
+              </b-container>
+            </div>
           </div>
-        </div>
-        <div class="card profile-card mb-3 shadow border-0">
-          <div class="card-body">
-            <h3 class="mb-3">Package offerings</h3>
-            <div v-for="pkg in packages" :key="pkg._id">
-              <div class="card profile-card mb-3 shadow border-0" v-if="pkg.isOffering">
-                <div class="card-body">
-                  <h5 class="text-muted font-weight-light">{{ toTitleCase(pkg.packageType) }} plan</h5>
-                  <p>{{ formatString(pkg.packageType, ['light', 'moderate', 'vigorous'], 
-                    ['This plan is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.', 'This plan is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.', 'This plan is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 21 personalized lessons every month or about 5 lessons every week.'])}}
-                  </p>
-                  <span class="badge badge-pill badge-primary manabu-blue" style="font-size: .9rem">{{convertMoney(pkg.priceDetails.price, pkg.priceDetails.currency, myUserData.settings.currency).toLocaleString()}} {{myUserData.settings.currency}}</span>  
+          <div class="card profile-card mb-3 shadow border-0">
+            <div class="card-body">
+              <h3 class="mb-3">Package offerings</h3>
+              <div v-for="pkg in packages" :key="pkg._id">
+                <div class="card profile-card mb-3 shadow border-0" v-if="pkg.isOffering">
+                  <div class="card-body">
+                    <h5 class="text-muted font-weight-light">{{ toTitleCase(pkg.packageType) }} plan</h5>
+                    <p>{{ formatString(pkg.packageType, ['light', 'moderate', 'vigorous'], 
+                      ['This plan is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.', 'This plan is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.', 'This plan is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 21 personalized lessons every month or about 5 lessons every week.'])}}
+                    </p>
+                    <span class="badge badge-pill badge-primary manabu-blue" style="font-size: .9rem">{{convertMoney(pkg.priceDetails.price, pkg.priceDetails.currency, myUserData.settings.currency).toLocaleString()}} {{myUserData.settings.currency}}</span>  
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </b-col>
-      <b-col lg="3" class="sticky-top ml-3">
-        <div class="card profile-card mb-3 shadow border-0">
-             <h5 class="font-weight-light mt-3 mx-3"> Lessons starting from {{convertMoney(viewingUserData.teacherData.hourlyRate.amount, viewingUserData.teacherData.hourlyRate.currency, myUserData.settings.currency)}} {{ myUserData.settings.currency }}/hour</h5>
-              <b-button variant="dark" class="mx-3 my-3 manabu-blue">BOOK NOW</b-button>
-        </div>
-        <div class="card profile-card mb-3 shadow border-0">
-          <b-button variant="dark" class="mx-3 my-3" @click="showCalendar = !showCalendar">
-            <span v-show="!showCalendar">VIEW</span> 
-            <span v-show="showCalendar">HIDE</span> 
-            CALENDAR</b-button>
-          <view-calendar :hostedByProp="viewingUserData._id" v-show="showCalendar" class="mt-2"></view-calendar>
-        </div>
-      </b-col>
-      <b-col></b-col>
-    </b-row>
+            <div class="card profile-card mb-3 shadow border-0">
+              <div class="card-body">
+                  <view-calendar :hostedByProp="viewingUserData._id" id="view-calendar"></view-calendar>
+              </div>
+            </div>
+        </b-col>
+        <b-col lg="3" class="button-wrapper sticky-top">
+          <div class="card profile-card mb-3 shadow border-0">
+              <h5 class="font-weight-light mt-3 mx-3"> Lessons starting from {{convertMoney(viewingUserData.teacherData.hourlyRate.amount, viewingUserData.teacherData.hourlyRate.currency, myUserData.settings.currency)}} {{ myUserData.settings.currency }}/hour</h5>
+                <b-button variant="dark" class="mx-3 my-3 manabu-blue">BOOK NOW</b-button>
+          </div>
+          <div class="card profile-card mb-3 shadow border-0">
+            <b-button variant="dark" class="mx-3 my-3" v-scroll-to="'#view-calendar'">VIEW CALENDAR</b-button>
+          </div>
+        </b-col>
+        <b-col lg="2"></b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 <script>
@@ -207,9 +212,7 @@ export default {
         return Math.round(fx.convert(amnt, { from, to }));
       },
     },
-    mounted() {      
-      // console.log(this.exchangeRates)
-      // console.log(this.storeUserData)
+    mounted() {
     }
 }
 </script>

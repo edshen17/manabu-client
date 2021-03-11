@@ -53,11 +53,12 @@ export default {
         try {
             this.viewingUserData = await fetchUserData(this.$route.params.uId);
             this.myUserData = this.storeUserData;
-            this.packages = await fetchPackageData(this.myUserData._id)
+            this.packages = await fetchPackageData(this.$route.params.uId)
             this.exchangeRates = await fetchExchangeRates();
             this.loading = false;
         } catch (err) {
-            this.$router.push('/404').catch(err => {});
+          console.log(err)
+            this.$router.push('/404').catch(err => {console.log(err)});
         }
     },
     methods: {
