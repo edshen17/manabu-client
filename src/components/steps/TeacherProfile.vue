@@ -69,7 +69,7 @@
                             <div
                               v-for="langData in teachingLanguages"
                               :key="langData.language"
-                              class="mr-1"
+                              class="mr-2"
                               style="display: inline"
                             >
                             <span>{{ languageCodeToText(langData.language) }}</span>
@@ -84,7 +84,7 @@
                               v-for="(langData, i) in otherLanguages"
                               :key="langData.language"
                               style="display: block"
-                              class="mt-2"
+                              class="mt-2 mr-2"
                             >
                             <span v-if="i == 0" class="light-bold">Also Speaks -- </span>
                               <span>{{ languageCodeToText(langData.language) }}</span>

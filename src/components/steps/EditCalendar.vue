@@ -438,6 +438,7 @@ export default {
             hostedBy: this.hostedBy,
             from: dayjs(kalendarEvent.start_time).toISOString(),
             to: dayjs(kalendarEvent.end_time).toISOString(),
+            appointmentId: kalendarEvent.data._id,
           }
 
         axios.delete(`${this.host}/schedule/availableTime`, {
@@ -492,16 +493,20 @@ export default {
         }
 
         else {
-          this.$kalendar.addNewEvent(
-            payload,
-          );
-          this.$kalendar.closePopups();
           axios.post(`${this.host}/schedule/availableTime`, {
             hostedBy: this.hostedBy,
             from: new Date(payload.from).toISOString(),
             to: new Date(payload.to).toISOString(),
           }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
+            }
+          }).then((res) => {
+            if (res.status == 200) {
+              payload.data._id = res.data._id
+              this.$kalendar.addNewEvent(
+                payload,
+              );
+              this.$kalendar.closePopups();
             }
           })
         }
