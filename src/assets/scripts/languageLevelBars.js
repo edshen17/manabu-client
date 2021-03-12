@@ -1,6 +1,5 @@
-function languageLevelBars(languageLvl, index) {
-    const languageLvlArr = languageLvl.split('-');
-    const level = languageLvlArr[1];
+function languageLevelBars(languageData, index) {
+    const level = languageData.level;
     const levelToNumber = {
       'A1': 0,
       'A2': 1,

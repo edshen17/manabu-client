@@ -7,7 +7,7 @@ const languageCodeToText = (lc, optionArr) => {
             { value: 'JP', text: 'Japanese' },
         ]
     }
-    const language = optionArr.find(code => code.value == lc || lc.includes(code.value))
+    const language = optionArr.find(code => code.value == lc.language || lc.includes(code.value))
     if (language != undefined) {
       return language.text;
     }

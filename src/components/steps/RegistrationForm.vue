@@ -119,13 +119,27 @@
             handleSubmit() {
                 if (this.formData.fluentLanguage && this.formData.nonFluentLanguage && this.formData.level && this.defaultData.region && this.defaultData.timezone) { // all required inputs are filled in
                     const sendUpdateObj = { ...this.formData, ...this.defaultData } // merge the data from the parent and child
-                    sendUpdateObj.fluentLanguages = [`${sendUpdateObj.fluentLanguage}-C2`]
-                    sendUpdateObj.nonFluentLanguages = [`${sendUpdateObj.nonFluentLanguage}-${sendUpdateObj.level}`]
-                    axios.put(`${this.host}${this.endpoint}/${this.userData._id}/updateProfile`, sendUpdateObj, { headers: {
+                    sendUpdateObj.languages = [{language: sendUpdateObj.fluentLanguage, level: 'C2' }, { language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]
+                    axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, sendUpdateObj, { headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
                     }).then(() => {
+                      if (this.endpoint == 'teacher') {
+                      axios
+                        .put(
+                          `${this.host}/teacher/${this.userData._id}/updateProfile`,
+                          { teachingLanguages: [{language: sendUpdateObj.fluentLanguage, level: 'C2' }]},
+                          { headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                          }}
+                        ).then((res) => {
+                          if (res.status == 200) {
+                            this.$emit('form-submitted');
+                          }
+                        })
+                      } else {
                         this.$emit('form-submitted');
+                      }
                     }).catch((err) => {
                         console.log(err);
                     })

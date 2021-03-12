@@ -9,6 +9,10 @@ html * {
   font-weight: 800;
 }
 
+.light-bold {
+  font-weight: 400;
+}
+
 /* Helpers */
 /**************************/
 .margin-top-10 {padding-top:10px;}

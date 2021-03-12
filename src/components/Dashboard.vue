@@ -59,7 +59,7 @@
           v-on:form-submitted="onFormSubmit"
           submitButtonText="Submit"
           :formData="formData"
-          endpoint="/user"
+          endpoint="user"
           v-if="userData.role == 'user' && !userData.teacherAppPending"
         >
           <template v-slot:uniqueSelect>
@@ -95,7 +95,7 @@
           v-on:form-submitted="onFormSubmit"
           submitButtonText="Submit"
           :formData="formData"
-          endpoint="/user"
+          endpoint="teacher"
           v-if="userData.teacherAppPending"
         >
           <template v-slot:uniqueSelect>
@@ -254,12 +254,12 @@
                 <div class="text-center mt-2">
                   <h5>{{ this.userData.name}}</h5>
                   <div
-                    v-for="lang in userData.fluentLanguages.concat(userData.nonFluentLanguages)"
-                    :key="lang"
+                    v-for="lang in userData.languages"
+                    :key="lang.language"
                     class="mx-1"
                     style="display: inline"
                   >
-                    {{ languageCodeToText(lang) }}
+                    {{ languageCodeToText(lang.language) }}
                     <span
                       v-for="(n, i) in 5"
                       :key="i"
@@ -600,8 +600,7 @@ export default {
         }
 
         this.loading = false;
-        const filledOutForm = !(this.userData.fluentLanguages.length == 0
-        && this.userData.nonFluentLanguages.length == 0 && !this.userData.region && !this.userData.timezone);
+        const filledOutForm = !(this.userData.languages.length == 0 && !this.userData.region && !this.userData.timezone);
 
         // teacher form
         if (this.userData.teacherAppPending && !filledOutForm) {

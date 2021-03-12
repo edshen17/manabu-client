@@ -59,37 +59,40 @@
                           <small class="text-muted">Last online {{ formatDate(viewingUserData.lastOnline, 'fromNow') }}</small>
                         </div>
                       </span>
-                      <div class="text-muted font-weight-light">
+                      <div class="text-muted font-weight-light mt-2">
                         <div>
                           <span style="font-size: 1.1rem">
-                            {{ formatString(this.viewingUserData.teacherData.teacherType, 
+                            <span class="light-bold">{{ formatString(this.viewingUserData.teacherData.teacherType, 
                         ['licensed', 'unlicensed'], 
                         ['Professional Teacher --', 'Community Teacher --']) }}
+                            </span>
                             <div
-                              v-for="lang in viewingUserData.fluentLanguages"
-                              :key="lang"
-                              style="display: inline"
+                              v-for="langData in teachingLanguages"
+                              :key="langData.language"
                               class="mr-1"
+                              style="display: inline"
                             >
-                              {{ languageCodeToText(lang) }}
+                            <span>{{ languageCodeToText(langData.language) }}</span>
                               <span
                                 v-for="(n, i) in 5"
                                 :key="i"
                                 class="level"
-                                :class="languageLevelBars(lang, i)"
+                                :class="languageLevelBars(langData, i)"
                               ></span>
                             </div>
                             <div
-                              v-for="lang in viewingUserData.nonFluentLanguages"
-                              :key="lang"
-                              style="display: inline"
+                              v-for="(langData, i) in otherLanguages"
+                              :key="langData.language"
+                              style="display: block"
+                              class="mt-2"
                             >
-                              {{ languageCodeToText(lang) }}
+                            <span v-if="i == 0" class="light-bold">Also Speaks -- </span>
+                              <span>{{ languageCodeToText(langData.language) }}</span>
                               <span
                                 v-for="(n, i) in 5"
                                 :key="i"
                                 class="level"
-                                :class="languageLevelBars(lang, i)"
+                                :class="languageLevelBars(langData, i)"
                               ></span>
                             </div>
                           </span>
@@ -121,11 +124,13 @@
               </div>
             </div>
           </div>
-            <div class="card profile-card mb-3 shadow border-0">
+          <div id="calendar-wrapper">
+            <div class="card profile-card mb-3 shadow border-0" v-show="showCalendar">
               <div class="card-body">
                   <view-calendar :hostedByProp="viewingUserData._id" id="view-calendar"></view-calendar>
               </div>
             </div>
+          </div>
         </b-col>
         <b-col lg="3" class="button-wrapper sticky-top">
           <div class="card profile-card mb-3 shadow border-0">
@@ -133,7 +138,11 @@
                 <b-button variant="dark" class="mx-3 my-3 manabu-blue">BOOK NOW</b-button>
           </div>
           <div class="card profile-card mb-3 shadow border-0">
-            <b-button variant="dark" class="mx-3 my-3" v-scroll-to="'#view-calendar'">VIEW CALENDAR</b-button>
+            <b-button variant="dark" class="mx-3 my-3" v-scroll-to="'#calendar-wrapper'" @click="showCalendar = !showCalendar">
+              <span v-show="!showCalendar">VIEW</span> 
+              <span v-show="showCalendar">HIDE</span> 
+              CALENDAR
+            </b-button>
           </div>
         </b-col>
         <b-col lg="2"></b-col>
@@ -160,6 +169,8 @@ export default {
             host: '/api',
             showCalendar: false,
             teacherPackages: null,
+            teachingLanguages: [],
+            otherLanguages: [],
         }
     },
     components: {
@@ -211,8 +222,17 @@ export default {
         fx.rates = this.exchangeRates;
         return Math.round(fx.convert(amnt, { from, to }));
       },
+      filterDuplicates(inputArr, filterArr) {
+        return inputArr.filter(el => {
+          return filterArr.some(f => {
+              return f.language != el.language && f.level != el.level;
+            });
+        })
+      }
     },
     mounted() {
+      this.teachingLanguages = this.viewingUserData.teacherData.teachingLanguages;
+      this.otherLanguages = this.filterDuplicates(this.viewingUserData.languages, this.teachingLanguages)
     }
 }
 </script>

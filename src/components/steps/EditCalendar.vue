@@ -14,9 +14,9 @@
           <h5 class="text-center mb-2 mt-2">{{selectedReservedBy.name}}</h5>
         </b-link>
         <div class="text-center">
-          <div v-for="lang in selectedReservedBy.fluentLanguages.concat(selectedReservedBy.nonFluentLanguages)" :key="lang" class="mx-1" style="display: inline">
-          {{lang}}
-          <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(lang, i)"></span>       
+          <div v-for="langData in selectedReservedBy.languages" :key="langData.language" class="mx-1" style="display: inline">
+          {{langData}}
+          <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(langData, i)"></span>       
         </div>
         <p>Region: {{selectedReservedBy.region}} ({{ selectedReservedBy.timezone }})</p> 
         </div>
@@ -197,7 +197,7 @@ import languageLevelBars from '../../assets/scripts/languageLevelBars'
 import fetchUserData from '../../assets/scripts/fetchUserData'
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
 import toTitleCase from '../../assets/scripts/toTitleCase'
-
+import store from '../../store/store';
 
 export default {
     name: 'EditCalendar',
@@ -207,7 +207,17 @@ export default {
     props: {
       hostedBy: String,
     },
+    computed: {
+    isMobile: {
+      get() {
+        return store.getters.isMobile
+      }
+    },
+    },
     mounted() {
+      if (this.isMobile) {
+        this.calendar_settings.view_type = 'day';
+      }
       this.getScheduleData();
     },
     data() {
@@ -262,18 +272,6 @@ export default {
         this.$bvModal.hide('update-modal'); 
       },
       toTitleCase,
-      recursiveSlotEdit(formatedTime) { // update available time so that it is not the same time as the lessons (avoid duplicate split on kalendar)
-        const dupeTimeSlot = this.events.find(timeSlot => timeSlot.from == formatedTime.from);
-        if (dupeTimeSlot) {
-          formatedTime.from = dupeTimeSlot.to;
-          formatedTime.data.isDuplicate = true;
-          this.recursiveSlotEdit(formatedTime)
-        } else {
-          if (formatedTime.from != formatedTime.to) {
-            this.events.push(formatedTime);
-          }
-        }
-      },
       cancelAppointment(aId) {
         this.modalTitleText = 'Are you sure you want to cancel the appointment?'
         if (this.isRejecting && this.isRejectingConfirmation) {
@@ -418,7 +416,6 @@ export default {
                       hostedBy: availableTimes[i].hostedBy,
                     }
                   }
-                  // this.recursiveSlotEdit(formatedTime);
                   this.events.push(formatedTime);
                 }
                 this.isCalendarLoaded = true;

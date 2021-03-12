@@ -22,6 +22,13 @@ const getUserData = async () => {
   return res;
 }
 
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (isMobile && !store.getters.isMobile) {
+  store.commit('setIsMobile', true)
+} else {
+  store.commit('setIsMobile', false)
+}
+
 async function beforeEnterCheck (route, next) {
   if (store.getters.isLoggedIn) {
     store.commit('setLoggedIn', true);

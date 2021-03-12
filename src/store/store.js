@@ -8,6 +8,9 @@ const store = new Vuex.Store({
         user: {
             data: null,
             isLoggedIn: false,
+        },
+        deviceData: {
+          isMobile: false,
         }
      },
      mutations: {
@@ -16,6 +19,9 @@ const store = new Vuex.Store({
          },
          setLoggedIn(state, loggedIn) {
           state.user.isLoggedIn = loggedIn;
+        },
+        setIsMobile(state, isMobile) {
+          state.deviceData.isMobile = isMobile;
         }
      },
      getters: {
@@ -24,6 +30,9 @@ const store = new Vuex.Store({
       },
       isLoggedIn: state => {
         return state.user.isLoggedIn;
+      },
+      isMobile: state => {
+        return state.deviceData.isMobile;
       },
     }
 })

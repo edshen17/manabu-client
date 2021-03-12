@@ -35,17 +35,17 @@
         
         <div class="text-center">
           <div
-            v-for="lang in selectedHostedBy.fluentLanguages.concat(selectedHostedBy.nonFluentLanguages)"
-            :key="lang"
+            v-for="langData in selectedHostedBy.languages"
+            :key="langData.language"
             class="mx-1"
             style="display: inline"
           >
-            {{lang}}
+            {{langData.language}}
             <span
               v-for="(n, i) in 5"
               :key="i"
               class="level"
-              :class="languageLevelBars(lang, i)"
+              :class="languageLevelBars(langData, i)"
             ></span>
           </div>
           <p>
@@ -233,6 +233,12 @@ export default {
         return userData;
       }
     },
+    isMobile: {
+      get() {
+        return store.getters.isMobile
+      }
+
+    },
     },
     watch: {
     storeUserData(userData) { // watch in case of mutations
@@ -240,6 +246,9 @@ export default {
     }
   },
     async mounted() {
+      if (this.isMobile) {
+        this.calendar_settings.view_type = 'day';
+      }
       this.user = this.storeUserData;
       this.hostedBy = this.$route.params.hostedBy || this.hostedByProp;
       if (this.$route.params.hostedBy && this.$route.params.packageTransactionId) {
