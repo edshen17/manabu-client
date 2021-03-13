@@ -1,5 +1,16 @@
 <template>
   <div class="teacher-profile">
+     <b-modal id="priceModal" title="Modal with Popover" ok-only>
+      <p>
+        This
+        <b-button v-b-popover="'Popover inside a modal!'" title="Popover">Button</b-button>
+        triggers a popover on click.
+      </p>
+      <p>
+        This <a href="#" v-b-tooltip title="Tooltip in a modal!">Link</a> will show a tooltip on
+        hover.
+      </p>
+    </b-modal>
     <b-container fluid>
       <b-row>
         <b-col lg="2"></b-col>
@@ -112,7 +123,7 @@
             <div class="card-body">
               <h3 class="mb-3">Package offerings</h3>
               <div v-for="pkg in packages" :key="pkg._id">
-                <div class="card profile-card mb-3 shadow border-0" v-if="pkg.isOffering">
+                <div class="card profile-card mb-3 shadow border-0" v-if="pkg.isOffering" @click="openModal('priceModal')">
                   <div class="card-body">
                     <h5 class="text-muted font-weight-light">{{ toTitleCase(pkg.packageType) }} plan</h5>
                     <p>{{ formatString(pkg.packageType, ['light', 'moderate', 'vigorous'], 
@@ -132,17 +143,19 @@
             </div>
           </div>
         </b-col>
-        <b-col lg="3" class="button-wrapper sticky-top">
-          <div class="card profile-card mb-3 shadow border-0">
+        <b-col lg="3" class="button-wrapper">
+          <div class="sticky-top">
+            <div class="card profile-card mb-3 shadow border-0">
               <h5 class="font-weight-light mt-3 mx-3"> Lessons starting from {{convertMoney(viewingUserData.teacherData.hourlyRate.amount, viewingUserData.teacherData.hourlyRate.currency, myUserData.settings.currency)}} {{ myUserData.settings.currency }}/hour</h5>
                 <b-button variant="dark" class="mx-3 my-3 manabu-blue">BOOK NOW</b-button>
           </div>
-          <div class="card profile-card mb-3 shadow border-0">
+                    <div class="card profile-card mb-3 shadow border-0">
             <b-button variant="dark" class="mx-3 my-3" v-scroll-to="'#calendar-wrapper'" @click="showCalendar = !showCalendar">
               <span v-show="!showCalendar">VIEW</span> 
               <span v-show="showCalendar">HIDE</span> 
               CALENDAR
             </b-button>
+          </div>
           </div>
         </b-col>
         <b-col lg="2"></b-col>
@@ -183,6 +196,9 @@ export default {
         packages: Array,
     },
     methods: {
+        openModal(modalId) {
+          this.$bvModal.show(modalId)
+        },
         toTitleCase,
         formatDate,
         languageCodeToText,

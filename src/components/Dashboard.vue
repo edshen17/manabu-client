@@ -512,8 +512,8 @@ export default {
             userId: '',
             appointments: [],
             formData: {
-                nonFluentLanguage: 'JP',
-                fluentLanguage: 'EN',
+                nonFluentLanguage: 'ja',
+                fluentLanguage: 'en',
                 level: 'B2',
                 teacherType: 'unlicensed',
                 license: null,
@@ -539,7 +539,7 @@ export default {
               },
             ],
             optionsPrimaryLanguage: [
-                    { value: 'JP', text: 'Japanese' },
+                    { value: 'ja', text: 'Japanese' },
                     { value: null, text: 'Other languages coming soon!', disabled: true }
                 ],
                 optionsLevel: [
@@ -551,9 +551,9 @@ export default {
                     { value: 'C2', text: 'Proficient (C2)' },
                 ],
                 optionsSecondaryLanguage: [
-                    { value: 'EN', text: 'English' },
-                    { value: 'CN', text: 'Chinese' },
-                    { value: 'KR', text: 'Korean' },
+                    { value: 'en', text: 'English' },
+                    { value: 'zh', text: 'Chinese' },
+                    { value: 'ko', text: 'Korean' },
                 ],
                 optionsTeacherType: [
                     { value: 'unlicensed', text: 'unlicensed teacher' },
@@ -604,8 +604,8 @@ export default {
 
         // teacher form
         if (this.userData.teacherAppPending && !filledOutForm) {
-            this.formData.nonFluentLanguage = 'EN',
-            this.formData.fluentLanguage = 'JP',
+            this.formData.nonFluentLanguage = 'en',
+            this.formData.fluentLanguage = 'ja',
             this.showModal();
         }
         // user has not filled out registration form, so show form

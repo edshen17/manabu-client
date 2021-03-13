@@ -59,6 +59,76 @@
     <main class="LayoutDefault_main">
       <slot />
     </main>
+    <footer class="bg-light text-black text-center text-lg-start">
+  <!-- Grid container -->
+  <div class="container p-4">
+    <!--Grid row-->
+    <div class="row">
+      <!--Grid column-->
+      <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+        <h5 class="text-uppercase">About</h5>
+
+        <p>
+          Minato Manabu (Pte. Ltd) is a private company focused on empowering people through education. Its headquarters are located in Singapore and the company focuses on offering students affordable and customizable lessons. 
+          
+        </p>
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+        <h5 class="text-uppercase">Social Media</h5>
+
+  <section class="mb-4">
+      <!-- Facebook -->
+      <a class="btn btn-floating m-1" href="https://www.facebook.com/ManabuOfficial/" role="button"
+        ><i class="fab fa-facebook-f"></i
+      ></a>
+
+      <!-- Twitter -->
+      <a class="btn btn-floating m-1" href="#!" role="button"
+        ><i class="fab fa-twitter"></i
+      ></a>
+
+      <!-- Instagram -->
+      <a class="btn btn-floating m-1" href="https://www.instagram.com/nihongo_manabu_/" role="button"
+        ><i class="fab fa-instagram"></i
+      ></a>
+
+    </section>
+      </div>
+      <!--Grid column-->
+      <!--Grid column-->
+      <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+        <h5 class="text-uppercase mb-0">More</h5>
+
+        <ul class="list-unstyled mt-2">
+          <li class="mb-2">
+            <a href="#!" class="text-black">Become a teacher</a>
+          </li>
+          <li class="mb-2">
+            <a href="#!" class="text-black">Find a teacher</a>
+          </li>
+          <li class="mb-2">
+            <a href="#!" class="text-black">Manabu Guidelines</a>
+          </li>
+          <li class="mb-2">
+            <a href="#!" class="text-black">Currency placeholder</a>
+          </li>
+        </ul>
+      </div>
+      <!--Grid column-->
+    </div>
+    <!--Grid row-->
+  </div>
+  <!-- Grid container -->
+
+  <!-- Copyright -->
+  <div class="text-center p-3 bg-light">
+    Copyright © 2021. Minabu Manato. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved.  
+  </div>
+  <!-- Copyright -->
+</footer>
   </div>
 </template>
 

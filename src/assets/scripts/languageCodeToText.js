@@ -1,10 +1,10 @@
 const languageCodeToText = (lc, optionArr) => {
     if (!optionArr) {
         optionArr = [
-            { value: 'EN', text: 'English' },
-            { value: 'CN', text: 'Chinese' },
-            { value: 'KR', text: 'Korean' },
-            { value: 'JP', text: 'Japanese' },
+            { value: 'en', text: 'English' },
+            { value: 'zh', text: 'Chinese' },
+            { value: 'ko', text: 'Korean' },
+            { value: 'ja', text: 'Japanese' },
         ]
     }
     const language = optionArr.find(code => code.value == lc.language || lc.includes(code.value))

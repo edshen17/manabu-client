@@ -13,6 +13,10 @@ html * {
   font-weight: 400;
 }
 
+.LayoutDefault_main {
+  min-height: calc(100vh - 120px);
+}
+
 /* Helpers */
 /**************************/
 .margin-top-10 {padding-top:10px;}
@@ -145,7 +149,7 @@ p {
   cursor: auto;
 }
 
-.teacher-profile .button-wrapper.sticky-top {
+.teacher-profile .button-wrapper .sticky-top {
   align-self: flex-start;
   top: 1rem !important;
 }
