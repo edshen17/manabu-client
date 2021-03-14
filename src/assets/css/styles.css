@@ -153,6 +153,15 @@ p {
   font-weight:bold;
 }
 
+.price-card:hover { 
+  background: #f0f1f2;
+  cursor: pointer; 
+}
+
+.active {
+  background: red;
+}
+
 .teacher-profile .button-wrapper .sticky-top {
   align-self: flex-start;
   top: 1rem !important;
