@@ -1,15 +1,47 @@
 <template>
   <div class="teacher-profile">
-     <b-modal id="priceModal" title="Modal with Popover" ok-only>
-      <p>
-        This
-        <b-button v-b-popover="'Popover inside a modal!'" title="Popover">Button</b-button>
-        triggers a popover on click.
-      </p>
-      <p>
-        This <a href="#" v-b-tooltip title="Tooltip in a modal!">Link</a> will show a tooltip on
-        hover.
-      </p>
+     <b-modal id="price-modal" title="Select a Lesson Plan" size="lg">
+       <b-form-select v-model="selectedLanguage" :options="optionsLanguage" v-show="teachingLanguages.length > 1"></b-form-select>
+        <b-form-group label="Lesson Plan" v-slot="{ ariaDescribedby }" class="mt-2">
+          <b-form-radio-group
+            v-model="selectedPlan"
+            :options="optionsPlan"
+            :aria-describedby="ariaDescribedby"
+            name="plans"
+            @change="changePlan"
+          ></b-form-radio-group>
+        </b-form-group>
+        <b-form-group label="Duration" v-slot="{ ariaDescribedby }" class="mt-2">
+          <b-form-radio-group
+            v-model="selectedDuration"
+            :options="optionsDuration"
+            :aria-describedby="ariaDescribedby"
+            name="durations"
+          ></b-form-radio-group>
+        </b-form-group>
+        <b-form-group label="Monthly Subscription?" v-slot="{ ariaDescribedby }" class="mt-2">
+          <b-form-radio-group
+            v-model="selectedSubscription"
+            :options="optionsSubscription"
+            :aria-describedby="ariaDescribedby"
+            name="subscriptions"
+          ></b-form-radio-group>
+        </b-form-group>
+        <span style="font-weight:bold; display:block;" class="mb-2" v-show="selectedDuration">Total Price: {{ convertMoney((selectedDuration / 60) * viewingUserData.teacherData.hourlyRate.amount, selectedPackageInfo.priceDetails.currency, myUserData.settings.currency, true).toFixed(1).toLocaleString()}} {{myUserData.settings.currency}} </span>
+        <span style="font-weight:bold;">Disclaimer</span>
+        <ul >
+          <li style="font-size: .9rem" class="mt-2">To give teachers time to prepare for their next student, lessons end 5 minutes early. However, after each lesson you will receive a 5 minute credit that you can use for that teacher. For example, if you buy 60 minute lessons, you will automatically get a "free" lesson after 12 lessons. The credits do not expire, but the extra lesson will expire when the plan expires.</li>
+          <li style="font-size: .9rem" class="mt-2">Lesson plans automatically expire 1 month after purchasing and unused lessons will not carryforward. If you choose the subscription option you will automatically receive a new lesson plan every month.</li>
+        </ul>
+          <template #modal-footer>
+            <b-button @click="$bvModal.hide('price-modal')"> Cancel </b-button>
+            <b-button
+              variant="primary"
+              @click="onConfirm"
+            >
+              Continue
+            </b-button>
+          </template>
     </b-modal>
     <b-container fluid>
       <b-row>
@@ -121,15 +153,15 @@
           </div>
           <div class="card profile-card mb-3 shadow border-0">
             <div class="card-body">
-              <h3 class="mb-3">Package offerings</h3>
+              <h3 class="mb-3">Lesson Plans</h3>
               <div v-for="pkg in packages" :key="pkg._id">
-                <div class="card profile-card mb-3 shadow border-0" v-if="pkg.isOffering" @click="openModal('priceModal')">
+                <div class="card profile-card mb-3 shadow border-0" v-if="pkg.isOffering">
                   <div class="card-body">
-                    <h5 class="text-muted font-weight-light">{{ toTitleCase(pkg.packageType) }} plan</h5>
+                    <h5 class="text-muted font-weight-light">{{ toTitleCase(pkg.packageType) }}</h5>
                     <p>{{ formatString(pkg.packageType, ['light', 'moderate', 'vigorous'], 
-                      ['This plan is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.', 'This plan is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.', 'This plan is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 21 personalized lessons every month or about 5 lessons every week.'])}}
+                      ['This plan is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.', 'This plan is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.', 'This plan is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 20 personalized lessons every month or about 5 lessons every week.'])}}
                     </p>
-                    <span class="badge badge-pill badge-primary manabu-blue" style="font-size: .9rem">{{convertMoney(pkg.priceDetails.price, pkg.priceDetails.currency, myUserData.settings.currency).toLocaleString()}} {{myUserData.settings.currency}}</span>  
+                    <span class="badge badge-pill badge-primary manabu-blue" style="font-size: .9rem">~{{convertMoney((pkg.packageDurations[0] / 60) * viewingUserData.teacherData.hourlyRate.amount, pkg.priceDetails.currency, myUserData.settings.currency).toLocaleString()}} {{myUserData.settings.currency}}+</span>  
                   </div>
                 </div>
               </div>
@@ -147,7 +179,7 @@
           <div class="sticky-top">
             <div class="card profile-card mb-3 shadow border-0">
               <h5 class="font-weight-light mt-3 mx-3"> Lessons starting from {{convertMoney(viewingUserData.teacherData.hourlyRate.amount, viewingUserData.teacherData.hourlyRate.currency, myUserData.settings.currency)}} {{ myUserData.settings.currency }}/hour</h5>
-                <b-button variant="dark" class="mx-3 my-3 manabu-blue">BOOK NOW</b-button>
+                <b-button variant="dark" class="mx-3 my-3 manabu-blue" @click="openModal('price-modal')">BOOK NOW</b-button>
           </div>
                     <div class="card profile-card mb-3 shadow border-0">
             <b-button variant="dark" class="mx-3 my-3" v-scroll-to="'#calendar-wrapper'" @click="showCalendar = !showCalendar">
@@ -173,9 +205,12 @@ import formatDate from '../../assets/scripts/formatDate';
 import toTitleCase from '../../assets/scripts/toTitleCase';
 import axios from 'axios';
 import fx from 'money';
+import { required, between } from "vuelidate/lib/validators";
+import { validationMixin } from "vuelidate";
 
 export default {
     name: 'TeacherProfile',
+    mixins: [validationMixin],
     data() {
         return {
             isApproved: false,
@@ -184,6 +219,25 @@ export default {
             teacherPackages: null,
             teachingLanguages: [],
             otherLanguages: [],
+            optionsPlan: [],
+            optionsDuration: [],
+            optionsLanguage: [],
+            optionsSubscription: [
+              {
+                text: 'Yes',
+                value: 'yes',
+              },
+              {
+                text: 'No',
+                value: 'no',
+              },
+            ],
+            selectedPlan: '',
+            selectedDuration: '',
+            selectedLanguage: '',
+            selectedSubscription: 'yes',
+            selectedPackageInfo: null,
+
         }
     },
     components: {
@@ -195,7 +249,26 @@ export default {
         exchangeRates: Object,
         packages: Array,
     },
+    validations: {
+        selectedDuration: {
+          required,
+          between: between(30, 90)
+        },
+        selectedLanguage: {
+          required,
+        },
+        selectedPlan: {
+          required,
+        }
+      },
     methods: {
+        onConfirm() {
+          if (this.$v.$invalid) {
+            alert('Missing input on the form. Please double check the inputs.')
+          } else {
+            this.router.push('/payment')
+          }
+        },
         openModal(modalId) {
           this.$bvModal.show(modalId)
         },
@@ -230,13 +303,18 @@ export default {
           console.log(err);
         })
       },
-      convertMoney(amnt, from, to) {
+      convertMoney(amnt, from, to, isRounded) {
         if (!from || !to) {
           from = 'SGD';
           to = 'SGD';
         }
         fx.rates = this.exchangeRates;
-        return Math.round(fx.convert(amnt, { from, to }));
+        if (isRounded) {
+          return fx.convert(amnt, { from, to })
+        } 
+        else {
+          return Math.round(fx.convert(amnt, { from, to }));
+        }
       },
       filterDuplicates(inputArr, filterArr) {
         return inputArr.filter(el => {
@@ -244,11 +322,46 @@ export default {
               return f.language != el.language && f.level != el.level;
             });
         })
-      }
+      },
+      changePlan(selectedPlan) {
+        const packageInfo = this.packages.find((pkg) => { return pkg.packageType == selectedPlan })
+        const newDurationOptions = [];
+        packageInfo.packageDurations.forEach((duration) => {
+          newDurationOptions.push({
+            text: `${duration} minutes`,
+            value: duration,
+          })
+        });
+        this.selectedDuration = '';
+        this.optionsDuration = newDurationOptions;
+        this.selectedPackageInfo = packageInfo;
+      },
     },
     mounted() {
       this.teachingLanguages = this.viewingUserData.teacherData.teachingLanguages;
       this.otherLanguages = this.filterDuplicates(this.viewingUserData.languages, this.teachingLanguages)
+      this.packages.forEach((pkg) => {
+        if (pkg.isOffering) {
+          pkg.packageDurations.sort((a, b) => {
+            return a - b;
+          })
+          const text = this.toTitleCase(pkg.packageType)
+          this.optionsPlan.push({
+            text,
+            value: pkg.packageType
+          })
+        }
+      });
+      this.teachingLanguages.forEach((langData) => {
+        this.optionsLanguage.push({
+          text: languageCodeToText(langData.language),
+          value: langData.language,
+        })
+      })
+      this.selectedPlan = this.optionsPlan[0].value;
+      this.selectedLanguage = this.optionsLanguage[0].value;
+      this.changePlan(this.selectedPlan);
+      this.selectedDuration = this.optionsDuration[0].value;
     }
 }
 </script>

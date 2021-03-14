@@ -149,6 +149,10 @@ p {
   cursor: auto;
 }
 
+#price-modal legend {
+  font-weight:bold;
+}
+
 .teacher-profile .button-wrapper .sticky-top {
   align-self: flex-start;
   top: 1rem !important;

@@ -186,7 +186,7 @@
           ></b-form-input>
         </b-input-group>
       </div>
-      <template #modal-title> My packages </template>
+      <template #modal-title> My lesson plans </template>
       <div>
         <b-card-group deck>
         <b-card v-for="pkg in defaultPackageInfo" :key="pkg.type" header-tag="header" footer-tag="footer">
@@ -197,7 +197,7 @@
 
                 }}{{ (Math.round((hourlyRate.myRate * pkg.monthlyAmount) * 2) / 2).toFixed(1)
 
-                }}/month
+                }}/month (60 min lessons)
               </h6>
             </template>
             <div>
@@ -329,7 +329,7 @@
                     v-if="userData.role == 'teacher' || userData.teacherAppPending"
                   >
                     <b-link @click="$bvModal.show('my-packages');"
-                      >My packages</b-link
+                      >My lesson plans</b-link
                     >
                   </li>
                   <li class="list-group-item">
@@ -524,7 +524,7 @@ export default {
             defaultPackageInfo: [
               {
                 type: 'vigorous',
-                monthlyAmount: 21,
+                monthlyAmount: 20,
                 weeklyAmount: 5,
               },
               {

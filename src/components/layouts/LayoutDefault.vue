@@ -125,7 +125,7 @@
 
   <!-- Copyright -->
   <div class="text-center p-3 bg-light">
-    Copyright © 2021. Minabu Manato. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved.  
+    Copyright © 2021. Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved.  
   </div>
   <!-- Copyright -->
 </footer>
