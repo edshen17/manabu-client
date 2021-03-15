@@ -44,7 +44,7 @@
         class="mb-2"
         v-show="selectedDuration"
         >Total Price:
-        {{ convertMoney((selectedDuration / 60) * viewingUserData.teacherData.hourlyRate.amount * selectedPackageInfo.lessonAmount, selectedPackageInfo.priceDetails.currency, myUserData.settings.currency, true).toFixed(1).toLocaleString()}}
+        {{ convertMoney((selectedDuration / 60) * viewingUserData.teacherData.hourlyRate.amount * selectedPackageData.lessonAmount, selectedPackageData.priceDetails.currency, myUserData.settings.currency, true).toFixed(1).toLocaleString()}}
         {{myUserData.settings.currency}}
       </span>
       <span style="font-weight: bold">Disclaimer</span>
@@ -290,7 +290,6 @@ export default {
             isApproved: false,
             host: '/api',
             showCalendar: false,
-            teacherPackages: null,
             teachingLanguages: [],
             otherLanguages: [],
             optionsPlan: [],
@@ -310,7 +309,7 @@ export default {
             selectedDuration: '',
             selectedLanguage: '',
             selectedSubscription: 'yes',
-            selectedPackageInfo: null,
+            selectedPackageData: this.packages[0],
 
         }
     },
@@ -340,7 +339,26 @@ export default {
           if (this.$v.$invalid) {
             alert('Missing input on the form. Please double check the inputs.')
           } else {
-            this.router.push('/payment')
+            // if not logged in, redirect... aka no myuserdata
+
+            const transactionData = {
+              hostedBy: this.viewingUserData._id,
+              reservedBy: this.myUserData._id,
+              selectedPlan: this.selectedPlan,
+              selectedDuration: this.selectedDuration,
+              selectedLanguage: this.selectedLanguage,
+              selectedSubscription: this.selectedSubscription,
+              selectedPackageId: this.selectedPackageData._id,
+            }
+
+            localStorage.setItem('transactionData', JSON.stringify(transactionData));
+
+            this.$router.push({
+              name: 'Payment',
+              params: {
+                transactionData,
+              }
+            })
           }
         },
         openModal(modalId) {
@@ -408,7 +426,7 @@ export default {
         });
         this.selectedDuration = packageInfo.packageDurations[0];
         this.optionsDuration = newDurationOptions;
-        this.selectedPackageInfo = packageInfo;
+        this.selectedPackageData = packageInfo;
       },
     },
     mounted() {

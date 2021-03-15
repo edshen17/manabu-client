@@ -10,6 +10,7 @@ import TeacherSignup from '@/components/TeacherSignup';
 import NotFound from '@/components/NotFound';
 import UserProfile from '@/components/UserProfile';
 import ViewCalendar from '@/components/steps/ViewCalendar';
+import Payment from '@/components/Payment';
 import store  from '../store/store';
 
 Vue.use(Router);
@@ -140,7 +141,7 @@ const router = new Router({
       },
     },
     {
-      path: '/settings/',
+      path: '/settings',
       name: 'Settings',
       component: Settings,
       beforeEnter(to, from, next) {
@@ -149,6 +150,15 @@ const router = new Router({
         } else {
           next('/')
         }
+      },
+    },
+    {
+      path: '/payment',
+      name: 'Payment',
+      component: Payment,
+      props: true,
+      beforeEnter(to, from, next) {
+        beforeEnterCheck(undefined, next)
       },
     },
     {

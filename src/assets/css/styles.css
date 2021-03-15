@@ -110,6 +110,12 @@ p {
   border-radius:50% !important; 
 }
 
+.mid-image {
+  float: left;
+  width: 15%;
+  border-radius:50% !important; 
+}
+
 .center-image {
   display: block;
   margin-left: auto;
@@ -158,13 +164,16 @@ p {
   cursor: pointer; 
 }
 
-.active {
-  background: red;
+.active-card {
+  background: #6bd6508a !important;
 }
 
-.teacher-profile .button-wrapper .sticky-top {
+.teacher-profile .button-wrapper .sticky-top, .Payment .button-wrapper .sticky-top  {
   align-self: flex-start;
   top: 1rem !important;
+  position: sticky;
+  z-index: 20;
+  background-color: #fff;
 }
 
 .manabu-blue {
