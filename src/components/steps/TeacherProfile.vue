@@ -44,7 +44,7 @@
         class="mb-2"
         v-show="selectedDuration"
         >Total Price:
-        {{ convertMoney((selectedDuration / 60) * viewingUserData.teacherData.hourlyRate.amount * selectedPackageData.lessonAmount, selectedPackageData.priceDetails.currency, myUserData.settings.currency, true).toFixed(1).toLocaleString()}}
+        {{ convertMoney((selectedDuration / 60) * viewingUserData.teacherData.hourlyRate.amount * selectedPackageData.lessonAmount, selectedPackageData.priceDetails.currency, myUserData.settings.currency, true, exchangeRates).toFixed(1).toLocaleString()}}
         {{myUserData.settings.currency}}
       </span>
       <span style="font-weight: bold">Disclaimer</span>
@@ -214,7 +214,7 @@
                     <span
                       class="badge badge-pill badge-primary manabu-blue"
                       style="font-size: 0.9rem"
-                      >~{{convertMoney((pkg.packageDurations[0] / 60) * viewingUserData.teacherData.hourlyRate.amount * pkg.lessonAmount, pkg.priceDetails.currency, myUserData.settings.currency).toLocaleString()}}+ 
+                      >~{{convertMoney((pkg.packageDurations[0] / 60) * viewingUserData.teacherData.hourlyRate.amount * pkg.lessonAmount, pkg.priceDetails.currency, myUserData.settings.currency, false, exchangeRates).toLocaleString()}}+ 
                       {{myUserData.settings.currency}}</span
                     >
                   </div>
@@ -241,7 +241,7 @@
             <div class="card profile-card mb-3 shadow border-0">
               <h5 class="font-weight-light mt-3 mx-3">
                 Lessons starting from
-                ~{{convertMoney(viewingUserData.teacherData.hourlyRate.amount, viewingUserData.teacherData.hourlyRate.currency, myUserData.settings.currency)}} {{ myUserData.settings.currency }}/hour
+                ~{{convertMoney(viewingUserData.teacherData.hourlyRate.amount, viewingUserData.teacherData.hourlyRate.currency, myUserData.settings.currency, false, exchangeRates)}} {{ myUserData.settings.currency }}/hour
               </h5>
               <b-button
                 variant="dark"
@@ -277,8 +277,8 @@ import languageCodeToText from '../../assets/scripts/languageCodeToText';
 import formatString from '../../assets/scripts/formatString';
 import formatDate from '../../assets/scripts/formatDate';
 import toTitleCase from '../../assets/scripts/toTitleCase';
+import convertMoney from '../../assets/scripts/convertMoney';
 import axios from 'axios';
-import fx from 'money';
 import { required, between } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 
@@ -340,7 +340,7 @@ export default {
             alert('Missing input on the form. Please double check the inputs.')
           } else {
             // if not logged in, redirect... aka no myuserdata
-
+            const myUserData = this.myUserData
             const transactionData = {
               hostedBy: this.viewingUserData._id,
               reservedBy: this.myUserData._id,
@@ -352,11 +352,12 @@ export default {
             }
 
             localStorage.setItem('transactionData', JSON.stringify(transactionData));
-
+            
             this.$router.push({
               name: 'Payment',
               params: {
                 transactionData,
+                myUserData,
               }
             })
           }
@@ -395,19 +396,7 @@ export default {
           console.log(err);
         })
       },
-      convertMoney(amnt, from, to, isRounded) {
-        if (!from || !to) {
-          from = 'SGD';
-          to = 'SGD';
-        }
-        fx.rates = this.exchangeRates;
-        if (isRounded) {
-          return fx.convert(amnt, { from, to })
-        }
-        else {
-          return Math.round(fx.convert(amnt, { from, to }));
-        }
-      },
+      convertMoney,
       filterDuplicates(inputArr, filterArr) {
         return inputArr.filter(el => {
           return filterArr.some(f => {

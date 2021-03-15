@@ -11,7 +11,7 @@
                 <div
                   class="card profile-card mb-3 shadow border-0"
                 >
-                  <div class="card-body price-card" @click="selectedMethod = method.method" :class="{ 'active-card': method.method == selectedMethod }">
+                  <div class="card-body price-card" @click="onMethodChange(method.method)" :class="{ 'active-card': method.method == selectedMethod }">
                     <h4 class="text-muted font-weight-light">
                       {{ method.method }}
                     </h4>
@@ -33,15 +33,17 @@
                 <div class='payment-card' style="display: block">
                     <h4>{{ validatedData.teacherData.name }}</h4>
                     <p class='text-capitalize light-bold'> {{ validatedData.selectedPlan }} plan ({{ validatedData.selectedDuration }} minutes)</p>
-                    <h5 class="mt-5">Subtotal</h5>
-                    <h5>Processing fee</h5>
-                    <h5>Total</h5>
+                    <h5 class="mt-5">Subtotal: {{ subTotal }} {{userData.settings.currency}}</h5>
+                    <h5>Processing fee: {{ (subTotal*(processingRate)).toFixed(1).toLocaleString()  }} {{userData.settings.currency}}</h5>
+                    <h5>Total: {{ totalPrice.toFixed(1).toLocaleString() }} {{userData.settings.currency}}</h5>
                 </div>
               </h5>
               <b-button
                 variant="dark"
                 class="mx-3 my-3 manabu-blue"
-                >BOOK NOW</b-button
+                :disabled="isDisabled"
+                @click="proceedPayment"
+                >PAY NOW</b-button
               >
             </div>
           </div>
@@ -59,6 +61,8 @@
 <script>
 import LayoutDefault from './layouts/LayoutDefault';
 import imageSourceEdit from '../assets/scripts/imageSourceEdit';
+import convertMoney from '../assets/scripts/convertMoney';
+import store from '../store/store';
 
 import axios from 'axios';
 export default {
@@ -68,29 +72,68 @@ export default {
     },
     props: {
         transactionData: Object,
+        myUserData: Object,
+    },
+        computed: {
+      storeUserData: {
+        get() {
+          return store.getters.userData;
+        },
+        set(userData) {
+          return userData;
+        }
+        }
     },
     data() {
         return {
             loading: true,
+            isDisabled: true,
             host: '/api',
             paymentMethods: [
                 {
-                    method: 'Credit / Debit Card'
+                    method: 'Credit / Debit Card',
+                    processingRate: 0,
                 },
                 {
-                    method: 'PayPal'
+                    method: 'PayPal',
+                    processingRate: .045,
                 }
             ],
             selectedMethod: null,
             validatedData: null,
+            subTotal: 0,
+            totalPrice:0,
+            userData: null,
         }
     },
     methods: {
+      onMethodChange(method) {
+        this.selectedMethod = method; 
+        this.isDisabled = false
+        this.processingRate = this.paymentMethods.find((paymentMethod) => { return paymentMethod.method == method }).processingRate;
+      },
         imageSourceEdit,
+        proceedPayment() {
+          if (this.selectedMethod == 'PayPal') {
+            const transactionData = this.transactionData || JSON.parse(localStorage.getItem('transactionData'));
+            axios.post('/api/pay', transactionData, { headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }}).then((res) => {
+              if (res.status == 200) {
+                window.location.href = res.data.redirectLink;
+                return false;
+              }
+            }).catch((err) => { //err
+
+            })
+          }
+        },
     },
     mounted() {
         try {
             const transactionData = this.transactionData || JSON.parse(localStorage.getItem('transactionData'));
+            const myUserData = this.myUserData || this.storeUserData;
+            this.userData = myUserData;
             if (transactionData) {
                 const { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId } = transactionData
                 return axios.get(`${this.host}/utils/verifyTransactionData`, { params: { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId } }, { headers: {
@@ -99,7 +142,10 @@ export default {
                     if (res.status == 200) {
                         this.loading = false;
                         this.validatedData = res.data
-                        console.log(this.validatedData)
+                        const { pkg, reservedBy, selectedDuration, selectedPlan, selectedSubscription, teacherData, exchangeRate } = res.data;
+                        this.subTotal = convertMoney((selectedDuration / 60) * teacherData.hourlyRate.amount * pkg.lessonAmount, pkg.priceDetails.currency, myUserData.settings.currency, true, exchangeRate).toFixed(1).toLocaleString()
+                        this.processingRate = 0;
+                        this.totalPrice = this.subTotal * (this.processingRate + 1)
                     } else {
                         //err
                     }

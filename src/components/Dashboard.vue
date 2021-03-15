@@ -635,7 +635,7 @@ export default {
             axios
               .post(
                 `${this.host}/transaction/package`,
-                { teacherPackages: this.hourlyRate.offering, teacherId: this.userId, price: this.hourlyRate.myRate, currency: this.hourlyRate.selectedCurrency, packageDurations: this.hourlyRate.packageDurations },
+                { teacherPackages: this.hourlyRate.offering, teacherId: this.userId, hourlyPrice: this.hourlyRate.myRate, currency: this.hourlyRate.selectedCurrency, packageDurations: this.hourlyRate.packageDurations },
                 { headers: {
                   'X-Requested-With': 'XMLHttpRequest'
                 }}
