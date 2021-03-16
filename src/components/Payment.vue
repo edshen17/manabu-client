@@ -34,8 +34,8 @@
                     <h4>{{ validatedData.teacherData.name }}</h4>
                     <p class='text-capitalize light-bold'> {{ validatedData.selectedPlan }} plan ({{ validatedData.selectedDuration }} minutes)</p>
                     <h5 class="mt-5">Subtotal: {{ subTotal }} {{userData.settings.currency}}</h5>
-                    <h5>Processing fee: {{ (subTotal*(processingRate)).toFixed(1).toLocaleString()  }} {{userData.settings.currency}}</h5>
-                    <h5>Total: {{ totalPrice.toFixed(1).toLocaleString() }} {{userData.settings.currency}}</h5>
+                    <h5>Processing fee: {{ (subTotal*(processingRate)).toFixed(2).toLocaleString()  }} {{userData.settings.currency}}</h5>
+                    <h5>Total: {{ totalPrice.toFixed(2).toLocaleString() }} {{userData.settings.currency}}</h5>
                 </div>
               </h5>
               <b-button
@@ -135,15 +135,16 @@ export default {
             const myUserData = this.myUserData || this.storeUserData;
             this.userData = myUserData;
             if (transactionData) {
-                const { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId } = transactionData
-                return axios.get(`${this.host}/utils/verifyTransactionData`, { params: { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId } }, { headers: {
+                const { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId, selectedLanguage } = transactionData
+                return axios.get(`${this.host}/utils/verifyTransactionData`, { params: { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId, selectedLanguage } }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
                     if (res.status == 200) {
                         this.loading = false;
                         this.validatedData = res.data
-                        const { pkg, reservedBy, selectedDuration, selectedPlan, selectedSubscription, teacherData, exchangeRate } = res.data;
-                        this.subTotal = convertMoney((selectedDuration / 60) * teacherData.hourlyRate.amount * pkg.lessonAmount, pkg.priceDetails.currency, myUserData.settings.currency, true, exchangeRate).toFixed(1).toLocaleString()
+                        const { pkg, reservedBy, selectedDuration, selectedPlan, selectedSubscription, teacherData, exchangeRate, transactionPrice } = res.data;
+                        console.log(res.data);
+                        this.subTotal = convertMoney(transactionPrice, 'USD', myUserData.settings.currency, true, exchangeRate).toFixed(2).toLocaleString()
                         this.processingRate = 0;
                         this.totalPrice = this.subTotal * (this.processingRate + 1)
                     } else {

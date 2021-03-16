@@ -635,7 +635,7 @@ export default {
             axios
               .post(
                 `${this.host}/transaction/package`,
-                { teacherPackages: this.hourlyRate.offering, teacherId: this.userId, hourlyPrice: this.hourlyRate.myRate, currency: this.hourlyRate.selectedCurrency, packageDurations: this.hourlyRate.packageDurations },
+                { teacherPackages: this.hourlyRate.offering, hostedBy: this.userId, hourlyPrice: parseFloat(this.hourlyRate.myRate).toFixed(2), currency: this.hourlyRate.selectedCurrency, packageDurations: this.hourlyRate.packageDurations },
                 { headers: {
                   'X-Requested-With': 'XMLHttpRequest'
                 }}
@@ -861,11 +861,6 @@ export default {
 
 .modal-header .close {
   display: none !important;
-}
-
-.d-flex .spinner-border {
-  height: 3.5rem;
-  width: 3.5rem;
 }
 
 .cropper {

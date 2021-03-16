@@ -2,16 +2,17 @@ import Vue from 'vue';
 import axios from 'axios';
 import Router from 'vue-router';
 import Home from '@/components/Home';
-import Signup from '@/components/Signup';
-import Login from '@/components/Login';
-import Settings from '@/components/Settings';
-import Dashboard from '@/components/Dashboard';
-import TeacherSignup from '@/components/TeacherSignup';
-import NotFound from '@/components/NotFound';
-import UserProfile from '@/components/UserProfile';
-import ViewCalendar from '@/components/steps/ViewCalendar';
-import Payment from '@/components/Payment';
 import store  from '../store/store';
+
+const Signup = () => import('@/components/Signup');
+const Login = () => import('@/components/Login');
+const Settings = () => import('@/components/Settings');
+const NotFound = () => import('@/components/NotFound');
+const Dashboard = () => import('@/components/Dashboard');
+const UserProfile = () => import('@/components/UserProfile');
+const TeacherSignup = () => import('@/components/TeacherSignup');
+const ViewCalendar = () => import('@/components/steps/ViewCalendar');
+const Payment = () => import('@/components/Payment');
 
 Vue.use(Router);
 const host = '/api';

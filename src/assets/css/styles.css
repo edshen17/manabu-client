@@ -134,6 +134,11 @@ p {
   cursor: pointer;
 }
 
+.d-flex .spinner-border {
+  height: 3.5rem;
+  width: 3.5rem;
+}
+
 .preview {
   display: block;
   margin-left: auto;

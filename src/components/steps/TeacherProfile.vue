@@ -43,8 +43,8 @@
         style="font-weight: bold; display: block"
         class="mb-2"
         v-show="selectedDuration"
-        >Total Price:
-        {{ convertMoney((selectedDuration / 60) * viewingUserData.teacherData.hourlyRate.amount * selectedPackageData.lessonAmount, selectedPackageData.priceDetails.currency, myUserData.settings.currency, true, exchangeRates).toFixed(1).toLocaleString()}}
+        >Estimated Price:
+        {{ convertMoney((selectedDuration / 60) * viewingUserData.teacherData.hourlyRate.amount * selectedPackageData.lessonAmount, selectedPackageData.priceDetails.currency, myUserData.settings.currency, true, exchangeRates).toFixed(2).toLocaleString()}}
         {{myUserData.settings.currency}}
       </span>
       <span style="font-weight: bold">Disclaimer</span>

@@ -67,10 +67,8 @@
       <!--Grid column-->
       <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
         <h5 class="text-uppercase">About</h5>
-
         <p>
-          Minato Manabu (Pte. Ltd) is a private company focused on empowering people through education. Its headquarters are located in Singapore and the company focuses on offering students affordable and customizable lessons. 
-          
+          Minato Manabu (Pte. Ltd) is a startup focused on empowering people through education. Its headquarters are located in Singapore and the company strives to provide students innovative learning tools as well as high quality lessons. 
         </p>
       </div>
       <!--Grid column-->
