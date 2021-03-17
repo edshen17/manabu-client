@@ -28,6 +28,11 @@
   .kalendar-wrapper.gstyle .creating-event {
     border-color: #152076;
   } */
+
+  .ViewCalendar .kalendar-wrapper.gstyle .created-event,
+  .kalendar-wrapper.gstyle .creating-event {
+    border: none !important;
+  }
   
   .ViewCalendar .kalendar-wrapper.gstyle .created-event {
     width: 100% !important;

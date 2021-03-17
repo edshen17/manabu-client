@@ -477,7 +477,7 @@ export default {
         hourlyRate: {
           myRate: {
             required,
-            between: between(0, 10000)
+            between: between(1, 10000)
           },
           packageDurations: {
             required,

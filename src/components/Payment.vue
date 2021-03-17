@@ -33,9 +33,9 @@
                 <div class='payment-card' style="display: block">
                     <h4>{{ validatedData.teacherData.name }}</h4>
                     <p class='text-capitalize light-bold'> {{ validatedData.selectedPlan }} plan ({{ validatedData.selectedDuration }} minutes)</p>
-                    <h5 class="mt-5">Subtotal: {{ subTotal }} {{userData.settings.currency}}</h5>
-                    <h5>Processing fee: {{ (subTotal*(processingRate)).toFixed(2).toLocaleString()  }} {{userData.settings.currency}}</h5>
-                    <h5>Total: {{ (totalPrice + subTotal*(processingRate)).toFixed(2) }} {{userData.settings.currency}}</h5>
+                    <h5 class="mt-5">Subtotal: {{ subTotal.toFixed(2) }} {{userData.settings.currency}}</h5>
+                    <h5>Processing fee: {{ (subTotal*(processingRate)).toFixed(2)  }} {{userData.settings.currency}}</h5>
+                    <h5>Total: {{ (totalPrice * (1+processingRate)).toFixed(2) }} {{userData.settings.currency}}</h5>
                 </div>
               </h5>
               <b-button
