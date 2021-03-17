@@ -1,179 +1,173 @@
-  .student-reserved {
-    background-color: #0E9135 !important;
-  }
+.student-reserved {
+  background-color: #0E9135 !important;
+}
 
-  .schedule-change {
-    background-color:pink !important;
-  }
+.schedule-change {
+  background-color:pink !important;
+}
 
-  .student-issue {
-    background-color:#152076 !important; 
-    color: #152076;
-    border: none !important;
-  }
-  
-  .pending {
-    background-color: #78D393 !important;
-  }
+.student-issue {
+  background-color:#152076 !important; 
+  color: #152076;
+  border: none !important;
+}
 
-  .pending-teacher {
-    background-color: #6c757d !important;
-  }
+.pending {
+  background-color: #78D393 !important;
+}
 
-  .event-card {
-    position: initial !important;
-  }
-  
-  /* .kalendar-wrapper.gstyle .created-event,
-  .kalendar-wrapper.gstyle .creating-event {
-    border-color: #152076;
-  } */
+.pending-teacher {
+  background-color: #6c757d !important;
+}
 
-  .ViewCalendar .kalendar-wrapper.gstyle .created-event,
-  .kalendar-wrapper.gstyle .creating-event {
-    border: none !important;
-  }
-  
-  .ViewCalendar .kalendar-wrapper.gstyle .created-event {
-    width: 100% !important;
-  }
-  
-  .time {
-    position: relative !important;
-    bottom: 0;
-    right: 0 !important;
-  }
-  
-  .details-card button {
-    margin: 0;
-    border: none;
-    color: #4c4b4b;
-    position: absolute;
-    padding-right: 0;
-    top: 0px;
-    right: 5px;
-    cursor: pointer;
-    background: transparent;
-  }
-  
-  .details-card button svg {
-    width: 18px;
-    height: 18px;
-    fill: #fff;
-  }
-  .event-card.inspecting {
-    z-index: 0 !important;
-  }
-  .app-button{
-      width: 150px;
-      margin:0 20px;
-      display:inline-block;
-      line-height: 30px;
-  }
+.event-card {
+  position: initial !important;
+}
 
-  .booked-by-other {
-    background-color: #6c757d !important;
-  }
+.kalendar-wrapper.gstyle .created-event,
+.kalendar-wrapper.gstyle .creating-event {
+  border: none !important;
+}
 
-  .cancelled {
-    background-color: pink !important;
-  }
-  
-  .booked-by-self {
-    background-color: #0E9135 !important;
-  }
-  
-  .modal-open {
-    padding-right: 0px !important;
-    overflow-y: scroll !important;
-  }
-  
-  .enabled-button {
-    background-color: #ff554b !important;
-  }
-  
-  .slots-left {
-    margin-top: 2%;
-  }
-  
-  .kalendar-cell .on-hover {
-    filter: brightness(85%);
-  }
-  
-  .time {
-    position: relative !important;
-    bottom: 0;
-    right: 0 !important;
-    margin: 4px 6px !important;
-  }
-  
-  .created-event {
-    display: flex;
-    padding: 0 !important;
-  }
-  
-  .created .details-card {
-    flex: 1;
-  }
-  
-  .details-card button {
-    margin: 0;
-    border: none;
-    color: #4c4b4b;
-    position: absolute;
-    padding-right: 0;
-    top: 0px;
-    right: 5px;
-    cursor: pointer;
-    background: transparent;
-  }
-  
-  .details-card button svg {
-    width: 18px;
-    height: 18px;
-    fill: #fff;
-  }
-  
-  .app-button {
+
+.time {
+  position: relative !important;
+  bottom: 0;
+  right: 0 !important;
+}
+
+.details-card button {
+  margin: 0;
+  border: none;
+  color: #4c4b4b;
+  position: absolute;
+  padding-right: 0;
+  top: 0px;
+  right: 5px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.details-card button svg {
+  width: 18px;
+  height: 18px;
+  fill: #fff;
+}
+
+.app-button{
     width: 150px;
-    margin: 0 20px;
-    display: inline-block;
+    margin:0 20px;
+    display:inline-block;
     line-height: 30px;
-  }
+}
 
-  .on-select {
-    background-color: #00bfbd !important;
-  }
-  
-  .restricted {
-    background-color: #c6dafc !important;
-    color:  #c6dafc !important;
-  }
-  
-  .kalendar-wrapper.gstyle .created-event,
-  .kalendar-wrapper.gstyle .creating-event {
-    border-radius: 0px !important;
-  }
-  
-  .add-manual {
-    border: none;
-    background-color: #6c757d;
-    color: #fff;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    padding: 0;
-    width: 60px;
-    height: 60px;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    border-radius: 50%;
-    z-index: 100;
-  }
+.booked-by-other {
+  background-color: #6c757d !important;
+}
+
+.cancelled {
+  background-color: pink !important;
+}
+
+.booked-by-self {
+  background-color: #0E9135 !important;
+}
+
+.modal-open {
+  padding-right: 0px !important;
+  overflow-y: scroll !important;
+}
+
+.enabled-button {
+  background-color: #ff554b !important;
+}
+
+.slots-left {
+  margin-top: 2%;
+}
+
+.kalendar-cell .on-hover {
+  filter: brightness(85%);
+}
+
+.time {
+  position: relative !important;
+  bottom: 0;
+  right: 0 !important;
+  margin: 4px 6px !important;
+}
+
+.created-event {
+  display: flex;
+  padding: 0 !important;
+}
+
+.created .details-card {
+  flex: 1;
+}
+
+.details-card button {
+  margin: 0;
+  border: none;
+  color: #4c4b4b;
+  position: absolute;
+  padding-right: 0;
+  top: 0px;
+  right: 5px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.details-card button svg {
+  width: 18px;
+  height: 18px;
+  fill: #fff;
+}
+
+.app-button {
+  width: 150px;
+  margin: 0 20px;
+  display: inline-block;
+  line-height: 30px;
+}
+.on-select {
+  background-color: #00bfbd !important;
+}
+
+.restricted {
+  background-color: #c6dafc !important;
+  color:  #c6dafc !important;
+}
+
+.kalendar-wrapper.gstyle .created-event,
+.kalendar-wrapper.gstyle .creating-event {
+  border-radius: 0px !important;
+}
+
+.kalendar-wrapper.gstyle .created-event,
+.kalendar-wrapper.gstyle .creating-event {
+  border: none !important;
+}
+
+.add-manual {
+  border: none;
+  background-color: #6c757d;
+  color: #fff;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0;
+  width: 60px;
+  height: 60px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  border-radius: 50%;
+  z-index: 100;
+}

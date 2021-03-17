@@ -11,13 +11,13 @@
               <div class="form-group">
                 <label>Country/Region</label>
                 <b-form-select
-                  v-model="defaultData.region"
+                  v-model="modelData.region"
                   @change="updateTimezone"
                   :options="optionsRegion"
                   size="md"
                 ></b-form-select>
                 <div
-                  v-if="submitted && defaultData.region.length == 0"
+                  v-show="submitted && modelData.region.length == 0"
                   class="invalid"
                 >
                   Please provide a region
@@ -26,19 +26,40 @@
               <div class="form-group">
                 <label>Timezone</label>
                 <b-form-select
-                  v-model="defaultData.timezone"
+                  v-model="modelData.timezone"
                   :options="optionsTz"
                   size="md"
                 ></b-form-select>
                 <div
-                  v-if="submitted && defaultData.timezone.length == 0"
+                  v-show="submitted && modelData.timezone.length == 0"
                   class="invalid"
                 >
                   Please provide a timezone
                 </div>
               </div>
               <div class="form-group">
-                <button class="btn btn-primary" @click="handleSubmit()">
+                <label>Preferred Communication Tool</label>
+                <b-form-select
+                  v-model="modelData.commMethods.method"
+                  :options="optionsCommMethod"
+                  size="md"
+                ></b-form-select>
+                <div
+                  v-show="submitted && modelData.timezone.length == 0"
+                  class="invalid"
+                >
+                  Please provide a communication tool
+                </div>
+              </div>
+              <b-form-input v-model="modelData.commMethods.id" :placeholder="`${modelData.commMethods.method} ID`"></b-form-input>
+              <div
+                  v-show="submitted && modelData.commMethods.id.length == 0"
+                  class="invalid"
+                >
+                  Please provide an ID
+                </div>
+              <div class="form-group">
+                <button class="btn btn-primary mt-2" @click="handleSubmit()">
                   {{submitButtonText}}
                 </button>
               </div>
@@ -93,9 +114,14 @@
                 host: '/api',
                 optionsRegion: [],
                 optionsTz: ['Asia/Singapore (UTC+08:00)'],
-                defaultData: {
+                optionsCommMethod: ['Line', 'Skype', 'Discord', 'Zoom'],
+                modelData: {
                     region: 'SG',
                     timezone: 'Asia/Singapore (UTC+08:00)',
+                    commMethods: {
+                      method: 'Line',
+                      id: '',
+                    }
                 },
                 userData: null,
                 submitted: false,
@@ -111,14 +137,18 @@
             },
             updateTimezone() { // update timezone when region is changed
                 this.optionsTz = [];
-                const tz = ct.getTimezonesForCountry(this.defaultData.region);
+                const tz = ct.getTimezonesForCountry(this.modelData.region);
                 for (let i = 0; i < tz.length; i++) {
                     this.optionsTz.push(`${tz[i].name} (UTC${tz[i].utcOffsetStr})`)
                 }
+
+                this.modelData.timezone = this.optionsTz[0]
             },
             handleSubmit() {
-                if (this.formData.fluentLanguage && this.formData.nonFluentLanguage && this.formData.level && this.defaultData.region && this.defaultData.timezone) { // all required inputs are filled in
-                    const sendUpdateObj = { ...this.formData, ...this.defaultData } // merge the data from the parent and child
+                this.submitted = true;
+                if (this.formData.fluentLanguage && this.formData.nonFluentLanguage && this.formData.level && this.modelData.region && this.modelData.timezone && this.modelData.commMethods.method && this.modelData.commMethods.id) { // all required inputs are filled in
+                    const sendUpdateObj = { ...this.formData, ...this.modelData } // merge the data from the parent and child
+                    sendUpdateObj.commMethods = [this.modelData.commMethods];
                     sendUpdateObj.languages = [{language: sendUpdateObj.fluentLanguage, level: 'C2' }, { language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]
                     axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, sendUpdateObj, { headers: {
                         'X-Requested-With': 'XMLHttpRequest'

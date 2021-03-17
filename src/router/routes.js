@@ -171,6 +171,9 @@ const router = new Router({
       beforeEnterCheck(undefined, next)
     }, }
   ],
+  scrollBehavior() {
+    document.getElementById('LayoutDefault').scrollIntoView();
+}
 });
 
 

@@ -346,7 +346,7 @@
           </b-col>
           <b-col md="5">
             <div v-if="userData.teacherAppPending">
-              <div class="card mb-3">
+              <div class="card mb-3 shadow border-0">
                 <div class="card-header">
                   <span class="mt-2">
                     To get approved for teaching, make an 1 hour appointment with
@@ -366,7 +366,7 @@
             </div>
             <div v-if="appointments.length > 0">
               <div
-                class="card mb-3"
+                class="card mb-3 shadow border-top-0 border-right-0 border-bottom-0"
                 v-for="apt in appointments"
                 :key="apt._id"
                 :class="apt.status + '-card'"
@@ -389,9 +389,9 @@
 
 
 
-                    }}-{{formatDate(apt.to, 'h:mma')}} on Skype (teacher.username)
+                    }}-{{formatDate(apt.to, 'h:mma')}} ({{userTimeZone}}) on {{apt.userData.commMethods[0].method}} (id: {{apt.userData.commMethods[0].id}})
                   </p>
-                  <p>Appointment agenda:</p>
+                  <!-- <p>Appointment agenda:</p> -->
                 </div>
               </div>
             </div>
@@ -418,6 +418,8 @@
 <script>
 import axios from 'axios';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import { Cropper, Preview } from "vue-advanced-cropper";
 import { validationMixin } from "vuelidate";
 import { required, between } from "vuelidate/lib/validators";
@@ -439,6 +441,9 @@ import 'vue-advanced-cropper/dist/style.css';
 import firebase from 'firebase/app';
 import 'firebase/storage';
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
   authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
@@ -448,7 +453,8 @@ const firebaseConfig = {
   messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 };
-const app = firebase.initializeApp(firebaseConfig)
+const app = firebase.initializeApp(firebaseConfig);
+
 
 export default {
     mixins: [validationMixin],
@@ -495,6 +501,7 @@ export default {
                 canvas: null,
               },
             },
+            userTimeZone: dayjs.tz.guess(),
             hourlyRate: {
               selectedCurrency: 'SGD',
               myRate: 0,
@@ -593,9 +600,9 @@ export default {
         this.appointments = await getAppointments(this.userId, from, to);
         for (let i = 0; i < this.appointments.length; i++) {
           if (this.appointments[i].hostedBy == this.userId) {
-            this.appointments[i].userData = await fetchUserData(this.appointments[i].reservedBy);
+            this.appointments[i].userData = this.appointments[i].reservedByData;
           } else {
-            this.appointments[i].userData = await fetchUserData(this.appointments[i].hostedBy);
+            this.appointments[i].userData = this.appointments[i].hostedByData;
           }
         }
 

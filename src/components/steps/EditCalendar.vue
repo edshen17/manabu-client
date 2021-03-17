@@ -15,7 +15,7 @@
         </b-link>
         <div class="text-center">
           <div v-for="langData in selectedReservedBy.languages" :key="langData.language" class="mx-1" style="display: inline">
-          {{langData}}
+          {{languageCodeToText(langData.language)}}
           <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(langData, i)"></span>       
         </div>
         <p>Region: {{selectedReservedBy.region}} ({{ selectedReservedBy.timezone }})</p> 
@@ -194,6 +194,7 @@ import { Kalendar } from 'kalendar-vue';
 import dayjs from 'dayjs'
 import axios from 'axios'
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
+import languageCodeToText from '../../assets/scripts/languageCodeToText';
 import fetchUserData from '../../assets/scripts/fetchUserData'
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
 import toTitleCase from '../../assets/scripts/toTitleCase'
@@ -258,6 +259,7 @@ export default {
         }
     },
     methods: {
+      languageCodeToText,
       imageSourceEdit,
       fetchUserData,
       languageLevelBars, // used to render the language bars
@@ -384,9 +386,9 @@ export default {
                 const availableTimes = resAvailableTimes.data;
                 const appointments = resAppointments.data.filter(appointment => appointment.cancellationReason != 'student issue' && appointment.cancellationReason != 'student cancel');
                 for (let i = 0; i < appointments.length; i++) { // add appointments
-                  let userData = await fetchUserData(appointments[i].reservedBy)
+                  let userData = appointments[i].reservedByUserData;
                   if (appointments[i].reservedBy == this.hostedBy) { // for certain role reservations (eg teacher/teacher or teacher/admin)
-                    userData = await fetchUserData(appointments[i].hostedBy)
+                    userData = appointments[i].hostedByData;
                   }
                   const formatedTime = {
                     from: appointments[i].from,

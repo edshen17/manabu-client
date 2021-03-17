@@ -8,7 +8,7 @@
       @dismiss-count-down="countDownChanged"
       class="mx-5"
     >
-      Profile updated successfully!
+      Settings updated successfully!
     </b-alert>
     <b-row>
       <b-col md="2"></b-col>
@@ -37,13 +37,21 @@
                     v-model="selected.currency"
                     :options="options.currency"
                     size="md"
-                    class="mt-1"
-                    @change="updateSettings"
+                    class="my-2"
                   ></b-form-select>
+                  <label><b>Preferred Communication Tool</b></label>
+                  <b-form-select
+                    v-model="selected.commMethod.method"
+                    :options="options.commMethod"
+                    size="md"
+                    @change="changeComms"
+                  ></b-form-select>
+                  <b-form-input class='mt-2' v-model="selected.commMethod.id" :placeholder="`${selected.commMethod.method} ID`"></b-form-input>
                 </div>
               </div>
             </div>
             <div v-show="viewingCard == 'Payment'">p</div>
+            <b-button @click="updateSettings" variant="primary" class="float-right"> Save Changes </b-button>
           </div>
         </div>
       </b-col>
@@ -72,12 +80,14 @@ export default {
     },
     data() {
         return {
+
         dismissSecs: 2,
         dismissCountDown: 0,
             host: 'api',
             userData: null,
             viewingCard: 'General',
             options: {
+                commMethod: ['Line', 'Skype', 'Discord', 'Zoom'],
                 fluentLanguage: [
                 { value: null, text: 'Please select an option' },
                 { value: 'a', text: 'This is First option' },
@@ -108,22 +118,40 @@ export default {
             selected: {
                 timezone: null,
                 currency: 'SGD',
+                commMethod: {
+                  method: '',
+                  id: '',
+                },
             }
         }
     },
     methods: {
+      changeComms() {
+        let newCommMethod = JSON.parse(JSON.stringify(this.userData.commMethods)).find((m) => { return m.method == this.selected.commMethod.method })
+        if (!newCommMethod) {
+          newCommMethod = {
+                  method: this.selected.commMethod.method,
+                  id: '',
+                }
+        }
+        this.selected.commMethod = newCommMethod;
+      },
       updateSettings() {
-        const updatedSettings = {
+        if (this.selected.commMethod.method && this.selected.commMethod.id) {
+         const updatedSettings = {
           currency: this.selected.currency,
         }
-        axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, { settings: updatedSettings }, { headers: {
+        axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, { settings: updatedSettings, commMethods: this.selected.commMethod }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
               }}).then((res) => {
                 if (res.status == 200) {
                   this.showAlert();
                   store.commit('setUserData', res.data);
                 }
-              }).catch((err) => { console.log(err) })
+              }).catch((err) => { console.log(err) }) 
+        } else {
+          alert('Please input a value in the communication tool ID field')
+        }
       },
       countDownChanged(dismissCountDown) {
         this.dismissCountDown = dismissCountDown
@@ -134,7 +162,8 @@ export default {
     },
     mounted() {
         this.userData = this.storeUserData;
-        this.selected.currency = this.userData.settings.currency || 'SGD'
+        this.selected.currency = this.userData.settings.currency || 'SGD';
+        this.selected.commMethod = JSON.parse(JSON.stringify(this.userData.commMethods[0])) || {};
     },
 }
 </script>
