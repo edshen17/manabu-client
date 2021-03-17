@@ -27,7 +27,7 @@
           name="durations"
         ></b-form-radio-group>
       </b-form-group>
-      <b-form-group
+      <!-- <b-form-group
         label="Monthly Subscription?"
         v-slot="{ ariaDescribedby }"
         class="mt-2"
@@ -38,7 +38,7 @@
           :aria-describedby="ariaDescribedby"
           name="subscriptions"
         ></b-form-radio-group>
-      </b-form-group>
+      </b-form-group> -->
       <span
         style="font-weight: bold; display: block"
         class="mb-2"
@@ -59,7 +59,7 @@
         </li>
         <li style="font-size: 0.9rem" class="mt-2">
           Lesson plans automatically expire 1 month after purchasing and unused
-          lessons will not carryforward. If you choose the subscription option
+          lessons will not carryforward. If you choose the subscription option (coming soon)
           you will automatically receive a new lesson plan every month.
         </li>
       </ul>
@@ -308,7 +308,7 @@ export default {
             selectedPlan: '',
             selectedDuration: '',
             selectedLanguage: '',
-            selectedSubscription: 'yes',
+            selectedSubscription: 'no',
             selectedPackageData: this.packages[0],
 
         }

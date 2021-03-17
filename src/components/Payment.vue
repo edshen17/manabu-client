@@ -35,7 +35,7 @@
                     <p class='text-capitalize light-bold'> {{ validatedData.selectedPlan }} plan ({{ validatedData.selectedDuration }} minutes)</p>
                     <h5 class="mt-5">Subtotal: {{ subTotal }} {{userData.settings.currency}}</h5>
                     <h5>Processing fee: {{ (subTotal*(processingRate)).toFixed(2).toLocaleString()  }} {{userData.settings.currency}}</h5>
-                    <h5>Total: {{ totalPrice.toFixed(2).toLocaleString() }} {{userData.settings.currency}}</h5>
+                    <h5>Total: {{ (totalPrice + subTotal*(processingRate)).toFixed(2) }} {{userData.settings.currency}}</h5>
                 </div>
               </h5>
               <b-button
@@ -90,10 +90,10 @@ export default {
             isDisabled: true,
             host: '/api',
             paymentMethods: [
-                {
-                    method: 'Credit / Debit Card',
-                    processingRate: 0,
-                },
+                // {
+                //     method: 'Credit / Debit Card',
+                //     processingRate: 0,
+                // },
                 {
                     method: 'PayPal',
                     processingRate: .045,
@@ -116,6 +116,7 @@ export default {
         proceedPayment() {
           if (this.selectedMethod == 'PayPal') {
             const transactionData = this.transactionData || JSON.parse(localStorage.getItem('transactionData'));
+            transactionData.selectedMethod = this.selectedMethod;
             axios.post('/api/pay', transactionData, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
@@ -136,15 +137,14 @@ export default {
             this.userData = myUserData;
             if (transactionData) {
                 const { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId, selectedLanguage } = transactionData
-                return axios.get(`${this.host}/utils/verifyTransactionData`, { params: { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId, selectedLanguage } }, { headers: {
+                return axios.get(`${this.host}/utils/verifyTransactionData`, { params: { hostedBy, reservedBy, selectedPlan, selectedDuration, selectedSubscription, selectedPackageId, selectedLanguage, 'selectedMethod': null, } }, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then((res) => {
                     if (res.status == 200) {
                         this.loading = false;
                         this.validatedData = res.data
-                        const { pkg, reservedBy, selectedDuration, selectedPlan, selectedSubscription, teacherData, exchangeRate, transactionPrice } = res.data;
-                        console.log(res.data);
-                        this.subTotal = convertMoney(transactionPrice, 'USD', myUserData.settings.currency, true, exchangeRate).toFixed(2).toLocaleString()
+                        const { exchangeRate, transactionPrice } = res.data;
+                        this.subTotal = convertMoney(transactionPrice, 'SGD', myUserData.settings.currency, true, exchangeRate)
                         this.processingRate = 0;
                         this.totalPrice = this.subTotal * (this.processingRate + 1)
                     } else {
