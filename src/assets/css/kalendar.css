@@ -24,6 +24,10 @@
   position: initial !important;
 }
 
+.event-card.two-in-one .details-card>* {
+  font-size: 85% !important;
+}
+
 .kalendar-wrapper.gstyle .created-event,
 .kalendar-wrapper.gstyle .creating-event {
   border: none !important;

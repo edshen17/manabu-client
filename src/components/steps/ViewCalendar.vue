@@ -1,6 +1,6 @@
 <template>
   <div class="ViewCalendar">
-    <b-modal id="complete-modal" title="Success!" :no-close-on-backdrop="true">
+    <b-modal id="complete-modal" title="Success!">
       <p class="my-4" v-show="!reserveErr">
         Your reservation has been made and is pending confirmation. You can
         reschedule appointments before they begin and can cancel them anytime
@@ -19,7 +19,7 @@
       </template>
     </b-modal>
 
-    <b-modal id="update-modal" :no-close-on-backdrop="true">
+    <b-modal id="update-modal">
       <template #modal-title>
         {{ modalTitleText }}
       </template>
@@ -32,7 +32,7 @@
         <b-link :to="`/user/${selectedHostedBy._id}`" class="profile-link">
           <h5 class="text-center mb-2 mt-2">{{selectedHostedBy.name}}</h5>
         </b-link>
-        
+
         <div class="text-center">
           <div
             v-for="langData in selectedHostedBy.languages"
@@ -40,7 +40,7 @@
             class="mx-1"
             style="display: inline"
           >
-            {{langData.language}}
+            {{languageCodeToText(langData.language)}}
             <span
               v-for="(n, i) in 5"
               :key="i"
@@ -48,15 +48,18 @@
               :class="languageLevelBars(langData, i)"
             ></span>
           </div>
-          <p>
-            Region: {{ selectedHostedBy.region }} [{{ selectedHostedBy.timezone
-
-            }}]
-          </p>
+                    <span class="mt-2" style="display: block" v-if="selectedEventData">
+           <b>Lesson time</b>:
+          {{ formatDate(selectedEventData.from, 'MMM DD @ h:mma')
+          }}-{{formatDate(selectedEventData.to, 'h:mma')}} ({{userTimeZone}})
+            
+            </span>
+          <span v-if="selectedEventData && selectedEventData.packageTransactionData">
+            <b>Communication Tool</b>:
+            {{ selectedEventData.packageTransactionData.reservedByData.commMethods[0].method }}
+            (id: {{selectedEventData.packageTransactionData.reservedByData.commMethods[0].id }})
+          </span>
         </div>
-        <h6 class="my-4 text-center" v-show="!updateErr">
-          lesson information goes here {{getAppointmentTime()}}
-        </h6>
       </div>
       <p class="my-4" v-show="updateErr">
         There was an error processing your request. If you are rescheduling,
@@ -144,8 +147,9 @@
     <div v-if="isLoaded">
       <div v-if="!isRescheduling">
         <h4 class="text-center slots-left" v-if="!nonReservableCalendar">
-          Remaining timeslots: {{ reservationSlotLimit }}. Reschedules: {{ rescheduleSlotLimit }}.
-          Appointments left until free lesson: {{ (reservationLength / 5) - (minuteBank / 5) }}
+          Remaining timeslots: {{ reservationSlotLimit }}. Reschedules:
+          {{ rescheduleSlotLimit }}. Appointments left until free lesson:
+          {{ (reservationLength / 5) - (minuteBank / 5) }}
         </h4>
       </div>
       <div v-else>
@@ -204,14 +208,22 @@
 <script>
 import { Kalendar } from 'kalendar-vue';
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 import axios from 'axios'
 import LayoutDefault from '../layouts/LayoutDefault';
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
+import languageCodeToText from '../../assets/scripts/languageCodeToText'
 import fetchUserData from '../../assets/scripts/fetchUserData'
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
 import store from '../../store/store';
+import formatDate from '../../assets/scripts/formatDate';
+
+
 dayjs.extend(isBetween);
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export default {
     name: 'ViewCalendar',
@@ -279,6 +291,7 @@ export default {
     },
     data() {
         return {
+            userTimeZone: dayjs.tz.guess(),
             user: null,
             host: '/api',
             reservedBy: '',
@@ -320,6 +333,7 @@ export default {
         }
     },
     methods: {
+      formatDate,
       imageSourceEdit,
       fetchUserData,
       deepCopy(obj) {
@@ -422,6 +436,7 @@ export default {
         this.modalTitleText = 'Appointment details';
         this.$bvModal.hide(modalName);
       },
+      languageCodeToText,
       languageLevelBars,
       onClick(eventData) { // on click, add items to currentlySelected
         const startTime = eventData.from;
@@ -478,7 +493,7 @@ export default {
              const currSelectedArrCopy = [... this.currentlySelected];
                 if (this.currentlySelected.length == 0) { // if no selected items, create selection
                     this.reservationSlotLimit -= 1;
-                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime)); 
+                    this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime));
                 } else { // if not first selected item, check that selected item times do not overlap
                   let isInBetween = false;
                   for (let i = 0; i < currSelectedArrCopy.length; i++) {
@@ -486,7 +501,7 @@ export default {
                     || dayjs(startTime).isBetween(dayjs(this.currentlySelected[i].from), dayjs(this.currentlySelected[i].to))
                     || dayjs(endTime).isBetween(dayjs(this.currentlySelected[i].from), dayjs(this.currentlySelected[i].to))
                     if (!isInBetween && i == this.currentlySelected.length - 1) {
-                      this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime)); 
+                      this.currentlySelected.push(this.appointmentFactory(this.hostedBy, this.reservedBy, this.$route.params.packageTransactionId, startTime, endTime));
                       this.reservationSlotLimit -= 1;
                     }
                   }
@@ -598,7 +613,7 @@ export default {
           if (resAvailableTimes.status == 200) {
             axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then((resAppointments) => {
               if (resAppointments.status == 200) {
-                const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data); 
+                const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
                 for (let i = 0; i < combinedTimeSlots.length; i++) {
                   this.intervals(combinedTimeSlots[i]);
                 }
@@ -606,7 +621,7 @@ export default {
                 this.isLoaded = true;
               }
             });
-          } 
+          }
         });
       },
       appointmentFactory(hostedBy, reservedBy, packageTransactionId, from, to) { // creates appointment object to send to server
@@ -625,8 +640,7 @@ export default {
         })
       },
       intervals(slot) { // split up any time into 30m intervals
-      const test = dayjs(slot.from);
-        const start = dayjs(slot.from).minute(Math.ceil(test.minute() / 30) * 30);
+        const start = dayjs(slot.from).minute(Math.ceil(dayjs(slot.from).minute() / 30) * 30);
         const end = dayjs(slot.to);
         const reservedBy = slot.reservedBy ? slot.reservedBy : '';
         const hostedBy = slot.hostedBy ? slot.hostedBy : '';
@@ -651,7 +665,8 @@ export default {
                   reservedBy,
                   hostedBy,
                   status,
-                  cancellationReason: slot.cancellationReason || ''
+                  cancellationReason: slot.cancellationReason || '',
+                  packageTransactionData: slot.packageTransactionData,
                 }
               }
               const duplicateIndex = this.events.findIndex(event => {event.data.from == formatedDate.from;});

@@ -189,20 +189,27 @@
       <template #modal-title> My lesson plans </template>
       <div>
         <b-card-group deck>
-        <b-card v-for="pkg in defaultPackageInfo" :key="pkg.type" header-tag="header" footer-tag="footer">
-          <template #header>
+          <b-card
+            v-for="pkg in defaultPackageInfo"
+            :key="pkg.type"
+            header-tag="header"
+            footer-tag="footer"
+          >
+            <template #header>
               <h6 class="mb-0">
                 {{toTitleCase(pkg.type)}} plan -
                 {{ hourlyRate.currencyIcon
 
+
                 }}{{ (Math.round((hourlyRate.myRate * pkg.monthlyAmount) * 2) / 2).toFixed(1)
+
 
                 }}/month (60 min lessons)
               </h6>
             </template>
             <div>
-              Students will have {{ pkg.monthlyAmount }} lessons with you every month. This is about
-              {{ pkg.weeklyAmount }} lessons every week.
+              Students will have {{ pkg.monthlyAmount }} lessons with you every
+              month. This is about {{ pkg.weeklyAmount }} lessons every week.
             </div>
             <template #footer>
               <div>
@@ -212,19 +219,29 @@
                 >
                   Offer
                 </b-form-checkbox>
-                <b-form-group label="Duration:" v-slot="{ ariaDescribedby }" v-show="hourlyRate.offering.includes(pkg.type)">
+                <b-form-group
+                  label="Duration:"
+                  v-slot="{ ariaDescribedby }"
+                  v-show="hourlyRate.offering.includes(pkg.type)"
+                >
                   <b-form-checkbox-group
                     v-model="hourlyRate.packageDurations"
                     :aria-describedby="ariaDescribedby"
                   >
-                    <b-form-checkbox :value="`${pkg.type}-30`">30 minutes</b-form-checkbox>
-                    <b-form-checkbox :value="`${pkg.type}-60`">60 minutes</b-form-checkbox>
-                    <b-form-checkbox :value="`${pkg.type}-90`">90 minutes</b-form-checkbox>
+                    <b-form-checkbox :value="`${pkg.type}-30`"
+                      >30 minutes</b-form-checkbox
+                    >
+                    <b-form-checkbox :value="`${pkg.type}-60`"
+                      >60 minutes</b-form-checkbox
+                    >
+                    <b-form-checkbox :value="`${pkg.type}-90`"
+                      >90 minutes</b-form-checkbox
+                    >
                   </b-form-checkbox-group>
                 </b-form-group>
               </div>
             </template>
-        </b-card>
+          </b-card>
         </b-card-group>
       </div>
       <template #modal-footer>
@@ -349,8 +366,8 @@
               <div class="card mb-3 shadow border-0">
                 <div class="card-header">
                   <span class="mt-2">
-                    To get approved for teaching, make an 1 hour appointment with
-                    Misaki
+                    To get approved for teaching, make an 1 hour appointment
+                    with Misaki
                   </span>
                 </div>
                 <div class="card-body">
@@ -364,38 +381,67 @@
                 </div>
               </div>
             </div>
-            <div v-if="appointments.length > 0">
-              <div
-                class="card mb-3 shadow border-top-0 border-right-0 border-bottom-0"
-                v-for="apt in appointments"
-                :key="apt._id"
-                :class="apt.status + '-card'"
-              >
-                <div class="card-header">
-                  <span class="mt-2"
-                    >Appointment with {{ apt.userData.name }} --
-                    {{apt.status}}
-                  </span>
+            <div>
+              <div v-if="appointments.length > 0">
+                <div
+                  class="card mb-3 shadow border-top-0 border-right-0 border-bottom-0"
+                  v-for="(apt, i) in appointments"
+                  :key="apt._id"
+                  :class="apt.status + '-card'"
+                >
+                  <div class="card-header" v-if="i <=5">
+                    <span class="mt-2"
+                      >Appointment with {{ apt.userData.name }} --
+                      {{apt.status}}
+                    </span>
+                  </div>
+                  <div class="card-body">
+                    <img
+                      class="mini-image"
+                      alt="100x100"
+                      :src="imageSourceEdit(apt.userData.profileImage)"
+                    />
+                    <p>
+                      {{ formatDate(apt.from, 'MMM DD @ h:mma')
+
+                      }}-{{formatDate(apt.to, 'h:mma')}} ({{userTimeZone}}) on
+                      {{apt.userData.commMethods[0].method}} (id:
+                      {{apt.userData.commMethods[0].id}})
+                    </p>
+                    <!-- <p>Appointment agenda:</p> -->
+                  </div>
                 </div>
-                <div class="card-body">
-                  <img
-                    class="mini-image"
-                    alt="100x100"
-                    :src="imageSourceEdit(apt.userData.profileImage)"
-                  />
-                  <p>
-                    {{ formatDate(apt.from, 'MMM DD @ h:mma')
-
-
-
-
-                    }}-{{formatDate(apt.to, 'h:mma')}} ({{userTimeZone}}) on {{apt.userData.commMethods[0].method}} (id: {{apt.userData.commMethods[0].id}})
-                  </p>
-                  <!-- <p>Appointment agenda:</p> -->
+              </div>
+              <div v-else>No appointments</div>
+              <div v-if="packageTransactions.length > 0">
+                <div
+                  class="card mb-3 shadow border-0"
+                  v-for="packageTransaction in packageTransactions"
+                  :key="packageTransaction._id"
+                  v-if="packageTransaction.remainingAppointments != 0"
+                  style="cursor: pointer;"
+                  @click="redirectTo(`/calendar/${packageTransaction.hostedBy}/${packageTransaction._id}`)"
+                >
+                <div>
+                  <div class="card-header">
+                    <span class="mt-2 text-capitalize"> {{packageTransaction.packageData.packageType}} Plan with {{ packageTransaction.relevantUserData.name }}
+                    </span>
+                  </div>
+                </div>
+                  <div class="card-body">
+                    <img
+                      class="mini-image"
+                      alt="100x100"
+                      :src="imageSourceEdit(packageTransaction.relevantUserData.profileImage)"
+                    />
+                    <p>
+                    </p>
+                    <p> {{packageTransaction.remainingAppointments}} / {{packageTransaction.packageData.lessonAmount}} lessons remaining. ({{packageTransaction.reservationLength}} minutes per lesson)</p>
+                  </div>
                 </div>
               </div>
             </div>
-            <div v-else>no appointments yet, find teacher</div>
+            <div class="package-list"></div>
           </b-col>
           <b-col md="2"></b-col>
         </b-row>
@@ -435,6 +481,7 @@ import imageSourceEdit from '../assets/scripts/imageSourceEdit';
 import languageCodeToText from '../assets/scripts/languageCodeToText';
 import formatString from '../assets/scripts/formatString';
 import validateYoutube from '../assets/scripts/validateYoutube';
+import fetchPackageTransactions from '../assets/scripts/fetchPackageTransactions';
 import formatDate from '../assets/scripts/formatDate';
 import store from '../store/store';
 import 'vue-advanced-cropper/dist/style.css';
@@ -566,6 +613,7 @@ export default {
                     { value: 'unlicensed', text: 'unlicensed teacher' },
                     { value: 'licensed', text: 'licensed/professional teacher' },
                 ],
+                packageTransactions: [],
         }
     },
     watch: {
@@ -598,11 +646,21 @@ export default {
         this.profileImage.original = this.userData.profileImage;
         this.editedBio = this.userData.profileBio.trim();
         this.appointments = await getAppointments(this.userId, from, to);
+        this.packageTransactions = await fetchPackageTransactions(this.userId);
+        
         for (let i = 0; i < this.appointments.length; i++) {
           if (this.appointments[i].hostedBy == this.userId) {
-            this.appointments[i].userData = this.appointments[i].reservedByData;
+            this.appointments[i].userData = this.appointments[i].packageTransactionData.reservedByData;
           } else {
-            this.appointments[i].userData = this.appointments[i].hostedByData;
+            this.appointments[i].userData = this.appointments[i].packageTransactionData.hostedByData;
+          }
+        }
+
+        for (let i = 0; i < this.packageTransactions.length; i++) {
+          if (this.packageTransactions[i].hostedBy == this.userId) {
+            this.packageTransactions[i].relevantUserData = this.packageTransactions[i].hostedByData;
+          } else {
+            this.packageTransactions[i].relevantUserData = this.packageTransactions[i].reservedByData;
           }
         }
 
@@ -622,6 +680,7 @@ export default {
     },
 
     methods: {
+      fetchPackageTransactions,
       toTitleCase,
       updatePackages() { // vuelidate from https://codesandbox.io/s/lzq6p?file=/App.vue:2183-2265 example
         this.$v.hourlyRate.$touch();
@@ -729,6 +788,9 @@ export default {
             if (bio.length < 350) return bio;
             return `${bio.substring(0, 350)}...`;
         }
+      },
+      redirectTo(link) {
+        this.$router.push(link);
       },
       saveProfileImage() {
         this.$bvModal.hide('edit-pic');

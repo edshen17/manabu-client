@@ -11,33 +11,58 @@
           :src="imageSourceEdit(selectedReservedBy.profileImage)"
         />
         <b-link :to="`/user/${selectedReservedBy._id}`" class="profile-link">
-          <h5 class="text-center mb-2 mt-2">{{selectedReservedBy.name}}</h5>
+          <h5 class="text-center my-2">{{selectedReservedBy.name}}</h5>
         </b-link>
         <div class="text-center">
-          <div v-for="langData in selectedReservedBy.languages" :key="langData.language" class="mx-1" style="display: inline">
-          {{languageCodeToText(langData.language)}}
-          <span v-for="(n, i) in 5" :key="i" class="level" :class="languageLevelBars(langData, i)"></span>       
+          <div
+            v-for="langData in selectedReservedBy.languages"
+            :key="langData.language"
+            class="mx-1"
+            style="display: inline"
+          >
+            {{languageCodeToText(langData.language)}}
+            <span
+              v-for="(n, i) in 5"
+              :key="i"
+              class="level"
+              :class="languageLevelBars(langData, i)"
+            ></span>
+          </div>
+          <span class="mt-2" style="display: block">
+            <b>Lesson time</b>:
+            {{ formatDate(selectedAppointmentData.from, 'MMM DD @ h:mma')
+
+            }}-{{formatDate(selectedAppointmentData.to, 'h:mma')}}
+            ({{userTimeZone}})</span
+          >
+          <span>
+            <b>Communication Tool</b>:
+            {{ selectedAppointmentData.reservedByData.commMethods[0].method }}
+            (id: {{selectedAppointmentData.reservedByData.commMethods[0].id}})
+          </span>
         </div>
-        <p>Region: {{selectedReservedBy.region}} ({{ selectedReservedBy.timezone }})</p> 
-        </div>
-        <p class="my-4" v-show="!updateErr">lesson information goes here</p>
+
         <div class="form-group" v-show="!updateErr && isRejecting">
-              <label>Reason for rejecting appointment</label>
-              <b-form-select
-                v-model="cancellationReason"
-                :options="cancellationSelect"
-                size="md"
-              ></b-form-select>
-            </div>
+          <label>Reason for rejecting appointment</label>
+          <b-form-select
+            v-model="cancellationReason"
+            :options="cancellationSelect"
+            size="md"
+          ></b-form-select>
+        </div>
       </div>
       <p class="my-4" v-show="updateErr">
         There was an error processing your request. Please try again.
       </p>
       <template #modal-footer>
-        <b-button @click="resetOnCancel" v-show="!updateErr">
-          Exit
+        <b-button @click="resetOnCancel" v-show="!updateErr"> Exit </b-button>
+        <b-button
+          variant="danger"
+          v-show="!updateErr && !isRejecting"
+          @click="isRejecting = true; cancelAppointment(selectedLessonId)"
+        >
+          Cancel
         </b-button>
-        <b-button variant="danger" v-show="!updateErr && !isRejecting" @click="isRejecting = true; cancelAppointment(selectedLessonId)"> Cancel </b-button>
         <b-button
           @click="isRejectingConfirmation = true; cancelAppointment(selectedLessonId)"
           variant="danger"
@@ -96,7 +121,8 @@
       </template>
     </b-modal>
     <div>
-      <kalendar v-if="isCalendarLoaded"
+      <kalendar
+        v-if="isCalendarLoaded"
         :configuration="calendar_settings"
         :events.sync="events"
         ref="kalendar"
@@ -129,23 +155,27 @@
             class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy"
           >
-             {{ toTitleCase(getEventData(event_information.data._id).data.status) }} ({{ parseISOString(event_information.start_time) }} -
+            {{ toTitleCase(getEventData(event_information.data._id).data.status) }}
+            ({{ parseISOString(event_information.start_time) }} -
             {{ parseISOString(event_information.end_time)}})
           </span>
           <span
             class="appointment-title ml-2"
             v-if="event_information.data && event_information.data.reservedBy"
           >
-            {{event_information.data.reservedByUserData.name}}
+            {{event_information.data.reservedByData.name}}
           </span>
-          <span v-else class="appointment-title ml-2">Available ({{ parseISOString(event_information.start_time) }} -
-            {{ parseISOString(event_information.end_time)}})</span>
+          <span v-else class="appointment-title ml-2"
+            >Available ({{ parseISOString(event_information.start_time) }} -
+            {{ parseISOString(event_information.end_time)}})</span
+          >
           <button
             @click="deleteAppointment(event_information)"
             class="remove"
             v-if="!event_information.data.reservedBy && !event_information.data.isDuplicate"
           >
-            <svg v-if="new Date() < new Date(event_information.start_time)"
+            <svg
+              v-if="new Date() < new Date(event_information.start_time)"
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -193,12 +223,17 @@
 import { Kalendar } from 'kalendar-vue';
 import dayjs from 'dayjs'
 import axios from 'axios'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import languageLevelBars from '../../assets/scripts/languageLevelBars'
 import languageCodeToText from '../../assets/scripts/languageCodeToText';
 import fetchUserData from '../../assets/scripts/fetchUserData'
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit'
 import toTitleCase from '../../assets/scripts/toTitleCase'
+import formatDate from '../../assets/scripts/formatDate';
 import store from '../../store/store';
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export default {
     name: 'EditCalendar',
@@ -223,6 +258,7 @@ export default {
     },
     data() {
         return {
+            userTimeZone: dayjs.tz.guess(),
             host: '/api',
             calendar_settings: {
                     style: 'material_design',
@@ -244,6 +280,7 @@ export default {
               currentDay: new Date().toISOString(),
               selectedLessonId: '',
               selectedReservedBy: null,
+              selectedAppointmentData: null,
               event_information: null,
               cancellationSelect:  [
                 { value: 'schedule change', text: 'Schedule change' },
@@ -271,9 +308,10 @@ export default {
         this.isRejecting = false;
         this.isRejectingConfirmation = false;
         this.modalTitleText = 'Confirm this Appointment?'
-        this.$bvModal.hide('update-modal'); 
+        this.$bvModal.hide('update-modal');
       },
       toTitleCase,
+      formatDate,
       cancelAppointment(aId) {
         this.modalTitleText = 'Are you sure you want to cancel the appointment?'
         if (this.isRejecting && this.isRejectingConfirmation) {
@@ -303,12 +341,12 @@ export default {
                               _id: appointment._id,
                               hostedBy: appointment.hostedBy,
                               reservedBy: appointment.reservedBy,
-                              reservedByUserData: userData,
+                              reservedByData: userData,
                               status: appointment.status,
                               cancellationReason: appointment.cancellationReason,
                             }
                           }
-                          
+
                           if (toUpdateIndex != -1) {
                             this.events[toUpdateIndex] = formatedTime;
                           }
@@ -350,7 +388,7 @@ export default {
                       _id: res.data._id,
                       hostedBy: res.data.hostedBy,
                       reservedBy: res.data.reservedBy,
-                      reservedByUserData: userData,
+                      reservedByData: userData,
                       status: res.data.status,
                       cancellationReason: res.data.cancellationReason,
                     }
@@ -359,7 +397,7 @@ export default {
                   if (toUpdateIndex != -1) {
                     this.events[toUpdateIndex] = formatedTime;
                   }
-                  
+
                 this.sessionConfirmed.push(res.data);
                 this.$bvModal.hide('update-modal');
               }
@@ -370,7 +408,8 @@ export default {
         if (!isPast && event.data.hostedBy == this.hostedBy) {
             if (event.data.status == 'pending' || event.data.status == 'confirmed') {
             this.selectedLessonId = event.data._id;
-            this.selectedReservedBy = event.data.reservedByUserData;
+            this.selectedReservedBy = event.data.reservedByData;
+            this.selectedAppointmentData = event.data;
             this.$bvModal.show('update-modal');
           }
         }
@@ -386,9 +425,9 @@ export default {
                 const availableTimes = resAvailableTimes.data;
                 const appointments = resAppointments.data.filter(appointment => appointment.cancellationReason != 'student issue' && appointment.cancellationReason != 'student cancel');
                 for (let i = 0; i < appointments.length; i++) { // add appointments
-                  let userData = appointments[i].reservedByUserData;
+                  let userData = appointments[i].packageTransactionData.reservedByData;
                   if (appointments[i].reservedBy == this.hostedBy) { // for certain role reservations (eg teacher/teacher or teacher/admin)
-                    userData = appointments[i].hostedByData;
+                    userData = appointments[i].packageTransactionData.hostedByData;
                   }
                   const formatedTime = {
                     from: appointments[i].from,
@@ -400,9 +439,10 @@ export default {
                       _id: appointments[i]._id,
                       hostedBy: appointments[i].hostedBy,
                       reservedBy: appointments[i].reservedBy,
-                      reservedByUserData: userData,
+                      reservedByData: userData,
                       status: appointments[i].status,
                       cancellationReason: appointments[i].cancellationReason,
+                      hostedByData: appointments[i].hostedByData,
                     }
                   }
                   this.events.push(formatedTime);
