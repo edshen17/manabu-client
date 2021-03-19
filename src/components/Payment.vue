@@ -28,10 +28,10 @@
                <img
                     class="mid-image mr-3 mb-3"
                     alt="100x100"
-                    :src="imageSourceEdit(validatedData.teacherData.profileImage)"
+                    :src="imageSourceEdit(validatedData.teacherUserData.profileImage)"
                 />
                 <div class='payment-card' style="display: block">
-                    <h4>{{ validatedData.teacherData.name }}</h4>
+                    <h4>{{ validatedData.teacherUserData.name }}</h4>
                     <p class='text-capitalize light-bold'> {{ validatedData.selectedPlan }} plan ({{ validatedData.selectedDuration }} minutes)</p>
                     <h5 class="mt-5">Subtotal: {{ subTotal.toFixed(2) }} {{userData.settings.currency}}</h5>
                     <h5>Processing fee: {{ (subTotal*(processingRate)).toFixed(2)  }} {{userData.settings.currency}}</h5>
@@ -142,7 +142,8 @@ export default {
             }}).then((res) => {
                     if (res.status == 200) {
                         this.loading = false;
-                        this.validatedData = res.data
+                        this.validatedData = res.data;
+                        console.log(this.validatedData)
                         const { exchangeRate, transactionPrice } = res.data;
                         this.subTotal = convertMoney(transactionPrice, 'SGD', myUserData.settings.currency, true, exchangeRate)
                         this.processingRate = 0;

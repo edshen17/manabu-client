@@ -425,9 +425,9 @@
                     <p></p>
                     <p>
                       {{packageTransaction.remainingAppointments}} /
-                      {{packageTransaction.packageData.lessonAmount}} lessons
+                      {{packageTransaction.packageData.lessonAmount}} appointments
                       remaining. ({{packageTransaction.reservationLength}}
-                      minutes per lesson)
+                      minutes per appointment)
                     </p>
                   </div>
                 </div>
