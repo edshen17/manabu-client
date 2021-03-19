@@ -201,7 +201,9 @@
                 {{ hourlyRate.currencyIcon
 
 
+
                 }}{{ (Math.round((hourlyRate.myRate * pkg.monthlyAmount) * 2) / 2).toFixed(1)
+
 
 
                 }}/month (60 min lessons)
@@ -338,7 +340,10 @@
             <div class="card mb-3 shadow border-0" v-if="userData">
               <div class="card-body">
                 <ul class="list-group list-group-flush profile-list">
-                  <li class="list-group-item">
+                  <li
+                    class="list-group-item"
+                    v-if="userData.role == 'teacher' || userData.role == 'admin' || userData.teacherAppPending"
+                  >
                     <b-link v-scroll-to="'#edit-calendar'">My calendar</b-link>
                   </li>
                   <li
@@ -362,25 +367,6 @@
             </div>
           </b-col>
           <b-col md="5">
-            <div v-if="userData.teacherAppPending">
-              <div class="card mb-3 shadow border-0">
-                <div class="card-header">
-                  <span class="mt-2">
-                    To get approved for teaching, make an 1 hour appointment
-                    with Misaki
-                  </span>
-                </div>
-                <div class="card-body">
-                  <p>
-                    Misaki will be interviewing you about your experience in
-                    teaching Japanese, etc.
-                  </p>
-                  <b-button variant="info" @click="adminTeacherTrans"
-                    >Schedule appointment</b-button
-                  >
-                </div>
-              </div>
-            </div>
             <div>
               <div v-if="appointments.length > 0">
                 <div
@@ -404,6 +390,7 @@
                     <p>
                       {{ formatDate(apt.from, 'MMM DD @ h:mma')
 
+
                       }}-{{formatDate(apt.to, 'h:mma')}} ({{userTimeZone}}) on
                       {{apt.userData.commMethods[0].method}} (id:
                       {{apt.userData.commMethods[0].id}})
@@ -412,31 +399,82 @@
                   </div>
                 </div>
               </div>
-              <div v-else>No appointments</div>
               <div v-if="packageTransactions.length > 0">
                 <div
                   class="card mb-3 shadow border-0"
                   v-for="packageTransaction in packageTransactions"
                   :key="packageTransaction._id"
                   v-if="packageTransaction.remainingAppointments != 0"
-                  style="cursor: pointer;"
+                  style="cursor: pointer"
                   @click="redirectTo(`/calendar/${packageTransaction.hostedBy}/${packageTransaction._id}`)"
                 >
-                <div>
-                  <div class="card-header">
-                    <span class="mt-2 text-capitalize"> {{packageTransaction.packageData.packageType}} Plan with {{ packageTransaction.relevantUserData.name }}
-                    </span>
+                  <div>
+                    <div class="card-header">
+                      <span class="mt-2 text-capitalize">
+                        {{packageTransaction.packageData.packageType}} Plan with
+                        {{ packageTransaction.relevantUserData.name }}
+                      </span>
+                    </div>
                   </div>
-                </div>
                   <div class="card-body">
                     <img
                       class="mini-image"
                       alt="100x100"
                       :src="imageSourceEdit(packageTransaction.relevantUserData.profileImage)"
                     />
+                    <p></p>
                     <p>
+                      {{packageTransaction.remainingAppointments}} /
+                      {{packageTransaction.packageData.lessonAmount}} lessons
+                      remaining. ({{packageTransaction.reservationLength}}
+                      minutes per lesson)
                     </p>
-                    <p> {{packageTransaction.remainingAppointments}} / {{packageTransaction.packageData.lessonAmount}} lessons remaining. ({{packageTransaction.reservationLength}} minutes per lesson)</p>
+                  </div>
+                </div>
+              </div>
+              <div
+                v-if="appointments.length == 0 && packageTransactions.length == 0"
+              >
+                Find a teacher
+              </div>
+              <div v-if="myTeachers.length > 0">
+                <div class="card mb-3 shadow border-0">
+                  <div class="card-body">
+                    <h3 class="mb-3">My Teachers</h3>
+                    <div
+                      v-for="minuteBank in myTeachers"
+                      :key="minuteBank._id"
+                    >
+                      <div class="card profile-card mb-3 shadow border-0" style="cursor: pointer">
+                        <div
+                          class="card-body"
+                          @click="redirectTo(`/user/${minuteBank.hostedBy}/`)"
+                        >
+                          <img
+                            class="mini-image float-left mr-3"
+                            alt="100x100"
+                            :src="imageSourceEdit(minuteBank.hostedByData.profileImage)"
+                          />
+                            <h5 class="text-muted light-bold">
+                            {{minuteBank.hostedByData.name}}
+                          </h5>
+                          <div
+                            v-for="lang in minuteBank.hostedByData.languages"
+                            :key="lang.language"
+                            class="mx-1"
+                            style="display: inline"
+                          >
+                            {{ languageCodeToText(lang.language) }}
+                            <span
+                              v-for="(n, i) in 5"
+                              :key="i"
+                              class="level"
+                              :class="languageLevelBars(lang, i)"
+                            ></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -446,11 +484,10 @@
           <b-col md="2"></b-col>
         </b-row>
       </b-container>
-
       <div>
         <edit-calendar
           :hostedBy="userData._id"
-          v-if="userData.role == 'teacher' || userData.role == 'admin'"
+          v-if="userData.role == 'teacher' || userData.role == 'admin' || userData.teacherAppPending"
           id="edit-calendar"
         ></edit-calendar>
       </div>
@@ -477,6 +514,7 @@ import EditCalendar from './steps/EditCalendar';
 import ViewCalendar from './steps/ViewCalendar';
 import languageLevelBars from '../assets/scripts/languageLevelBars';
 import fetchUserData from '../assets/scripts/fetchUserData';
+import fetchMyTeachers from '../assets/scripts/fetchMyTeachers';
 import imageSourceEdit from '../assets/scripts/imageSourceEdit';
 import languageCodeToText from '../assets/scripts/languageCodeToText';
 import formatString from '../assets/scripts/formatString';
@@ -556,8 +594,6 @@ export default {
               offering: [],
               packageDurations: [],
             },
-            adminToTeacherPkgId: process.env.VUE_APP_ADMIN_TO_TEACHER_PKG_ID,
-            adminId: process.env.VUE_APP_ADMIN_ID,
             isEditingImage: false,
             isEditingBio: false,
             editedBio: '',
@@ -577,8 +613,8 @@ export default {
             maxInputLength: 2000,
             defaultPackageInfo: [
               {
-                type: 'vigorous',
-                monthlyAmount: 20,
+                type: 'mainichi',
+                monthlyAmount: 22,
                 weeklyAmount: 5,
               },
               {
@@ -614,6 +650,7 @@ export default {
                     { value: 'licensed', text: 'licensed/professional teacher' },
                 ],
                 packageTransactions: [],
+                myTeachers: [],
         }
     },
     watch: {
@@ -647,7 +684,8 @@ export default {
         this.editedBio = this.userData.profileBio.trim();
         this.appointments = await getAppointments(this.userId, from, to);
         this.packageTransactions = await fetchPackageTransactions(this.userId);
-        
+        this.myTeachers = await fetchMyTeachers();
+
         for (let i = 0; i < this.appointments.length; i++) {
           if (this.appointments[i].hostedBy == this.userId) {
             this.appointments[i].userData = this.appointments[i].packageTransactionData.reservedByData;
@@ -658,9 +696,9 @@ export default {
 
         for (let i = 0; i < this.packageTransactions.length; i++) {
           if (this.packageTransactions[i].hostedBy == this.userId) {
-            this.packageTransactions[i].relevantUserData = this.packageTransactions[i].hostedByData;
-          } else {
             this.packageTransactions[i].relevantUserData = this.packageTransactions[i].reservedByData;
+          } else {
+            this.packageTransactions[i].relevantUserData = this.packageTransactions[i].hostedByData;
           }
         }
 
@@ -899,28 +937,6 @@ export default {
           }
         }
       },
-      // create transaction between admin and teacher
-      adminTeacherTrans() {
-        const adminToTeacher = {
-          hostedBy: this.adminId,
-          packageId: this.adminToTeacherPkgId,
-          reservedBy: this.userData._id,
-          terminationDate: dayjs().add(1, 'month').toDate(),
-          remainingAppointments: 1,
-          remainingReschedules: 5,
-          reservationLength: 60,
-        }
-        axios.post(`${this.host}/transaction/packageTransaction`, adminToTeacher, { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }}).then((res) => {
-              if (res.status == 200) {
-                this.$router.push(`/calendar/${adminToTeacher.hostedBy}/${res.data._id}`);
-              }
-            }).catch((err) => {
-              console.log(err)
-            })
-      },
-
     },
 }
 </script>

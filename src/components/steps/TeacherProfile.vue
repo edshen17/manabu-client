@@ -205,11 +205,11 @@
                 >
                   <div class="card-body price-card" @click="selectedPlan = pkg.packageType; openModal('price-modal')">
                     <h5 class="text-muted font-weight-light">
-                      {{ toTitleCase(pkg.packageType) }}
+                      {{ toTitleCase(pkg.packageType) }} Plan
                     </h5>
                     <p>
-                      {{ formatString(pkg.packageType, ['light', 'moderate', 'vigorous'], 
-                      ['This plan is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.', 'This plan is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.', 'This plan is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 20 personalized lessons every month or about 5 lessons every week.'])}}
+                      {{ formatString(pkg.packageType, ['light', 'moderate', 'mainichi'], 
+                      ['This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.', 'This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.', 'This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 22 personalized lessons every month or about 5 lessons every week.'])}}
                     </p>
                     <span
                       class="badge badge-pill badge-primary manabu-blue"

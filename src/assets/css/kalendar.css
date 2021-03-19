@@ -143,15 +143,24 @@
   color:  #c6dafc !important;
 }
 
-.kalendar-wrapper.gstyle .created-event,
+.ViewCalendar .kalendar-wrapper.gstyle .created-event,
 .kalendar-wrapper.gstyle .creating-event {
   border-radius: 0px !important;
 }
 
-.kalendar-wrapper.gstyle .created-event,
-.kalendar-wrapper.gstyle .creating-event {
-  border: none !important;
+.ViewCalendar .created-event .details-card {
+  border-radius: 0px !important;
 }
+
+.EditCalendar .kalendar-wrapper.gstyle .EditCalendar .created-event,
+.EditCalendar .kalendar-wrapper.gstyle .creating-event {
+  border-radius: 2px !important;
+}
+
+.EditCalendar .created-event .details-card {
+  border-radius: 2px !important;
+}
+
 
 .add-manual {
   border: none;
