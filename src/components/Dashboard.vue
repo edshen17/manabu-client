@@ -437,7 +437,7 @@
               >
                 Find a teacher
               </div>
-              <div v-if="myTeachers.length > 0">
+              <div v-if="myTeachers.length > 0 && !userData.teacherAppPending">
                 <div class="card mb-3 shadow border-0">
                   <div class="card-body">
                     <h3 class="mb-3">My Teachers</h3>
