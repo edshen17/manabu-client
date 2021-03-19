@@ -175,7 +175,7 @@ export default {
                     isTeacherApp: this.isTeacherApp,
                 }).then((res) =>{
                     if (res.status == 200) {
-                        this.$router.go()
+                        this.$router.push({ path: '/dashboard', query: { hostedBy: this.$route.query.hostedBy, }}).catch(err => { });
                     }
 
                 }).catch((err) => {
@@ -190,9 +190,10 @@ export default {
                 isTeacherApp: this.isTeacherApp,
             }).then((res) =>{
                 if (res.status == 200) {
-                    this.$router.go()
+                  this.$router.push({ path: '/dashboard', query: { hostedBy: this.$route.query.hostedBy, }}).catch(err => { });
                 }
             }).catch((err) => { // username/password was wrong
+            console.log(err)
                 this.errors = [];
                 this.errors.push('Something went wrong during Google Authentication! If you are using incognito mode, make sure you have enabled cookies.')
             });

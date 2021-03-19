@@ -57,8 +57,7 @@ export default {
             this.exchangeRates = await fetchExchangeRates();
             this.loading = false;
         } catch (err) {
-          console.log(err)
-            this.$router.push('/404').catch(err => {console.log(err)});
+            this.$router.push('/404').catch(err => { });
         }
     },
     methods: {

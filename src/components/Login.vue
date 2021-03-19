@@ -136,7 +136,7 @@ export default {
                     isTeacherApp: this.isTeacherApp,
                 }).then((res) =>{
                     if (res.status == 200) {
-                        this.$router.go()
+                        this.$router.push({ path: '/dashboard', query: { hostedBy: this.$route.query.hostedBy, }}).catch(err => { });
                     }
                 }).catch((err) => { // username/password was wrong
                     this.errors.push(err.response.data);
@@ -149,7 +149,7 @@ export default {
                 isTeacherApp: this.isTeacherApp,
             }).then((res) =>{
                 if (res.status == 200) {
-                    this.$router.go()
+                    this.$router.push({ path: '/dashboard', query: { hostedBy: this.$route.query.hostedBy, }}).catch(err => { });
                 }
             }).catch((err) => { // username/password was wrong
                 this.errors = [];

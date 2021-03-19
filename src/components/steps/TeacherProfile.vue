@@ -281,10 +281,21 @@ import convertMoney from '../../assets/scripts/convertMoney';
 import axios from 'axios';
 import { required, between } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
+import store from '../../store/store';
 
 export default {
     name: 'TeacherProfile',
     mixins: [validationMixin],
+       computed: {
+   isLoggedIn: {
+      get() {
+        return store.getters.isLoggedIn;
+      },
+      set(isLoggedIn) {
+        return isLoggedIn;
+      }
+    },
+    },
     data() {
         return {
             isApproved: false,
@@ -353,13 +364,17 @@ export default {
 
             localStorage.setItem('transactionData', JSON.stringify(transactionData));
             
+            if (this.isLoggedIn) {
             this.$router.push({
-              name: 'Payment',
-              params: {
-                transactionData,
-                myUserData,
-              }
-            })
+                name: 'Payment',
+                params: {
+                  transactionData,
+                  myUserData,
+                }
+              })
+            } else {
+              this.$router.push({ name: 'Sign Up', query: { hostedBy: transactionData.hostedBy, }})
+            }
           }
         },
         openModal(modalId) {

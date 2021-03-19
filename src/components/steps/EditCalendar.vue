@@ -145,8 +145,7 @@
                 'student-reserved': (event_information.data && event_information.data.status == 'confirmed') || onEventClassBind(event_information.data.from, sessionConfirmed),
                 'dotted-border':  event_information.data && (event_information.data.status == 'pending' 
                 || event_information.data.status == 'confirmed' || (event_information.data.status == 'cancelled')),
-                'schedule-change': (event_information.data && event_information.data.cancellationReason == 'schedule change') || onEventClassBind(event_information.data.from, sessionScheduleChange),
-                'student-issue': (event_information.data && event_information.data.cancellationReason == 'student issue') || onEventClassBind(event_information.data.from, sessionStudentIssue),
+                'schedule-change': (event_information.data && event_information.data.cancellationReason == 'student issue') || (event_information.data && event_information.data.cancellationReason == 'schedule change') || (event_information.data && event_information.data.cancellationReason == 'student cancel')  || onEventClassBind(event_information.data.from, sessionScheduleChange),
         }"
           :id="event_information.data._id"
           @click="onSlotClick(event_information)"
@@ -423,7 +422,7 @@ export default {
             axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
               if (resAppointments.status == 200) {
                 const availableTimes = resAvailableTimes.data;
-                const appointments = resAppointments.data.filter(appointment => appointment.cancellationReason != 'student issue' && appointment.cancellationReason != 'student cancel');
+                const appointments = resAppointments.data;
                 for (let i = 0; i < appointments.length; i++) { // add appointments
                   let userData = appointments[i].packageTransactionData.reservedByData;
                   if (appointments[i].reservedBy == this.hostedBy) { // for certain role reservations (eg teacher/teacher or teacher/admin)

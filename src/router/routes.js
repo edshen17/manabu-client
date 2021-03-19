@@ -31,16 +31,18 @@ if (isMobile && !store.getters.isMobile) {
   store.commit('setIsMobile', false)
 }
 
-async function beforeEnterCheck (route, next) {
+async function beforeEnterCheck (route, next, to) {  
+  let query;
+  if (to) query = to.query; // set up query params
   if (store.getters.isLoggedIn) {
     store.commit('setLoggedIn', true);
-    next(route)
+    next({ path: route, query: query,  })
   } else {
     const res = await getUserData();
     if (res != null && res.data) {
       store.commit('setUserData', res.data);
       store.commit('setLoggedIn', true);
-      next(route)
+      next({ path: route, query: query })
     } else {
       store.commit('setLoggedIn', false);
       store.commit('setUserData', {
@@ -64,7 +66,7 @@ const router = new Router({
         title: 'Manabu',
       },
       beforeEnter(to, from, next) {
-        beforeEnterCheck('/dashboard', next)
+        beforeEnterCheck('/dashboard', next, to)
       },
     },
     {
@@ -109,9 +111,12 @@ const router = new Router({
       },
       beforeEnter(to, from, next) {
         if (to != '/' && store.getters.isLoggedIn) {
-          beforeEnterCheck(undefined, next) // undefined to prevent infinite loop
+          beforeEnterCheck(undefined, next, to) // undefined to prevent infinite loop
         } else {
-          next('/')
+          const qs = Object.keys(to.query)
+            .map(key => `${key}=${to.query[key]}`)
+            .join('&');
+          next({ path: '/', query: to.query })
         }
       },
     },
@@ -159,7 +164,11 @@ const router = new Router({
       component: Payment,
       props: true,
       beforeEnter(to, from, next) {
-        beforeEnterCheck(undefined, next)
+        if (to != '/' && store.getters.isLoggedIn) {
+          beforeEnterCheck(undefined, next) // undefined to prevent infinite loop
+        } else {
+          next('/')
+        }
       },
     },
     {
@@ -172,7 +181,10 @@ const router = new Router({
     }, }
   ],
   scrollBehavior() {
-    document.getElementById('LayoutDefault').scrollIntoView();
+    const layoutDefault = document.getElementById('LayoutDefault')
+    if (layoutDefault) {
+      layoutDefault.scrollIntoView();
+    }
 }
 });
 

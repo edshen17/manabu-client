@@ -374,8 +374,9 @@
                   v-for="(apt, i) in appointments"
                   :key="apt._id"
                   :class="apt.status + '-card'"
+                  v-if="i < 5"
                 >
-                  <div class="card-header" v-if="i <=5">
+                  <div class="card-header">
                     <span class="mt-2"
                       >Appointment with {{ apt.userData.name }} --
                       {{apt.status}}
@@ -686,6 +687,16 @@ export default {
         this.packageTransactions = await fetchPackageTransactions(this.userId);
         this.myTeachers = await fetchMyTeachers();
 
+        // for redirects/future use, update local storage
+        try {
+          let storedTransactionData = JSON.parse(localStorage.getItem('transactionData'));
+          storedTransactionData.reservedBy = this.userId;
+          localStorage.setItem('transactionData', JSON.stringify(storedTransactionData))
+        } catch (err) {
+          console.log('JSON Parse Error');
+        }
+        
+        
         for (let i = 0; i < this.appointments.length; i++) {
           if (this.appointments[i].hostedBy == this.userId) {
             this.appointments[i].userData = this.appointments[i].packageTransactionData.reservedByData;
@@ -714,7 +725,14 @@ export default {
         // user has not filled out registration form, so show form
         else if (!filledOutForm) {
             this.showModal();
+        } else { // filled out form
+          if (this.$route.query.hostedBy) {
+            this.$router.push('/payment')
+          }
         }
+
+
+
     },
 
     methods: {
@@ -828,7 +846,7 @@ export default {
         }
       },
       redirectTo(link) {
-        this.$router.push(link);
+        this.$router.push(link).catch(() => {});
       },
       saveProfileImage() {
         this.$bvModal.hide('edit-pic');
@@ -893,7 +911,7 @@ export default {
       },
       async onFormSubmit() {
           this.$bvModal.hide('reg-form');
-          if (this.formData.license != null) {
+          if (this.formData.license != null) { // if license attached, upload it
             const storageRef = app.storage().ref();
             const fileRef = storageRef.child(
               `teachingLicenses/${this.userData._id}_license.png`
@@ -913,6 +931,10 @@ export default {
                 // if err, alert
                 console.log(err);
               });
+          }
+
+          if (this.$route.query.hostedBy) { //if user was not logged in and buying, redirect to payment
+            this.$router.push('/payment')
           }
       },
       selectFile(event, fileType) {
