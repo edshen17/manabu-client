@@ -114,7 +114,7 @@
                 host: '/api',
                 optionsRegion: [],
                 optionsTz: ['Asia/Singapore (UTC+08:00)'],
-                optionsCommMethod: ['Line', 'Skype', 'Discord', 'Zoom'],
+                optionsCommMethod: ['Line', 'Skype', 'Discord',],
                 modelData: {
                     region: 'SG',
                     timezone: 'Asia/Singapore (UTC+08:00)',

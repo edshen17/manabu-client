@@ -115,7 +115,14 @@ export default {
         imageSourceEdit,
         proceedPayment() {
           if (this.selectedMethod == 'PayPal') {
-            const transactionData = this.transactionData || JSON.parse(localStorage.getItem('transactionData'));
+            let transactionData = this.transactionData;
+            if (!transactionData) {
+              try {
+                 transactionData = JSON.parse(localStorage.getItem('transactionData'));
+              } catch (err) {
+                console.log('JSON Parse Error')
+              }
+            }
             transactionData.selectedMethod = this.selectedMethod;
             axios.post('/api/pay', transactionData, { headers: {
                 'X-Requested-With': 'XMLHttpRequest'

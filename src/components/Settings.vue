@@ -87,28 +87,7 @@ export default {
             userData: null,
             viewingCard: 'General',
             options: {
-                commMethod: ['Line', 'Skype', 'Discord', 'Zoom'],
-                fluentLanguage: [
-                { value: null, text: 'Please select an option' },
-                { value: 'a', text: 'This is First option' },
-                { value: 'b', text: 'Selected Option' },
-                { value: { C: '3PO' }, text: 'This is an option with object value' },
-                { value: 'd', text: 'This one is disabled', disabled: true }
-                ],
-                nonFluentLanguage: [
-                { value: null, text: 'Please select an option' },
-                { value: 'a', text: 'This is First option' },
-                { value: 'b', text: 'Selected Option' },
-                { value: { C: '3PO' }, text: 'This is an option with object value' },
-                { value: 'd', text: 'This one is disabled', disabled: true }
-                ],
-                timezone: [
-                { value: null, text: 'Please select an option' },
-                { value: 'a', text: 'This is First option' },
-                { value: 'b', text: 'Selected Option' },
-                { value: { C: '3PO' }, text: 'This is an option with object value' },
-                { value: 'd', text: 'This one is disabled', disabled: true }
-                ],
+                commMethod: ['Line', 'Skype', 'Discord',],
                 currency: [
                 { value: 'SGD', text: '$ SGD' },
                 { value: 'USD', text: '$ USD' },
@@ -116,7 +95,6 @@ export default {
                 ]
             },
             selected: {
-                timezone: null,
                 currency: 'SGD',
                 commMethod: {
                   method: '',
