@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="userData">
     <div class="container">
       <div class="row">
         <div class="col-md">
@@ -37,27 +37,60 @@
                   Please provide a timezone
                 </div>
               </div>
-              <div class="form-group">
-                <label>Preferred Communication Tool</label>
-                <b-form-select
-                  v-model="modelData.commMethods.method"
-                  :options="optionsCommMethod"
-                  size="md"
-                ></b-form-select>
-                <div
-                  v-show="submitted && modelData.timezone.length == 0"
-                  class="invalid"
-                >
-                  Please provide a communication tool
+              <div class="comm-tool-student">
+                <div class="form-group" v-if="userData.role == 'user'">
+                  <label>Preferred Communication Tool</label>
+                  <b-form-select
+                    v-model="modelData.commMethods.method"
+                    :options="optionsCommMethod"
+                    size="md"
+                  ></b-form-select>
+                  <div
+                    v-show="submitted && modelData.timezone.length == 0"
+                    class="invalid"
+                  >
+                    Please provide a communication tool
+                  </div>
+                  <b-form-input
+                    v-model="modelData.commMethods.id"
+                    :placeholder="`${modelData.commMethods.method} ID`"
+                    class='mt-2'
+                  ></b-form-input>
+                  <div
+                    v-show="submitted && modelData.commMethods.id.length == 0"
+                    class="invalid"
+                  >
+                    Please provide an ID
+                  </div>
+                </div>
+                <div class="form-group" v-else>
+                  <label>Communication Tools</label>
+                  <b-form-input
+                    v-model="teacherComms.lineId"
+                    placeholder="LINE ID"
+                    class="mt-2"
+                  ></b-form-input>
+                  <b-form-input
+                    v-model="teacherComms.skypeId"
+                    placeholder="Skype ID"
+                    class="mt-2"
+                  ></b-form-input>
+                  <b-form-input
+                    v-model="teacherComms.discordId"
+                    placeholder="Discord ID"
+                    class="mt-2"
+                  ></b-form-input>
+                  <div
+                    v-show="submitted && (teacherComms.lineId.length == 0 
+                      || teacherComms.skypeId.length == 0 
+                      || teacherComms.discordId.length == 0)"
+                    class="invalid"
+                  >
+                    Please provide IDs for all of the communication methods.
+                  </div>
                 </div>
               </div>
-              <b-form-input v-model="modelData.commMethods.id" :placeholder="`${modelData.commMethods.method} ID`"></b-form-input>
-              <div
-                  v-show="submitted && modelData.commMethods.id.length == 0"
-                  class="invalid"
-                >
-                  Please provide an ID
-                </div>
+
               <div class="form-group">
                 <button class="btn btn-primary mt-2" @click="handleSubmit()">
                   {{submitButtonText}}
@@ -72,89 +105,113 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import ct from 'countries-and-timezones';
-    // import { required, minLength } from 'vuelidate/lib/validators';
-    import store from '../../store/store';
+import axios from 'axios';
+import ct from 'countries-and-timezones';
+// import { required, minLength } from 'vuelidate/lib/validators';
+import store from '../../store/store';
 
-    export default {
-        name: 'RegistrationForm1',
-        props: {
-            submitButtonText: String,
-            formData: Object,
-            endpoint: String,
-            userId: String,
+export default {
+    name: 'RegistrationForm1',
+    props: {
+        submitButtonText: String,
+        formData: Object,
+        endpoint: String,
+        userId: String,
+    },
+    computed: {
+      storeUserData: {
+        get() {
+          return store.getters.userData;
         },
-        computed: {
-          storeUserData: {
-            get() {
-              return store.getters.userData;
-            },
-            set(userData) {
-              return userData;
+        set(userData) {
+          return userData;
+        }
+        }
+      },
+    mounted() {
+      
+        const countries = ct.getAllCountries();
+        for (const countryCode in countries) {
+            const regionObj = {
+                value: countryCode,
+                text: `${countries[countryCode].name} - ${countryCode}`,
             }
-            }
-          },
-        async mounted() {
-            const countries = ct.getAllCountries();
-            for (const countryCode in countries) {
-                const regionObj = {
-                    value: countryCode,
-                    text: `${countries[countryCode].name} - ${countryCode}`,
+            this.optionsRegion.push(regionObj);
+        }
+
+        this.optionsRegion.sort(this.compare);
+        this.userData = this.storeUserData;
+    },
+
+    data() {
+        return {
+            host: '/api',
+            optionsRegion: [],
+            optionsTz: ['Asia/Singapore (UTC+08:00)'],
+            optionsCommMethod: ['LINE', 'Skype', 'Discord',],
+            modelData: {
+                region: 'SG',
+                timezone: 'Asia/Singapore (UTC+08:00)',
+                commMethods: {
+                  method: 'LINE',
+                  id: '',
                 }
-                this.optionsRegion.push(regionObj);
+            },
+            teacherComms: {
+              lineId: '',
+              skypeId: '',
+              discordId: '',
+            },
+            userData: null,
+            submitted: false,
+        };
+    },
+    methods: {
+        compare(a, b) { // used to sort the countries in the select dropdown
+            if (a.text < b.text)
+                return -1;
+            if (a.text > b.text)
+                return 1;
+            return 0;
+        },
+        updateTimezone() { // update timezone when region is changed
+            this.optionsTz = [];
+            const tz = ct.getTimezonesForCountry(this.modelData.region);
+            for (let i = 0; i < tz.length; i++) {
+                this.optionsTz.push(`${tz[i].name} (UTC${tz[i].utcOffsetStr})`)
             }
 
-            this.optionsRegion.sort(this.compare);
-            this.userData = this.storeUserData;
+            this.modelData.timezone = this.optionsTz[0]
         },
-
-        data() {
-            return {
-                host: '/api',
-                optionsRegion: [],
-                optionsTz: ['Asia/Singapore (UTC+08:00)'],
-                optionsCommMethod: ['Line', 'Skype', 'Discord',],
-                modelData: {
-                    region: 'SG',
-                    timezone: 'Asia/Singapore (UTC+08:00)',
-                    commMethods: {
-                      method: 'Line',
-                      id: '',
-                    }
-                },
-                userData: null,
-                submitted: false,
-            };
-        },
-        methods: {
-            compare(a, b) { // used to sort the countries in the select dropdown
-                if (a.text < b.text)
-                    return -1;
-                if (a.text > b.text)
-                    return 1;
-                return 0;
-            },
-            updateTimezone() { // update timezone when region is changed
-                this.optionsTz = [];
-                const tz = ct.getTimezonesForCountry(this.modelData.region);
-                for (let i = 0; i < tz.length; i++) {
-                    this.optionsTz.push(`${tz[i].name} (UTC${tz[i].utcOffsetStr})`)
+        handleSubmit() {
+            this.submitted = true;
+            if (this.formData.fluentLanguage && this.formData.nonFluentLanguage && this.formData.level && this.modelData.region && this.modelData.timezone && (this.modelData.commMethods.method && this.modelData.commMethods.id) || !(this.teacherComms.lineId.length == 0 
+                      || this.teacherComms.skypeId.length == 0 
+                      || this.teacherComms.discordId.length == 0)) { // all required inputs are filled in
+                const sendUpdateObj = { ...this.formData, ...this.modelData } // merge the data from the parent and child
+                if (this.userData.role == 'user') {
+                  sendUpdateObj.commMethods = [this.modelData.commMethods];
+                } else {
+                  sendUpdateObj.commMethods = [{
+                    method: 'LINE',
+                    id: this.teacherComms.lineId,
+                  }, {
+                    method: 'Skype',
+                    id: this.teacherComms.skypeId,
+                  } ,{
+                    method: 'Discord',
+                    id: this.teacherComms.discordId,
+                  }]
                 }
-
-                this.modelData.timezone = this.optionsTz[0]
-            },
-            handleSubmit() {
-                this.submitted = true;
-                if (this.formData.fluentLanguage && this.formData.nonFluentLanguage && this.formData.level && this.modelData.region && this.modelData.timezone && this.modelData.commMethods.method && this.modelData.commMethods.id) { // all required inputs are filled in
-                    const sendUpdateObj = { ...this.formData, ...this.modelData } // merge the data from the parent and child
-                    sendUpdateObj.commMethods = [this.modelData.commMethods];
-                    sendUpdateObj.languages = [{language: sendUpdateObj.fluentLanguage, level: 'C2' }, { language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]
-                    axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, sendUpdateObj, { headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                    }).then(() => {
-                      if (this.endpoint == 'teacher') {
+                
+                sendUpdateObj.languages = [{language: sendUpdateObj.fluentLanguage, level: 'C2' }, { language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]
+                axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, sendUpdateObj, { headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+                }).then((res) => {
+                  if (res.status == 200) {
+                    store.commit('setUserData', res.data);
+                    if (this.endpoint == 'teacher') {
                       axios
                         .put(
                           `${this.host}/teacher/${this.userData._id}/updateProfile`,
@@ -166,17 +223,18 @@
                           if (res.status == 200) {
                             this.$emit('form-submitted');
                           }
-                        })
+                        }).catch((err) => { console.log(err) })
                       } else {
                         this.$emit('form-submitted');
                       }
-                    }).catch((err) => {
-                        console.log(err);
-                    })
-                }
+                  }
+                }).catch((err) => {
+                    console.log(err);
+                })
             }
         }
-    };
+    }
+};
 </script>
 <style lang="css" scoped>
 .invalid {

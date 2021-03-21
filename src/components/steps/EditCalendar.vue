@@ -35,10 +35,10 @@
             }}-{{formatDate(selectedAppointmentData.to, 'h:mma')}}
             ({{userTimeZone}})</span
           >
-          <span>
+          <span v-if="selectedAppointmentData && selectedAppointmentData.locationData">
             <b>Communication Tool</b>:
-            {{ selectedAppointmentData.reservedByData.commMethods[0].method }}
-            (id: {{selectedAppointmentData.reservedByData.commMethods[0].id}})
+            {{ selectedAppointmentData.locationData.method }}
+            (id: {{selectedAppointmentData.locationData.reservedByMethodId }})
           </span>
         </div>
 
@@ -442,6 +442,7 @@ export default {
                       status: appointments[i].status,
                       cancellationReason: appointments[i].cancellationReason,
                       hostedByData: appointments[i].hostedByData,
+                      locationData: appointments[i].locationData,
                     }
                   }
                   this.events.push(formatedTime);

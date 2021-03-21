@@ -1,5 +1,5 @@
 <template>
-  <div class="Dashboard">
+  <div class="Dashboard" v-if="userData && isLoggedIn">
     <b-modal id="edit-pic" size="lg" v-if="userData" title="Edit profile image">
       <img
         v-show="!isEditingImage"
@@ -109,8 +109,8 @@
             </div>
             <div class="form-group" v-show="formData.teacherType == 'licensed'">
               <label for="license"
-                >Upload a PDF of your teaching license (if you cannot find it
-                now, email it to us).</label
+                >Upload a PDF of your teaching license (if you cannot upload it
+                now, email it to support@manabu.sg).</label
               >
               <input
                 type="file"
@@ -393,8 +393,8 @@
 
 
                       }}-{{formatDate(apt.to, 'h:mma')}} ({{userTimeZone}}) on
-                      {{apt.userData.commMethods[0].method}} (id:
-                      {{apt.userData.commMethods[0].id}})
+                      {{ apt.locationData.method }} (id:
+                      {{ apt.locationId }})
                     </p>
                     <!-- <p>Appointment agenda:</p> -->
                   </div>
@@ -411,8 +411,8 @@
                 >
                   <div>
                     <div class="card-header">
-                      <span class="mt-2 text-capitalize">
-                        {{packageTransaction.packageData.packageType}} Plan with
+                      <span class="mt-2">
+                        {{toTitleCase(packageTransaction.packageData.packageType)}} Plan with
                         {{ packageTransaction.relevantUserData.name }}
                       </span>
                     </div>
@@ -563,7 +563,15 @@ export default {
       set(userData) {
         return userData;
       }
-      }
+      },
+      isLoggedIn: {
+        get() {
+          return store.getters.isLoggedIn;
+        },
+        set(isLoggedIn) {
+          return isLoggedIn;
+        }
+      },
     },
     validations: {
         hourlyRate: {
@@ -662,7 +670,10 @@ export default {
                     ['$', '$', '¥'])
         },
         deep: true
-      }
+      },
+      storeUserData(value) { // watch in case of mutations
+        this.userData = value;
+      },
     },
     async mounted() {
         const from = dayjs().toISOString()
@@ -700,8 +711,10 @@ export default {
         for (let i = 0; i < this.appointments.length; i++) {
           if (this.appointments[i].hostedBy == this.userId) {
             this.appointments[i].userData = this.appointments[i].packageTransactionData.reservedByData;
+            this.appointments[i].locationId = this.appointments[i].locationData.reservedByMethodId;
           } else {
             this.appointments[i].userData = this.appointments[i].packageTransactionData.hostedByData;
+            this.appointments[i].locationId = this.appointments[i].locationData.hostedByMethodId;
           }
         }
 

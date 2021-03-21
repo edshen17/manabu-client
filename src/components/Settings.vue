@@ -87,7 +87,7 @@ export default {
             userData: null,
             viewingCard: 'General',
             options: {
-                commMethod: ['Line', 'Skype', 'Discord',],
+                commMethod: ['LINE', 'Skype', 'Discord',],
                 currency: [
                 { value: 'SGD', text: '$ SGD' },
                 { value: 'USD', text: '$ USD' },

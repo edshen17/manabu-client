@@ -54,10 +54,10 @@
           }}-{{formatDate(selectedEventData.to, 'h:mma')}} ({{userTimeZone}})
             
             </span>
-          <span v-if="selectedEventData && selectedEventData.packageTransactionData">
+          <span v-if="selectedEventData && selectedEventData.locationData">
             <b>Communication Tool</b>:
-            {{ selectedEventData.packageTransactionData.reservedByData.commMethods[0].method }}
-            (id: {{selectedEventData.packageTransactionData.reservedByData.commMethods[0].id }})
+            {{ selectedEventData.locationData.method }}
+            (id: {{selectedEventData.locationData.hostedByMethodId }})
           </span>
         </div>
       </div>
@@ -667,6 +667,7 @@ export default {
                   status,
                   cancellationReason: slot.cancellationReason || '',
                   packageTransactionData: slot.packageTransactionData,
+                  locationData: slot.locationData,
                 }
               }
               const duplicateIndex = this.events.findIndex(event => {event.data.from == formatedDate.from;});
