@@ -1,7 +1,7 @@
 <template>
   <div class="FindTeacher">
       <div v-if='teacherArr'>
-          {{teacherArr}}
+          <!-- {{teacherArr}} -->
           <!-- <div
             class="card mb-3 shadow border-0"
             v-for="teacher in teacherArr"
@@ -58,6 +58,7 @@ export default {
             if (res.status == 200) {
                 this.teacherArr = res.data;
                 this.loaded = true;
+                console.log(this.teacherArr)
             }
         })
     },
