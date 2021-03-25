@@ -393,8 +393,11 @@
 
 
                       }}-{{formatDate(apt.to, 'h:mma')}} ({{userTimeZone}}) on
-                      {{ apt.locationData.method }} (id:
+                      {{ apt.locationData.method }} 
+                      <span v-if="apt.locationId">
+                      (id:
                       {{ apt.locationId }})
+                      </span>
                     </p>
                     <!-- <p>Appointment agenda:</p> -->
                   </div>
@@ -405,7 +408,7 @@
                   class="card mb-3 shadow border-0"
                   v-for="packageTransaction in packageTransactions"
                   :key="packageTransaction._id"
-                  v-if="packageTransaction.remainingAppointments != 0"
+                  v-if="packageTransaction.remainingAppointments != 0 && packageTransaction.hostedBy != userData._id"
                   style="cursor: pointer"
                   @click="redirectTo(`/calendar/${packageTransaction.hostedBy}/${packageTransaction._id}`)"
                 >

@@ -264,13 +264,19 @@ export default {
       this.user = this.storeUserData;
       this.hostedBy = this.$route.params.hostedBy || this.hostedByProp;
       if (this.$route.params.hostedBy && this.$route.params.packageTransactionId) {
-        axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`).then((res) => {
+        axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, { headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      } 
+    }).then((res) => {
           if (res.status == 200 && res.data.reservedBy == this.user._id) {
             this.reservedBy = res.data.reservedBy;
             this.reservationSlotLimit = res.data.remainingAppointments;
             this.rescheduleSlotLimit = res.data.remainingReschedules;
             this.reservationLength = res.data.reservationLength;
-            axios.get(`${this.host}/transaction/minuteBank/${this.hostedBy}/${this.reservedBy}`).then((res) => {
+            axios.get(`${this.host}/transaction/minuteBank/${this.hostedBy}/${this.reservedBy}`, { headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      } 
+    }).then((res) => {
               if (res.status == 200) {
                 this.minuteBank = res.data.minuteBank;
                 this.getScheduleData();
@@ -609,9 +615,15 @@ export default {
         const from = dayjs().subtract(1, 'month');
         const to = dayjs().add(3, 'month');
         this.selectedHostedBy = await fetchUserData(this.hostedBy);
-        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
+        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`, { headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      } 
+    }).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then((resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`, { headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      } 
+    }).then((resAppointments) => {
               if (resAppointments.status == 200) {
                 const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
                 for (let i = 0; i < combinedTimeSlots.length; i++) {

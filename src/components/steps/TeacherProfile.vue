@@ -456,6 +456,7 @@ export default {
       })
       this.selectedPlan = this.optionsPlan[0].value;
       this.selectedLanguage = this.optionsLanguage[0].value;
+      console.log(this.optionsLanguage)
       this.changePlan(this.selectedPlan);
       this.selectedDuration = this.optionsDuration[0].value;
     }

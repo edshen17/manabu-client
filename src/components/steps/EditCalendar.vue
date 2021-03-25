@@ -10,7 +10,7 @@
           alt="100x100"
           :src="imageSourceEdit(selectedReservedBy.profileImage)"
         />
-        <b-link :to="`/user/${selectedReservedBy._id}`" class="profile-link">
+        <b-link :to="`/user/${selectedAppointmentData.reservedBy}`" class="profile-link">
           <h5 class="text-center my-2">{{selectedReservedBy.name}}</h5>
         </b-link>
         <div class="text-center">
@@ -89,7 +89,6 @@
     <b-modal
       id="delete-modal"
       title="Delete this timeslot?"
-      :no-close-on-backdrop="true"
     >
       <p class="my-4" v-show="!deleteErr">
         Are you sure you want to delete this timeslot?
@@ -160,9 +159,11 @@
           </span>
           <span
             class="appointment-title ml-2"
-            v-if="event_information.data && event_information.data.reservedBy"
+            v-if="event_information.data && event_information.data.reservedBy && storeUserData"
           >
-            {{event_information.data.reservedByData.name}}
+          <span v-if="event_information.data.reservedBy != storeUserData._id">{{event_information.data.reservedByData.name}}</span>
+          <span v-else> {{event_information.data.hostedByData.name}} </span>
+            
           </span>
           <span v-else class="appointment-title ml-2"
             >Available ({{ parseISOString(event_information.start_time) }} -
@@ -248,6 +249,14 @@ export default {
         return store.getters.isMobile
       }
     },
+    storeUserData: {
+      get() {
+        return store.getters.userData;
+      },
+      set(userData) {
+        return userData;
+      }
+      },
     },
     mounted() {
       if (this.isMobile) {
@@ -375,7 +384,6 @@ export default {
                 'X-Requested-With': 'XMLHttpRequest'
             }}).then(async (res) => {
               if (res.status == 200) {
-                const userData = await fetchUserData(res.data.reservedBy)
                 const toUpdateIndex = this.events.findIndex(event => event.data._id == aId);
                 const formatedTime = {
                     from: res.data.from,
@@ -387,7 +395,7 @@ export default {
                       _id: res.data._id,
                       hostedBy: res.data.hostedBy,
                       reservedBy: res.data.reservedBy,
-                      reservedByData: userData,
+                      reservedByData: this.selectedReservedBy,
                       status: res.data.status,
                       cancellationReason: res.data.cancellationReason,
                     }
@@ -417,17 +425,19 @@ export default {
         this.events = [];
         const from = dayjs().subtract(1, 'month');
         const to = dayjs().add(3, 'month');
-        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
+        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`, { headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      } 
+    }).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`, { headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      } 
+    }).then(async (resAppointments) => {
               if (resAppointments.status == 200) {
                 const availableTimes = resAvailableTimes.data;
                 const appointments = resAppointments.data;
                 for (let i = 0; i < appointments.length; i++) { // add appointments
-                  let userData = appointments[i].packageTransactionData.reservedByData;
-                  if (appointments[i].reservedBy == this.hostedBy) { // for certain role reservations (eg teacher/teacher or teacher/admin)
-                    userData = appointments[i].packageTransactionData.hostedByData;
-                  }
                   const formatedTime = {
                     from: appointments[i].from,
                     to: appointments[i].to,
@@ -438,10 +448,10 @@ export default {
                       _id: appointments[i]._id,
                       hostedBy: appointments[i].hostedBy,
                       reservedBy: appointments[i].reservedBy,
-                      reservedByData: userData,
+                      reservedByData: appointments[i].packageTransactionData.reservedByData,
                       status: appointments[i].status,
                       cancellationReason: appointments[i].cancellationReason,
-                      hostedByData: appointments[i].hostedByData,
+                      hostedByData: appointments[i].packageTransactionData.hostedByData,
                       locationData: appointments[i].locationData,
                     }
                   }

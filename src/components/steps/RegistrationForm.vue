@@ -37,8 +37,8 @@
                   Please provide a timezone
                 </div>
               </div>
-              <div class="comm-tool-student">
-                <div class="form-group" v-if="userData.role == 'user'">
+              <div class="comm-tool">
+                <div class="form-group">
                   <label>Preferred Communication Tool</label>
                   <b-form-select
                     v-model="modelData.commMethods.method"
@@ -61,32 +61,6 @@
                     class="invalid"
                   >
                     Please provide an ID
-                  </div>
-                </div>
-                <div class="form-group" v-else>
-                  <label>Communication Tools</label>
-                  <b-form-input
-                    v-model="teacherComms.lineId"
-                    placeholder="LINE ID"
-                    class="mt-2"
-                  ></b-form-input>
-                  <b-form-input
-                    v-model="teacherComms.skypeId"
-                    placeholder="Skype ID"
-                    class="mt-2"
-                  ></b-form-input>
-                  <b-form-input
-                    v-model="teacherComms.discordId"
-                    placeholder="Discord ID"
-                    class="mt-2"
-                  ></b-form-input>
-                  <div
-                    v-show="submitted && (teacherComms.lineId.length == 0 
-                      || teacherComms.skypeId.length == 0 
-                      || teacherComms.discordId.length == 0)"
-                    class="invalid"
-                  >
-                    Please provide IDs for all of the communication methods.
                   </div>
                 </div>
               </div>
@@ -157,11 +131,6 @@ export default {
                   id: '',
                 }
             },
-            teacherComms: {
-              lineId: '',
-              skypeId: '',
-              discordId: '',
-            },
             userData: null,
             submitted: false,
         };
@@ -189,20 +158,7 @@ export default {
                       || this.teacherComms.skypeId.length == 0 
                       || this.teacherComms.discordId.length == 0)) { // all required inputs are filled in
                 const sendUpdateObj = { ...this.formData, ...this.modelData } // merge the data from the parent and child
-                if (this.userData.role == 'user') {
-                  sendUpdateObj.commMethods = [this.modelData.commMethods];
-                } else {
-                  sendUpdateObj.commMethods = [{
-                    method: 'LINE',
-                    id: this.teacherComms.lineId,
-                  }, {
-                    method: 'Skype',
-                    id: this.teacherComms.skypeId,
-                  } ,{
-                    method: 'Discord',
-                    id: this.teacherComms.discordId,
-                  }]
-                }
+                sendUpdateObj.commMethods = [this.modelData.commMethods];
                 
                 sendUpdateObj.languages = [{language: sendUpdateObj.fluentLanguage, level: 'C2' }, { language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]
                 axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, sendUpdateObj, { headers: {
@@ -215,7 +171,7 @@ export default {
                       axios
                         .put(
                           `${this.host}/teacher/${this.userData._id}/updateProfile`,
-                          { teachingLanguages: [{language: sendUpdateObj.fluentLanguage, level: 'C2' }]},
+                          { teachingLanguages: [{language: sendUpdateObj.fluentLanguage, level: 'C2' }], alsoSpeaks: [{ language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]},
                           { headers: {
                             'X-Requested-With': 'XMLHttpRequest'
                           }}
