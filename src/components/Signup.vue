@@ -79,7 +79,7 @@
                 <hr class="my-4" />
                 <button
                   class="btn btn-lg btn-google btn-block text-uppercase"
-                  v-google-signin-button="clientId"
+                  @click='redirect(GOOGLE_AUTH_URL)'
                 >
                   <i class="fab fa-google mr-2"></i> Continue with Google
                 </button>
@@ -102,19 +102,16 @@
 <script>
 import axios from 'axios';
 import LayoutDefault from './layouts/LayoutDefault';
-import GoogleSignInButton from 'vue-google-signin-button-directive'
 
 export default {
     name: 'Signup',
-    directives: {
-        GoogleSignInButton,
-    },
     created() {
     this.$emit('update:layout', LayoutDefault);
     },
     data() {
         return {
             clientId: process.env.VUE_APP_G_CLIENTID,
+            GOOGLE_AUTH_URL: process.env.VUE_APP_GOOGLE_AUTH_URL,
             showPassword: false,
             name: '',
             email: '',
@@ -127,6 +124,9 @@ export default {
       this.$refs.name.focus();
     },
     methods: {
+      redirect(url){
+        window.location.href = `${url}&state=${this.isTeacherApp}`
+      },
         switchVisibility() {
             const passwordField = document.querySelector('#inputPassword');
             if (passwordField.getAttribute('type') === 'password') passwordField.setAttribute('type', 'text');
@@ -184,24 +184,6 @@ export default {
                 });
             }
         },
-           OnGoogleAuthSuccess (idToken) {
-            axios.post('api/glogin', {
-                idToken,
-                isTeacherApp: this.isTeacherApp,
-            }).then((res) =>{
-                if (res.status == 200) {
-                  this.$router.push({ path: '/dashboard', query: { hostedBy: this.$route.query.hostedBy, }}).catch(err => { });
-                }
-            }).catch((err) => { // username/password was wrong
-            console.log(err)
-                this.errors = [];
-                this.errors.push('Something went wrong during Google Authentication! If you are using incognito mode, make sure you have enabled cookies.')
-            });
-        },
-    OnGoogleAuthFail (err) {
-        this.errors = [];
-        this.errors.push('Something went wrong during Google Authentication! If you are using incognito mode, make sure you have enabled cookies.')
-    },
   }
 }
 </script>

@@ -150,7 +150,6 @@ export default {
                     if (res.status == 200) {
                         this.loading = false;
                         this.validatedData = res.data;
-                        console.log(this.validatedData)
                         const { exchangeRate, transactionPrice } = res.data;
                         this.subTotal = convertMoney(transactionPrice, 'SGD', myUserData.settings.currency, true, exchangeRate)
                         this.processingRate = 0;

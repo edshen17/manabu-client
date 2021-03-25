@@ -185,6 +185,12 @@ p {
   background-color: #152076 !important;
 }
 
+.jp-text {
+  font-family: Helvetica,"游ゴシック",YuGothic,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+  line-height: 1.75;
+  font-size: 1.4rem !important;
+}
+
 /* Section - Title */
 /**************************/
 #parallax .title {background: white; padding: 60px; margin:0 auto; text-align:center;}
