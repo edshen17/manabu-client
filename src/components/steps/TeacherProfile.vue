@@ -387,18 +387,10 @@ export default {
         languageLevelBars,
         formatString,
         approveTeacher(uId) {
-        axios.put(`${this.host}/user/${uId}/updateProfile`, { role: 'teacher', },
-          { headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        }
+        axios.put(`${this.host}/user/${uId}/updateProfile`, { role: 'teacher', }
         ).then((res) => {
           if (res.status == 200) {
             axios.put(`${this.host}/teacher/${uId}/updateProfile`, { isApproved: true, dateApproved: new Date(), },
-            { headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }
-            }
           ).then((res) => {
           if (res.status == 200) {
             this.isApproved = true;
@@ -435,7 +427,7 @@ export default {
     },
     mounted() {
       this.teachingLanguages = this.viewingUserData.teacherData.teachingLanguages;
-      this.otherLanguages = this.filterDuplicates(this.viewingUserData.languages, this.teachingLanguages)
+      this.otherLanguages = this.viewingUserData.teacherData.alsoSpeaks;
       this.packages.forEach((pkg) => {
         if (pkg.isOffering) {
           pkg.packageDurations.sort((a, b) => {
@@ -456,7 +448,6 @@ export default {
       })
       this.selectedPlan = this.optionsPlan[0].value;
       this.selectedLanguage = this.optionsLanguage[0].value;
-      console.log(this.optionsLanguage)
       this.changePlan(this.selectedPlan);
       this.selectedDuration = this.optionsDuration[0].value;
     }

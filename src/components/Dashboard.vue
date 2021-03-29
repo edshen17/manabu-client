@@ -774,9 +774,6 @@ export default {
               .post(
                 `${this.host}/transaction/package`,
                 { teacherPackages: this.hourlyRate.offering, hostedBy: this.userId, hourlyPrice: parseFloat(this.hourlyRate.myRate).toFixed(2), currency: this.hourlyRate.selectedCurrency, packageDurations: this.hourlyRate.packageDurations },
-                { headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }}
               ).then((res) => {
                 if (res.status == 200) {
                   this.$bvModal.hide('my-packages')
@@ -816,9 +813,6 @@ export default {
             .put(
               `${this.host}/user/${this.userData._id}/updateProfile`,
               { profileBio: this.editedBio.trim() },
-              { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-              }}
             )
             .then((res) => {
               if (res.status == 200) {
@@ -838,9 +832,6 @@ export default {
               .put(
                 `${this.host}/teacher/${this.userData._id}/updateProfile`,
                 { introductionVideo: this.validateYoutube(this.userData.teacherData.introductionVideo.trim()) },
-                { headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }}
               )
             }
               }
@@ -882,9 +873,6 @@ export default {
               .put(
                 `${this.host}/user/${this.userData._id}/updateProfile`,
                 { profileImage: downloadUrl },
-                { headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }}
               )
               .then((res) => {
                 if (res.status == 200) {
@@ -939,9 +927,6 @@ export default {
               .put(
                 `${this.host}/teacher/${this.userData._id}/updateProfile`,
                 { licensePath: downloadUrl, teacherType: 'licensed' },
-                { headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }}
               )
               .catch((err) => {
                 // if err, alert

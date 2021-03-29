@@ -119,9 +119,7 @@ export default {
          const updatedSettings = {
           currency: this.selected.currency,
         }
-        axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, { settings: updatedSettings, commMethods: this.selected.commMethod }, { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-              }}).then((res) => {
+        axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, { settings: updatedSettings, commMethods: this.selected.commMethod }).then((res) => {
                 if (res.status == 200) {
                   this.showAlert();
                   store.commit('setUserData', res.data);

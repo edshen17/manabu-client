@@ -264,19 +264,13 @@ export default {
       this.user = this.storeUserData;
       this.hostedBy = this.$route.params.hostedBy || this.hostedByProp;
       if (this.$route.params.hostedBy && this.$route.params.packageTransactionId) {
-        axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, { headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      } 
-    }).then((res) => {
+        axios.get(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`).then((res) => {
           if (res.status == 200 && res.data.reservedBy == this.user._id) {
             this.reservedBy = res.data.reservedBy;
             this.reservationSlotLimit = res.data.remainingAppointments;
             this.rescheduleSlotLimit = res.data.remainingReschedules;
             this.reservationLength = res.data.reservationLength;
-            axios.get(`${this.host}/transaction/minuteBank/${this.hostedBy}/${this.reservedBy}`, { headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      } 
-    }).then((res) => {
+            axios.get(`${this.host}/transaction/minuteBank/${this.hostedBy}/${this.reservedBy}`).then((res) => {
               if (res.status == 200) {
                 this.minuteBank = res.data.minuteBank;
                 this.getScheduleData();
@@ -374,15 +368,10 @@ export default {
        axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'pending',
           from: this.updatedReschedulingLesson.from,
           to: this.updatedReschedulingLesson.to, },
-          { headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }}
         ).then((res) => {
           if (res.status == 200) {
             this.rescheduleSlotLimit--;
-            axios.put(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, {remainingReschedules: this.rescheduleSlotLimit }, { headers: {
-              'X-Requested-With': 'XMLHttpRequest'
-            }}).catch((err) => {
+            axios.put(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, {remainingReschedules: this.rescheduleSlotLimit }).catch((err) => {
               console.log(err);
             })
             this.$bvModal.hide('reschedule-modal');
@@ -550,9 +539,7 @@ export default {
         this.modalTitleText = 'Are you sure you want to cancel the appointment?'
         const selectedLessonId = this.appointments.find(appointment => appointment.from == startTime)._id;
         if (this.isCancelling && this.isCancellingConfirmation) {
-          axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'cancelled', cancellationReason: 'student cancel' }, { headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }}
+          axios.put(`${this.host}/schedule/appointment/${selectedLessonId}`, { status: 'cancelled', cancellationReason: 'student cancel' },
         ).then((res) => {
           if (res.status == 200) {
             this.$bvModal.hide('update-modal');
@@ -578,9 +565,7 @@ export default {
             const currentlySelectedFrom = this.currentlySelected[i].from;
             const toUpdateTime = this.events.find(event => event.from != undefined && event.data.from == currentlySelectedFrom).data.from;
 
-            axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i], { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }}).then(res => {
+            axios.post(`${this.host}/schedule/appointment`, this.currentlySelected[i]).then(res => {
               if (res.status == 200) {
                 this.$bvModal.show('complete-modal');
                     this.appointments.push(res.data);
@@ -593,9 +578,7 @@ export default {
                         }
                       }
                     }
-                axios.put(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, {remainingAppointments: this.reservationSlotLimit }, { headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }}).then((res) => {
+                axios.put(`${this.host}/transaction/packageTransaction/${this.$route.params.packageTransactionId}`, {remainingAppointments: this.reservationSlotLimit }).then((res) => {
                   if (res.status == 200) {
                     this.sessionPendingLessons.push(...this.currentlySelected);
                     this.currentlySelected = [];
@@ -615,15 +598,9 @@ export default {
         const from = dayjs().subtract(1, 'month');
         const to = dayjs().add(3, 'month');
         this.selectedHostedBy = await fetchUserData(this.hostedBy);
-        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`, { headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      } 
-    }).then((resAvailableTimes) => {
+        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`, { headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      } 
-    }).then((resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then((resAppointments) => {
               if (resAppointments.status == 200) {
                 const combinedTimeSlots = resAvailableTimes.data.concat(resAppointments.data);
                 for (let i = 0; i < combinedTimeSlots.length; i++) {
