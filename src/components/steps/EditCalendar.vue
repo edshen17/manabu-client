@@ -323,19 +323,13 @@ export default {
       cancelAppointment(aId) {
         this.modalTitleText = 'Are you sure you want to cancel the appointment?'
         if (this.isRejecting && this.isRejectingConfirmation) {
-          axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'cancelled', cancellationReason: this.cancellationReason.toLowerCase() }, { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }}).then((res) => {
+          axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'cancelled', cancellationReason: this.cancellationReason.toLowerCase() }).then((res) => {
               if (res.status == 200) {
                 const appointment = res.data;
-                axios.get(`${this.host}/transaction/packageTransaction/${appointment.packageTransactionId}`, { headers: {
-                  'X-Requested-With': 'XMLHttpRequest'
-                }}).then((res) => {
+                axios.get(`${this.host}/transaction/packageTransaction/${appointment.packageTransactionId}`).then((res) => {
                   if (res.status == 200) {
                     const packageTransaction = res.data;
-                    axios.put(`${this.host}/transaction/packageTransaction/${appointment.packageTransactionId}`, {remainingAppointments: packageTransaction.remainingAppointments + 1 }, { headers: {
-                      'X-Requested-With': 'XMLHttpRequest'
-                    }}).then(async (res) => {
+                    axios.put(`${this.host}/transaction/packageTransaction/${appointment.packageTransactionId}`, {remainingAppointments: packageTransaction.remainingAppointments + 1 }).then(async (res) => {
                       if (res.status == 200) {
                         const userData = await fetchUserData(appointment.reservedBy)
                         const toUpdateIndex = this.events.findIndex(event => event.data._id == aId);
@@ -380,9 +374,7 @@ export default {
         return event;
       },
       confirmAppointment(aId) {
-        axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'confirmed' }, { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }}).then(async (res) => {
+        axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'confirmed' }).then(async (res) => {
               if (res.status == 200) {
                 const toUpdateIndex = this.events.findIndex(event => event.data._id == aId);
                 const formatedTime = {
@@ -425,15 +417,9 @@ export default {
         this.events = [];
         const from = dayjs().subtract(1, 'month');
         const to = dayjs().add(3, 'month');
-        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`, { headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      } 
-    }).then((resAvailableTimes) => {
+        axios.get(`${this.host}/schedule/${this.hostedBy}/availableTime/${from.toISOString()}/${to.toISOString()}`).then((resAvailableTimes) => {
           if (resAvailableTimes.status == 200) {
-            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`, { headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      } 
-    }).then(async (resAppointments) => {
+            axios.get(`${this.host}/schedule/${this.hostedBy}/appointment/${from.toISOString()}/${to.toISOString()}`).then(async (resAppointments) => {
               if (resAppointments.status == 200) {
                 const availableTimes = resAvailableTimes.data;
                 const appointments = resAppointments.data;
@@ -494,9 +480,6 @@ export default {
           }
 
         axios.delete(`${this.host}/schedule/availableTime`, {
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          },
           data: {
             deleteObj
           }
@@ -549,9 +532,6 @@ export default {
             hostedBy: this.hostedBy,
             from: new Date(payload.from).toISOString(),
             to: new Date(payload.to).toISOString(),
-          }, { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
           }).then((res) => {
             if (res.status == 200) {
               payload.data._id = res.data._id

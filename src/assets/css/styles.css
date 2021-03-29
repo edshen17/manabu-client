@@ -103,7 +103,6 @@ p {
   border-left: 4px solid pink !important;
 }
 
-
 .mini-image {
   float: right;
   width: 8%;
@@ -165,7 +164,7 @@ p {
 }
 
 .price-card:hover { 
-  background: #f0f1f2;
+  background: #eff5f8;
   cursor: pointer; 
 }
 

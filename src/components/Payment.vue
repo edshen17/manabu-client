@@ -124,9 +124,7 @@ export default {
               }
             }
             transactionData.selectedMethod = this.selectedMethod;
-            axios.post('/api/pay', transactionData, { headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }}).then((res) => {
+            axios.post('/api/pay', transactionData).then((res) => {
               if (res.status == 200) {
                 window.location.href = res.data.redirectLink;
                 return false;

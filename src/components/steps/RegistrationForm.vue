@@ -161,10 +161,7 @@ export default {
                 sendUpdateObj.commMethods = [this.modelData.commMethods];
                 
                 sendUpdateObj.languages = [{language: sendUpdateObj.fluentLanguage, level: 'C2' }, { language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]
-                axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, sendUpdateObj, { headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-                }).then((res) => {
+                axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, sendUpdateObj).then((res) => {
                   if (res.status == 200) {
                     store.commit('setUserData', res.data);
                     if (this.endpoint == 'teacher') {
@@ -172,9 +169,6 @@ export default {
                         .put(
                           `${this.host}/teacher/${this.userData._id}/updateProfile`,
                           { teachingLanguages: [{language: sendUpdateObj.fluentLanguage, level: 'C2' }], alsoSpeaks: [{ language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]},
-                          { headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                          }}
                         ).then((res) => {
                           if (res.status == 200) {
                             this.$emit('form-submitted');

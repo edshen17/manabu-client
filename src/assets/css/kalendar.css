@@ -152,6 +152,10 @@
   border-radius: 0px !important;
 }
 
+.created-event>.details-card {
+  white-space: normal !important;
+}
+
 .EditCalendar .kalendar-wrapper.gstyle .EditCalendar .created-event,
 .EditCalendar .kalendar-wrapper.gstyle .creating-event {
   border-radius: 2px !important;
