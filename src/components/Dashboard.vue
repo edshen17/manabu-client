@@ -370,11 +370,12 @@
             <div>
               <div v-if="appointments.length > 0">
                 <div
-                  class="card mb-3 shadow border-top-0 border-right-0 border-bottom-0"
+                  class="card mb-3 shadow border-top-0 border-right-0 border-bottom-0 hover-card"
                   v-for="(apt, i) in appointments"
                   :key="apt._id"
                   :class="apt.status + '-card'"
                   v-if="i < 5"
+                  @click="$router.push({ name: 'AppointmentDetails', params: {appointment: apt, aId: apt._id, userData, }})"
                 >
                   <div class="card-header">
                     <span class="mt-2"
@@ -390,16 +391,22 @@
                     />
                     <p>
                       {{ formatDate(apt.from, 'MMM DD @ h:mma')
-
-
                       }}-{{formatDate(apt.to, 'h:mma')}} ({{userTimeZone}}) on
-                      {{ apt.locationData.method }} 
-                      <span v-if="apt.locationId">
-                      (id:
-                      {{ apt.locationId }})
+                      {{ apt.locationData.method }}.
+                      <span v-if="apt.locationData.reservedByMethodId">
+                        <span v-if="apt.reservedBy != userData._id">(ID:
+                      {{ apt.locationData.reservedByMethodId }})</span>
+                      <span v-else>(ID:
+                      {{ apt.locationData.hostedByMethodId }})</span>
+                      </span>
+                      <span v-else>
+                      Click to view alternative contact methods.
                       </span>
                     </p>
                     <!-- <p>Appointment agenda:</p> -->
+
+                 
+                      
                   </div>
                 </div>
               </div>
@@ -926,7 +933,7 @@ export default {
             axios
               .put(
                 `${this.host}/teacher/${this.userData._id}/updateProfile`,
-                { licensePath: downloadUrl, teacherType: 'licensed' },
+                { licensePath: downloadUrl, },
               )
               .catch((err) => {
                 // if err, alert

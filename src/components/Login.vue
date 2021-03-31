@@ -107,7 +107,7 @@ export default {
     mounted() {
       this.$refs.email.focus();
       if (process.env.NODE_ENV != 'production') {
-        this.GOOGLE_AUTH_URL = process.env.VUE_APP_GOOGLE_AUTH_URL_DEV;
+        this.GOOGLE_AUTH_URL = process.env.VUE_APP_GOOGLE_AUTH_URL;
       }
     },
     methods: {

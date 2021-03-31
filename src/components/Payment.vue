@@ -96,7 +96,7 @@ export default {
                 // },
                 {
                     method: 'PayPal',
-                    processingRate: .045,
+                    processingRate: .03,
                 }
             ],
             selectedMethod: null,

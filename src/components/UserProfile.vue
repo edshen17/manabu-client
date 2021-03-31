@@ -1,6 +1,6 @@
 <template>
   <div class="user-profile" v-if="viewingUserData">
-    <div v-if="!loading" class="mt-5">
+    <div v-if="!loading" class="mt-4">
         <teacher-profile :viewingUserData="viewingUserData" :myUserData="myUserData" :packages="packages" :exchangeRates="exchangeRates" v-if="viewingUserData.teacherData"></teacher-profile>
         <student-profile :viewingUserData="viewingUserData" :myUserData="myUserData" v-else></student-profile>
     </div>

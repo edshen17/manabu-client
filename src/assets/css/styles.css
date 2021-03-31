@@ -2,7 +2,7 @@
 @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic);
 
 html * {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'Nunito Sans', sans-serif; 
 }
 
 .navbar-brand {
@@ -93,14 +93,17 @@ p {
 
 .confirmed-card {
   border-left: 4px solid #0E9135 !important;
+  border-radius: 6px !important;
 }
 
 .pending-card {
   border-left: 4px solid #78D393 !important;
+  border-radius: 6px !important;
 }
 
 .cancelled-card {
   border-left: 4px solid pink !important;
+  border-radius: 6px !important;
 }
 
 .mini-image {
@@ -163,7 +166,7 @@ p {
   font-weight:bold;
 }
 
-.price-card:hover { 
+.price-card:hover, .hover-card:hover { 
   background: #eff5f8;
   cursor: pointer; 
 }

@@ -168,7 +168,7 @@ export default {
                       axios
                         .put(
                           `${this.host}/teacher/${this.userData._id}/updateProfile`,
-                          { teachingLanguages: [{language: sendUpdateObj.fluentLanguage, level: 'C2' }], alsoSpeaks: [{ language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]},
+                          { teacherType: sendUpdateObj.teacherType, teachingLanguages: [{language: sendUpdateObj.fluentLanguage, level: 'C2' }], alsoSpeaks: [{ language: sendUpdateObj.nonFluentLanguage, level: sendUpdateObj.level }]},
                         ).then((res) => {
                           if (res.status == 200) {
                             this.$emit('form-submitted');
