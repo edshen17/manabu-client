@@ -14,6 +14,8 @@ const TeacherSignup = () => import('@/components/TeacherSignup');
 const ViewCalendar = () => import('@/components/steps/ViewCalendar');
 const Payment = () => import('@/components/Payment');
 const FindTeacher = () => import('@/components/FindTeacher');
+const AppointmentDetails = () => import('@/components/AppointmentDetails');
+
 
 Vue.use(Router);
 const host = '/api';
@@ -138,6 +140,15 @@ const router = new Router({
       beforeEnter(to, from, next) {
         beforeEnterCheck(undefined, next)
       },
+    },
+    {
+      path: '/appointment/:aId',
+      name: 'AppointmentDetails',
+      component: AppointmentDetails,
+      beforeEnter(to, from, next) {
+        beforeEnterCheck(undefined, next)
+      },
+      props: true,
     },
     {
       path: '/teachers',
