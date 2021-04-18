@@ -84,13 +84,18 @@
       ></a>
 
       <!-- Twitter -->
-      <a class="btn btn-floating m-1" href="#!" role="button"
+      <a class="btn btn-floating m-1" href="https://twitter.com/lessonsmanabu" role="button"
         ><i class="fab fa-twitter"></i
       ></a>
 
       <!-- Instagram -->
       <a class="btn btn-floating m-1" href="https://www.instagram.com/nihongo_manabu_/" role="button"
         ><i class="fab fa-instagram"></i
+      ></a>
+
+      <!-- Instagram -->
+      <a class="btn btn-floating m-1" href="https://www.youtube.com/channel/UCwtTZCZ9apsj7zNn7n1eS5w" role="button"
+        ><i class="fab fa-youtube"></i
       ></a>
 
     </section>
@@ -102,17 +107,17 @@
 
         <ul class="list-unstyled mt-2">
           <li class="mb-2">
-            <a href="#!" class="text-black">Become a teacher</a>
+            <a href="http://manabu.sg/apply" class="text-black">Become a teacher</a>
           </li>
           <li class="mb-2">
-            <a href="#!" class="text-black">Find a teacher</a>
+            <a href="http://manabu.sg/teachers" class="text-black">Find a teacher</a>
           </li>
           <li class="mb-2">
-            <a href="#!" class="text-black">Manabu Guidelines</a>
+            <a href="https://docs.google.com/document/d/1dSeF8bpURoVB3N2H4nDqbU_hXFsJIErHJPBlavXukmo/edit?usp=sharing" class="text-black">Manabu Guidelines</a>
           </li>
-          <li class="mb-2">
+          <!-- <li class="mb-2">
             <a href="#!" class="text-black">Currency placeholder</a>
-          </li>
+          </li> -->
         </ul>
       </div>
       <!--Grid column-->

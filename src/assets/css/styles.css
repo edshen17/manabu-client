@@ -91,6 +91,28 @@ p {
   color: red;
 }
 
+.signup-split {
+  height: calc(100vh);
+}
+
+.left-split {
+  background-color: #0a4abf
+}
+
+.vertical-margin {
+  margin-top: calc(25vh);
+}
+
+.vertical-margin span h2 {
+  font-size: 3.5rem;
+  font-weight: bolder;
+}
+
+.vertical-margin span h3 {
+  font-size: 2.2rem;
+  margin-top: calc(5vh);
+}
+
 .confirmed-card {
   border-left: 4px solid #0E9135 !important;
   border-radius: 6px !important;

@@ -17,6 +17,9 @@
                     </h4>
                   </div>
                 </div>
+                <div v-show="method.method == 'Credit / Debit Card' && selectedMethod == 'Credit / Debit Card'">
+                  <credit-card-form></credit-card-form>
+                </div>
               </div>
             </div>
           </div>
@@ -60,13 +63,16 @@
 </template>
 <script>
 import LayoutDefault from './layouts/LayoutDefault';
+import CreditCardForm from './steps/CreditCardForm';
 import imageSourceEdit from '../assets/scripts/imageSourceEdit';
 import convertMoney from '../assets/scripts/convertMoney';
 import store from '../store/store';
-
 import axios from 'axios';
 export default {
     name: 'Payment',
+    components: {
+      CreditCardForm,
+    },
     created() {
         this.$emit('update:layout', LayoutDefault);
     },
@@ -92,7 +98,7 @@ export default {
             paymentMethods: [
                 // {
                 //     method: 'Credit / Debit Card',
-                //     processingRate: 0,
+                //     processingRate: .03,
                 // },
                 {
                     method: 'PayPal',
@@ -114,23 +120,24 @@ export default {
       },
         imageSourceEdit,
         proceedPayment() {
-          if (this.selectedMethod == 'PayPal') {
-            let transactionData = this.transactionData;
-            if (!transactionData) {
+          let transactionData = this.transactionData;
+          if (!transactionData) {
               try {
                  transactionData = JSON.parse(localStorage.getItem('transactionData'));
               } catch (err) {
                 console.log('JSON Parse Error')
               }
             }
-            transactionData.selectedMethod = this.selectedMethod;
+          transactionData.selectedMethod = this.selectedMethod;
+
+          if (this.selectedMethod == 'PayPal') {
             axios.post('/api/pay', transactionData).then((res) => {
               if (res.status == 200) {
                 window.location.href = res.data.redirectLink;
                 return false;
               }
             }).catch((err) => { //err
-
+              console.log(err);
             })
           }
         },

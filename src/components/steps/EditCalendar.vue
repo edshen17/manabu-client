@@ -498,7 +498,7 @@ export default {
           this.deleteErr = true;
         });
       },
-      addEvent(popup_data, form_data) { // create event on client and serve (when user drags to make a slot and presses save)
+      addEvent(popup_data) { // create event on client and serve (when user drags to make a slot and presses save)
         let payload = {
             from: popup_data.start_time,
             to: popup_data.end_time,
@@ -510,24 +510,25 @@ export default {
         const payloadTime = new Date(payload.from);
         const currentTime = new Date(payload.to);
         const timeDiffMins = dayjs(currentTime).diff(dayjs(payloadTime), 'minutes')
+        let alertMsg = '';
 
         if (payloadTime <= new Date()) { // if date goes into the past
-          alert('You cannot make an appointment in the past.')
+          alertMsg += 'You cannot make an appointment in the past.\n'
+        } if (timeDiffMins != 10 && timeDiffMins % 30 != 0) {
+          alertMsg += 'Your appointments must be in 30 minute to 1 hour intervals.\n'
+        } if (payloadTime.getMinutes() != 0 && payloadTime.getMinutes() != 30) {
+          alertMsg += 'You cannot start your appointments at that time (must be at the start of the hour or 30 minutes in).\n'
         }
-
-        else if (timeDiffMins < 30) { // appointment less than 30 mins
-          alert('Your appointments must be at least 30 minutes.')
-        }
-
-        else if (timeDiffMins % 30 != 0) {
-          alert('Your appointments must be in 30 minute to 1 hour intervals.')
-        }
-
-        else if (payloadTime.getMinutes() != 0 && payloadTime.getMinutes() != 30) {
-          alert('You cannot start your appointments at that time (must be at the start of the hour or 30 minutes in).')
-        }
-
-        else {
+        if (timeDiffMins < 30 && timeDiffMins != 10) { // appointment less than 30 mins
+          alertMsg += 'Your appointments must be at least 30 minutes.\n'
+        } 
+        
+        if (alertMsg) {
+          alert(alertMsg)
+        } else {
+          if (timeDiffMins == 10) {
+            payload.to = dayjs(currentTime).add(50, 'minute').format(); // default 1 hour and format with time zone designator
+          }
           axios.post(`${this.host}/schedule/availableTime`, {
             hostedBy: this.hostedBy,
             from: new Date(payload.from).toISOString(),

@@ -15,4 +15,11 @@ module.exports = {
         // https: false,
         // hotOnly: false,
     },
+    css: {
+      loaderOptions: {
+        scss: {
+          prependData: `@import "@/styles/_variables.scss";`
+        }
+      }
+      }
 }

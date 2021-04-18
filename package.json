@@ -16,7 +16,9 @@
     "firebase": "^8.2.4",
     "jwt-decode": "^3.1.2",
     "kalendar-vue": "^2.1.1",
+    "node-sass": "^4.14.1",
     "portal-vue": "^2.1.7",
+    "v-mask": "^2.2.4",
     "vue": "^2.6.11",
     "vue-advanced-cropper": "^1.2.4",
     "vue-cookies": "^1.7.4",
@@ -33,6 +35,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "sass-loader": "^7.3.1",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

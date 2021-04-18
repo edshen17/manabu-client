@@ -15,12 +15,8 @@
                   <span>
                     {{ formatDate(appointmentData.from, 'h:mma')
 
-
-
                     }}-{{formatDate(appointmentData.to, 'h:mma')}}
                     ({{userTimeZone
-
-
 
                     }})
                   </span>

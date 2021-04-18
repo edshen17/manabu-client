@@ -271,7 +271,14 @@
                   />
                 </div>
                 <div class="text-center mt-2">
-                  <h5>{{ this.userData.name}}</h5>
+                  <h5 style="cursor: pointer" @click="startEditBio('name')" v-show="!isEditingBio">{{ this.userData.name}}</h5>
+                  <b-form-input
+                      v-model="editedName"
+                      placeholder="Display Name"
+                      class="my-3"
+                      ref="editedName"
+                      v-show="isEditingBio"
+                    ></b-form-input>
                   <div
                     v-for="lang in userData.languages"
                     :key="lang.language"
@@ -616,6 +623,7 @@ export default {
             isEditingImage: false,
             isEditingBio: false,
             editedBio: '',
+            editedName: '',
             isHoveringPic: false,
             userData: null,
             userId: '',
@@ -704,6 +712,7 @@ export default {
         this.userId = this.userData._id;
         this.profileImage.original = this.userData.profileImage;
         this.editedBio = this.userData.profileBio.trim();
+        this.editedName = this.userData.name.trim();
         this.appointments = await getAppointments(this.userId, from, to);
         this.packageTransactions = await fetchPackageTransactions(this.userId);
         this.myTeachers = await fetchMyTeachers();
@@ -803,28 +812,36 @@ export default {
         }
       },
       // used when user clicks on their profile
-      startEditBio() {
+      startEditBio(ref) {
         this.isEditingBio = true;
         setTimeout(() => {
-          const quillRef = this.$refs.quillEditor.quill
-          quillRef.setSelection(quillRef.getLength());
+          if (typeof ref != 'string') {
+            const quillRef = this.$refs.quillEditor.quill
+            quillRef.setSelection(quillRef.getLength());
+          }
         })
-
+        if(ref == 'name') {
+          this.$nextTick(() => {
+            this.$refs.editedName.focus();
+          }) 
+        }
       },
       cancelBio() {
         this.isEditingBio = false;
         this.editedBio = this.userData.profileBio;
+        this.editedName = this.userData.name;
       },
       saveBio() {
         axios
             .put(
               `${this.host}/user/${this.userData._id}/updateProfile`,
-              { profileBio: this.editedBio.trim() },
+              { profileBio: this.editedBio.trim(), name: this.editedName.trim() },
             )
             .then((res) => {
               if (res.status == 200) {
                 this.isEditingBio = false;
                 this.userData.profileBio = this.editedBio.trim();
+                this.userData.name = this.editedName.trim();
               }
             })
             .catch((err) => {

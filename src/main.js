@@ -12,6 +12,8 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import axios from 'axios';
+import VueMask from 'v-mask'
+Vue.use(VueMask);
 
 axios.defaults.headers.common = {
   "X-Requested-With": "XMLHttpRequest",

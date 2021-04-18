@@ -1,28 +1,26 @@
 <template>
   <div class="TeacherApplication">
-    <b-container fluid class="mt-4">
-      <b-row>
-        <b-col></b-col>
-        <b-col sm="8">
-        <b-card-body class="mb-3 shadow border-0">
-        <b-card-title><b>MANABU</b> - <span class="light-bold">学びをチカラに</span></b-card-title>
-        <b-card-text>         
-          <p class="jp-text">
-            先生の募集にご興味をお持ちいただきありがとうございます。Manabuはシンガポールの小さなコミュニティーから始まった会社です。シンガポール在住の日本人が集まってボランティアで日本語を教えていましたが、徐々に拡大して会社を組織するに至りました。人と人との関わりを第一に、コミュニケーションを大切にしながら育ってきたグループです。是非あなたも一緒に日本語や日本の文化を世界に広めて、グローバルに活躍して下さい！Manabuはグローバルに働く先生方を全力で応援します。
-          </p>
-          <p class="jp-text">
-              1. Sign up for a Teacher account now!をクリック、Googleのアカウントなどでサインアップ<br>
-              2. 資格の有無、話せる言語とレベル、お住まいの国と時間帯、LINEやSkypeやDiscordなどのIDを記入<br>
-              3. 1/1 appointment remainingという部分をクリックし、ご希望の面接の日時を選んでください。<br>
-              4. 面接の日までにできる範囲で構いませんので自己紹介動画やプロフィールを記入してお待ちください。(ガイドを参考にしてください。)
-          </p>
-        </b-card-text>
-          <b-button variant="outline-dark" @click="redirect" class="mt-2">Sign up for a Teacher Account now!</b-button>
-
-        </b-card-body>         
-          </b-col
-        >
-        <b-col></b-col>
+    <b-container fluid class='h-100'>
+      <b-row class='h-100'>
+        <b-col>
+          <b-row class='h-100'>
+            <b-col sm="6" class="text-white text-center left-split">
+              <div class='vertical-margin'>
+                <span class='text-uppercase d-block'><h2>Teacher sign-up</h2></span>
+                <span class=''><h3>左の５つのステップをよく読んでManabuの先生にご登録下さい。</h3></span>
+              </div>
+            </b-col>
+            <b-col sm="6" style="margin-top: calc(13vh) !important;">
+              <div v-for="i in 5" :key="i" class='mx-4 mt-4'>
+                <span style='font-size: 3rem;' class='mx-3'>{{i}}</span>
+                <span style='font-size: 1.7rem ' class='d-inline'>
+                  {{listText[i]}}
+                </span>
+              </div>
+              <b-button variant="outline-dark" @click="redirect" class="mx-4 mt-4" style='font-size: 2rem;'>Sign up for a teacher account now!</b-button>
+            </b-col>
+          </b-row>
+          </b-col>
       </b-row>
     </b-container>
   </div>
@@ -36,6 +34,13 @@ export default {
     },
     data() {
         return {
+          listText: {
+            1: 'Sign up for a teacher account now!をクリック、Googleのアカウントでサインアップ',
+            2: '資格の有無、話せる言語とレベル、お住まいの国と時間帯、LINEやSkypeやDiscordなどのIDを記入',
+            3: '1/1 appointment remainingという部分をクリックし、ご希望の面接の日時を選んでください。',
+            4: '面接日から２週間後までの予定をカレンダーに１時間単位でドラッグして入れて下さい。',
+            5: '面接の日までに、Find a teacher のページから他の先生方を参考に、 アイコン画像、1~2分の自己紹介動画やプロフィールを作成してください。また、名前＋Sensei になるように編集して下さい。(例: Aya Sensei）',
+          }
         }
     },
     methods: {

@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-          <div class="card card-signin my-5">
+          <div class="card card-signin my-5 shadow border-0">
             <div class="card-body">
               <h5 class="card-title text-center">Log in</h5>
               <form class="form-signin">
@@ -106,9 +106,6 @@ export default {
     },
     mounted() {
       this.$refs.email.focus();
-      if (process.env.NODE_ENV != 'production') {
-        this.GOOGLE_AUTH_URL = process.env.VUE_APP_GOOGLE_AUTH_URL;
-      }
     },
     methods: {
       redirect(url){
