@@ -226,7 +226,7 @@ p {
 .choose-us h1 { text-align: center; font-size: 1.3em;}
 /* Section - Parallax */
 /**************************/
-#parallax .parallax-one {padding-top: 10%; padding-bottom: 20%; overflow: hidden; position: relative; width: 100%; background-image: url('../images/home.webp'); background-attachment: fixed; background-size: cover; -moz-background-size: cover; -webkit-background-size: cover; background-repeat: no-repeat; background-position: center;}
+#parallax .parallax-one {padding-top: 10%; padding-bottom: 20%; overflow: hidden; position: relative; width: 100%; background-image: url('../images/home.webp'); background-attachment: fixed; background-size: cover; -moz-background-size: cover; -webkit-background-size: cover; background-repeat: no-repeat; background-position: bottom;}
 
 /* Extras */
 /**************************/

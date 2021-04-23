@@ -50,7 +50,7 @@
                 </div>
               </div>
             </div>
-            <div v-show="viewingCard == 'Payment'">p</div>
+            <div v-show="viewingCard == 'Payment'">Payment settings coming soon!</div>
             <b-button @click="updateSettings" variant="primary" class="float-right"> Save Changes </b-button>
           </div>
         </div>

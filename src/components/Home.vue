@@ -79,12 +79,12 @@
               alt="Card image cap"
             />
             <div class="card-body bg-dark text-white">
-              <h5 class="card-title">Feature Subtitle</h5>
+              <h5 class="card-title">Goal-oriented studying</h5>
               <p class="card-text">
                 Achieve your goal with your teacher. We understand the need for
                 goals. Reflect on your strengths, weaknesses, threats and
                 opportunities. We know how to create effective goals. Define
-                your goals clearly using SMART systems. Think of problems that
+                your goals clearly using smart systems. Think of problems that
                 might come up that would interfere.
               </p>
             </div>
