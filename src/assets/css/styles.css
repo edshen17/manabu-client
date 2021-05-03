@@ -282,8 +282,10 @@ p {
   #parallax .block {padding: 30px 15px; width:290px;}
 }
 
-.equal {
-  display: flex;
-  display: -webkit-flex;
-  flex-wrap: wrap;
+@media (min-width: 768px) {
+  .make-it-flex {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .flex-item-1 { order: 1; }
 }
