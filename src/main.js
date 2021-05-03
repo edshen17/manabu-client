@@ -13,13 +13,15 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import axios from 'axios';
 import VueMask from 'v-mask'
+import i18n from './plugins/i18n'
+import store from './store/store'
 Vue.use(VueMask);
 
 axios.defaults.headers.common = {
   "X-Requested-With": "XMLHttpRequest",
 };
 
-var toolbarOptions = {
+const quillToolbarOptions = {
   modules: {
     'toolbar': [
       [ 'bold', 'italic', ],
@@ -36,13 +38,13 @@ Vue.component('BIconPatchCheckFll', BIconPatchCheckFll)
 Vue.component('BIconPatchMinusFll', BIconPatchMinusFll)
 Vue.$cookies.config('1d');
 Vue.use(VueScrollTo)
-Vue.use(VueQuillEditor, toolbarOptions)
+Vue.use(VueQuillEditor, quillToolbarOptions)
 Vue.config.productionTip = false
 Vue.use(BootstrapVue);
 
-
-
 new Vue({
   router,
-  render: h => h(App),
+  i18n,
+  store,
+  render: h => h(App)
 }).$mount('#app')

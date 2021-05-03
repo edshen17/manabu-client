@@ -7,7 +7,7 @@
       >
         <b-navbar-brand>
           <b-link to="/" class="navbar-brand d-lg-inline-block">
-            MANABU
+            Manabu
           </b-link>
         </b-navbar-brand>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -115,9 +115,17 @@
           <li class="mb-2">
             <a href="https://docs.google.com/document/d/1dSeF8bpURoVB3N2H4nDqbU_hXFsJIErHJPBlavXukmo/edit?usp=sharing" class="text-black">Manabu Guidelines</a>
           </li>
-          <!-- <li class="mb-2">
-            <a href="#!" class="text-black">Currency placeholder</a>
-          </li> -->
+          <div class="lang-dropdown">
+            <select v-model="lang">
+              <option
+                v-for="(lang, i) in languageArray"
+                :key="`lang${i}`"
+                :value="lang"
+              >
+                {{ langToText[lang] }}
+              </option>
+            </select>
+          </div>
         </ul>
       </div>
       <!--Grid column-->
@@ -137,7 +145,7 @@
 
 <script>
 import store from '../../store/store'
-
+import { languages } from '@/plugins/i18n'
 export default {
   name: 'LayoutDefault',
   computed: {
@@ -149,12 +157,29 @@ export default {
         return isLoggedIn;
       }
     },
+    lang: {
+      get: function() {
+        return store.getters.locale
+      },
+      set: function(newVal) {
+        store.dispatch('changeLocale', newVal)
+      }
+    }
 },
   watch: {
     isLoggedIn(value) { // watch in case of mutations
       this.isLoggedIn = value;
     }
   },
+  data() {
+    return {
+        languageArray: languages,
+        langToText: {
+          'en': 'English',
+          'ja': '日本語'
+        }
+    };
+},
 };
 </script>
 

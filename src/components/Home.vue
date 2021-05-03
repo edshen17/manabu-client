@@ -3,46 +3,44 @@
     <div id="parallax">
       <section>
         <div class="parallax-one">
-          <h2>MANABU</h2>
-          <h3 class="mt-2">Learning your way</h3>
+          <img src='../assets/images/logo_white.png' class='center-home'/>
         </div>
       </section>
-
       <section>
         <div class="block">
-          <p>
-            <span class="first-character sc">O</span>ur vision is to connect the
-            world through personalized language learning. Above all, we value
-            multicultural communication, friendship, and long-lasting
-            relationships between students and teachers. We strive to teach with
-            the best digital resources available and are commited to adjusting
-            our curriculums to fit students' needs and goals. After all, we
-            founded Manabu to make language learning fun and rewarding.
+           <p>
+            {{ $t('homepage.visionStatement') }}
           </p>
           <p class="line-break margin-top-10"></p>
-          <p class="margin-top-10">
-            Manabu is a technology-focused organization based in Singapore. We
-            started from a small community of Japanese teachers and hope to
-            build a global community of language learners. We believe that
-            fluency can be achieved through intensive learning and everyday
-            communication. This idea is reflected in our learning portal, as we
-            have developed tools to aid Japanese learning: we provide shared
-            lesson materials, in-depth data reporting on student progress, and
-            extensive feedback to help students overcome their weaknesses.
-          </p>
         </div>
       </section>
 
       <div class="choose-us">
         <section>
-          <h1>Why choose us?</h1>
+          <h1>{{ $t('homepage.chooseUs') }}</h1>
           <div class="block">
-            <p>
-              At Manabu, we are confident in our ability to provide effective
-              and customized lessons, regardless of student language level. Our
-              digital resources - curated and carefully prepared by experts -
-              have achieved great results in the past.
-            </p>
+            <b-container>
+            <b-row>
+              <b-col sm="6">
+                <i class="fas fa-chart-bar fa-2x"></i>
+                <h5 style="display: inline" class="mx-2 bold">Data Analytics</h5>
+                <p class="mt-2">Duolingo lessons adapt to your learning style. Exercises are tailored to help you learn and review vocabulary effectively.</p>
+                <br />
+                <i class="fas fa-chart-bar fa-2x"></i>
+                <h5 style="display: inline" class="mx-2 text-center">Data Analytics</h5>
+                <p class="mt-2">Duolingo lessons adapt to your learning style. Exercises are tailored to help you learn and review vocabulary effectively.</p>
+              </b-col>
+              <b-col sm="6">
+                <i class="fas fa-chart-bar fa-2x"></i>
+                <h5 style="display: inline" class="mx-2 text-center bold">Data Analytics</h5>
+                <p class="mt-2">Duolingo lessons adapt to your learning style. Exercises are tailored to help you learn and review vocabulary effectively.</p>
+                <br />
+                <i class="fas fa-chart-bar fa-2x"></i>
+                <h5 style="display: inline" class="mx-2 text-center">Data Analytics</h5>
+                <p class="mt-2">Duolingo lessons adapt to your learning style. Exercises are tailored to help you learn and review vocabulary effectively.</p>
+              </b-col>
+            </b-row>
+          </b-container>
           </div>
         </section>
       </div>
@@ -143,6 +141,8 @@ export default {
   created() {
     this.$emit('update:layout', LayoutDefault);
   },
+  mounted() {
+  }
 };
 </script>
 

@@ -48,11 +48,6 @@ async function beforeEnterCheck (route, next, to) {
       next({ path: route, query: query })
     } else {
       store.commit('setLoggedIn', false);
-      store.commit('setUserData', {
-        settings: {
-          currency: 'SGD',
-        }
-      });
       next()
     }
   }

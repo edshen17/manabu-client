@@ -2,15 +2,21 @@
 @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic);
 
 html * {
-  font-family: 'Nunito Sans', sans-serif; 
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 .navbar-brand {
+  font-family: 'samsungsharpsans-bold';
   font-weight: 800;
+  font-size: 1.2em !important;
 }
 
 .light-bold {
   font-weight: 400;
+}
+
+.bold {
+  font-weight: 800;
 }
 
 .LayoutDefault_main {
@@ -25,8 +31,6 @@ html * {
 /* Typography */
 /**************************/
 #parallax h1 {font-size:24px; font-weight:400; text-transform: uppercase; color:black; padding:0; margin:0;}
-#parallax h2 {font-size:70px; letter-spacing:10px; text-align:center; color:white; font-weight:400; text-transform:uppercase; z-index:10; opacity:.9;}
-#parallax h3 {font-size:14px; text-align:center; line-height:0; font-weight:400; letter-spacing:8px; text-transform: uppercase; color:white; margin-top: 2% !important}
 #parallax p {font-weight:400; font-size:1.1em; line-height:24px;}
 .first-character {font-weight:400; float: left; font-size: 84px; line-height: 64px; padding-top: 4px; padding-right: 8px; padding-left: 3px;}
 
@@ -140,6 +144,14 @@ p {
   border-radius:50% !important; 
 }
 
+.center-home {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100vw;
+  max-height: 80vh;
+}
+
 .center-image {
   display: block;
   margin-left: auto;
@@ -210,9 +222,20 @@ p {
 }
 
 .jp-text {
-  font-family: Helvetica,"游ゴシック",YuGothic,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+  font-family: 'ヒラギノ角ゴ W5' !important;
   line-height: 1.75;
   font-size: 1.4rem !important;
+}
+
+@font-face {
+  font-family: 'ヒラギノ角ゴ W5';
+  src: url(../fonts/ヒラギノ角ゴ\ Std\ W5.otf) format("opentype");
+  unicode-range: U+4E00–U+9FBF, U+3040–U+309F, U+30A0–U+30FF;
+}
+
+@font-face {
+  font-family: 'samsungsharpsans-bold';
+  src: url(../fonts/samsungsharpsans-bold.otf) format("opentype");
 }
 
 /* Section - Title */
@@ -222,11 +245,11 @@ p {
 
 /* Section - Block */
 /**************************/
-#parallax .block {background: white; padding: 60px; width:820px; margin:0 auto; text-align:justify;}
+#parallax .block {background: white; padding: 60px; max-width:100vh; margin:0 auto; text-align:justify;}
 .choose-us h1 { text-align: center; font-size: 1.3em;}
 /* Section - Parallax */
 /**************************/
-#parallax .parallax-one {padding-top: 10%; padding-bottom: 20%; overflow: hidden; position: relative; width: 100%; background-image: url('../images/home.webp'); background-attachment: fixed; background-size: cover; -moz-background-size: cover; -webkit-background-size: cover; background-repeat: no-repeat; background-position: bottom;}
+#parallax .parallax-one {overflow: hidden; position: relative; width: 100%; background-image: url('../images/home.webp'); background-attachment: fixed; background-size: cover; -moz-background-size: cover; -webkit-background-size: cover; background-repeat: no-repeat; background-position:center;}
 
 /* Extras */
 /**************************/
