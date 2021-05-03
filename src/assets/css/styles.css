@@ -238,6 +238,15 @@ p {
   src: url(../fonts/samsungsharpsans-bold.otf) format("opentype");
 }
 
+.choose-us-parent {
+  display: flex;
+  justify-content: center;
+}
+
+#content {
+  flex: 0;
+}
+
 /* Section - Title */
 /**************************/
 #parallax .title {background: white; padding: 60px; margin:0 auto; text-align:center;}
@@ -245,7 +254,7 @@ p {
 
 /* Section - Block */
 /**************************/
-#parallax .block {background: white; padding: 60px; max-width:100vh; margin:0 auto; text-align:justify;}
+#parallax .block {background: white; padding: 60px; max-width:1000px; margin:0 auto;}
 .choose-us h1 { text-align: center; font-size: 1.3em;}
 /* Section - Parallax */
 /**************************/
@@ -271,4 +280,10 @@ p {
 
 @media screen and (max-width: 479px) {
   #parallax .block {padding: 30px 15px; width:290px;}
+}
+
+.equal {
+  display: flex;
+  display: -webkit-flex;
+  flex-wrap: wrap;
 }
