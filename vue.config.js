@@ -24,7 +24,6 @@ module.exports = {
       }
     }
     },
-
   pluginOptions: {
     i18n: {
       locale: 'en',
@@ -32,5 +31,5 @@ module.exports = {
       localeDir: 'locales',
       enableInSFC: true
     }
-  }
+  },
 }

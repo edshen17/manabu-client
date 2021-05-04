@@ -19,7 +19,7 @@
           <h1>{{ $t('homepage.chooseUs') }}</h1>
           <div class="block">
             <b-container fluid>
-              <b-row class="make-it-flex">
+              <b-row class="flex">
                 <b-col sm="6" class="flex-item-1">
                   <div class='choose-us-parent'>
                     <i class="fas fa-language fa-2x inline"></i>
@@ -46,14 +46,29 @@
                     <i class="fas fa-hands-helping fa-2x inline"></i>
                     <h5 class="mx-2 my-1 bold">Community</h5>
                   </div>
-                  <p class="mt-2">Learning a language can be difficult so if you ever feel stuck we are happy to guide you! We have a supportive community of teachers and staff that will aid you throughout your studies.</p>
+                  <p class="mt-2">Learning a language can be difficult, so if you ever feel stuck we are happy to guide you! We have a supportive community of teachers and staff that will aid you throughout your studies.</p>
                 </b-col>
               </b-row>
             </b-container>
           </div>
         </section>
       </div>
+      <section>
+        <h1 class='text-center'>Innovative Digital Resources</h1>
+        <img src=""/>
+        <div class="block">
+          <b-container fluid>
+              <b-row class="flex">
+                <b-col v-for="card in cardData" :key="card.title" class="flex-item-1">
+                  <b-card :img-src="card.imgSrc" :img-alt="card.title" img-bottom :title="card.title" class="shadow border-0">
+                  </b-card>                  
+                </b-col>
+              </b-row>
+            </b-container>
+        </div>
+      </section>
     </div>
+    <div></div>
   </div>
 </template>
 
@@ -65,6 +80,24 @@ export default {
     this.$emit('update:layout', LayoutDefault);
   },
   mounted() {
+  },
+  data() {
+    return {
+      cardData : [
+        {
+          title: 'Digital Flashcards',
+          imgSrc: require('../assets/images/flashcard_1.png')
+        },
+        {
+          title: 'Progress Report',
+          imgSrc: require('../assets/images/flashcard_1.png')
+        },
+        {
+          title: 'E-learning Tools',
+          imgSrc: require('../assets/images/flashcard_1.png')
+        },
+      ],
+    }
   }
 };
 </script>
