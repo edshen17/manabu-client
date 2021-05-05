@@ -20,33 +20,12 @@
           <div class="block">
             <b-container fluid>
               <b-row class="flex">
-                <b-col sm="6" class="flex-item-1">
+                <b-col v-for="feature in chooseUsData" :key="feature.title" sm="12" md="6" class="flex-item-1">
                   <div class='choose-us-parent'>
-                    <i class="fas fa-language fa-2x inline"></i>
-                    <h5 class="mx-2 my-1 bold">Customized Lessons</h5>
+                    <i :class="feature.iconClass"></i>
+                    <h5 class="mx-2 my-1 bold">{{ feature.title }}</h5>
                   </div>
-                  <p class="mt-2">Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are tailored specifically for you.</p>
-                </b-col>
-                <b-col sm="6" class="flex-item-1">
-                  <div class='choose-us-parent'>
-                    <i class="fas fa-headphones fa-2x inline"></i>
-                    <h5 class="mx-2 my-1 bold">Immersion</h5>
-                  </div>
-                  <p class="mt-2">We focus on getting students into a habit of constant learning. We are confident that we can help you immerse and achieve your fluency goals.</p>
-                </b-col>
-                <b-col sm="6" class="flex-item-1">
-                  <div class='choose-us-parent'>
-                    <i class="fas fa-chart-bar fa-2x inline"></i>
-                    <h5 class="mx-2 my-1 bold">Data Analytics</h5>
-                  </div>
-                  <p class="mt-2">Through Manabu, you can visualize your progress and growth. This can not only a way to stay motivated, but can also help you find areas of improvement.</p>
-                </b-col>
-                <b-col sm="6" class="flex-item-1">
-                  <div class='choose-us-parent'>
-                    <i class="fas fa-hands-helping fa-2x inline"></i>
-                    <h5 class="mx-2 my-1 bold">Community</h5>
-                  </div>
-                  <p class="mt-2">Learning a language can be difficult, so if you ever feel stuck we are happy to guide you! We have a supportive community of teachers and staff that will aid you throughout your studies.</p>
+                  <p class="mt-2">{{ feature.text }}</p>
                 </b-col>
               </b-row>
             </b-container>
@@ -59,7 +38,7 @@
         <div class="block">
           <b-container fluid>
               <b-row class="flex">
-                <b-col v-for="card in cardData" :key="card.title" class="flex-item-1">
+                <b-col v-for="card in cardData" :key="card.title" class="flex-item-1 mb-4" md="4" sm="12">
                   <b-card :img-src="card.imgSrc" :img-alt="card.title" img-bottom :title="card.title" class="shadow border-0">
                   </b-card>                  
                 </b-col>
@@ -97,6 +76,28 @@ export default {
           imgSrc: require('../assets/images/flashcard_1.png')
         },
       ],
+      chooseUsData: [
+        {
+          title: 'Tailored Lessons',
+          text: 'Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are customized specifically for you.',
+          iconClass: 'fas fa-language fa-2x inline',
+        },
+        {
+          title: 'Immersion',
+          text: 'We focus on getting students into a habit of constant learning. We are confident that we can help you immerse and achieve your fluency goals.',
+          iconClass: 'fas fa-headphones fa-2x inline',
+        },
+        {
+          title: 'Data Analytics',
+          text: 'Through Manabu, you can visualize your progress and growth. This can not only a way to stay motivated, but can also help you find areas of improvement.',
+          iconClass: 'fas fa-chart-bar fa-2x inline',
+        },
+        {
+          title: 'Community',
+          text: 'Learning a language can be difficult, so if you ever feel stuck we are happy to guide you! We have a supportive community of teachers and staff that will aid you throughout your studies.',
+          iconClass: 'fas fa-hands-helping fa-2x inline',
+        },
+      ]
     }
   }
 };

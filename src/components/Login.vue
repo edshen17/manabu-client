@@ -93,7 +93,7 @@ export default {
         return {
             isTeacherApp: this.$route.query.teacherSignup == 'true',
             clientId: process.env.VUE_APP_G_CLIENTID,
-            GOOGLE_AUTH_URL: process.env.VUE_APP_GOOGLE_AUTH_URL,
+            GOOGLE_AUTH_URL: process.env.VUE_APP_GOOGLE_AUTH_URL_DEV,
             appId: process.env.VUE_APP_FACEBOOK_APPID,
             errors: [],
             email: '',

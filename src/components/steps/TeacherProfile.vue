@@ -282,7 +282,8 @@ import axios from 'axios';
 import { required, between } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
 import store from '../../store/store';
-
+import SecureLS from "secure-ls";
+import SecureLsConfig from '../../config/secureLs.config';
 export default {
     name: 'TeacherProfile',
     mixins: [validationMixin],
@@ -298,6 +299,7 @@ export default {
     },
     data() {
         return {
+            encryptedStorage: new SecureLS(SecureLsConfig),
             isApproved: false,
             host: '/api',
             showCalendar: false,
@@ -362,7 +364,12 @@ export default {
               selectedPackageId: this.selectedPackageData._id,
             }
 
-            localStorage.setItem('transactionData', JSON.stringify(transactionData));
+            try {
+              this.encryptedStorage.set('storedTransaction', JSON.stringify(transactionData));
+            } catch (err) {
+              console.log(err)
+            }
+            
             
             if (this.isLoggedIn) {
             this.$router.push({

@@ -543,6 +543,8 @@ import store from '../store/store';
 import 'vue-advanced-cropper/dist/style.css';
 import firebase from 'firebase/app';
 import 'firebase/storage';
+import SecureLS from "secure-ls";
+import SecureLsConfig from '../config/secureLs.config';
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -603,6 +605,7 @@ export default {
       },
    data() {
         return {
+            encryptedStorage: new SecureLS(SecureLsConfig),
             profileImage: {
               original: null,
               updated: null,
@@ -719,11 +722,11 @@ export default {
 
         // for redirects/future use, update local storage
         try {
-          let storedTransactionData = JSON.parse(localStorage.getItem('transactionData'));
+          let storedTransactionData = JSON.parse(this.encryptedStorage.get('storedTransaction'))
           storedTransactionData.reservedBy = this.userId;
-          localStorage.setItem('transactionData', JSON.stringify(storedTransactionData))
+          this.encryptedStorage.set('storedTransaction', JSON.stringify(storedTransactionData))
         } catch (err) {
-          console.log('JSON Parse Error');
+          // console.log('JSON Parse Error');
         }
         
         

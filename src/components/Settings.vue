@@ -115,11 +115,9 @@ export default {
         this.selected.commMethod = newCommMethod;
       },
       updateSettings() {
-        if (this.selected.commMethod.method && this.selected.commMethod.id) {
-         const updatedSettings = {
-          currency: this.selected.currency,
-        }
-        axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, { settings: updatedSettings, commMethods: this.selected.commMethod }).then((res) => {
+        if (this.selected.commMethod.method && this.selected.commMethod.id) { // required fields
+        this.userData.settings.currency = this.selected.currency;
+        axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, { settings: this.userData.settings, commMethods: this.selected.commMethod }).then((res) => {
                 if (res.status == 200) {
                   this.showAlert();
                   store.commit('setUserData', res.data);

@@ -52,8 +52,12 @@ p {
 
 .Home .card-img-bottom {
   width: 100%;
-  height: 15vw;
+  max-height: 1000px;
   object-fit: cover;
+}
+
+.footer-dropdown {
+  max-width: 70%;
 }
 
 .level-color-1 {
@@ -227,11 +231,13 @@ p {
   font-family: 'ヒラギノ角ゴ W5';
   src: url(../fonts/ヒラギノ角ゴ\ Std\ W5.otf) format("opentype");
   unicode-range: U+4E00–U+9FBF, U+3040–U+309F, U+30A0–U+30FF;
+  font-display: swap;
 }
 
 @font-face {
   font-family: 'samsungsharpsans-bold';
   src: url(../fonts/samsungsharpsans-bold.otf) format("opentype");
+  font-display: swap;
 }
 
 .choose-us-parent {

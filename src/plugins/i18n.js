@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { dateTimeFormats } from '../locales/formats/dataTimeFormats'
-import SecureLS from "secure-ls";
-const ls = new SecureLS({ isCompression: false });
+import SecureEncryptedStorage from "secure-ls";
+import SecureLsConfig from '../config/secureLs.config';
+const encryptedStorage = new SecureEncryptedStorage(SecureLsConfig);
 Vue.use(VueI18n)
 
 export function loadLocaleMessages() {
@@ -32,25 +33,25 @@ export function checkDefaultLanguage() {
   })
   if (!matched) {
     languages.forEach(lang => {
-      let languagePartials = navigator.language.split('-')[0]
-      if (lang === languagePartials) {
+      let languagePartiaencryptedStorage = navigator.language.split('-')[0]
+      if (lang === languagePartiaencryptedStorage) {
         matched = lang
       }
     })
   }
   if (!matched) {
     languages.forEach(lang => {
-      let languagePartials = navigator.language.split('-')[0]
-      if (lang.split('-')[0] === languagePartials) {
+      let languagePartiaencryptedStorage = navigator.language.split('-')[0]
+      if (lang.split('-')[0] === languagePartiaencryptedStorage) {
         matched = lang
       }
     })
   }
   return matched
 }
-let storedLocale;
+let storedLocale = null;
 try { // get stored locale 
-  storedLocale = JSON.parse(ls.get('metaData')).user.data.settings.locale
+  storedLocale = JSON.parse(encryptedStorage.get('metaData')).user.data.settings.locale
 } catch(err) {
 }
 

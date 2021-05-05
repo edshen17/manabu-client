@@ -68,6 +68,9 @@ import imageSourceEdit from '../assets/scripts/imageSourceEdit';
 import convertMoney from '../assets/scripts/convertMoney';
 import store from '../store/store';
 import axios from 'axios';
+import SecureLS from "secure-ls";
+import SecureLsConfig from '../config/secureLs.config';
+
 export default {
     name: 'Payment',
     components: {
@@ -92,6 +95,7 @@ export default {
     },
     data() {
         return {
+            encryptedStorage: new SecureLS(SecureLsConfig),
             loading: true,
             isDisabled: true,
             host: '/api',
@@ -123,7 +127,7 @@ export default {
           let transactionData = this.transactionData;
           if (!transactionData) {
               try {
-                 transactionData = JSON.parse(localStorage.getItem('transactionData'));
+                 transactionData = JSON.parse(this.encryptedStorage.get('storedTransaction'))
               } catch (err) {
                 console.log('JSON Parse Error')
               }
@@ -144,7 +148,7 @@ export default {
     },
     mounted() {
         try {
-            const transactionData = this.transactionData || JSON.parse(localStorage.getItem('transactionData'));
+            const transactionData = this.transactionData || JSON.parse(this.encryptedStorage.get('storedTransaction'));
             const myUserData = this.myUserData || this.storeUserData;
             this.userData = myUserData;
             if (transactionData) {

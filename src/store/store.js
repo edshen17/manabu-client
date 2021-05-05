@@ -3,7 +3,8 @@ import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import i18n, { selectedLocale } from '@/plugins/i18n'
 import SecureLS from "secure-ls";
-const ls = new SecureLS({ isCompression: false });
+import SecureLsConfig from '../config/secureLs.config';
+const ls = new SecureLS(SecureLsConfig);
 Vue.use(Vuex);
 
 //init store
@@ -26,6 +27,9 @@ const store = new Vuex.Store({
          setUserData(state, userData) {
              state.user.data = userData;
          },
+         setUserSettings(state, settings) {
+          state.user.data.settings = settings;
+        },
          setLoggedIn(state, loggedIn) {
           state.user.isLoggedIn = loggedIn;
         },
@@ -33,7 +37,9 @@ const store = new Vuex.Store({
           state.deviceData.isMobile = isMobile;
         },
         setLocale(state, newLocale) {
-          state.user.data.settings.locale = newLocale
+          if (state.user.data) {
+            state.user.data.settings.locale = newLocale
+          }
         },
      },
      getters: {
@@ -47,7 +53,12 @@ const store = new Vuex.Store({
         return state.deviceData.isMobile;
       },
       locale: state => {
-        return state.user.data.settings.locale;
+        if (state.user.data) {
+          return state.user.data.settings.locale;
+        }
+        else {
+          return selectedLocale;
+        }
       }, 
     },
     actions: {
