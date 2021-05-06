@@ -32,12 +32,21 @@
             <div class="form-group">
               <div v-show="viewingCard == 'General'">
                 <div class="form-group">
+                  <label><b>Language</b></label>
+                  <b-form-select
+                    v-model="lang"
+                    :options="localeOptions"
+                    size="md"
+                    class="my-2"
+                    @change="showAlert"
+                  ></b-form-select>
                   <label><b>Currency</b></label>
                   <b-form-select
-                    v-model="selected.currency"
+                    v-model="userCurrency"
                     :options="options.currency"
                     size="md"
                     class="my-2"
+                    @change="showAlert"
                   ></b-form-select>
                   <label><b>Preferred Communication Tool</b></label>
                   <b-form-select
@@ -46,12 +55,24 @@
                     size="md"
                     @change="changeComms"
                   ></b-form-select>
-                  <b-form-input class='mt-2' v-model="selected.commMethod.id" :placeholder="`${selected.commMethod.method} ID`"></b-form-input>
+                  <b-form-input
+                    class="mt-2"
+                    v-model="selected.commMethod.id"
+                    :placeholder="`${selected.commMethod.method} ID`"
+                  ></b-form-input>
                 </div>
               </div>
             </div>
-            <div v-show="viewingCard == 'Payment'">Payment settings coming soon!</div>
-            <b-button @click="updateSettings" variant="primary" class="float-right"> Save Changes </b-button>
+            <div v-show="viewingCard == 'Payment'">
+              Payment settings coming soon!
+            </div>
+            <b-button
+              @click="updateSettings"
+              variant="primary"
+              class="float-right"
+            >
+              Save Changes
+            </b-button>
           </div>
         </div>
       </b-col>
@@ -62,25 +83,64 @@
 <script>
 import axios from 'axios';
 import LayoutDefault from './layouts/LayoutDefault';
-import store from '../store/store';
+import { languages } from '@/plugins/i18n'
+
 export default {
     name: 'Settings',
     computed: {
     storeUserData: {
       get() {
-        return store.getters.userData;
+        return this.$store.getters.userData;
       },
       set(userData) {
         return userData;
       }
+      },
+      userSettings: {
+      get() {
+        return this.storeUserData.settings;
+      },
+      set(updatedSettings) {
+        this.$store.commit('setUserSettings', updatedSettings)
+        axios
+          .put(
+            `api/user/${this.storeUserData._id}/updateProfile`,
+            { settings: updatedSettings },
+          )
+          .catch((err) => {
+            // if err, alert
+          });
       }
+    },
+    lang: {
+      get: function() {
+        return this.$store.getters.locale
+      },
+      set: function(newVal) {
+        this.$store.dispatch('changeLocale', newVal)
+        const updatedSettings = this.userSettings
+        updatedSettings.locale = newVal
+        this.userSettings = updatedSettings;
+      }
+    },
+    userCurrency: {
+      get() {
+        return this.userSettings.currency;
+      },
+      set(updatedCurrency) {
+        const updatedSettings = this.userSettings
+        updatedSettings.currency = updatedCurrency
+        this.userSettings = updatedSettings;
+      }
+    },
     },
     created() {
         this.$emit('update:layout', LayoutDefault);
     },
     data() {
         return {
-
+        languageArray: languages,
+        localeOptions: [],
         dismissSecs: 2,
         dismissCountDown: 0,
             host: 'api',
@@ -100,7 +160,11 @@ export default {
                   method: '',
                   id: '',
                 },
-            }
+            },
+            langToText: {
+              'en': 'English',
+              'ja': '日本語'
+            },
         }
     },
     methods: {
@@ -113,6 +177,7 @@ export default {
                 }
         }
         this.selected.commMethod = newCommMethod;
+        this.showAlert()
       },
       updateSettings() {
         if (this.selected.commMethod.method && this.selected.commMethod.id) { // required fields
@@ -120,9 +185,9 @@ export default {
         axios.put(`${this.host}/user/${this.userData._id}/updateProfile`, { settings: this.userData.settings, commMethods: this.selected.commMethod }).then((res) => {
                 if (res.status == 200) {
                   this.showAlert();
-                  store.commit('setUserData', res.data);
+                  this.$store.commit('setUserData', res.data);
                 }
-              }).catch((err) => { console.log(err) }) 
+              }).catch((err) => { console.log(err) })
         } else {
           alert('Please input a value in the communication tool ID field')
         }
@@ -137,7 +202,19 @@ export default {
     mounted() {
         this.userData = this.storeUserData;
         this.selected.currency = this.userData.settings.currency || 'SGD';
-        this.selected.commMethod = JSON.parse(JSON.stringify(this.userData.commMethods[0])) || {};
+        try {
+          this.selected.commMethod = JSON.parse(JSON.stringify(this.userData.commMethods[0]))
+        } catch(err) {
+           this.selected.commMethod = {};
+        }
+
+        this.languageArray.forEach((language) => {
+        this.localeOptions.push({
+          value: language,
+          text: this.langToText[language]
+        })
+      })
+
     },
 }
 </script>

@@ -57,7 +57,7 @@ p {
 }
 
 .footer-dropdown {
-  max-width: 70%;
+  max-width: 80%;
 }
 
 .level-color-1 {
@@ -249,6 +249,10 @@ p {
   flex: 0;
 }
 
+.footer-icons {
+  font-size: 1.125em;
+}
+
 /* Section - Title */
 /**************************/
 #parallax .title {background: white; padding: 60px; margin:0 auto; text-align:center;}
@@ -282,5 +286,8 @@ p {
 
 @media screen and (max-width: 479px) {
   #parallax .block {padding: 30px 15px; width:290px;}
+  .footer-dropdown {
+    max-width: 100%;
+  }
 }
 

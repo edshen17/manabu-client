@@ -123,7 +123,6 @@ const router = new Router({
       name: 'Logout',
       beforeEnter(to, from, next) {
         Vue.$cookies.set('hp', '').set('sig', '');
-        store.commit('setUserData', null);
         store.commit('setLoggedIn', false);
         next('/')
       },

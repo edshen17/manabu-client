@@ -60,8 +60,8 @@
     <footer class="bg-light text-black">
       <b-container fluid class='p-4'>
         <b-row>
-          <b-col></b-col>
-          <b-col class='text-center text-lg-start'>
+          <b-col md="2" sm="0"></b-col>
+          <b-col md="3" sm="12" class='text-center text-lg-start'>
             <h5 class="text-uppercase">About</h5>
             <p>
               Minato Manabu (Pte. Ltd) is a startup focused on empowering people
@@ -70,7 +70,7 @@
               tools and high quality lessons.
             </p>
           </b-col>
-          <b-col class='text-center text-lg-start'>
+          <b-col md="3" sm="12" class='text-center text-lg-start'>
             <h5 class="text-uppercase mb-0">More</h5>
             <ul class="list-unstyled mt-2">
               <li v-for='linkData in links' :key='linkData.title' class="mb-2">
@@ -79,16 +79,15 @@
               </li>
             </ul>
           </b-col>
-          <b-col>
+          <b-col md="3" sm="12">
             <div class="footer-dropdown">
               <b-form-select v-model="lang" :options="localeOptions" class='mb-3'></b-form-select>
               <b-form-select v-model="userCurrency" :options="currencyOptions" class='mb-2'></b-form-select>
             </div>
-            <section class="mb-4">
+            <section class="mb-4 text-center footer-icons">
             <i v-for="iconData in icons" style="cursor: pointer;" :key="iconData.link" :class=iconData.iconClass @click="redirectTo(iconData.link)"></i>  
             </section>
           </b-col>
-          <b-col></b-col>
         </b-row>
       </b-container>
       <div class="text-center p-3 bg-light">
@@ -131,7 +130,6 @@ export default {
           )
           .catch((err) => {
             // if err, alert
-            console.log(err);
           });
       }
     },
@@ -151,11 +149,11 @@ export default {
       },
       set: function(newVal) {
         this.$store.dispatch('changeLocale', newVal)
-        if (this.isLoggedIn) { // update profile
-          const updatedSettings = this.userSettings
-          updatedSettings.locale = newVal
-          this.userSettings = updatedSettings;
-        }
+
+        // update settings
+        const updatedSettings = this.userSettings
+        updatedSettings.locale = newVal
+        this.userSettings = updatedSettings;
       }
     }
 },
@@ -204,7 +202,7 @@ methods: {
         icons: [
           {
             link: 'https://www.facebook.com/ManabuOfficial/',
-            iconClass: 'fab fa-facebook-f fa-lg mr-5 mt-4',
+            iconClass: 'fab fa-facebook-f fa-lg mr-5 mt-4 text-center',
           },
           {
             link: 'https://twitter.com/lessonsmanabu',
