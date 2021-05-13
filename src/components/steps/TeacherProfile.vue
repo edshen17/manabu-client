@@ -1,13 +1,13 @@
 <template>
   <div class="teacher-profile">
-    <b-modal id="price-modal" title="Select a Lesson Plan" size="lg">
+    <b-modal id="price-modal" :title="priceModalText.priceModalTitle" size="lg">
       <b-form-select
         v-model="selectedLanguage"
         :options="optionsLanguage"
         v-show="teachingLanguages.length > 1"
       ></b-form-select>
       <b-form-group
-        label="Lesson Plan"
+        :label="priceModalText.lessonPlan"
         v-slot="{ ariaDescribedby }"
         class="mt-2"
       >
@@ -16,10 +16,9 @@
           :options="optionsPlan"
           :aria-describedby="ariaDescribedby"
           name="plans"
-          @change="changePlan"
         ></b-form-radio-group>
       </b-form-group>
-      <b-form-group label="Duration" v-slot="{ ariaDescribedby }" class="mt-2">
+      <b-form-group :label="priceModalText.lessonDuration" v-slot="{ ariaDescribedby }" class="mt-2">
         <b-form-radio-group
           v-model="selectedDuration"
           :options="optionsDuration"
@@ -43,29 +42,22 @@
         style="font-weight: bold; display: block"
         class="mb-2"
         v-show="selectedDuration"
-        >Estimated Price:
+        >{{ priceModalText.estimatedPrice }}
         {{ convertMoney((selectedDuration / 60) * viewingUserData.teacherData.hourlyRate.amount * selectedPackageData.lessonAmount, selectedPackageData.priceDetails.currency, myUserData.settings.currency, true, exchangeRates).toFixed(2).toLocaleString()}}
         {{myUserData.settings.currency}}
       </span>
-      <span style="font-weight: bold">Disclaimer</span>
+      <span style="font-weight: bold">{{ priceModalText.disclaimerText.disclaimer }}</span>
       <ul>
         <li style="font-size: 0.9rem" class="mt-2">
-          To give teachers time to prepare for their next student, lessons end 5
-          minutes early. However, after each lesson you will receive a 5 minute
-          credit that you can use for that teacher. For example, if you buy 60
-          minute lessons, you will automatically get a "free" lesson after 12
-          lessons. The credits do not expire, but the extra lesson will expire
-          when the plan expires.
+          {{ priceModalText.disclaimerText.minuteBank }}
         </li>
         <li style="font-size: 0.9rem" class="mt-2">
-          Lesson plans automatically expire 1 month after purchasing and unused
-          lessons will not carryforward. If you choose the subscription option (coming soon)
-          you will automatically receive a new lesson plan every month.
+          {{ priceModalText.disclaimerText.expiration }}
         </li>
       </ul>
       <template #modal-footer>
-        <b-button @click="$bvModal.hide('price-modal')"> Cancel </b-button>
-        <b-button variant="primary" @click="onConfirm"> Continue </b-button>
+        <b-button @click="$bvModal.hide('price-modal')"> {{ $t('modal.cancel') }} </b-button>
+        <b-button variant="primary" @click="onConfirm"> {{ $t('modal.continue') }} </b-button>
       </template>
     </b-modal>
     <b-container fluid>
@@ -92,13 +84,13 @@
                         <b-icon-patch-check-fll
                           v-if="this.viewingUserData.teacherData.isApproved || this.isApproved"
                           class="ml-2 patch-icon"
-                          :title="`Manabu Verified Teacher since ${formatDate(viewingUserData.teacherData.dateApproved, 'MMMM YYYY')}`"
+                          :title="teacherSince"
                         >
                         </b-icon-patch-check-fll>
                         <b-icon-patch-minus-fll
                           v-else
                           class="ml-2 patch-icon"
-                          title="Teacher application pending"
+                          :title="teacherProfileText.appPending"
                         >
                         </b-icon-patch-minus-fll>
                         <b-dropdown
@@ -118,7 +110,7 @@
                               && !this.isApproved"
                               @click="approveTeacher(viewingUserData._id)"
                             >
-                              Approve application
+                              {{ teacherProfileText.approveApp }}
                             </b-dropdown-item>
                             <b-dropdown-item
                               v-if="viewingUserData.teacherData.licensePath 
@@ -126,26 +118,26 @@
                               :href="viewingUserData.teacherData.licensePath"
                               target="_blank"
                             >
-                              View professional license
+                              {{ teacherProfileText.viewLicense }} 
                             </b-dropdown-item>
                           </div>
-                          <b-dropdown-item>Report</b-dropdown-item>
-                          <b-dropdown-item>Block</b-dropdown-item>
+                          <b-dropdown-item>{{ $t('profile.common.report') }}</b-dropdown-item>
+                          <b-dropdown-item>{{ $t('profile.common.block') }}</b-dropdown-item>
                         </b-dropdown>
                         <div class="card-text">
-                          <small class="text-muted"
-                            >Last online
-                            {{ formatDate(viewingUserData.lastOnline, 'fromNow') }}</small
-                          >
+                          <small class="text-muted">
+                            {{ $t('profile.common.lastOnline', { date: formatDate(viewingUserData.lastOnline, 'fromNow') }) }}
+                          </small>
                         </div>
                       </span>
                       <div class="text-muted font-weight-light mt-2">
                         <div>
                           <span style="font-size: 1.1rem">
-                            <span class="light-bold"
-                              >{{ formatString(this.viewingUserData.teacherData.teacherType, 
-                        ['licensed', 'unlicensed'], 
-                        ['Professional Teacher --', 'Community Teacher --']) }}
+                            <span class="light-bold">
+                              {{ formatString(this.viewingUserData.teacherData.teacherType, 
+                                ['licensed', 'unlicensed'], 
+                                teacherTypes) 
+                              }}
                             </span>
                             <div
                               v-for="langData in teachingLanguages"
@@ -153,9 +145,9 @@
                               class="mr-2"
                               style="display: inline"
                             >
-                              <span
-                                >{{ languageCodeToText(langData.language) }}</span
-                              >
+                              <span>
+                                {{ $t(`localeCodes.${langData.language}`) }}
+                              </span>
                               <span
                                 v-for="(n, i) in 5"
                                 :key="i"
@@ -169,12 +161,12 @@
                               style="display: block"
                               class="mt-2 mr-2"
                             >
-                              <span v-if="i == 0" class="light-bold"
-                                >Also Speaks --
+                              <span v-if="i == 0" class="light-bold">
+                               {{ $t('profile.common.alsoSpeaks') }} --
                               </span>
-                              <span
-                                >{{ languageCodeToText(langData.language) }}</span
-                              >
+                              <span>
+                                {{ $t(`localeCodes.${langData.language}`) }}
+                              </span>
                               <span
                                 v-for="(n, i) in 5"
                                 :key="i"
@@ -197,19 +189,19 @@
           </div>
           <div class="card profile-card mb-3 shadow border-0">
             <div class="card-body">
-              <h3 class="mb-3">Lesson Plans</h3>
+              <h3 class="mb-3">{{ teacherProfileText.lessonPlans }}</h3>
               <div v-for="pkg in packages" :key="pkg._id">
                 <div
                   class="card profile-card mb-3 shadow border-0"
                   v-if="pkg.isOffering"
                 >
                   <div class="card-body price-card" @click="selectedPlan = pkg.packageType; openModal('price-modal')">
-                    <h5 class="text-muted font-weight-light">
-                      {{ toTitleCase(pkg.packageType) }} Plan
+                    <h5 class="text-muted font-weight-light text-capitalize">
+                      {{ teacherProfileText.lessonTypes[`${pkg.packageType}Alt`] }}
                     </h5>
                     <p>
                       {{ formatString(pkg.packageType, ['light', 'moderate', 'mainichi'], 
-                      ['This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.', 'This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.', 'This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 22 personalized lessons every month or about 5 lessons every week.'])}}
+                      [teacherProfileText.lessonTypes.lightDesc, teacherProfileText.lessonTypes.moderateDesc, teacherProfileText.lessonTypes.mainichiDesc])}}
                     </p>
                     <span
                       class="badge badge-pill badge-primary manabu-blue"
@@ -240,14 +232,13 @@
           <div class="sticky-top">
             <div class="card profile-card mb-3 shadow border-0">
               <h5 class="font-weight-light mt-3 mx-3">
-                Lessons starting from
-                ~{{convertMoney(viewingUserData.teacherData.hourlyRate.amount, viewingUserData.teacherData.hourlyRate.currency, myUserData.settings.currency, false, exchangeRates)}} {{ myUserData.settings.currency }}/hour
+                {{ $t('profile.teacher.hourlyRate', { rate: teacherRate, currency: myUserData.settings.currency }) }}
               </h5>
               <b-button
                 variant="dark"
                 class="mx-3 my-3 manabu-blue"
                 @click="openModal('price-modal')"
-                >BOOK NOW</b-button
+                >{{ teacherProfileText.bookNow }} </b-button
               >
             </div>
             <div class="card profile-card mb-3 shadow border-0">
@@ -257,9 +248,8 @@
                 v-scroll-to="'#calendar-wrapper'"
                 @click="showCalendar = !showCalendar"
               >
-                <span v-show="!showCalendar">VIEW</span>
-                <span v-show="showCalendar">HIDE</span>
-                CALENDAR
+                <span v-show="!showCalendar">{{ $t('profile.common.viewCalendar') }}</span>
+                <span v-show="showCalendar">{{ $t('profile.common.hideCalendar') }}</span>
               </b-button>
             </div>
           </div>
@@ -273,29 +263,132 @@
 import imageSourceEdit from '../../assets/scripts/imageSourceEdit';
 import ViewCalendar from './ViewCalendar';
 import languageLevelBars from '../../assets/scripts/languageLevelBars';
-import languageCodeToText from '../../assets/scripts/languageCodeToText';
 import formatString from '../../assets/scripts/formatString';
 import formatDate from '../../assets/scripts/formatDate';
-import toTitleCase from '../../assets/scripts/toTitleCase';
 import convertMoney from '../../assets/scripts/convertMoney';
 import axios from 'axios';
-import { required, between } from "vuelidate/lib/validators";
-import { validationMixin } from "vuelidate";
-import store from '../../store/store';
 import SecureLS from "secure-ls";
 import SecureLsConfig from '../../config/secureLs.config';
 export default {
     name: 'TeacherProfile',
-    mixins: [validationMixin],
-       computed: {
-   isLoggedIn: {
-      get() {
-        return store.getters.isLoggedIn;
+      computed: {
+        isLoggedIn: {
+            get() {
+              return this.$store.getters.isLoggedIn;
+            },
+            set(isLoggedIn) {
+              return isLoggedIn;
+            }
+        },
+      priceModalText: {
+        get() {
+          return this.$t('modal.priceModalText')
+        }
       },
-      set(isLoggedIn) {
-        return isLoggedIn;
-      }
-    },
+      teacherProfileText: {
+        get() {
+          return this.$t('profile.teacher');
+        }
+      },
+      teacherTypes: {
+        get() {
+          return [`${this.teacherProfileText.proTeacher} --`, `${this.teacherProfileText.commTeacher} --`]
+        }
+      },
+      teacherRate: {
+        get() {
+          return convertMoney(this.viewingUserData.teacherData.hourlyRate.amount, this.viewingUserData.teacherData.hourlyRate.currency, this.myUserData.settings.currency, false, this.exchangeRates)
+        }
+      },
+      teacherSince: {
+        get() {
+          return this.$t('profile.teacher.manabuVerified', { date: formatDate(this.viewingUserData.teacherData.dateApproved, 'MMMM YYYY')})
+        }
+      },
+      optionsSubscription: {
+        get() {
+          return [
+              {
+                text: this.$t('modal.yes'),
+                value: 'yes',
+              },
+              {
+                text: this.$t('modal.no'),
+                value: 'no',
+              },
+            ]
+        }
+      },
+      teachingLanguages: {
+        get() {
+          return this.viewingUserData.teacherData.teachingLanguages;
+        }
+      },
+      otherLanguages: {
+        get() {
+          return this.viewingUserData.teacherData.alsoSpeaks;
+        }
+      },
+
+      optionsPlan: {
+        get() {
+          const optionsPlan = []
+
+          this.packages.forEach((pkg) => {
+            if (pkg.isOffering) {
+              pkg.packageDurations.sort((a, b) => { return a - b; })
+              const text = this.$t(`profile.teacher.lessonTypes.${pkg.packageType}`, { amount: pkg.lessonAmount })
+              optionsPlan.push({
+                text,
+                value: pkg.packageType
+              })
+            }
+          });
+          return optionsPlan;
+        }
+      },
+
+      optionsDuration: {
+        get() {
+          const packageInfo = this.packages.find((pkg) => { return pkg.packageType == this.selectedPlan })
+          const newDurationOptions = [];
+          packageInfo.packageDurations.forEach((duration) => {
+            newDurationOptions.push({
+              text: this.$t('profile.teacher.lessonDuration', { duration }),
+              value: duration,
+            })
+          });
+          
+          this.selectedDuration = packageInfo.packageDurations[0];
+          this.selectedPackageData = packageInfo;
+
+          return newDurationOptions;
+        }
+        },
+
+      optionsLanguage: {
+        get() {
+          const optionsLanguage = [];
+
+          this.teachingLanguages.forEach((langData) => {
+            optionsLanguage.push({
+              text: this.$t(`localeCodes.${langData.language}`),
+              value: langData.language,
+            })
+          })
+          return optionsLanguage;
+        }
+      },
+      encodedQueryParams: { // base 64
+        get() {
+          return this.$store.getters.encodedQueryParams;
+        }
+      },
+      decodedQueryParams: {
+        get() {
+          return this.$store.getters.decodedQueryParams;
+        }
+      },
     },
     data() {
         return {
@@ -303,27 +396,11 @@ export default {
             isApproved: false,
             host: '/api',
             showCalendar: false,
-            teachingLanguages: [],
-            otherLanguages: [],
-            optionsPlan: [],
-            optionsDuration: [],
-            optionsLanguage: [],
-            optionsSubscription: [
-              {
-                text: 'Yes',
-                value: 'yes',
-              },
-              {
-                text: 'No',
-                value: 'no',
-              },
-            ],
             selectedPlan: '',
             selectedDuration: '',
             selectedLanguage: '',
             selectedSubscription: 'no',
             selectedPackageData: this.packages[0],
-
         }
     },
     components: {
@@ -335,61 +412,45 @@ export default {
         exchangeRates: Object,
         packages: Array,
     },
-    validations: {
-        selectedDuration: {
-          required,
-          between: between(30, 90)
-        },
-        selectedLanguage: {
-          required,
-        },
-        selectedPlan: {
-          required,
-        }
-      },
     methods: {
         onConfirm() {
-          if (this.$v.$invalid) {
-            alert('Missing input on the form. Please double check the inputs.')
-          } else {
-            // if not logged in, redirect... aka no myuserdata
-            const myUserData = this.myUserData
-            const transactionData = {
-              hostedBy: this.viewingUserData._id,
-              reservedBy: this.myUserData._id,
-              selectedPlan: this.selectedPlan,
-              selectedDuration: this.selectedDuration,
-              selectedLanguage: this.selectedLanguage,
-              selectedSubscription: this.selectedSubscription,
-              selectedPackageId: this.selectedPackageData._id,
-            }
+          // if not logged in, redirect... aka no myuserdata
+          const myUserData = this.myUserData
+          const transactionData = {
+            hostedBy: this.viewingUserData._id,
+            reservedBy: this.myUserData._id,
+            selectedPlan: this.selectedPlan,
+            selectedDuration: this.selectedDuration,
+            selectedLanguage: this.selectedLanguage,
+            selectedSubscription: this.selectedSubscription,
+            selectedPackageId: this.selectedPackageData._id,
+          }
 
-            try {
-              this.encryptedStorage.set('storedTransaction', JSON.stringify(transactionData));
-            } catch (err) {
-              console.log(err)
-            }
+          try {
+            this.encryptedStorage.set('storedTransaction', JSON.stringify(transactionData));
+          } catch (err) {
+            console.log(err)
+          }
             
-            
-            if (this.isLoggedIn) {
-            this.$router.push({
-                name: 'Payment',
-                params: {
-                  transactionData,
-                  myUserData,
-                }
-              })
-            } else {
-              this.$router.push({ name: 'Sign Up', query: { hostedBy: transactionData.hostedBy, }})
-            }
+          if (this.isLoggedIn) {
+          this.$router.push({
+              name: 'Payment',
+              params: {
+                transactionData,
+                myUserData,
+              }
+            })
+          } else {
+            const queryParams = this.decodedQueryParams;
+            queryParams.hostedBy = this.viewingUserData._id
+            this.$store.commit('setEncodedQueryParams', queryParams);
+            this.$router.push(`/signup?state=${this.encodedQueryParams}`).catch((err) => {})
           }
         },
         openModal(modalId) {
           this.$bvModal.show(modalId)
         },
-        toTitleCase,
         formatDate,
-        languageCodeToText,
         imageSourceEdit,
         languageLevelBars,
         formatString,
@@ -418,44 +479,10 @@ export default {
             });
         })
       },
-      changePlan(selectedPlan) {
-        const packageInfo = this.packages.find((pkg) => { return pkg.packageType == selectedPlan })
-        const newDurationOptions = [];
-        packageInfo.packageDurations.forEach((duration) => {
-          newDurationOptions.push({
-            text: `${duration} minutes`,
-            value: duration,
-          })
-        });
-        this.selectedDuration = packageInfo.packageDurations[0];
-        this.optionsDuration = newDurationOptions;
-        this.selectedPackageData = packageInfo;
-      },
     },
     mounted() {
-      this.teachingLanguages = this.viewingUserData.teacherData.teachingLanguages;
-      this.otherLanguages = this.viewingUserData.teacherData.alsoSpeaks;
-      this.packages.forEach((pkg) => {
-        if (pkg.isOffering) {
-          pkg.packageDurations.sort((a, b) => {
-            return a - b;
-          })
-          const text = `${this.toTitleCase(pkg.packageType)} (${pkg.lessonAmount} lessons)`
-          this.optionsPlan.push({
-            text,
-            value: pkg.packageType
-          })
-        }
-      });
-      this.teachingLanguages.forEach((langData) => {
-        this.optionsLanguage.push({
-          text: languageCodeToText(langData.language),
-          value: langData.language,
-        })
-      })
       this.selectedPlan = this.optionsPlan[0].value;
       this.selectedLanguage = this.optionsLanguage[0].value;
-      this.changePlan(this.selectedPlan);
       this.selectedDuration = this.optionsDuration[0].value;
     }
 }

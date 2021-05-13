@@ -57,7 +57,6 @@
       <div v-if="userData">
         <registration-form
           v-on:form-submitted="onFormSubmit"
-          submitButtonText="Submit"
           :formData="formData"
           endpoint="user"
           v-if="userData.role == 'user' && !userData.teacherAppPending"
@@ -93,7 +92,6 @@
         </registration-form>
         <registration-form
           v-on:form-submitted="onFormSubmit"
-          submitButtonText="Submit"
           :formData="formData"
           endpoint="teacher"
           v-if="userData.teacherAppPending"
@@ -529,7 +527,6 @@ import getAppointments from '../assets/scripts/getAppointments';
 import toTitleCase from '../assets/scripts/toTitleCase';
 import RegistrationForm from './steps/RegistrationForm';
 import EditCalendar from './steps/EditCalendar';
-import ViewCalendar from './steps/ViewCalendar';
 import languageLevelBars from '../assets/scripts/languageLevelBars';
 import fetchUserData from '../assets/scripts/fetchUserData';
 import fetchMyTeachers from '../assets/scripts/fetchMyTeachers';
@@ -568,7 +565,6 @@ export default {
         Preview,
         RegistrationForm,
         EditCalendar,
-        ViewCalendar,
     },
     name: 'Dashboard',
     created() {

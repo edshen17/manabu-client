@@ -6,8 +6,8 @@ html * {
 }
 
 .navbar-brand {
-  font-family: 'samsungsharpsans-bold';
-  font-weight: 800;
+  font-family: 'samsungsharpsans-medium';
+  font-weight: 590;
   font-size: 1.2em !important;
 }
 
@@ -30,8 +30,8 @@ html * {
 
 /* Typography */
 /**************************/
-#parallax h1 {font-size:24px; font-weight:400; text-transform: uppercase; color:black; padding:0; margin:0;}
-#parallax p {font-weight:400; font-size:1.15em; line-height:24px;}
+#parallax h1 {font-size:1.75em; font-weight:400; text-transform: uppercase; color:black; padding:0; margin:0;}
+#parallax p {font-weight:400; font-size:1.25em; }
 .first-character {font-weight:400; float: left; font-size: 84px; line-height: 64px; padding-top: 4px; padding-right: 8px; padding-left: 3px;}
 
 .Home .col-sm-6 {
@@ -43,7 +43,7 @@ html * {
 }
 
 p {
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .Home .card-title {
@@ -126,6 +126,8 @@ p {
   border-left: 4px solid #78D393 !important;
   border-radius: 6px !important;
 }
+
+
 
 .cancelled-card {
   border-left: 4px solid pink !important;
@@ -221,26 +223,21 @@ p {
   background-color: #152076 !important;
 }
 
-.jp-text {
-  font-family: 'ヒラギノ角ゴ W5' !important;
-  line-height: 1.75;
-  font-size: 1.4rem !important;
-}
 
 @font-face {
-  font-family: 'ヒラギノ角ゴ W5';
-  src: url(../fonts/ヒラギノ角ゴ\ Std\ W5.otf) format("opentype");
-  unicode-range: U+4E00–U+9FBF, U+3040–U+309F, U+30A0–U+30FF;
+  font-family: 'samsungsharpsans-medium';
+  src: url(../fonts/SamsungSharpSans-Medium.otf) format("opentype");
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'samsungsharpsans-bold';
-  src: url(../fonts/samsungsharpsans-bold.otf) format("opentype");
+  font-family: 'Nunito Sans';
+  src: url(../fonts/NotoSansJP-Regular.woff2) format("woff2");
   font-display: swap;
+  line-height: 100px;
 }
 
-.choose-us-parent {
+.parallax-section-parent {
   display: flex;
   justify-content: center;
 }
@@ -261,7 +258,7 @@ p {
 /* Section - Block */
 /**************************/
 #parallax .block {background: white; padding: 60px; max-width:1000px; margin:0 auto;}
-.choose-us h1 { text-align: center; font-size: 1.3em;}
+.parallax-section h1 { text-align: center; font-size: 1.3em;}
 /* Section - Parallax */
 /**************************/
 #parallax .parallax-one {overflow: hidden; position: relative; width: 100%; background-image: url('../images/home.webp'); background-attachment: fixed; background-size: cover; -moz-background-size: cover; -webkit-background-size: cover; background-repeat: no-repeat; background-position:center;}
@@ -289,5 +286,22 @@ p {
   .footer-dropdown {
     max-width: 100%;
   }
+
+  .footer-icons {
+    text-align: center !important;
+  }
+
+  .center-home {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100vw;
+    max-height: 80vh;
+  }
+
+  #parallax .parallax-one {
+    max-height: 500px;
+  }
+  
 }
 

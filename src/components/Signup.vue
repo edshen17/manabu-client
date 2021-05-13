@@ -5,7 +5,7 @@
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
           <div class="card card-signin my-5 shadow border-0">
             <div class="card-body">
-              <h5 class="card-title text-center">Sign Up</h5>
+              <h5 class="card-title text-center">{{ $t('login.signup') }}</h5>
               <form class="form-signin">
                 <div class="form-label-group">
                   <div class="form-label-group">
@@ -14,7 +14,7 @@
                       type="name"
                       id="inputName"
                       class="form-control"
-                      placeholder="Name"
+                      :placeholder="$t('login.name')"
                       v-model="name"
                       @keyup.13="signUp"
                     />
@@ -24,7 +24,7 @@
                     type="email"
                     id="inputEmail"
                     class="form-control"
-                    placeholder="Email address"
+                    :placeholder="$t('login.email')"
                     v-model="email"
                     @keyup.13="signUp"
                   />
@@ -36,7 +36,7 @@
                     type="password"
                     id="inputPassword"
                     class="form-control"
-                    placeholder="Password"
+                    :placeholder="$t('login.password')"
                     v-model="password"
                     autocomplete="on"
                     aria-label="Password"
@@ -63,7 +63,7 @@
                   onsubmit="return false"
                   @click="signUp"
                 >
-                  Sign Up
+                  {{$t('login.signup')}}
                 </button>
                 <div v-if="errors.length">
                   <ul class="list-group mt-4">
@@ -81,13 +81,13 @@
                   class="btn btn-lg btn-google btn-block text-uppercase"
                   @click='redirect(GOOGLE_AUTH_URL)'
                 >
-                  <i class="fab fa-google mr-2"></i> Continue with Google
+                  <i class="fab fa-google mr-2"></i> {{$t('login.googleLogin')}}
                 </button>
                 <!-- <button class="btn btn-lg btn-facebook btn-block text-uppercase" onsubmit="return false"><i class="fab fa-facebook-f mr-2"></i> Continue with Facebook</button> -->
                 <p class="mt-4 float-right">
-                  Already have an account?
-                  <b-link :to="`/login?teacherSignup=${isTeacherApp}`"
-                    >Log in here</b-link
+                 {{ $t('login.haveAccount') }}
+                  <b-link :to="`/login?state=${encodedQueryParams}`"
+                    >{{ $t('login.loginHere') }}</b-link
                   >
                 </p>
               </div>
@@ -108,24 +108,48 @@ export default {
     created() {
     this.$emit('update:layout', LayoutDefault);
     },
+    computed: {
+      encodedQueryParams: { // base 64
+        get() {
+          return this.$store.getters.encodedQueryParams;
+        }
+      },
+      decodedQueryParams: {
+        get() {
+          return this.$store.getters.decodedQueryParams;
+        }
+      },
+      isTeacherApp: {
+        get() {
+          return this.decodedQueryParams.teacherSignup == 'true'
+        }
+      },
+      hostedBy: {
+        get() {
+          return this.decodedQueryParams.hostedBy;
+        }
+      },
+    },
     data() {
         return {
             clientId: process.env.VUE_APP_G_CLIENTID,
-            GOOGLE_AUTH_URL: process.env.VUE_APP_GOOGLE_AUTH_URL,
+            GOOGLE_AUTH_URL: process.env.VUE_APP_GOOGLE_AUTH_URL_DEV,
             showPassword: false,
             name: '',
             email: '',
             password: '',
-            isTeacherApp: this.$route.query.teacherSignup == 'true',
             errors: [],
         }
     },
     mounted() {
+      if (!this.$route.query.state) {
+        this.$store.commit('setEncodedQueryParams', {});
+      }
       this.$refs.name.focus();
     },
     methods: {
       redirect(url){
-        window.location.href = `${url}&state=${this.isTeacherApp}`
+        window.location.href = `${url}&state=${this.encodedQueryParams}`
       },
         switchVisibility() {
             const passwordField = document.querySelector('#inputPassword');
@@ -166,7 +190,6 @@ export default {
       signUp() {
             // check if form information is correct
             this.checkForm()
-
             if (!this.errors.length) { // everything is good
                 axios.post('api/register', {
                     name: this.name,
@@ -175,7 +198,7 @@ export default {
                     isTeacherApp: this.isTeacherApp,
                 }).then((res) =>{
                     if (res.status == 200) {
-                        this.$router.push({ path: '/dashboard', query: { hostedBy: this.$route.query.hostedBy, }}).catch(err => { });
+                        this.$router.push({ path: '/dashboard', query: { hostedBy: this.hostedBy }}).catch(err => { });
                     }
 
                 }).catch((err) => {

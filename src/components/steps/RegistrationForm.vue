@@ -9,7 +9,7 @@
                 <slot name="uniqueSelect"></slot>
               </div>
               <div class="form-group">
-                <label>Country/Region</label>
+                <label>{{ $t('form.region') }}</label>
                 <b-form-select
                   v-model="modelData.region"
                   @change="updateTimezone"
@@ -20,11 +20,11 @@
                   v-show="submitted && modelData.region.length == 0"
                   class="invalid"
                 >
-                  Please provide a region
+                  {{ $t('form.regionErr') }}
                 </div>
               </div>
               <div class="form-group">
-                <label>Timezone</label>
+                <label>{{ $t('form.timezone') }}</label>
                 <b-form-select
                   v-model="modelData.timezone"
                   :options="optionsTz"
@@ -34,12 +34,12 @@
                   v-show="submitted && modelData.timezone.length == 0"
                   class="invalid"
                 >
-                  Please provide a timezone
+                  {{ $t('form.timezoneErr') }}
                 </div>
               </div>
               <div class="comm-tool">
                 <div class="form-group">
-                  <label>Preferred Communication Tool</label>
+                  <label>{{ $t('form.prefComm') }}</label>
                   <b-form-select
                     v-model="modelData.commMethods.method"
                     :options="optionsCommMethod"
@@ -49,7 +49,7 @@
                     v-show="submitted && modelData.timezone.length == 0"
                     class="invalid"
                   >
-                    Please provide a communication tool
+                    {{ $t('form.prefCommErr') }}
                   </div>
                   <b-form-input
                     v-model="modelData.commMethods.id"
@@ -60,14 +60,14 @@
                     v-show="submitted && modelData.commMethods.id.length == 0"
                     class="invalid"
                   >
-                    Please provide an ID
+                    {{ $t('form.idErr') }}
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <button class="btn btn-primary mt-2" @click="handleSubmit()">
-                  {{submitButtonText}}
+                  {{ $t('form.submit') }}
                 </button>
               </div>
             </form>
@@ -87,7 +87,6 @@ import store from '../../store/store';
 export default {
     name: 'RegistrationForm1',
     props: {
-        submitButtonText: String,
         formData: Object,
         endpoint: String,
         userId: String,

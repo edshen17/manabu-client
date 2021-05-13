@@ -43,8 +43,8 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue);
 
 new Vue({
-  router,
   i18n,
+  router,
   store,
   render: h => h(App)
 }).$mount('#app')

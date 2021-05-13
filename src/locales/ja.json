@@ -1,4 +1,141 @@
 {
-    "hello": "nihongo !!",
-    "welcomeMessage": "Welcome to Advanced Localization techniques tutorial"
+  "homepage": {
+    "visionStatement": "私たちの目標は、個人個人に合わせた語学学習を提供してみなさんが世界とつながる手助けをすることです。私たちは異文化間コミュニケーション、友情と思いやり、そして生徒と教師の間の長期にわたる関係を大切に考えています。私たちは、利用可能な最高のデジタルリソースの開発に努めており、生徒の目標に合わせてレッスンを調整することに取り組んでいます。また、フィードバックを真摯に受け止め、皆さんのご要望に応じてWebサイトの更新もこまめにしております。",
+    "chooseUs": "なぜ私たちを選ぶのか",
+    "valueProp": {
+      "tailoredLessonsTitle": "個別レッスン",
+      "tailoredLessonsText": "Manabuの先生はあなたの学習スタイルや興味に合わせてレッスンプランを作ります。練習問題や教材もあなたのためだけにカスタマイズします。",
+      "immersionTitle": "イマージョン",
+      "immersionText": "私たちは生徒が継続的に学習できるように力を尽くします。あなたが言語学習に没頭し、目標が達成できるよう手助けができる強い自信があります。",
+      "dataAnalyticsTitle": "データ分析",
+      "dataAnalyticsText": "Manabuを通して、ご自身の学習状況や成長を確認することができます。やる気を維持するだけでなく、改善すべきところを見つけることもできます。",
+      "communityTitle": "コミュニティ",
+      "communityText": "言語学習は大変に感じることもあります。もしあなたが言語学習の壁にぶつかった時には、私たちが精一杯助けます。強い絆で結ばれたコミュニティがあり、先生やスタッフがあなたの学習を支援します。",
+      "innovativeResources": {
+        "title": "革新的なデジタルリソース",
+        "flashcards": "デジタル単語帳",
+        "report": "進捗状況レポート",
+        "tools": "Eラーニング教材"
+      }
+    }
+  },
+  "login": {
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "login": "ログイン",
+    "signup": "登録",
+    "noAccount": "アカウントを持っていない場合",
+    "haveAccount": "以前アカウントを作った方",
+    "signupHere": "ここに登録",
+    "loginHere": "ここにログイン",
+    "googleLogin": "Googleで続ける",
+    "name": "お名前"
+  },
+  "nav": {
+    "findTeacher": "先生を見つける",
+    "becomeTeacher": "先生になる",
+    "login": "@:login.login",
+    "signup": "@:login.signup",
+    "logout": "ログアウト",
+    "guidelines": "Manabu ガイドライン"
+  },
+  "footer": {
+    "titles": {
+      "about": "Manabuについて",
+      "more": "その他"
+    },
+    "aboutText": "Minato Manabu（Pte。Ltd）は、教育を通したエンパワメントに焦点を当てたスタートアップです。 本社はシンガポールにあり、同社は生徒さんの成長を1番に考えて、ハイテクな学習ツールと質の高いレッスンを提供するよう努めています。",
+    "copyright": "Copyright © 2021. Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved."
+  },
+  "calendar": {
+    "lessonTime": "レッスン時間",
+    "commTool": "コミュニケーションツール",
+    "rejectReason": "アポイントメント拒否の理由",
+    "available": "@:modal.available",
+    "alerts": {
+      "pastAppoint": "過去時間の予約をすることはできません",
+      "unevenAppoint": "30分から1時間の間隔でアポイントメントが取れます",
+      "badStart": "この時間でアポイントメントを設定することはできません",
+      "shortAppoint": "アポイントメントは最低30分以上にしてください"
+    }
+  },
+  "modal": {
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "yes": "はい",
+    "no": "いいえ",
+    "available": "都合がつく時間",
+    "save": "保存",
+    "ok": "OK",
+    "continue": "続ける",
+    "confirm": "承認",
+    "confirmAppoint": "この予約を承認しますか？",
+    "confirmCancel": "この予約を本当にキャンセルしてよろしいですか？",
+    "confirmDelete": "この予約を本当に削除してよろしいですか？",
+    "confirmDeleteTitle": "このタイムスロットを削除しますか？",
+    "processErr": "リクエストの処理中にエラーが発生しました。もう一度やり直してください",
+    "cancellationReason": {
+      "scheduleChange": "スケジュールの変更",
+      "uncomfortableStudent": "この学生とレッスンをしたくありません"
+    },
+    "priceModalText": {
+      "priceModalTitle": "レッスン計画を選んでください",
+      "lessonPlan": "レッスン計画",
+      "lessonDuration": "レッスン時間",
+      "estimatedPrice": "推定価格：",
+      "disclaimerText": {
+        "disclaimer": "免責事項",
+        "minuteBank": "教師が次の生徒の準備をする時間を作るために、レッスンは5分早く終了します。ただし、各レッスンの後に、その教師に使用できる5分のクレジットを受け取ることができます。たとえば、60分のレッスンを購入した場合、12レッスン後に自動的に「無料」のレッスンが受けられます。クレジットの有効期限はありませんが、プランの有効期限が切れると追加レッスンの有効期限が切れます。", 
+        "expiration": "レッスンプランは購入後1か月で自動的に期限切れになり、未使用のレッスンは繰り越されません。定期購入オプション（近日公開）を選択すると、毎月新しいレッスンプランが自動的に受け取れます。"
+      }
+    }
+  },
+  "form": {
+    "region": "国/地域",
+    "regionErr": "地域を指定してください",
+    "timezone": "タイムゾーン",
+    "timezoneErr": "タイムゾーンを選んでください",
+    "prefComm": "主なコミュニケーションツール",
+    "prefCommErr": "コミュニケーションツールを選んでください",
+    "idErr": "IDを入力してください",
+    "submit": "続ける"
+  },
+  "profile": {
+    "common": {
+      "block": "ブロック",
+      "report": "通報",
+      "lastOnline": "Last online {date}",
+      "alsoSpeaks": "他に話せる言語",
+      "viewCalendar": "カレンダーを見る",
+      "hideCalendar": "カレンダーを閉じる"
+    },
+    "teacher": {
+      "manabuVerified": "Manabu Verified Teacher since {date}",
+      "appPending": "Teacher application pending",
+      "approveApp": "Approve application",
+      "viewLicense": "View professional license",
+      "proTeacher": "資格保有教師",
+      "commTeacher": "コミュニティティーチャー",
+      "lessonTypes": {
+        "mainichi": "毎日 ({amount}個のレッスン)",
+        "mainichiAlt": "毎日プラン",
+        "mainichiDesc": "こちらは、早く効率的に、そして日本語を話すことに没頭したいと思う生徒向けのプランです。このプランでは、約週5回、毎月22回の個人レッスンを受けることができます。",
+        "moderate": "スタンダード ({amount}個のレッスン)",
+        "moderateAlt": "スタンダードプラン",
+        "moderateDesc": "こちらは、スケジュールのバランスを考慮しながら集中した学習をしたい生徒向けのコースです。このプランでは、約週3回、毎月12回の個人レッスンを受けることができます。",
+        "light": "ライト ({amount}個のレッスン)",
+        "lightAlt": "ライトプラン",
+        "lightDesc": "こちらはカジュアルなスケジュールで日本語を学習したい生徒向けのプランです。このプランでは、週1回、毎月5回の個人レッスンを受けることができます。"
+      },
+      "lessonDuration": "{duration}分",
+      "lessonPlans": "レッスン計画",
+      "hourlyRate": "レッスンは1時間約{rate} {currency}です",
+      "bookNow": "予約する"
+    }
+  },
+  "localeCodes": {
+    "en": "英語",
+    "ja": "日本語"
   }
+
+}

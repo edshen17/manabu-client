@@ -66,7 +66,7 @@
                         {{convertMoney(teacher.hourlyRate.amount, teacher.hourlyRate.currency, myUserData.settings.currency, true, exchangeRates).toFixed(2).toLocaleString()}}
                         {{myUserData.settings.currency}}
                       </p>
-                      <b-button class="mt-2 manabu-blue" @click="$router.push(`/user/${teacher.userId}`)"
+                      <b-button class="mt-2 manabu-blue" :to="`/user/${teacher.userId}`"
                         >Book now!</b-button
                       >
                     </b-col>

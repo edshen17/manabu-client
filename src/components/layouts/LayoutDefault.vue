@@ -18,7 +18,7 @@
                 to="/teachers"
                 class="nav-link menu-item"
                 :class=" { active: $route.name == 'Teachers' } "
-                >Find a Teacher</b-link
+                >{{ $t('nav.findTeacher') }}</b-link
               >
             </b-nav-item>
             <b-nav-item
@@ -28,7 +28,7 @@
                 to="/apply"
                 class="nav-link menu-item"
                 :class=" { active: $route.name == 'Apply' } "
-                >Become a Teacher</b-link
+                >{{ $t('nav.becomeTeacher') }}</b-link
               >
             </b-nav-item>
             <b-nav-item v-show="!this.isLoggedIn">
@@ -36,7 +36,7 @@
                 to="/login"
                 class="nav-link menu-item"
                 :class=" { active: $route.name == 'Log In' } "
-                >Log In</b-link
+                >{{ $t('nav.login') }}</b-link
               >
             </b-nav-item>
             <b-nav-item v-show="!this.isLoggedIn">
@@ -44,11 +44,11 @@
                 to="/signup"
                 class="nav-link menu-item"
                 :class=" { active: $route.name == 'Sign Up' }"
-                >Sign Up</b-link
+                >{{ $t('nav.signup') }}</b-link
               >
             </b-nav-item>
             <b-nav-item v-show="this.isLoggedIn">
-              <b-link to="/logout" class="nav-link menu-item">Logout</b-link>
+              <b-link to="/logout" class="nav-link menu-item">{{ $t('nav.logout') }}</b-link>
             </b-nav-item>
           </b-navbar-nav>
         </b-collapse>
@@ -60,39 +60,36 @@
     <footer class="bg-light text-black">
       <b-container fluid class='p-4'>
         <b-row>
-          <b-col md="2" sm="0"></b-col>
+          <b-col></b-col>
           <b-col md="3" sm="12" class='text-center text-lg-start'>
-            <h5 class="text-uppercase">About</h5>
+            <h5 class="text-uppercase">{{ $t('footer.titles.about') }}</h5>
             <p>
-              Minato Manabu (Pte. Ltd) is a startup focused on empowering people
-              through education. Its headquarters are located in Singapore and
-              the company strives to provide students with innovative learning
-              tools and high quality lessons.
+              {{ $t('footer.aboutText') }}
             </p>
           </b-col>
           <b-col md="3" sm="12" class='text-center text-lg-start'>
-            <h5 class="text-uppercase mb-0">More</h5>
+            <h5 class="text-uppercase mb-0">{{ $t('footer.titles.more') }}</h5>
             <ul class="list-unstyled mt-2">
-              <li v-for='linkData in links' :key='linkData.title' class="mb-2">
+              <p v-for='linkData in links' :key='linkData.title' class="mb-2">
                 <b-link v-if="!linkData.isExternal" :to="linkData.link" class="text-black">{{ linkData.title }}</b-link>
                 <a :href="linkData.link" v-else>{{ linkData.title }}</a>
-              </li>
+              </p>
             </ul>
           </b-col>
           <b-col md="3" sm="12">
             <div class="footer-dropdown">
               <b-form-select v-model="lang" :options="localeOptions" class='mb-3'></b-form-select>
-              <b-form-select v-model="userCurrency" :options="currencyOptions" class='mb-2'></b-form-select>
+              <b-form-select v-model="userCurrency" :options="currencyOptions" class='mb-4'></b-form-select>
             </div>
-            <section class="mb-4 text-center footer-icons">
+            <section class="mb-4 footer-icons">
             <i v-for="iconData in icons" style="cursor: pointer;" :key="iconData.link" :class=iconData.iconClass @click="redirectTo(iconData.link)"></i>  
             </section>
           </b-col>
+          <b-col></b-col>
         </b-row>
       </b-container>
       <div class="text-center p-3 bg-light">
-        Copyright © 2021. Minato Manabu. 68 Circular Road, #02-01, 049422,
-        Singapore. All Rights Reserved.
+        {{ $t('footer.copyright') }}
       </div>
     </footer>
   </div>
@@ -123,7 +120,8 @@ export default {
       },
       set(updatedSettings) {
         this.$store.commit('setUserSettings', updatedSettings)
-        axios
+        if (this.isLoggedIn) {
+          axios
           .put(
             `api/user/${this.userData._id}/updateProfile`,
             { settings: updatedSettings },
@@ -131,6 +129,7 @@ export default {
           .catch((err) => {
             // if err, alert
           });
+        }
       }
     },
     userCurrency: {
@@ -154,6 +153,57 @@ export default {
         const updatedSettings = this.userSettings
         updatedSettings.locale = newVal
         this.userSettings = updatedSettings;
+      }
+    },
+    links: {
+      get: function() {
+        return [
+          {
+            title: this.$t('nav.becomeTeacher'),
+            link: '/apply',
+            isExternal: false,
+          },
+          {
+            title: this.$t('nav.findTeacher'),
+            link: '/teachers',
+            isExternal: false,
+          },
+          {
+            title: this.$t('nav.guidelines'),
+            link: 'https://docs.google.com/document/d/1dSeF8bpURoVB3N2H4nDqbU_hXFsJIErHJPBlavXukmo/edit',
+            isExternal: true,
+          }
+        ]
+      }
+    },
+
+    icons: {
+      get: function() {
+        return [
+          {
+            link: 'https://www.facebook.com/ManabuOfficial/',
+            iconClass: 'fab fa-facebook-f fa-lg mr-4 text-center',
+          },
+          {
+            link: 'https://twitter.com/lessonsmanabu',
+            iconClass: 'fab fa-twitter fa-lg mr-4',
+          },
+          {
+            link: 'https://www.instagram.com/nihongo_manabu_/',
+            iconClass: 'fab fa-instagram fa-lg mr-4',
+          },
+          {
+            link: 'https://www.youtube.com/channel/UCwtTZCZ9apsj7zNn7n1eS5w',
+            iconClass: 'fab fa-youtube fa-lg mr-4',
+          },
+          {
+            link: 'https://lin.ee/Ag4MMyk',
+            iconClass: 'fab fa-line fa-lg mr-4',
+          }, {
+            link: 'https://discord.gg/zHpyvN2TVA',
+            iconClass: 'fab fa-discord fa-lg mr-4'
+          }
+        ]
       }
     }
 },
@@ -182,45 +232,6 @@ methods: {
           'en': 'English',
           'ja': '日本語'
         },
-        links: [
-          {
-            title: 'Become a teacher',
-            link: '/apply',
-            isExternal: false,
-          },
-          {
-            title: 'Find a teacher',
-            link: '/teachers',
-            isExternal: false,
-          },
-          {
-            title: 'Manabu Guidelines',
-            link: 'https://docs.google.com/document/d/1dSeF8bpURoVB3N2H4nDqbU_hXFsJIErHJPBlavXukmo/edit',
-            isExternal: true,
-          }
-        ],
-        icons: [
-          {
-            link: 'https://www.facebook.com/ManabuOfficial/',
-            iconClass: 'fab fa-facebook-f fa-lg mr-5 mt-4 text-center',
-          },
-          {
-            link: 'https://twitter.com/lessonsmanabu',
-            iconClass: 'fab fa-twitter fa-lg mr-5',
-          },
-          {
-            link: 'https://www.instagram.com/nihongo_manabu_/',
-            iconClass: 'fab fa-instagram fa-lg mr-5',
-          },
-          {
-            link: 'https://www.youtube.com/channel/UCwtTZCZ9apsj7zNn7n1eS5w',
-            iconClass: 'fab fa-youtube fa-lg mr-5',
-          },
-          {
-            link: 'https://lin.ee/Ag4MMyk',
-            iconClass: 'fab fa-line fa-lg mr-5',
-          }
-        ],
         localeOptions: [],
         currencyOptions: [
           {

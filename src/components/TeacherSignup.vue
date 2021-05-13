@@ -32,6 +32,18 @@ export default {
     created() {
         this.$emit('update:layout', LayoutDefault);
     },
+    computed: {
+      encodedQueryParams: { // base 64
+        get() {
+          return this.$store.getters.encodedQueryParams;
+        }
+      },
+      decodedQueryParams: {
+        get() {
+          return this.$store.getters.decodedQueryParams;
+        }
+      },
+    },
     data() {
         return {
           listText: {
@@ -43,9 +55,14 @@ export default {
           }
         }
     },
+    mounted() {
+      const queryParams = this.decodedQueryParams;
+      queryParams.isTeacherApp = true;
+      this.$store.commit('setEncodedQueryParams', queryParams);
+    },
     methods: {
         redirect() {
-            this.$router.push('/signup?teacherSignup=true').catch((err) => {})
+          this.$router.push(`/signup?state=${this.encodedQueryParams}`).catch((err) => {})
         }
     },
 }

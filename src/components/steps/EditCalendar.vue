@@ -29,21 +29,21 @@
             ></span>
           </div>
           <span class="mt-2" style="display: block">
-            <b>Lesson time</b>:
+            <b>{{ $t('calendar.lessonTime') }}</b>:
             {{ formatDate(selectedAppointmentData.from, 'MMM DD @ h:mma')
 
             }}-{{formatDate(selectedAppointmentData.to, 'h:mma')}}
             ({{userTimeZone}})</span
           >
           <span v-if="selectedAppointmentData && selectedAppointmentData.locationData">
-            <b>Communication Tool</b>:
+            <b>{{ $t('calendar.commTool') }}</b>:
             {{ selectedAppointmentData.locationData.method }}
             (id: {{selectedAppointmentData.locationData.reservedByMethodId }})
           </span>
         </div>
 
         <div class="form-group" v-show="!updateErr && isRejecting">
-          <label>Reason for rejecting appointment</label>
+          <label class="mt-3">{{ $t('calendar.rejectReason') }}:</label>
           <b-form-select
             v-model="cancellationReason"
             :options="cancellationSelect"
@@ -52,7 +52,7 @@
         </div>
       </div>
       <p class="my-4" v-show="updateErr">
-        There was an error processing your request. Please try again.
+        {{ $t('modal.processErr') }}
       </p>
       <template #modal-footer>
         <b-button @click="resetOnCancel" v-show="!updateErr"> Exit </b-button>
@@ -61,61 +61,61 @@
           v-show="!updateErr && !isRejecting"
           @click="isRejecting = true; cancelAppointment(selectedLessonId)"
         >
-          Cancel
+          {{ $t('modal.cancel') }}
         </b-button>
         <b-button
           @click="isRejectingConfirmation = true; cancelAppointment(selectedLessonId)"
           variant="danger"
           v-show="!updateErr && isRejecting"
         >
-          Yes
+          {{ $t('modal.yes') }}
         </b-button>
         <b-button
           @click="updateErr = false; $bvModal.hide('update-modal')"
           variant="primary"
           v-show="updateErr"
         >
-          OK
+          {{ $t('modal.ok') }}
         </b-button>
         <b-button
           @click="confirmAppointment(selectedLessonId)"
           variant="primary"
           v-show="!updateErr && !isRejecting"
         >
-          Confirm
+          {{ $t('modal.confirm') }}
         </b-button>
       </template>
     </b-modal>
     <b-modal
       id="delete-modal"
-      title="Delete this timeslot?"
+      :title="$t('modal.confirmDeleteTitle')"
     >
       <p class="my-4" v-show="!deleteErr">
-        Are you sure you want to delete this timeslot?
+        {{ $t('modal.confirmDelete') }}
       </p>
       <p class="my-4" v-show="deleteErr">
-        There was an error processing your request.
+        {{ $t('modal.processErr') }}
       </p>
       <template #modal-footer>
         <b-button
           @click="$bvModal.hide('delete-modal')"
           v-show="!updateErr && !deleteErr"
         >
-          <div>Cancel</div>
+          <div>{{ $t('modal.cancel') }}</div>
         </b-button>
         <b-button
           @click="removeEvent(event_information)"
           variant="danger"
           v-show="!deleteErr"
         >
-          <div>Delete</div>
+          <div>{{ $t('modal.delete') }}</div>
         </b-button>
         <b-button
           @click="deleteErr = false; $bvModal.hide('delete-modal')"
           variant="primary"
           v-show="deleteErr"
         >
-          <div>OK</div>
+          <div>{{ $t('modal.ok') }}</div>
         </b-button>
       </template>
     </b-modal>
@@ -129,7 +129,7 @@
       >
         <div slot="creating-card" slot-scope="{ event_information }">
           <span class="appointment-title">
-            Available ({{ parseISOString(event_information.start_time) }} -
+            {{$t('calendar.available')}} ({{ parseISOString(event_information.start_time) }} -
             {{ parseISOString(event_information.end_time)}})
           </span>
         </div>
@@ -166,7 +166,7 @@
             
           </span>
           <span v-else class="appointment-title ml-2"
-            >Available ({{ parseISOString(event_information.start_time) }} -
+            >{{$t('calendar.available')}} ({{ parseISOString(event_information.start_time) }} -
             {{ parseISOString(event_information.end_time)}})</span
           >
           <button
@@ -200,14 +200,14 @@
               type="submit"
               class="app-button"
               id="btnSearch"
-              value="Save"
+              :value="$t('modal.save')"
               @click="addEvent(popup_information)"
             />
             <input
               type="submit"
               class="app-button"
               id="btnClearSearch"
-              value="Cancel"
+              :value="$t('modal.cancel')"
               @click="$kalendar.closePopups()"
             />
           </div>
@@ -257,6 +257,14 @@ export default {
         return userData;
       }
       },
+    cancellationSelect: {
+      get() {
+        return [
+                { value: 'schedule change', text: this.$t('modal.cancellationReason.scheduleChange') },
+                { value: 'student issue', text: this.$t('modal.cancellationReason.uncomfortableStudent') },
+              ]
+      }
+    }
     },
     mounted() {
       if (this.isMobile) {
@@ -290,12 +298,8 @@ export default {
               selectedReservedBy: null,
               selectedAppointmentData: null,
               event_information: null,
-              cancellationSelect:  [
-                { value: 'schedule change', text: 'Schedule change' },
-                { value: 'student issue', text: 'I am uncomfortable with this student' },
-              ],
               cancellationReason: 'schedule change',
-              modalTitleText: 'Confirm this appointment?',
+              modalTitleText: this.$t('modal.confirmAppoint'),
               isRejecting: false,
               isRejectingConfirmation: false,
               sessionStudentIssue: [],
@@ -315,14 +319,15 @@ export default {
       resetOnCancel() {
         this.isRejecting = false;
         this.isRejectingConfirmation = false;
-        this.modalTitleText = 'Confirm this Appointment?'
+        this.modalTitleText = this.$t('modal.confirmAppoint')
         this.$bvModal.hide('update-modal');
       },
       toTitleCase,
       formatDate,
       cancelAppointment(aId) {
-        this.modalTitleText = 'Are you sure you want to cancel the appointment?'
+        this.modalTitleText = this.$t('modal.confirmCancel')
         if (this.isRejecting && this.isRejectingConfirmation) {
+          this.$bvModal.hide('update-modal');
           axios.put(`${this.host}/schedule/appointment/${this.selectedLessonId}`, { status: 'cancelled', cancellationReason: this.cancellationReason.toLowerCase() }).then((res) => {
               if (res.status == 200) {
                 const appointment = res.data;
@@ -353,7 +358,6 @@ export default {
                             this.events[toUpdateIndex] = formatedTime;
                           }
 
-                        this.$bvModal.hide('update-modal');
                         this.isRejecting = false;
                         this.isRejectingConfirmation = false;
                         if (this.cancellationReason.toLowerCase() == 'student issue') {
@@ -513,14 +517,14 @@ export default {
         let alertMsg = '';
 
         if (payloadTime <= new Date()) { // if date goes into the past
-          alertMsg += 'You cannot make an appointment in the past.\n'
+          alertMsg += `${this.$('calendar.alerts.pastAppoint')}\n`
         } if (timeDiffMins != 10 && timeDiffMins % 30 != 0) {
-          alertMsg += 'Your appointments must be in 30 minute to 1 hour intervals.\n'
+          alertMsg += `${this.$('calendar.alerts.unevenAppoint')}\n`
         } if (payloadTime.getMinutes() != 0 && payloadTime.getMinutes() != 30) {
-          alertMsg += 'You cannot start your appointments at that time (must be at the start of the hour or 30 minutes in).\n'
+          alertMsg += `${this.$('calendar.alerts.badStart')}\n`
         }
         if (timeDiffMins < 30 && timeDiffMins != 10) { // appointment less than 30 mins
-          alertMsg += 'Your appointments must be at least 30 minutes.\n'
+          alertMsg += `${this.$('calendar.alerts.shortAppoint')}\n`
         } 
         
         if (alertMsg) {

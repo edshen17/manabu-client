@@ -14,18 +14,18 @@
           <p class="line-break margin-top-10"></p>
         </div>
       </section>
-      <div class="choose-us">
+      <div class="parallax-section">
         <section>
           <h1>{{ $t('homepage.chooseUs') }}</h1>
           <div class="block">
             <b-container fluid>
               <b-row class="flex">
                 <b-col v-for="feature in chooseUsData" :key="feature.title" sm="12" md="6" class="flex-item-1">
-                  <div class='choose-us-parent'>
-                    <i :class="feature.iconClass"></i>
-                    <h5 class="mx-2 my-1 bold">{{ feature.title }}</h5>
+                  <div class='parallax-section-parent'>
+                    <i :class="feature.iconClass" class="mb-1" style="font-size: 2.95em"></i>
+                    <h4 class="mx-2 my-2 bold">{{ feature.title }}</h4>
                   </div>
-                  <p class="mt-2">{{ feature.text }}</p>
+                  <p class="mb-5">{{ feature.text }}</p>
                 </b-col>
               </b-row>
             </b-container>
@@ -33,7 +33,7 @@
         </section>
       </div>
       <section>
-        <h1 class='text-center'>Innovative Digital Resources</h1>
+        <h1 class='text-center'>{{ $t('homepage.valueProp.innovativeResources.title') }}</h1>
         <img src=""/>
         <div class="block">
           <b-container fluid>
@@ -46,8 +46,23 @@
             </b-container>
         </div>
       </section>
+      <div class="parallax-section">
+        <section>
+          <div class="d-flex justify-content-center">
+            <b-button variant="primary" class="mt-4" size="lg" to="/teachers">Find a Teacher Now!</b-button>
+          </div>
+          <div class="block">
+            <p>
+              As a special thanks to beta testers, if you sign up now and purchase a lesson plan you will receive permanent free access to ALL premium features we release in the future. Happy learning!
+            </p>
+          </div>
+        </section>
+      </div>
+      <section>
+      </section>
     </div>
-    <div></div>
+    <div>
+    </div>
   </div>
 </template>
 
@@ -60,44 +75,62 @@ export default {
   },
   mounted() {
   },
+  computed: {
+    isLoggedIn: {
+      get() {
+        return this.$store.getters.isLoggedIn;
+      },
+      set(isLoggedIn) {
+        return isLoggedIn;
+      }
+    },
+    cardData: {
+      get() {
+        return [
+          {
+            title: this.$t('homepage.valueProp.innovativeResources.flashcards'),
+            imgSrc: require('../assets/images/feature_1.jpg')
+          },
+          {
+            title: this.$t('homepage.valueProp.innovativeResources.report'),
+            imgSrc: require('../assets/images/feature_2.jpg')
+          },
+          {
+            title: this.$t('homepage.valueProp.innovativeResources.tools'),
+            imgSrc: require('../assets/images/feature_3.jpg')
+          },
+        ]
+      }
+    },
+    chooseUsData: {
+      get() {
+        return [
+          {
+            title: this.$t('homepage.valueProp.tailoredLessonsTitle'),
+            text: this.$t('homepage.valueProp.tailoredLessonsText'),
+            iconClass: 'fas fa-language fa-2x inline mb-1',
+          },
+          {
+            title: this.$t('homepage.valueProp.immersionTitle'),
+            text: this.$t('homepage.valueProp.immersionText'),
+            iconClass: 'fas fa-headphones fa-2x inline mb-1',
+          },
+          {
+            title: this.$t('homepage.valueProp.dataAnalyticsTitle'),
+            text: this.$t('homepage.valueProp.dataAnalyticsText'),
+            iconClass: 'fas fa-chart-bar fa-2x inline mb-1',
+          },
+          {
+            title: this.$t('homepage.valueProp.communityTitle'),
+            text: this.$t('homepage.valueProp.communityText'),
+            iconClass: 'fas fa-hands-helping fa-2x inline mb-1',
+          },
+        ]
+      }
+    } 
+  },
   data() {
     return {
-      cardData : [
-        {
-          title: 'Digital Flashcards',
-          imgSrc: require('../assets/images/flashcard_1.png')
-        },
-        {
-          title: 'Progress Report',
-          imgSrc: require('../assets/images/flashcard_1.png')
-        },
-        {
-          title: 'E-learning Tools',
-          imgSrc: require('../assets/images/flashcard_1.png')
-        },
-      ],
-      chooseUsData: [
-        {
-          title: 'Tailored Lessons',
-          text: 'Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are customized specifically for you.',
-          iconClass: 'fas fa-language fa-2x inline',
-        },
-        {
-          title: 'Immersion',
-          text: 'We focus on getting students into a habit of constant learning. We are confident that we can help you immerse and achieve your fluency goals.',
-          iconClass: 'fas fa-headphones fa-2x inline',
-        },
-        {
-          title: 'Data Analytics',
-          text: 'Through Manabu, you can visualize your progress and growth. This can not only a way to stay motivated, but can also help you find areas of improvement.',
-          iconClass: 'fas fa-chart-bar fa-2x inline',
-        },
-        {
-          title: 'Community',
-          text: 'Learning a language can be difficult, so if you ever feel stuck we are happy to guide you! We have a supportive community of teachers and staff that will aid you throughout your studies.',
-          iconClass: 'fas fa-hands-helping fa-2x inline',
-        },
-      ]
     }
   }
 };
