@@ -7,7 +7,7 @@
       >
         <b-navbar-brand>
           <b-link to="/" class="navbar-brand d-lg-inline-block">
-            Manabu
+            <img src="../../assets/images/nav_logo.svg" width="130"/>
           </b-link>
         </b-navbar-brand>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -82,7 +82,7 @@
               <b-form-select v-model="userCurrency" :options="currencyOptions" class='mb-4'></b-form-select>
             </div>
             <section class="mb-4 footer-icons">
-            <i v-for="iconData in icons" style="cursor: pointer;" :key="iconData.link" :class=iconData.iconClass @click="redirectTo(iconData.link)"></i>  
+            <i v-for="iconData in icons" style="cursor: pointer;" :key="iconData.link" :class=iconData.iconClass class="fa-lg mr-4" :style="iconData.style" @click="redirectTo(iconData.link)"></i>  
             </section>
           </b-col>
           <b-col></b-col>
@@ -182,26 +182,30 @@ export default {
         return [
           {
             link: 'https://www.facebook.com/ManabuOfficial/',
-            iconClass: 'fab fa-facebook-f fa-lg mr-4 text-center',
+            iconClass: 'fab fa-facebook-f',
           },
           {
             link: 'https://twitter.com/lessonsmanabu',
-            iconClass: 'fab fa-twitter fa-lg mr-4',
+            iconClass: 'fab fa-twitter',
           },
           {
             link: 'https://www.instagram.com/nihongo_manabu_/',
-            iconClass: 'fab fa-instagram fa-lg mr-4',
+            iconClass: 'fab fa-instagram',
           },
           {
             link: 'https://www.youtube.com/channel/UCwtTZCZ9apsj7zNn7n1eS5w',
-            iconClass: 'fab fa-youtube fa-lg mr-4',
+            iconClass: 'fab fa-youtube',
           },
           {
             link: 'https://lin.ee/Ag4MMyk',
-            iconClass: 'fab fa-line fa-lg mr-4',
+            iconClass: 'fab fa-line',
           }, {
             link: 'https://discord.gg/zHpyvN2TVA',
-            iconClass: 'fab fa-discord fa-lg mr-4'
+            iconClass: 'fab fa-discord',
+          }, {
+            link: 'https://wa.me/message/RJYZPGP6LNXNF1',
+            iconClass: 'fab fa-whatsapp',
+            style: "font-size: 1.7rem;"
           }
         ]
       }

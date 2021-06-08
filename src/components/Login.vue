@@ -102,7 +102,7 @@ export default {
       },
       isTeacherApp: {
         get() {
-          return this.decodedQueryParams.teacherSignup == 'true'
+          return this.decodedQueryParams.isTeacherApp;
         }
       },
       hostedBy: {

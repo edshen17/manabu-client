@@ -121,7 +121,7 @@ export default {
       },
       isTeacherApp: {
         get() {
-          return this.decodedQueryParams.teacherSignup == 'true'
+          return this.decodedQueryParams.isTeacherApp
         }
       },
       hostedBy: {
@@ -148,6 +148,11 @@ export default {
       this.$refs.name.focus();
     },
     methods: {
+      storeAuthToken(token) {
+        const tokenArr = token.split('.');
+        this.$cookies.set('hp', `${tokenArr[0]}.${tokenArr[1]}`)
+        this.$cookies.set('sig', `.${tokenArr[2]}`);
+      },
       redirect(url){
         window.location.href = `${url}&state=${this.encodedQueryParams}`
       },
@@ -197,7 +202,8 @@ export default {
                     password: this.password,
                     isTeacherApp: this.isTeacherApp,
                 }).then((res) =>{
-                    if (res.status == 200) {
+                    if (res.status == 201) {
+                        this.storeAuthToken(res.data.token);
                         this.$router.push({ path: '/dashboard', query: { hostedBy: this.hostedBy }}).catch(err => { });
                     }
 

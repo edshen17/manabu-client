@@ -1,8 +1,7 @@
-@import url(https://fonts.googleapis.com/css?family=Oswald:300,400,700);
-@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900,200italic,300italic,400italic,600italic,700italic,900italic);
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400&display=swap');
 
 html * {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'Noto Sans JP', sans-serif;
 }
 
 .navbar-brand {
@@ -25,14 +24,28 @@ html * {
 
 /* Helpers */
 /**************************/
-.margin-top-10 {padding-top:10px;}
-.margin-bot-10 {padding-bottom:10px;}
+.margin-top-10 {
+  padding-top:10px;
+}
+
+.margin-bot-10 {
+  padding-bottom:10px;
+}
 
 /* Typography */
 /**************************/
-#parallax h1 {font-size:1.75em; font-weight:400; text-transform: uppercase; color:black; padding:0; margin:0;}
-#parallax p {font-weight:400; font-size:1.25em; }
-.first-character {font-weight:400; float: left; font-size: 84px; line-height: 64px; padding-top: 4px; padding-right: 8px; padding-left: 3px;}
+#parallax h1 { 
+  font-size:1.75em; 
+  font-weight:400; 
+  text-transform: uppercase; 
+  color:black; 
+  padding:0; margin:0;
+}
+
+#parallax p {
+  font-weight:400; 
+  font-size:1.25em; 
+}
 
 .Home .col-sm-6 {
   padding-left: 0 !important;
@@ -127,8 +140,6 @@ p {
   border-radius: 6px !important;
 }
 
-
-
 .cancelled-card {
   border-left: 4px solid pink !important;
   border-radius: 6px !important;
@@ -152,6 +163,7 @@ p {
   margin-right: auto;
   max-width: 100vw;
   max-height: 80vh;
+  margin-top: -2.5em;
 }
 
 .center-image {
@@ -232,9 +244,10 @@ p {
 
 @font-face {
   font-family: 'Nunito Sans';
-  src: url(../fonts/NotoSansJP-Regular.woff2) format("woff2");
+  src: url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100&display=swap');
   font-display: swap;
   line-height: 100px;
+  unicode-range: U+3000-9FFF, U+ff??;
 }
 
 .parallax-section-parent {
@@ -252,37 +265,90 @@ p {
 
 /* Section - Title */
 /**************************/
-#parallax .title {background: white; padding: 60px; margin:0 auto; text-align:center;}
-#parallax .title h1 {font-size:35px; letter-spacing:8px;}
+#parallax .title { 
+  background: white; 
+  padding: 60px; 
+  margin:0 auto; 
+  text-align:center;
+}
+
+#parallax .title h1 {
+  font-size:35px; 
+  letter-spacing:8px;
+}
 
 /* Section - Block */
 /**************************/
-#parallax .block {background: white; padding: 60px; max-width:1000px; margin:0 auto;}
-.parallax-section h1 { text-align: center; font-size: 1.3em;}
+#parallax .block { 
+  background: white; 
+  padding: 60px; 
+  max-width:1000px; 
+  margin:0 auto;
+}
+
+.parallax-section h1 { 
+  text-align: center; 
+  font-size: 1.3em;
+}
+
 /* Section - Parallax */
 /**************************/
-#parallax .parallax-one {overflow: hidden; position: relative; width: 100%; background-image: url('../images/home.webp'); background-attachment: fixed; background-size: cover; -moz-background-size: cover; -webkit-background-size: cover; background-repeat: no-repeat; background-position:center;}
+#parallax .parallax-one {
+  overflow: hidden; 
+  position: relative; 
+  width: 100%; 
+  background-image: url('../images/home2.jpg'); 
+  background-attachment: fixed; 
+  background-size: cover;
+  -moz-background-size: cover; 
+  -webkit-background-size: cover; 
+  background-repeat: no-repeat;
+  background-position: center top;
+}
+
 
 /* Extras */
 /**************************/
-#parallax .line-break {border-bottom:1px solid black; width: 150px; margin:0 auto;}
+#parallax .line-break {
+  border-bottom:1px solid black; 
+  width: 150px; margin:0 auto;
+}
 
 
 /* Media Queries */
 /**************************/
 @media screen and (max-width: 959px) and (min-width: 768px) {
-  #parallax .block {padding: 40px; width:620px;}
+  #parallax .block {
+    padding: 40px; 
+    width:620px;
+  }
 }
 
 @media screen and (max-width: 767px) {
-  #parallax .block {padding: 30px; width:420px;}
-  #parallax h2 {font-size:30px;}
-  #parallax .block {padding: 30px;}
-  #parallax .parallax-one {padding-top:100px; padding-bottom:100px;}
+  #parallax .block {
+    padding: 30px; 
+    width:420px;
+  }
+
+  #parallax h2 {
+    font-size:30px;
+  }
+
+  #parallax .block {
+    padding: 30px;
+  }
+  #parallax .parallax-one {
+    padding-top:100px; 
+    padding-bottom:100px;
+  }
 }
 
 @media screen and (max-width: 479px) {
-  #parallax .block {padding: 30px 15px; width:290px;}
+  #parallax .block {
+    padding: 30px 15px; 
+    width:290px;
+  }
+
   .footer-dropdown {
     max-width: 100%;
   }
@@ -296,12 +362,28 @@ p {
     margin-left: auto;
     margin-right: auto;
     max-width: 100vw;
-    max-height: 80vh;
+    max-height: 85vh;
+    margin-top: -8em;
   }
 
   #parallax .parallax-one {
-    max-height: 500px;
+    max-height: 85vh;
+    position: relative;
+  }
+
+  #parallax p {
+    font-size:1.05em; 
+  }
+
+  #parallax h4 {
+    font-size: 1.25em
   }
   
+}
+
+@supports (-webkit-overflow-scrolling: touch) { 
+  #parallax .parallax-one {
+    background-attachment: scroll;
+  }
 }
 

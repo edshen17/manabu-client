@@ -449,9 +449,18 @@
                 </div>
               </div>
               <div
-                v-if="appointments.length == 0 && packageTransactions.length == 0"
+                v-if="appointments.length == 0 && packageTransactions.length == 0 && !(userData.role == 'teacher' || userData.role == 'admin' || userData.teacherAppPending)"
               >
-                Find a teacher
+                <div class="card mb-3 shadow border-0">
+                  <div class="card-body">
+                    <h3 class="mb-3">Getting started</h3>
+                    You can find a teacher by clicking on the button below. Not sure which teacher is best for you? We can help recommend you one if you text us on Whatsapp!
+                    <div>
+                      <b-button variant="primary" class="mt-4" to="/teachers">{{ $t('homepage.findTeacher') }}</b-button>
+                      <b-button variant="success" class="mt-4 mx-3" href="https://wa.me/message/RJYZPGP6LNXNF1">Contact us on WhatsApp!</b-button>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div v-if="myTeachers.length > 0 && !userData.teacherAppPending">
                 <div class="card mb-3 shadow border-0">

@@ -3,7 +3,7 @@
     <div id="parallax">
       <section>
         <div class="parallax-one">
-          <img src='../assets/images/logo_white.png' class='center-home'/>
+          <img src='../assets/images/logo_black.png' class='center-home' alt="home-logo"/>
         </div>
       </section>
       <section>
@@ -34,7 +34,6 @@
       </div>
       <section>
         <h1 class='text-center'>{{ $t('homepage.valueProp.innovativeResources.title') }}</h1>
-        <img src=""/>
         <div class="block">
           <b-container fluid>
               <b-row class="flex">
@@ -49,11 +48,11 @@
       <div class="parallax-section">
         <section>
           <div class="d-flex justify-content-center">
-            <b-button variant="primary" class="mt-4" size="lg" to="/teachers">Find a Teacher Now!</b-button>
+            <b-button variant="primary" class="mt-4" size="lg" to="/teachers">{{ $t('homepage.findTeacher') }}</b-button>
           </div>
           <div class="block">
             <p>
-              As a special thanks to beta testers, if you sign up now and purchase a lesson plan you will receive permanent free access to ALL premium features we release in the future. Happy learning!
+              {{ $t('homepage.beta') }}
             </p>
           </div>
         </section>
