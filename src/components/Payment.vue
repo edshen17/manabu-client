@@ -18,7 +18,6 @@
                   </div>
                 </div>
                 <div v-show="method.method == 'Credit / Debit Card' && selectedMethod == 'Credit / Debit Card'">
-                  <credit-card-form></credit-card-form>
                 </div>
               </div>
             </div>
@@ -63,7 +62,6 @@
 </template>
 <script>
 import LayoutDefault from './layouts/LayoutDefault';
-import CreditCardForm from './steps/CreditCardForm';
 import imageSourceEdit from '../assets/scripts/imageSourceEdit';
 import convertMoney from '../assets/scripts/convertMoney';
 import store from '../store/store';
@@ -73,9 +71,6 @@ import SecureLsConfig from '../config/secureLs.config';
 
 export default {
     name: 'Payment',
-    components: {
-      CreditCardForm,
-    },
     created() {
         this.$emit('update:layout', LayoutDefault);
     },
