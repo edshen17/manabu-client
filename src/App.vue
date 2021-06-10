@@ -20,6 +20,9 @@ export default Vue.extend({
       layout: 'div',
     };
   },
+  created() {
+    this.$store.dispatch('fetchUserData');
+  }
 });
 </script>
 

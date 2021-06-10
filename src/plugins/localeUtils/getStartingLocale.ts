@@ -7,7 +7,7 @@ const getStoredLocale = (): string => {
   try {
     const ls = new SecureLS(secureLsConfig);
     let storedLocale = null;
-    storedLocale = JSON.parse(ls.get('user')).userData.settings.locale;
+    storedLocale = JSON.parse(ls.get('user')).user.userData.settings.locale;
     return storedLocale;
   } catch (err) {
     return fallbackLocale;

@@ -89,9 +89,6 @@ export default Vue.extend({
   created() {
     this.$emit('update:layout', LayoutDefault);
   },
-  mounted() {
-    this.$store.dispatch('fetchUserData');
-  },
   computed: {
     cardData: {
       get() {

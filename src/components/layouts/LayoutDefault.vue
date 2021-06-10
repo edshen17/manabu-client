@@ -26,25 +26,25 @@
                 >{{ $t('nav.becomeTeacher') }}</b-link
               >
             </b-nav-item>
-            <!-- <b-nav-item v-show="!this.isLoggedIn">
+            <b-nav-item v-show="!this.isLoggedIn">
               <b-link
                 to="/login"
                 class="nav-link menu-item"
                 :class=" { active: $route.name == 'Log In' } "
                 >{{ $t('nav.login') }}</b-link
               >
-            </b-nav-item> -->
-            <!-- <b-nav-item v-show="!this.isLoggedIn">
+            </b-nav-item>
+            <b-nav-item v-show="!this.isLoggedIn">
               <b-link
                 to="/signup"
                 class="nav-link menu-item"
                 :class=" { active: $route.name == 'Sign Up' }"
                 >{{ $t('nav.signup') }}</b-link
               >
-            </b-nav-item> -->
-            <!-- <b-nav-item v-show="this.isLoggedIn">
+            </b-nav-item>
+            <b-nav-item v-show="this.isLoggedIn">
               <b-link to="/logout" class="nav-link menu-item">{{ $t('nav.logout') }}</b-link>
-            </b-nav-item> -->
+            </b-nav-item>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
@@ -74,10 +74,10 @@
             </ul>
           </b-col>
           <b-col md="3" sm="12">
-            <!-- <div class="footer-dropdown">
-              <b-form-select v-model="lang" :options="localeOptions" class='mb-3'></b-form-select>
+            <div class="footer-dropdown">
+              <b-form-select v-model="userLocale" :options="localeOptions" class='mb-3'></b-form-select>
               <b-form-select v-model="userCurrency" :options="currencyOptions" class='mb-4'></b-form-select>
-            </div> -->
+            </div>
             <section class="mb-4 footer-icons">
               <i
                 v-for="iconData in icons"
@@ -101,13 +101,34 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import Vue from 'vue';
+import { mapState } from 'vuex';
+import { TranslateResult } from 'vue-i18n';
+import { SUPPORTED_LOCALES } from '../../plugins/i18n';
 export default Vue.extend({
   name: 'LayoutDefault',
   computed: {
+    ...mapState({
+      isLoggedIn: (state: any) => state.user.isLoggedIn,
+    }),
+    userLocale: {
+      get: function(): string {
+        return this.$store.state.user.userData.settings.locale;
+      },
+      set: function(newLocale: string): void {
+        this.$store.dispatch('changeUserLocale', newLocale);
+      }
+    },
+    userCurrency: {
+      get: function(): string {
+        return this.$store.state.user.userData.settings.currency;
+      },
+      set: function(newCurrency: string): void {
+        // this.$store.dispatch('changeUserLocale', newLocale);
+      }
+    },
     links: {
-      get: function () {
+      get: function (): Array<{ title: TranslateResult, link: string, isExternal: boolean }> {
         return [
           {
             title: this.$t('nav.becomeTeacher'),
@@ -162,7 +183,41 @@ export default Vue.extend({
         ];
       },
     },
+    localeOptions: {
+      get: function(): Array<{value: string, text: string}> {
+        const localeOptions = [];
+        for (const property in SUPPORTED_LOCALES) {
+          localeOptions.push({
+            value: property,
+            text: SUPPORTED_LOCALES[property],
+          })
+        }
+        return localeOptions;
+      }
+    },
   },
+  data() {
+    return {
+        langToText: {
+          'en': 'English',
+          'ja': '日本語'
+        },
+        currencyOptions: [
+          {
+            value: 'SGD',
+            text: '$ SGD'
+          },
+          {
+            value: 'USD',
+            text: '$ USD'
+          },
+          {
+            value: 'JPY',
+            text: '¥ JPY'
+          },
+        ],
+    };
+},
 });
 </script>
 

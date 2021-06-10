@@ -1,6 +1,6 @@
 export interface UserState {
   userPromise?: any;
-  userData?: {};
+  userData: any;
   isLoggedIn: boolean;
   isMobile: boolean;
 }
