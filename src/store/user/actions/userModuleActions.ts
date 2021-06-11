@@ -13,8 +13,12 @@ class UserModuleActions implements IModuleAction {
     return this;
   }
 
-  public fetchAPIData = async (props: { state: any; commit: any }): Promise<any> => {
-    const { state, commit } = props;
+  public fetchAPIData = async (props: {
+    state: any;
+    commit: any;
+    APIEndpoint: string;
+  }): Promise<any> => {
+    const { state, commit, APIEndpoint } = props;
     const isLoaded = state.userData && state.isLoggedIn;
     if (isLoaded) {
       return state.userData;
@@ -22,7 +26,7 @@ class UserModuleActions implements IModuleAction {
     if (state.userPromise) {
       return state.userPromise;
     }
-    const userDataPromise: any = await this.axios.get('/api/me').catch((err: Error) => {
+    const userDataPromise: any = await this.axios.get(APIEndpoint).catch((err: Error) => {
       console.log(err);
     });
 
@@ -34,13 +38,25 @@ class UserModuleActions implements IModuleAction {
     }
   };
 
-  public updateModuleData = (props: { commit: any; newLocale: string }): void => {
-    const { commit, newLocale } = props;
-    this.i18n.locale = newLocale;
-    require(`dayjs/locale/${newLocale}`); // require again in case not required
-    this.dayjs.locale(newLocale);
-    commit('SET_USER_LOCALE', newLocale);
-    //TODO: make db update request
+  private _handleLocaleChange = (newValue: string) => {
+    this.i18n.locale = newValue;
+    require(`dayjs/locale/${newValue}`); // require again in case not required
+    this.dayjs.locale(newValue);
+    // api call
+  };
+
+  public updateSettings = (props: {
+    commit: any;
+    newValue: string;
+    settingsProperty: string;
+  }): void => {
+    const { commit, newValue, settingsProperty } = props;
+    if (settingsProperty == 'locale') {
+      this._handleLocaleChange(newValue);
+    } else if (settingsProperty == 'currency') {
+      // _handleCurrencyChange
+    }
+    commit('SET_USER_SETTINGS_PROPERTY', { newValue, settingsProperty });
   };
 }
 export { UserModuleActions };

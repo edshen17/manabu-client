@@ -12,9 +12,13 @@ class UserModuleMutations {
     state.userPromise = promise;
   };
 
-  public SET_USER_LOCALE = (props: { state: UserState; newLocale: string }) => {
-    const { state, newLocale } = props;
-    state.userData.settings.locale = newLocale;
+  public SET_USER_SETTINGS_PROPERTY = (props: {
+    state: UserState;
+    payload: { newValue: string; settingsProperty: string };
+  }) => {
+    const { state, payload } = props;
+    const { newValue, settingsProperty } = payload;
+    state.userData.settings[settingsProperty] = newValue;
   };
 }
 

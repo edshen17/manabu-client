@@ -10,7 +10,7 @@ export const mutations: MutationTree<UserState> = {
   SET_USER_DATA_PROMISE(state, promise: Promise<any>): void {
     makeUserModuleMutations.SET_USER_DATA_PROMISE({ state, promise });
   },
-  SET_USER_LOCALE(state, newLocale: string): void {
-    makeUserModuleMutations.SET_USER_LOCALE({ state, newLocale });
+  SET_USER_SETTINGS_PROPERTY(state, payload: { newValue: string; settingsProperty: string }): void {
+    makeUserModuleMutations.SET_USER_SETTINGS_PROPERTY({ state, payload });
   },
 };

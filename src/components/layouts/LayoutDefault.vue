@@ -116,7 +116,11 @@ export default Vue.extend({
         return this.$store.state.user.userData.settings.locale;
       },
       set: function(newLocale: string): void {
-        this.$store.dispatch('changeUserLocale', newLocale);
+        const props = {
+          newValue: newLocale,
+          settingsProperty: 'locale'
+        }
+        this.$store.dispatch('changeUserSettings', props);
       }
     },
     userCurrency: {
@@ -124,7 +128,11 @@ export default Vue.extend({
         return this.$store.state.user.userData.settings.currency;
       },
       set: function(newCurrency: string): void {
-        // this.$store.dispatch('changeUserLocale', newLocale);
+        const props = {
+          newValue: newCurrency,
+          settingsProperty: 'currency'
+        }
+        this.$store.dispatch('changeUserSettings', props);
       }
     },
     links: {
