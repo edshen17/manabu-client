@@ -9,7 +9,7 @@ const makeUserModuleActions = new UserModuleActions().init({ dayjs, axios, i18n 
 
 export const actions: ActionTree<UserState, RootState> = {
   async fetchUserData({ state, commit }): Promise<any> {
-    const APIEndpoint = '/api/user/me';
+    const APIEndpoint = '/api/user/self/me';
     makeUserModuleActions.fetchAPIData({ state, commit, APIEndpoint });
   },
   async changeUserSettings(
