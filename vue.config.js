@@ -24,6 +24,7 @@ module.exports = {
       }
     }
   },
+
   pluginOptions: {
     i18n: {
       locale: 'en',
@@ -31,5 +32,9 @@ module.exports = {
       localeDir: 'src/locales',
       enableInSFC: true
     }
-  }
+  },
+
+  transpileDependencies: [
+    'vuetify'
+  ]
 };

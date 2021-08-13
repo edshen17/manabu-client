@@ -9,17 +9,19 @@
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
   },
   "dependencies": {
+    "@tailwindcss/postcss7-compat": "^2.0.2",
+    "autoprefixer": "^9",
     "axios": "^0.21.0",
-    "bootstrap-vue": "^2.21.1",
     "core-js": "^3.6.5",
     "countries-and-timezones": "^2.3.1",
     "dayjs": "^1.10.4",
     "firebase": "^8.2.4",
     "jwt-decode": "^3.1.2",
-    "kalendar-vue": "^2.1.1",
     "node-sass": "^4.14.1",
     "portal-vue": "^2.1.7",
+    "postcss": "^7",
     "secure-ls": "^1.2.6",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "v-mask": "^2.2.4",
     "vue": "^2.6.11",
     "vue-advanced-cropper": "^1.2.4",
@@ -30,6 +32,7 @@
     "vue-router": "^3.4.9",
     "vue-scrollto": "^2.20.0",
     "vuelidate": "^0.7.6",
+    "vuetify": "^2.4.0",
     "vuex": "^3.6.2",
     "vuex-persistedstate": "^4.0.0-beta.3"
   },
@@ -41,10 +44,14 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "sass-loader": "^7.3.1",
+    "sass": "~1.32.0",
+    "sass-loader": "^10.0.0",
     "typescript": "~4.1.5",
     "vue-cli-plugin-i18n": "~2.1.1",
-    "vue-template-compiler": "^2.6.11"
+    "vue-cli-plugin-tailwind": "~2.0.6",
+    "vue-cli-plugin-vuetify": "~2.4.2",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.7.0"
   },
   "eslintConfig": {
     "root": true,
