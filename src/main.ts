@@ -56,7 +56,6 @@ import i18n from './plugins/i18n';
 
 axios.defaults.headers.common = {
   'X-Requested-With': 'XMLHttpRequest',
-  'x-requested-with': 'XMLHttpRequest',
 };
 
 Vue.component('BIconPatchCheckFll', BIconPatchCheckFll);

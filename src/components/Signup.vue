@@ -177,7 +177,7 @@ export default {
             }
 
             if (this.password && !this.validPassword(this.password)) {
-                this.errors.push('Your password needs a minimum of 8 characters with at least one capital letter, a number, and a special character.');
+                this.errors.push('Your password needs a minimum of 8 characters with at least one capital letter and a number.');
             }
         },
         validEmail: function (email) {
@@ -185,7 +185,7 @@ export default {
             return re.test(email);
         },
         validPassword: function (password) {
-          const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+          const re = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
           return re.test(password);
       },
       validName: function(name) {

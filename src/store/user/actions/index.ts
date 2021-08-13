@@ -5,11 +5,11 @@ import { RootState } from '@/store/types';
 import { UserState } from '@/store/user/types';
 import i18n from '@/plugins/i18n';
 import { UserModuleActions } from '@/store/user/actions/userModuleActions';
-const makeUserModuleActions = new UserModuleActions().init({ dayjs, axios, i18n });
 
+const makeUserModuleActions = new UserModuleActions().init({ dayjs, axios, i18n });
 export const actions: ActionTree<UserState, RootState> = {
   async fetchUserData({ state, commit }): Promise<any> {
-    const APIEndpoint = '/api/user/self/me';
+    const APIEndpoint = '/api/users/self/me';
     makeUserModuleActions.fetchAPIData({ state, commit, APIEndpoint });
   },
   async changeUserSettings(
