@@ -11,7 +11,7 @@
         >
           <span
             id="blackOverlay"
-            class="w-full h-full absolute opacity-75 bg-black"
+            class="w-full h-full absolute opacity-50 bg-black"
           ></span>
         </div>
         <div class="container relative mx-auto">
@@ -39,7 +39,7 @@
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
             version="1.1"
-            viewBox="0 0 2560 100"
+            viewBox="2560 100 2560 100"
             x="0"
             y="0"
           >
@@ -189,7 +189,7 @@
             y="0"
           >
             <polygon
-              class="text-white fill-current"
+              class="text-gray-300 fill-current"
               points="2560 0 2560 100 0 100"
             ></polygon>
           </svg>
@@ -430,10 +430,7 @@
             x="0"
             y="0"
           >
-            <polygon
-              class="text-gray-900 fill-current"
-              points="2560 0 2560 100 0 100"
-            ></polygon>
+           
           </svg>
         </div>
         <div class="container mx-auto px-4 lg:pt-24 lg:pb-64">

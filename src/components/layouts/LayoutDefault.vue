@@ -1,7 +1,7 @@
 <template>
   <div class="LayoutDefault" id="LayoutDefault">
     <navbar-component></navbar-component> 
-    <main class="LayoutDefault_main">
+    <main class="LayoutDefault_main relative">
       <slot />
     </main>
     <footer class="bg-light text-black">
