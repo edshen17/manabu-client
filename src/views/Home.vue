@@ -30,20 +30,26 @@
         <div class="container mx-auto px-4">
           <div class="flex flex-wrap justify-center mb-24">
             <div class="w-full lg:w-8/12 px-4">
-              <div class="border-b-2">
+              <div class="border-b-2 pb-6">
                 <h2 class="text-3xl font-semibold text-center">Our Vision</h2>
-                <p class="text-xl leading-relaxed m-4 text-gray-600">
+                <p class="text-xl leading-relaxed m-4">
                   We strive to connect the world through personalized language learning. Above all, we value multicultural communication, friendship, and long-lasting relationships between students and teachers. We work to develop the best digital resources available and are committed to adjusting our lessons to fit students' goals. We also take feedback seriously and frequently update the website with requested features.
                 </p>
               </div>
-              <h2 class="text-3xl font-semibold text-center py-6">Why choose us?</h2>
-              <p class="text-xl leading-relaxed m-4 text-gray-600">
-              </p>
-              <!-- <div
-                  class="text-pink-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-pink-300"
-                >
-                  <i class="fas fa-language fa-2x inline text-xl"></i>
-                </div> -->
+              <div> 
+                <h2 class="text-3xl font-semibold text-center pt-6">Why choose us?</h2>
+                <div class="grid grid-cols-2 gap-x-5 items-stretch m-auto">
+                  <div class="flex items-center">
+                    <div>
+                      <div class="px-6 py-4 flex items-center justify-center">
+                      <i class="fas fa-language fa-2x text-3xl align-middle font-semibold inline-block py-3 px-3 uppercase rounded-full text-pink-600 bg-pink-200 mr-2"></i>
+                      <span class="text-2xl text-center uppercase text-gray-600">Tailored Lessons</span>
+                    </div>
+                    <p class="text-xl">Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are customized specifically for you.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -62,7 +68,6 @@
             x="0"
             y="0"
           >
-           
           </svg>
         </div>
         <div class="container mx-auto px-4 lg:pt-24 lg:pb-64">
