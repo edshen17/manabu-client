@@ -21,40 +21,39 @@
           </div>
         </div>
       </div>
-      <section class="relative py-8">
+      <section class="relative py-6">
         <div
           class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
           style="height: 80px;"
         >
         </div>
         <div class="container mx-auto px-4">
-          <div class="flex flex-wrap justify-center mb-24">
+          <div class="flex flex-wrap justify-center mb-6">
             <div class="w-full lg:w-8/12 px-4">
-              <div class="border-b-2 pb-6">
-                <h2 class="text-3xl font-semibold text-center">Our Vision</h2>
+              <div class="border-b-2">
+                <h2 class="text-3xl font-semibold text-center">{{ $t('homepage.visionStatementTitle') }}</h2>
                 <p class="text-xl leading-relaxed m-4">
-                  We strive to connect the world through personalized language learning. Above all, we value multicultural communication, friendship, and long-lasting relationships between students and teachers. We work to develop the best digital resources available and are committed to adjusting our lessons to fit students' goals. We also take feedback seriously and frequently update the website with requested features.
+                  {{ $t('homepage.visionStatementText') }}
                 </p>
               </div>
-              <div> 
-                <h2 class="text-3xl font-semibold text-center pt-6">Why choose us?</h2>
-                <div class="grid grid-cols-2 gap-x-5 items-stretch m-auto">
-                  <div class="flex items-center">
-                    <div>
-                      <div class="px-6 py-4 flex items-center justify-center">
-                      <i class="fas fa-language fa-2x text-3xl align-middle font-semibold inline-block py-3 px-3 uppercase rounded-full text-pink-600 bg-pink-200 mr-2"></i>
-                      <span class="text-2xl text-center uppercase text-gray-600">Tailored Lessons</span>
-                    </div>
-                    <p class="text-xl">Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are customized specifically for you.</p>
-                    </div>
+               <h2 class="text-3xl font-semibold text-center py-8"> {{ $t('homepage.chooseUsTitle') }}</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 md:gap-y-7">
+                <div v-for="feature in chooseUsData" :key="feature.title">
+                  <div class="text-center">
+                    <span class="fa-stack fa-2x">
+                    <i class="fas fa-circle fa-stack-2x text-pink-200"></i>
+                    <i :class="`${feature.iconClass} fa-stack-1x text-pink-600`"></i>
+                  </span>
+                  <span class="text-xl text-center uppercase text-gray-600 px-2 font-semibold">{{feature.title}}</span>
                   </div>
+                  <p class="text-xl py-5">{{feature.text}}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <section class="pb-20 relative block bg-gray-900">
+      <section class="relative block bg-gray-600">
         <div
           class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
           style="height: 80px;"
@@ -70,120 +69,27 @@
           >
           </svg>
         </div>
-        <div class="container mx-auto px-4 lg:pt-24 lg:pb-64">
+        <div class="container mx-auto px-4 pt-8 pb-10">
           <div class="flex flex-wrap text-center justify-center">
             <div class="w-full lg:w-6/12 px-4">
-              <h2 class="text-4xl font-semibold text-white">Build something</h2>
-              <p class="text-lg leading-relaxed mt-4 mb-4 text-gray-500">
-                Put the potentially record low maximum sea ice extent tihs year
-                down to low ice. According to the National Oceanic and
-                Atmospheric Administration, Ted, Scambos.
-              </p>
+              <h2 class="text-4xl font-semibold text-white">{{ $t('homepage.valueProp.innovativeResources.title') }}</h2> 
             </div>
           </div>
           <div class="flex flex-wrap mt-12 justify-center">
-            <div class="w-full lg:w-3/12 px-4 text-center">
-              <div
-                class="text-gray-900 p-3 w-12 h-12 shadow-lg rounded-full bg-white inline-flex items-center justify-center"
-              >
-                <i class="fas fa-medal text-xl"></i>
-              </div>
-              <h6 class="text-xl mt-5 font-semibold text-white">
-                Excelent Services
-              </h6>
-              <p class="mt-2 mb-4 text-gray-500">
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </p>
-            </div>
-            <div class="w-full lg:w-3/12 px-4 text-center">
-              <div
-                class="text-gray-900 p-3 w-12 h-12 shadow-lg rounded-full bg-white inline-flex items-center justify-center"
-              >
-                <i class="fas fa-poll text-xl"></i>
-              </div>
-              <h5 class="text-xl mt-5 font-semibold text-white">
-                Grow your market
-              </h5>
-              <p class="mt-2 mb-4 text-gray-500">
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </p>
-            </div>
-            <div class="w-full lg:w-3/12 px-4 text-center">
-              <div
-                class="text-gray-900 p-3 w-12 h-12 shadow-lg rounded-full bg-white inline-flex items-center justify-center"
-              >
-                <i class="fas fa-lightbulb text-xl"></i>
-              </div>
-              <h5 class="text-xl mt-5 font-semibold text-white">Launch time</h5>
-              <p class="mt-2 mb-4 text-gray-500">
-                Some quick example text to build on the card title and make up
-                the bulk of the card's content.
-              </p>
-            </div>
+         <section class="grid lg:grid-cols-2 2xl:grid-cols-3 grid-cols-1 gap-8">
+            <article v-for="card in cardData" :key="card.title" class="mx-auto max-w-sm pb-8 bg-cover bg-center bg-white cursor-pointer transform duration-500 hover:-translate-y-1 shadow-2xl rounded-xl">
+                <h2 class="text-center text-3xl mt-8 min-h-18 px-12">
+                    {{card.title}}
+                </h2>
+                <img class="mx-auto mt-10 w-80" :src="card.imgSrc" :alt="card.title" />
+            </article>
+        </section>
           </div>
-        </div>
-      </section>
-      <section class="relative block py-24 lg:pt-0 bg-gray-900">
-        <div class="container mx-auto px-4">
-          <div class="flex flex-wrap justify-center lg:-mt-64 -mt-48">
-            <div class="w-full lg:w-6/12 px-4">
-              <div
-                class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-300"
-              >
-                <div class="flex-auto p-5 lg:p-10">
-                  <h4 class="text-2xl font-semibold">Want to work with us?</h4>
-                  <p class="leading-relaxed mt-1 mb-4 text-gray-600">
-                    Complete this form and we will get back to you in 24 hours.
-                  </p>
-                  <div class="relative w-full mb-3 mt-8">
-                    <label
-                      class="block uppercase text-gray-700 text-xs font-bold mb-2"
-                      for="full-name"
-                      >Full Name</label
-                    ><input
-                      type="text"
-                      class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                      placeholder="Full Name"
-                      style="transition: all 0.15s ease 0s;"
-                    />
-                  </div>
-                  <div class="relative w-full mb-3">
-                    <label
-                      class="block uppercase text-gray-700 text-xs font-bold mb-2"
-                      for="email"
-                      >Email</label
-                    ><input
-                      type="email"
-                      class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                      placeholder="Email"
-                      style="transition: all 0.15s ease 0s;"
-                    />
-                  </div>
-                  <div class="relative w-full mb-3">
-                    <label
-                      class="block uppercase text-gray-700 text-xs font-bold mb-2"
-                      for="message"
-                      >Message</label
-                    ><textarea
-                      rows="4"
-                      cols="80"
-                      class="border-0 px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full"
-                      placeholder="Type a message..."
-                    ></textarea>
-                  </div>
-                  <div class="text-center mt-6">
-                    <button
-                      class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                      type="button"
-                      style="transition: all 0.15s ease 0s;"
-                    >
-                      Send Message
-                    </button>
-                  </div>
-                </div>
-              </div>
+          <div class="flex flex-wrap mt-12 justify-center">
+            <div class="grid-cols-1">
+              <button class="bg-red-400 text-white font-bold py-2 px-4 rounded">
+              {{ $t('homepage.findTeacher') }}
+            </button>
             </div>
           </div>
         </div>
@@ -223,22 +129,22 @@ export default {
           {
             title: this.$t('homepage.valueProp.tailoredLessonsTitle'),
             text: this.$t('homepage.valueProp.tailoredLessonsText'),
-            iconClass: 'fas fa-language fa-2x inline mb-1',
+            iconClass: 'fas fa-circle fa-language',
           },
           {
             title: this.$t('homepage.valueProp.immersionTitle'),
             text: this.$t('homepage.valueProp.immersionText'),
-            iconClass: 'fas fa-headphones fa-2x inline mb-1',
+            iconClass: 'fas fa-circle fa-headphones',
           },
           {
             title: this.$t('homepage.valueProp.dataAnalyticsTitle'),
             text: this.$t('homepage.valueProp.dataAnalyticsText'),
-            iconClass: 'fas fa-chart-bar fa-2x inline mb-1',
+            iconClass: 'fas fa-chart-bar',
           },
           {
             title: this.$t('homepage.valueProp.communityTitle'),
             text: this.$t('homepage.valueProp.communityText'),
-            iconClass: 'fas fa-hands-helping fa-2x inline mb-1',
+            iconClass: 'fas fa-hands-helping',
           },
         ]
       }

@@ -1,5 +1,5 @@
 <template>
-  <component :is="layout">
+  <component :is="layout" class="font-noto-sans">
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
@@ -28,13 +28,4 @@ export default Vue.extend({
 
 <style lang="css">
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
-
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #86898b;
-  margin-top: 60px;
-}
 </style>

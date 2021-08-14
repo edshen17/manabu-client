@@ -1,7 +1,8 @@
 {
   "homepage": {
-    "visionStatement": "Our vision is to connect the world through personalized language learning. Above all, we value multicultural communication, friendship, and long-lasting relationships between students and teachers. We strive to develop the best digital resources available and are committed to adjusting our lessons to fit students' goals. We also take feedback seriously and frequently update the website with requested features.",
-    "chooseUs": "Why choose us?",
+    "visionStatementTitle": "Our Vision",
+    "visionStatementText": "We strive to connect the world through personalized language learning. Above all, we value multicultural communication, friendship, and long-lasting relationships between students and teachers. We work to develop the best digital resources available and are committed to adjusting our lessons to fit students' goals. We also take feedback seriously and frequently update the website with requested features.",
+    "chooseUsTitle": "Why Choose Us?",
     "valueProp": {
       "tailoredLessonsTitle": "Tailored Lessons",
       "tailoredLessonsText": "Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are customized specifically for you.",

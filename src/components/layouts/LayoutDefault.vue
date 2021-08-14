@@ -5,6 +5,7 @@
       <slot />
     </main>
     <footer class="bg-light text-black">
+      sasasa
     </footer>
   </div>
 </template>
