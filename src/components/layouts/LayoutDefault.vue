@@ -4,9 +4,8 @@
     <main class="LayoutDefault_main relative">
       <slot />
     </main>
-    <footer class="bg-light text-black">
-      sasasa
-    </footer>
+    <footer-component class="bg-light text-black">
+    </footer-component>
   </div>
 </template>
 
