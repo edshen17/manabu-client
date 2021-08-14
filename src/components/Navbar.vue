@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="flex items-center justify-between flex-wrap p-6 fixed w-full z-10 top-0 bg-white font-noto-sans"
+    class="flex items-center justify-between flex-wrap p-6 fixed w-full z-10 top-0 bg-white font-noto-sans shadow-md"
   >
     <div class="flex items-center flex-shrink-0 text-white mr-6">
       <router-link to="/" class="text-black no-underline"
