@@ -4,7 +4,7 @@
       <div
         class="relative h-full flex content-center items-center justify-center"
       >
-        <div class="absolute top-0 w-full h-full bg-cover bg-main bg-bottom">
+        <div class="absolute top-0 w-full h-full bg-cover bg-main lg:bg-fixed bg-left-bottom">
           <span
             id="blackOverlay"
             class="w-full h-full absolute opacity-25 bg-black"
@@ -27,14 +27,14 @@
           <div class="flex flex-wrap justify-center mb-8">
             <div class="w-full lg:w-8/12 px-4">
               <div class="border-b-2">
-                <h2 class="text-3xl font-semibold text-center">
+                <h2 class="text-3xl font-semibold text-center tracking-wide">
                   {{ $t('homepage.visionStatementTitle') }}
                 </h2>
                 <p class="text-xl leading-relaxed m-4">
                   {{ $t('homepage.visionStatementText') }}
                 </p>
               </div>
-              <h2 class="text-3xl font-semibold text-center py-8">
+              <h2 class="text-3xl font-semibold text-center py-8 tracking-wide">
                 {{ $t('homepage.chooseUsTitle') }}
               </h2>
               <div
@@ -43,9 +43,9 @@
                 <div v-for="feature in chooseUsData" :key="feature.title">
                   <div class="text-center">
                     <span class="fa-stack fa-2x">
-                      <i class="fas fa-circle fa-stack-2x text-pink-200"></i>
+                      <i class="fas fa-circle fa-stack-2x text-pink-100"></i>
                       <i
-                        :class="`${feature.iconClass} fa-stack-1x text-pink-600`"
+                        :class="`${feature.iconClass} fa-stack-1x text-red-400`"
                       ></i>
                     </span>
                     <span
@@ -64,7 +64,7 @@
         <div class="container mx-auto px-4 py-8">
           <div class="flex flex-wrap text-center justify-center">
             <div class="w-full lg:w-6/12 px-4">
-              <h2 class="text-4xl font-semibold text-white">
+              <h2 class="text-4xl font-semibold text-white tracking-wide">
                 {{ $t('homepage.valueProp.innovativeResources.title') }}
               </h2>
             </div>
