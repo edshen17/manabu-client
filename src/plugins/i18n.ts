@@ -3,8 +3,9 @@ import VueI18n from 'vue-i18n';
 import { getStartingLocale } from './localeUtils/getStartingLocale';
 import { loadLocaleMessages } from './localeUtils/loadLocaleMessages';
 import { loadDayjsLocale } from './localeUtils/loadDayjsLocale';
+import { StringKeyObject } from '@server/types/custom/index';
 
-export const SUPPORTED_LOCALES: { [key: string]: string } = Object.freeze({
+export const SUPPORTED_LOCALES: StringKeyObject = Object.freeze({
   en: 'English',
   ja: '日本語',
 });

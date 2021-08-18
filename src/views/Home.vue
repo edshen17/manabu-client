@@ -7,12 +7,12 @@
         <div class="absolute top-0 w-full h-full bg-cover bg-main lg:bg-fixed bg-left-bottom">
           <span
             id="blackOverlay"
-            class="w-full h-full absolute opacity-25 bg-black"
+            class="w-full h-full absolute opacity-30 bg-black"
           ></span>
         </div>
         <div class="container relative mx-auto">
           <div class="items-center flex flex-wrap">
-            <div class="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center">
+            <div class="w-full lg:w-8/12 px-4 ml-auto mr-auto text-center">
               <img src="../assets/img/logo_white.png" />
             </div>
           </div>
@@ -45,7 +45,7 @@
                     <span class="fa-stack fa-2x">
                       <i class="fas fa-circle fa-stack-2x text-pink-100"></i>
                       <i
-                        :class="`${feature.iconClass} fa-stack-1x text-red-400`"
+                        :class="`${feature.class} fa-stack-1x text-red-400`"
                       ></i>
                     </span>
                     <span
@@ -76,13 +76,13 @@
               <article
                 v-for="card in cardData"
                 :key="card.title"
-                class="mx-auto max-w-sm pb-8 bg-cover bg-center bg-white cursor-pointer transform duration-500 hover:-translate-y-1 shadow-2xl rounded-xl"
+                class="mx-auto max-w-sm pb-8 bg-cover bg-center bg-white transform duration-500 hover:-translate-y-1 shadow-2xl rounded-xl"
               >
-                <h2 class="text-center text-3xl mt-8 min-h-18 px-12">
+                <h2 class="text-center text-3xl my-6 min-h-18 px-12">
                   {{card.title}}
                 </h2>
                 <img
-                  class="mx-auto mt-10 w-80"
+                  class="h-90"
                   :src="card.imgSrc"
                   :alt="card.title"
                 />
@@ -111,7 +111,8 @@ export default {
   name: 'Home',
   created() {
     this.$emit('update:layout', LayoutDefault);
-  },computed: {
+  },
+  computed: {
     cardData: {
       get() {
         return [
@@ -136,26 +137,26 @@ export default {
           {
             title: this.$t('homepage.valueProp.tailoredLessonsTitle'),
             text: this.$t('homepage.valueProp.tailoredLessonsText'),
-            iconClass: 'fas fa-circle fa-language',
+            class: 'fas fa-circle fa-language',
           },
           {
             title: this.$t('homepage.valueProp.immersionTitle'),
             text: this.$t('homepage.valueProp.immersionText'),
-            iconClass: 'fas fa-circle fa-headphones',
+            class: 'fas fa-circle fa-headphones',
           },
           {
             title: this.$t('homepage.valueProp.dataAnalyticsTitle'),
             text: this.$t('homepage.valueProp.dataAnalyticsText'),
-            iconClass: 'fas fa-chart-bar',
+            class: 'fas fa-chart-bar',
           },
           {
             title: this.$t('homepage.valueProp.communityTitle'),
             text: this.$t('homepage.valueProp.communityText'),
-            iconClass: 'fas fa-hands-helping',
+            class: 'fas fa-hands-helping',
           },
         ]
       }
-    } 
+    },
   }
 };
 </script>

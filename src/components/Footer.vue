@@ -2,91 +2,50 @@
   <footer class="relative bg-white pt-8 pb-6">
     <div
       class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
-      style="height: 80px;"
-    >
-    </div>
+      style="height: 80px"
+    ></div>
     <div class="container mx-auto px-4">
-      <div class="flex flex-wrap">
-        <div class="w-full lg:w-6/12 px-4">
+      <div class="grid grid-cols-12">
+        <div class="col-span-12 md:col-span-6">
           <h4 class="text-xl font-semibold">Questions?</h4>
-          <h5 class="text-lg mt-2 mb-2 text-gray-700">
-            Find us on any of these platforms! We usually respond in 1-2 business days.
+          <h5 class="text-lg mt-2 mb-4 text-gray-700">
+            Find us on any of these platforms! We usually respond in 1-2
+            business days.
           </h5>
-          <div class="mt-3">
-            <button
-              class="bg-white text-blue-400 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2 p-3"
-              type="button"
-            >
-              <i class="flex fab fa-twitter"></i></button
-            ><button
-              class="bg-white text-blue-600 shadow-lg font-normal h-10 w-10 items-center justify-center align-center rounded-full outline-none focus:outline-none mr-2 p-3"
-              type="button"
-            >
-              <i class="flex fab fa-facebook-square"></i></button
-            >
+          <div class="grid grid-cols-12 gap-4">
+            <div v-for="icon in iconData" :key="icon.mediaName">
+              <a :href="icon.link" :title="icon.mediaName" target="_blank">
+                <i class="pr-7 pb-4 text-2xl" :class="icon.class"></i>
+              </a>
+            </div>
           </div>
         </div>
-        <div class="w-full lg:w-6/12 px-4">
-          <div class="flex flex-wrap items-top mb-6">
-            <div class="w-full lg:w-4/12 px-4 ml-auto">
-              <span
-                class="block uppercase text-gray-600 text-sm font-semibold mb-2"
-                >Useful Links</span
+        <div class="col-span-3">
+          <span class="block uppercase text-gray-600 text-md font-semibold mb-2"
+            >Useful Links</span
+          >
+          <ul
+            class="list-unstyled"
+            v-for="usefulLink in usefulLinkData"
+            :key="usefulLink.title"
+          >
+            <li class="mt-2">
+              <router-link
+                :to="usefulLink.link"
+                >{{usefulLink.title}}</router-link
               >
-              <ul class="list-unstyled">
-                <li>
-                  <a
-                    class="text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm"
-                    href="https://www.creative-tim.com/presentation"
-                    >About Us</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm"
-                    href="https://blog.creative-tim.com"
-                    >Blog</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm"
-                    href="https://www.creative-tim.com/bootstrap-themes/free"
-                    >Free Products</a
-                  >
-                </li>
-              </ul>
-            </div>
-            <div class="w-full lg:w-4/12 px-4">
-              <span
-                class="block uppercase text-gray-600 text-sm font-semibold mb-2"
-                >Other Resources</span
-              >
-              <ul class="list-unstyled">
-                <li>
-                  <a
-                    class="text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm"
-                    href="https://creative-tim.com/terms"
-                    >Terms &amp; Conditions</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm"
-                    href="https://creative-tim.com/privacy"
-                    >Privacy Policy</a
-                  >
-                </li>
-                <li>
-                  <a
-                    class="text-gray-700 hover:text-gray-900 font-semibold block pb-2 text-sm"
-                    href="https://creative-tim.com/contact-us"
-                    >Contact Us</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
+            </li>
+          </ul>
+        </div>
+        <div class="col-span-3">
+          <label class="block border-2 border-gray-300 rounded-md">
+            <select
+              class="block w-full rounded-md"
+            >
+              <option>Corporate event</option>
+              <option>Wedding</option>
+            </select>
+          </label>
         </div>
       </div>
       <hr class="my-6 border-gray-400" />
@@ -104,10 +63,68 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
-      date: new Date().getFullYear()
-    }
+  computed: {
+    date: {
+      get() {
+        const currentYear = new Date().getFullYear()
+        return currentYear
+      }
+    },
+    iconData: {
+      get() {
+        return [
+          {
+            link: 'https://www.facebook.com/ManabuOfficial/',
+            class: 'fab fa-facebook-f',
+            mediaName: 'Facebook'
+          },
+          {
+            link: 'https://twitter.com/lessonsmanabu',
+            class: 'fab fa-twitter',
+            mediaName: 'Twitter'
+          },
+          {
+            link: 'https://www.instagram.com/nihongo_manabu_/',
+            class: 'fab fa-instagram',
+            mediaName: 'Instagram'
+          },
+          {
+            link: 'https://www.youtube.com/channel/UCwtTZCZ9apsj7zNn7n1eS5w',
+            class: 'fab fa-youtube',
+            mediaName: 'Youtube'
+          },
+          {
+            link: 'https://line.me/R/ti/p/%40743ilrvx',
+            class: 'fab fa-line',
+            mediaName: 'LINE'
+          },
+          {
+            link: 'https://discord.com/invite/zHpyvN2TVA',
+            class: 'fab fa-discord',
+            mediaName: 'Discord'
+          },
+          {
+            link: 'https://api.whatsapp.com/message/RJYZPGP6LNXNF1',
+            class: 'fab fa-whatsapp',
+            mediaName: 'WhatsApp'
+          },
+        ]
+      }
+    },
+    usefulLinkData: {
+      get() {
+        return [
+          {
+            link: '/apply',
+            title: 'Become a Teacher'
+          },
+          {
+            link: '/teachers',
+            title: 'Find a Teacher'
+          },
+        ]
+      }
+    },
   }
 }
 </script>

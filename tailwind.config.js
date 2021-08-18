@@ -12,7 +12,8 @@ module.exports = {
     },
   },
   variants: {
+    outline: ['focus'],
     extend: {},
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 };
