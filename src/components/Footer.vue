@@ -12,15 +12,15 @@
             Find us on any of these platforms! We usually respond in 1-2
             business days.
           </h5>
-          <div class="grid grid-cols-12 gap-4">
+          <div class="grid grid-cols-12 gap-10 md:gap-4">
             <div v-for="icon in iconData" :key="icon.mediaName">
               <a :href="icon.link" :title="icon.mediaName" target="_blank">
-                <i class="pr-7 pb-4 text-2xl" :class="icon.class"></i>
+                <i class="mr-7 mb-4 text-2xl" :class="icon.class"></i>
               </a>
             </div>
           </div>
         </div>
-        <div class="col-span-3">
+        <div class="col-span-12 mt-2 md:col-span-3 md:mt-0">
           <span class="block uppercase text-gray-600 text-md font-semibold mb-2"
             >Useful Links</span
           >
@@ -29,7 +29,7 @@
             v-for="usefulLink in usefulLinkData"
             :key="usefulLink.title"
           >
-            <li class="mt-2">
+            <li class="my-2">
               <router-link
                 :to="usefulLink.link"
                 >{{usefulLink.title}}</router-link
@@ -37,7 +37,7 @@
             </li>
           </ul>
         </div>
-        <div class="col-span-3">
+        <div class="col-span-12 mt-2 md:col-span-3 md:mt-0">
           <label class="block border-2 border-gray-300 rounded-md">
             <select
               class="block w-full rounded-md"

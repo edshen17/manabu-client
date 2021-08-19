@@ -26,19 +26,18 @@
         <div class="container mx-auto px-4">
           <div class="flex flex-wrap justify-center mb-8">
             <div class="w-full lg:w-8/12 px-4">
-              <div class="border-b-2">
-                <h2 class="text-3xl font-semibold text-center tracking-wide">
+              <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
                   {{ $t('homepage.visionStatementTitle') }}
                 </h2>
                 <p class="text-xl leading-relaxed m-4">
                   {{ $t('homepage.visionStatementText') }}
                 </p>
-              </div>
-              <h2 class="text-3xl font-semibold text-center py-8 tracking-wide">
+                <hr class="my-10 border-gray-300" />
+              <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
                 {{ $t('homepage.chooseUsTitle') }}
               </h2>
               <div
-                class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 md:gap-y-7"
+                class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 md:gap-y-7"
               >
                 <div v-for="feature in chooseUsData" :key="feature.title">
                   <div class="text-center">
@@ -76,13 +75,13 @@
               <article
                 v-for="card in cardData"
                 :key="card.title"
-                class="mx-auto max-w-sm pb-8 bg-cover bg-center bg-white transform duration-500 hover:-translate-y-1 shadow-2xl rounded-xl"
+                class="mx-auto max-w-sm pb-8 bg-white transform duration-500 hover:-translate-y-1 shadow-2xl rounded-xl"
               >
                 <h2 class="text-center text-3xl my-6 min-h-18 px-12">
                   {{card.title}}
                 </h2>
                 <img
-                  class="h-90"
+                  class="mx-auto h-90"
                   :src="card.imgSrc"
                   :alt="card.title"
                 />
@@ -121,7 +120,7 @@ export default {
             imgSrc: require('../assets/img/feature_1.jpg')
           },
           {
-            title: this.$t('homepage.valueProp.innovativeResources.report'),
+            title: this.$t('homepage.valueProp.innovativeResources.reports'),
             imgSrc: require('../assets/img/feature_2.jpg')
           },
           {
