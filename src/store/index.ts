@@ -1,17 +1,17 @@
-import Vue from 'vue';
-import Vuex, { StoreOptions } from 'vuex';
-import { plugins } from './plugins';
-import { RootState } from './types';
-import { user } from './user';
+// import Vue from 'vue';
+// import Vuex, { StoreOptions } from 'vuex';
+// import { IRootState } from './abstractions/IRootState';
+// import { user } from './modules/user';
+// import { plugins } from './plugins';
 
-Vue.use(Vuex);
+// Vue.use(Vuex);
 
-const store: StoreOptions<RootState> = {
-  state: {},
-  modules: {
-    user
-  },
-  plugins
-};
+// const store: StoreOptions<IRootState> = {
+//   state: {},
+//   modules: {
+//     user
+//   },
+//   plugins
+// };
 
-export default new Vuex.Store<RootState>(store);
+// export default new Vuex.Store<IRootState>(store);

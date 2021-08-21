@@ -3,7 +3,7 @@ import VueI18n from 'vue-i18n';
 import { getStartingLocale } from './localeUtils/getStartingLocale';
 import { loadLocaleMessages } from './localeUtils/loadLocaleMessages';
 import { loadDayjsLocale } from './localeUtils/loadDayjsLocale';
-import { StringKeyObject } from '@server/types/custom/index';
+import { StringKeyObject } from '@server/types/custom/';
 
 Vue.use(VueI18n);
 

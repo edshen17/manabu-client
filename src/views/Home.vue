@@ -1,6 +1,6 @@
 <template>
   <div>
-    <main>
+    <main class="leading-5">
       <div
         class="relative h-full flex content-center items-center justify-center"
       >
@@ -29,10 +29,10 @@
               <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
                   {{ $t('homepage.visionStatementTitle') }}
                 </h2>
-                <p class="text-xl leading-relaxed m-4">
+                <p class="text-xl m-4">
                   {{ $t('homepage.visionStatementText') }}
                 </p>
-                <hr class="my-10 border-gray-300" />
+                <hr class="my-10 border-gray-300"/>
               <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
                 {{ $t('homepage.chooseUsTitle') }}
               </h2>
@@ -77,11 +77,11 @@
                 :key="card.title"
                 class="mx-auto max-w-sm pb-8 bg-white transform duration-500 hover:-translate-y-1 shadow-2xl rounded-xl"
               >
-                <h2 class="text-center text-3xl my-6 min-h-18 px-12">
+                <h2 class="text-center text-3xl my-6 min-h-18 px-12 select-none">
                   {{card.title}}
                 </h2>
                 <img
-                  class="mx-auto h-90"
+                  class="mx-auto h-90 pointer-events-none select-none"
                   :src="card.imgSrc"
                   :alt="card.title"
                 />
