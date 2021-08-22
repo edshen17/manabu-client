@@ -14,4 +14,4 @@ type LoggedOutUser = {
   };
 };
 
-export { UserEntityState };
+export { UserEntityState, UserEntityStateData };

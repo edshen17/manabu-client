@@ -9,15 +9,27 @@ type RequiredModuleActionInitParams = {
   axios: any;
 };
 
-interface IModuleAction<OptionalModuleActionInitParams> {
-  storeData: (props: ModuleActionStoreDataParams<IEntityState<any>>) => Promise<void>;
-  init: (initParams: ModuleActionInitParams<OptionalModuleActionInitParams>) => Promise<this>;
-  getModuleActions: () => ActionTree<IEntityState<any>, IRootState>;
+type GetEntityStateDataResponse<EntityStateData> =
+  | EntityStateData
+  | Promise<EntityStateData>
+  | undefined;
+
+interface IModuleAction<OptionalModuleActionInitParams, EntityStateData> {
+  getEntityStateData: (
+    props: ModuleActionStoreDataParams<EntityStateData>
+  ) => Promise<GetEntityStateDataResponse<EntityStateData>>;
+  init: (initParams: ModuleActionInitParams<OptionalModuleActionInitParams>) => this;
+  getModuleActions: () => ActionTree<IEntityState<EntityStateData>, IRootState>;
 }
 
-type ModuleActionStoreDataParams<IEntityState> = {
-  state: IEntityState;
+type ModuleActionStoreDataParams<EntityStateData> = {
+  state: IEntityState<EntityStateData>;
   commit: any;
 };
 
-export { IModuleAction, ModuleActionStoreDataParams, ModuleActionInitParams };
+export {
+  IModuleAction,
+  ModuleActionStoreDataParams,
+  ModuleActionInitParams,
+  GetEntityStateDataResponse,
+};

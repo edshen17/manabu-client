@@ -1,22 +1,45 @@
-// abstract class AbstractModuleMutation {
-//   public SET_USER = (props: { state: UserState; payload: UserState }): void => {
-//     const { state, payload } = props;
-//     state.userData = payload;
-//   };
+import { MutationTree } from 'vuex';
+import { IEntityState } from './IEntityState';
 
-//   public SET_USER_DATA_PROMISE = (props: { state: UserState; promise: Promise<any> }) => {
-//     const { state, promise } = props;
-//     state.userPromise = promise;
-//   };
+abstract class AbstractModuleMutation<EntityStateData> {
+  public SET_ENTITY_STATE_DATA = (props: {
+    state: IEntityState<EntityStateData>;
+    payload: EntityStateData;
+  }): void => {
+    const { state, payload } = props;
+    state.entityStateData = payload;
+  };
 
-//   public SET_USER_SETTINGS_PROPERTY = (props: {
-//     state: UserState;
-//     payload: { newValue: string; settingsProperty: string };
-//   }) => {
-//     const { state, payload } = props;
-//     const { newValue, settingsProperty } = payload;
-//     state.userData.settings[settingsProperty] = newValue;
-//   };
-// }
+  public SET_ENTITY_STATE_PROMISE = (props: {
+    state: IEntityState<EntityStateData>;
+    promise?: Promise<EntityStateData>;
+  }) => {
+    const { state, promise } = props;
+    state.entityStatePromise = promise;
+  };
 
-// export { AbstractModuleMutation };
+  public getModuleMutations = (): MutationTree<IEntityState<EntityStateData>> => {
+    const self = this;
+    const baseModuleMutations: MutationTree<IEntityState<EntityStateData>> = {
+      SET_ENTITY_STATE_DATA(entityState: IEntityState<EntityStateData>): void {
+        const state = entityState;
+        const payload = entityState.entityStateData;
+        self.SET_ENTITY_STATE_DATA({ state, payload });
+      },
+      SET_ENTITY_STATE_PROMISE(entityState: IEntityState<EntityStateData>): void {
+        const state = entityState;
+        const promise = entityState.entityStatePromise;
+        self.SET_ENTITY_STATE_PROMISE({ state, promise });
+      },
+    };
+    const extendedModuleMutations = this._getModuleMutationsTemplate();
+    const moduleMutations = { ...baseModuleMutations, ...extendedModuleMutations };
+    return moduleMutations;
+  };
+
+  protected _getModuleMutationsTemplate = (): MutationTree<IEntityState<EntityStateData>> => {
+    return {};
+  };
+}
+
+export { AbstractModuleMutation };
