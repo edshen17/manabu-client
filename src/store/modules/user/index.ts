@@ -5,7 +5,7 @@ import { IRootState } from '@/store/abstractions/IRootState';
 import { userModuleActions } from './actions';
 import { userModuleMutations } from './mutations';
 
-const state: UserEntityState = {
+const userState: UserEntityState = {
   entityStateData: {
     settings: {
       currency: 'SGD',
@@ -16,7 +16,7 @@ const state: UserEntityState = {
 };
 
 const user: Module<UserEntityState, IRootState> = {
-  state,
+  state: userState,
   actions: userModuleActions,
   mutations: userModuleMutations,
 };

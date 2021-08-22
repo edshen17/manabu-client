@@ -1,4 +1,3 @@
-import { ActionTree } from 'vuex';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import i18n from '@/plugins/i18n';
