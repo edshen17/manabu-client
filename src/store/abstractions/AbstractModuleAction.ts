@@ -14,7 +14,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
 {
   protected _axios!: any;
 
-  public GET_ENTITY_STATE = async (
+  public getEntityState = async (
     props: ModuleActionStoreDataParams<EntityStateData>
   ): Promise<GetEntityStateDataResponse<EntityStateData>> => {
     const { state } = props;
@@ -63,7 +63,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
       commit: any;
     }): Promise<any> => {
       const { state, commit } = props;
-      return self.GET_ENTITY_STATE({ state, commit });
+      return self.getEntityState({ state, commit });
     };
     const extendedModuleActions = this._getModuleActionsTemplate();
     const moduleActions = { ...baseModuleActions, ...extendedModuleActions };

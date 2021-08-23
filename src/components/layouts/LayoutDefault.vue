@@ -9,14 +9,15 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import NavbarComponent from "../Navbar.vue";
 import FooterComponent from "../Footer.vue";
-export default {
-  name: "landing-page",
+export default Vue.extend({
+  name: "LayoutDefault",
   components: {
     NavbarComponent,
     FooterComponent
   }
-}
+})
 </script>

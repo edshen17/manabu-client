@@ -15,7 +15,7 @@ type GetEntityStateDataResponse<EntityStateData> =
   | undefined;
 
 interface IModuleAction<OptionalModuleActionInitParams, EntityStateData> {
-  GET_ENTITY_STATE: (
+  getEntityState: (
     props: ModuleActionStoreDataParams<EntityStateData>
   ) => Promise<GetEntityStateDataResponse<EntityStateData>>;
   init: (initParams: ModuleActionInitParams<OptionalModuleActionInitParams>) => this;

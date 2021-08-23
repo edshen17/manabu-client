@@ -65,9 +65,11 @@
   </div>
 </template>
 
-<script>
-import LayoutDefault from './layouts/LayoutDefault';
-export default {
+<script lang="ts">
+import Vue from 'vue';
+import LayoutDefault from './layouts/LayoutDefault.vue';
+
+export default Vue.extend({
   name: 'Home',
   created() {
     this.$emit('update:layout', LayoutDefault);
@@ -132,7 +134,8 @@ export default {
     return {
     }
   }
-};
+})
+
 </script>
 
 <style lang="css">

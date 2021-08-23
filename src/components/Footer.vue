@@ -61,17 +61,28 @@
     </div>
   </footer>
 </template>
-<script>
-import { SUPPORTED_LOCALES } from '../plugins/i18n'
-export default {
-  data() {
-    return {
-      selectedLocale: '',
-      currentYear: new Date().getFullYear(),
-      SUPPORTED_LOCALES,
-    }
-  },
+
+<script lang="ts">
+import Vue from 'vue';
+import { SUPPORTED_LOCALES } from '../plugins/i18n';
+
+export default Vue.extend({
+  name: 'Footer',
   computed: {
+    selectedLocale: {
+      get: function(): string {
+        console.log(this.$store.state.user.entityStateData.settings.locale)
+        return 'en'
+        // return this.$store.state.user.userData.settings.locale;
+      },
+      set: function(newLocale: string): void {
+        // const props = {
+        //   newValue: newLocale,
+        //   settingsProperty: 'locale'
+        // }
+        // this.$store.dispatch('changeUserSettings', props);
+      }
+    },
     iconData: {
       get() {
         return [
@@ -128,5 +139,11 @@ export default {
       }
     },
   },
-}
+  data() {
+    return {
+      currentYear: new Date().getFullYear(),
+      SUPPORTED_LOCALES,
+    }
+  },
+});
 </script>
