@@ -6,11 +6,7 @@ class LocaleHandler {
   private _dayjs!: any;
   private _fallbackLocale!: string;
   private _dateLocales!: StringKeyObject;
-  public secureLsConfig: StringKeyObject = {
-    isCompression: false,
-    encodingType: 'aes',
-    encryptionSecret: process.env.VUE_APP_LS_ENCRYPTION_SECRET,
-  };
+  private _secureLsConfig!: StringKeyObject;
 
   public getStartingLocale = (SUPPORTED_LOCALES: {}, fallbackLocale: string): string => {
     const storedLocale = this.getStoredLocale();
@@ -27,7 +23,7 @@ class LocaleHandler {
 
   public getStoredLocale = (): string => {
     try {
-      const secureLsConfig = this.secureLsConfig;
+      const secureLsConfig = this._secureLsConfig;
       const localStorage = new this._secureLs(secureLsConfig);
       const storedLocale = JSON.parse(localStorage.get('user')).user.userData.settings.locale;
       return storedLocale;
@@ -73,12 +69,14 @@ class LocaleHandler {
     dayjs: any;
     fallbackLocale: string;
     dateLocales: StringKeyObject;
+    secureLsConfig: StringKeyObject;
   }): this => {
-    const { secureLs, dayjs, fallbackLocale, dateLocales } = initParams;
+    const { secureLs, dayjs, fallbackLocale, dateLocales, secureLsConfig } = initParams;
     this._secureLs = secureLs;
     this._dayjs = dayjs;
     this._fallbackLocale = fallbackLocale;
     this._dateLocales = dateLocales;
+    this._secureLsConfig = secureLsConfig;
     return this;
   };
 }

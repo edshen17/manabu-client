@@ -10,7 +10,9 @@ interface IModuleMutation<EntityStateData> {
     state: IEntityState<EntityStateData>;
     promise: Promise<EntityStateData>;
   }) => void;
-  getModuleMutations: () => MutationTree<IEntityState<EntityStateData>>;
+  getModuleMutations: (
+    entityState: IEntityState<EntityStateData>
+  ) => MutationTree<IEntityState<EntityStateData>>;
 }
 
 export { IModuleMutation };

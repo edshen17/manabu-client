@@ -2,7 +2,6 @@ const path = require('path');
 
 module.exports = {
   outputDir: path.resolve(__dirname, '../server/public'),
-
   devServer: {
     open: process.platform === 'darwin',
     host: '0.0.0.0',
@@ -16,7 +15,6 @@ module.exports = {
     // https: false,
     // hotOnly: false,
   },
-
   css: {
     loaderOptions: {
       scss: {
@@ -24,7 +22,6 @@ module.exports = {
       }
     }
   },
-
   pluginOptions: {
     i18n: {
       locale: 'en',

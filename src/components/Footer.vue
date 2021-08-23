@@ -41,9 +41,9 @@
           <label class="block border-2 border-gray-300 rounded-md">
             <select
               class="block w-full rounded-md"
+              :v-model="selectedLocale"
             >
-              <option>Corporate event</option>
-              <option>Wedding</option>
+              <option v-for="(localeName, localeCode) in SUPPORTED_LOCALES" :key="localeCode" :value="localeCode">{{localeName}}</option>
             </select>
           </label>
         </div>
@@ -54,7 +54,7 @@
       >
         <div class="w-full md:w-4/12 px-4 mx-auto text-center">
           <div class="text-sm text-black font-semibold py-1">
-            Copyright © {{date}}. {{$t('footer.copyright')}}
+            Copyright © {{currentYear}}. {{$t('footer.copyright')}}
           </div>
         </div>
       </div>
@@ -62,14 +62,16 @@
   </footer>
 </template>
 <script>
+import { SUPPORTED_LOCALES } from '../plugins/i18n'
 export default {
+  data() {
+    return {
+      selectedLocale: '',
+      currentYear: new Date().getFullYear(),
+      SUPPORTED_LOCALES,
+    }
+  },
   computed: {
-    date: {
-      get() {
-        const currentYear = new Date().getFullYear()
-        return currentYear
-      }
-    },
     iconData: {
       get() {
         return [
@@ -125,6 +127,6 @@ export default {
         ]
       }
     },
-  }
+  },
 }
 </script>

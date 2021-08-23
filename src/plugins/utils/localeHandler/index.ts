@@ -3,6 +3,7 @@ import secureLs from 'secure-ls';
 import { fallbackLocale } from '@/plugins/i18n';
 import dayjs from 'dayjs';
 import { StringKeyObject } from '@server/types/custom';
+import { secureLsConfig } from '@/config/secureLsConfig';
 
 const dateLocales: StringKeyObject = {
   ja: () => import('dayjs/locale/ja'),
@@ -14,6 +15,7 @@ const makeLocaleHandler = new LocaleHandler().init({
   fallbackLocale,
   dayjs,
   dateLocales,
+  secureLsConfig,
 });
 
 export { makeLocaleHandler };

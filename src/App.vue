@@ -21,7 +21,7 @@ export default Vue.extend({
     };
   },
   created() {
-    this.$store.dispatch('getEntityStateData');
+    this.$store.dispatch('GET_USER_ENTITY_STATE_DATA');
   }
 });
 </script>

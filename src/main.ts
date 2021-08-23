@@ -4,7 +4,7 @@ import App from './App.vue';
 import router from './router';
 import store from './store/index';
 import i18n from './plugins/i18n';
-import vuetify from './plugins/vuetify';
+import vuetify from './plugins/vuetify/vuetify';
 import './assets/css/tailwind.css';
 
 axios.defaults.headers.common = {
