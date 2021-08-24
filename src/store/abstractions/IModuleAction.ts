@@ -1,4 +1,5 @@
-import { ActionTree } from 'vuex';
+import { StringKeyObject } from '@server/types/custom';
+import { ActionContext, ActionTree } from 'vuex';
 import { IEntityState } from './IEntityState';
 import { IRootState } from './IRootState';
 
@@ -15,23 +16,12 @@ type GetEntityStateDataResponse<EntityStateData> =
   | undefined;
 
 interface IModuleAction<OptionalModuleActionInitParams, EntityStateData> {
-  getEntityState: (
-    props: ModuleActionStoreDataParams<EntityStateData>
+  getEntityStateData: (
+    props: ActionContext<IEntityState<EntityStateData>, IRootState>,
+    payload: StringKeyObject
   ) => Promise<GetEntityStateDataResponse<EntityStateData>>;
   init: (initParams: ModuleActionInitParams<OptionalModuleActionInitParams>) => this;
-  getModuleActions: (
-    entityStateName: string
-  ) => ActionTree<IEntityState<EntityStateData>, IRootState>;
+  getModuleActions: () => ActionTree<IEntityState<EntityStateData>, IRootState>;
 }
 
-type ModuleActionStoreDataParams<EntityStateData> = {
-  state: IEntityState<EntityStateData>;
-  commit: any;
-};
-
-export {
-  IModuleAction,
-  ModuleActionStoreDataParams,
-  ModuleActionInitParams,
-  GetEntityStateDataResponse,
-};
+export { IModuleAction, ModuleActionInitParams, GetEntityStateDataResponse };

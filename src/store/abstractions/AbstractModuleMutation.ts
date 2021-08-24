@@ -2,7 +2,7 @@ import { MutationTree } from 'vuex';
 import { IEntityState } from './IEntityState';
 
 abstract class AbstractModuleMutation<EntityStateData> {
-  public SET_ENTITY_STATE_DATA = (props: {
+  public setEntityStateData = (props: {
     state: IEntityState<EntityStateData>;
     payload: EntityStateData;
   }): void => {
@@ -10,7 +10,7 @@ abstract class AbstractModuleMutation<EntityStateData> {
     state.entityStateData = payload;
   };
 
-  public SET_ENTITY_STATE_PROMISE = (props: {
+  public setEntityStatePromise = (props: {
     state: IEntityState<EntityStateData>;
     promise?: Promise<EntityStateData>;
   }) => {
@@ -21,15 +21,15 @@ abstract class AbstractModuleMutation<EntityStateData> {
   public getModuleMutations = (): MutationTree<IEntityState<EntityStateData>> => {
     const self = this;
     const baseModuleMutations: MutationTree<IEntityState<EntityStateData>> = {
-      SET_ENTITY_STATE_DATA(entityState: IEntityState<EntityStateData>): void {
+      setEntityStateData(entityState: IEntityState<EntityStateData>): void {
         const state = entityState;
         const payload = entityState.entityStateData;
-        self.SET_ENTITY_STATE_DATA({ state, payload });
+        self.setEntityStateData({ state, payload });
       },
-      SET_ENTITY_STATE_PROMISE(entityState: IEntityState<EntityStateData>): void {
+      setEntityStatePromise(entityState: IEntityState<EntityStateData>): void {
         const state = entityState;
         const promise = entityState.entityStatePromise;
-        self.SET_ENTITY_STATE_PROMISE({ state, promise });
+        self.setEntityStatePromise({ state, promise });
       },
     };
     const extendedModuleMutations = this._getModuleMutationsTemplate();

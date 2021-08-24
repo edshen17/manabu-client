@@ -1,6 +1,6 @@
 import { AbstractModuleAction } from '@/store/abstractions/AbstractModuleAction';
 import { ModuleActionInitParams } from '@/store/abstractions/IModuleAction';
-import { UserEntityState, UserEntityStateData } from '@/store/modules/user/types';
+import { UserEntityStateData } from '@/store/modules/user/types';
 
 type OptionalUserModuleActionInitParams = { dayjs: any; i18n: any };
 
@@ -12,18 +12,17 @@ class UserModuleAction extends AbstractModuleAction<
   private _i18n!: any;
 
   public updateSettings = (props: {
-    state: UserEntityState;
     commit: any;
     newValue: string;
     settingsProperty: string;
   }): void => {
-    const { state, commit, newValue, settingsProperty } = props;
+    const { commit, newValue, settingsProperty } = props;
     if (settingsProperty == 'locale') {
       this._handleLocaleChange(newValue);
     } else if (settingsProperty == 'currency') {
       // _handleCurrencyChange
     }
-    commit(`SET_${state.entityStateName}_ENTITY_STATE_SETTINGS`, {
+    commit('SET_ENTITY_STATE_SETTINGS', {
       newValue,
       settingsProperty,
     });

@@ -12,9 +12,8 @@ type LoggedOutUser = {
   };
 };
 
-enum USER_ENTITY_STATE {
-  NAME = 'USER',
+enum USER_ENTITY_STATE_DISPATCH_PAYLOAD {
   ENDPOINT = 'users/self',
 }
 
-export { UserEntityState, UserEntityStateData, USER_ENTITY_STATE };
+export { UserEntityState, UserEntityStateData, USER_ENTITY_STATE_DISPATCH_PAYLOAD };

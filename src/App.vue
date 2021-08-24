@@ -12,6 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { USER_ENTITY_STATE_DISPATCH_PAYLOAD } from './store/modules/user/types';
 
 export default Vue.extend({
   name: 'App',
@@ -21,7 +22,9 @@ export default Vue.extend({
     };
   },
   created() {
-    this.$store.dispatch('GET_USER_ENTITY_STATE_DATA');
+    this.$store.dispatch('user/getEntityStateData', {
+      endpoint: USER_ENTITY_STATE_DISPATCH_PAYLOAD.ENDPOINT
+    });
   }
 });
 </script>

@@ -1,12 +1,7 @@
 import { StringKeyObject } from '@server/types/custom';
-import { ActionTree } from 'vuex';
+import { ActionContext, ActionTree } from 'vuex';
 import { IEntityState } from './IEntityState';
-import {
-  GetEntityStateDataResponse,
-  IModuleAction,
-  ModuleActionInitParams,
-  ModuleActionStoreDataParams,
-} from './IModuleAction';
+import { GetEntityStateDataResponse, IModuleAction, ModuleActionInitParams } from './IModuleAction';
 import { IRootState } from './IRootState';
 
 abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateData>
@@ -14,18 +9,19 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
 {
   protected _axios!: any;
 
-  public getEntityState = async (
-    props: ModuleActionStoreDataParams<EntityStateData>
+  public getEntityStateData = async (
+    props: ActionContext<IEntityState<EntityStateData>, IRootState>,
+    payload: StringKeyObject
   ): Promise<GetEntityStateDataResponse<EntityStateData>> => {
     const { state } = props;
-    const entityState = this._getEntityState(state);
+    const entityState = this._getEntityStateData(state);
     if (entityState) {
       return entityState;
     }
-    await this._setEntityState(props);
+    await this._setEntityStateData(props, payload);
   };
 
-  private _getEntityState = (
+  private _getEntityStateData = (
     state: IEntityState<EntityStateData>
   ): GetEntityStateDataResponse<EntityStateData> => {
     const isDataLoaded = state.entityStateData;
@@ -38,32 +34,30 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     }
   };
 
-  protected _setEntityState = async (
-    props: ModuleActionStoreDataParams<EntityStateData>
+  protected _setEntityStateData = async (
+    props: ActionContext<IEntityState<EntityStateData>, IRootState>,
+    payload: StringKeyObject
   ): Promise<void> => {
-    const { state, commit } = props;
-    const { entityStateName, entityStateEndpoint } = state;
+    const { commit } = props;
     try {
-      const entityStatePromise = await this._axios.get(`/api/v1/${entityStateEndpoint}`);
-      const payload = entityStatePromise && entityStatePromise.data;
-      commit(`SET_${entityStateName}_ENTITY_STATE_PROMISE`, entityStatePromise);
-      if (payload) {
-        commit(`SET_${entityStateName}_ENTITY_STATE_DATA`, payload);
+      const entityStatePromise = await this._axios.get(`/api/v1/${payload.endpoint}`);
+      const entityStateData = entityStatePromise && entityStatePromise.data;
+      commit('setEntityStatePromise', entityStatePromise);
+      if (entityStateData) {
+        commit('setEntityStateData', entityStateData);
       }
     } catch (err) {}
   };
 
-  public getModuleActions = (
-    entityStateName: string
-  ): ActionTree<IEntityState<EntityStateData>, IRootState> => {
+  public getModuleActions = (): ActionTree<IEntityState<EntityStateData>, IRootState> => {
     const self = this;
-    const baseModuleActions: StringKeyObject = {};
-    baseModuleActions[`GET_${entityStateName}_ENTITY_STATE_DATA`] = async (props: {
-      state: IEntityState<EntityStateData>;
-      commit: any;
-    }): Promise<any> => {
-      const { state, commit } = props;
-      return self.getEntityState({ state, commit });
+    const baseModuleActions = {
+      async getEntityStateData(
+        props: ActionContext<IEntityState<EntityStateData>, IRootState>,
+        payload: StringKeyObject
+      ) {
+        return self.getEntityStateData(props, payload);
+      },
     };
     const extendedModuleActions = this._getModuleActionsTemplate();
     const moduleActions = { ...baseModuleActions, ...extendedModuleActions };
