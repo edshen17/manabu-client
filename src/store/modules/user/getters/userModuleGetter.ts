@@ -5,12 +5,16 @@ import { GetterTree } from 'vuex';
 import { UserEntityStateData } from '../types';
 
 class UserModuleGetter extends AbstractModuleGetter<UserEntityStateData> {
-  public getModuleGetters = (): GetterTree<IEntityState<UserEntityStateData>, IRootState> => {
-    return {
+  protected _getModuleGettersTemplate = (): GetterTree<
+    IEntityState<UserEntityStateData>,
+    IRootState
+  > => {
+    const extendedModuleGetters = {
       settings(state: IEntityState<UserEntityStateData>) {
         return state.entityStateData.settings;
       },
     };
+    return extendedModuleGetters;
   };
 }
 

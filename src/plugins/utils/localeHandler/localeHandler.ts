@@ -46,6 +46,13 @@ class LocaleHandler {
     return trimmedLocale;
   };
 
+  // pass i18n because otherwise circular dependency
+  public updateLocale = (props: { i18n: any; locale: string }): void => {
+    const { i18n, locale } = props;
+    i18n.locale = locale;
+    this.loadDateLocale(locale);
+  };
+
   public loadDateLocale = (locale: string): void => {
     this._dateLocales[locale]().then(() => this._dayjs.locale(locale));
     this._dayjs.locale(locale); // set original locale

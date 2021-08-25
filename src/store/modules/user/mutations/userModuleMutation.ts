@@ -1,19 +1,27 @@
 import { AbstractModuleMutation } from '@/store/abstractions/AbstractModuleMutation';
-import { UserEntityState, UserEntityStateData } from '../types';
+import { IEntityState } from '@/store/abstractions/IEntityState';
+import { StringKeyObject } from '@server/types/custom';
+import { MutationTree } from 'vuex';
+import { UserEntityStateData } from '../types';
 
 class UserModuleMutation extends AbstractModuleMutation<UserEntityStateData> {
-  // public SET_USER_SETTINGS_PROPERTY = (props: {
-  //   state: UserState;
-  //   payload: { newValue: string; settingsProperty: string };
-  // }) => {
-  //   const { state, payload } = props;
-  //   const { newValue, settingsProperty } = payload;
-  //   state.userData.settings[settingsProperty] = newValue;
-  // };
-  // in index.ts
-  //   SET_USER_SETTINGS_PROPERTY(state, payload: { newValue: string; settingsProperty: string }): void {
-  //     userModuleMutations.SET_USER_SETTINGS_PROPERTY({ state, payload });
-  //   },
+  protected _getModuleMutationsTemplate = (): MutationTree<IEntityState<UserEntityStateData>> => {
+    const self = this;
+    const extendedModuleMutations = {
+      updateSettings(state: IEntityState<UserEntityStateData>, payload: StringKeyObject): void {
+        self.updateSettings({ state, payload });
+      },
+    };
+    return extendedModuleMutations;
+  };
+
+  public updateSettings = (props: {
+    state: IEntityState<UserEntityStateData>;
+    payload: StringKeyObject;
+  }): void => {
+    const { state, payload } = props;
+    state.entityStateData.settings = { ...state.entityStateData.settings, ...payload };
+  };
 }
 
 export { UserModuleMutation };

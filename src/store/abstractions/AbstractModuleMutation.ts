@@ -2,6 +2,23 @@ import { MutationTree } from 'vuex';
 import { IEntityState } from './IEntityState';
 
 abstract class AbstractModuleMutation<EntityStateData> {
+  public getModuleMutations = (): MutationTree<IEntityState<EntityStateData>> => {
+    const self = this;
+    const baseModuleMutations: MutationTree<IEntityState<EntityStateData>> = {
+      setEntityStateData(state: IEntityState<EntityStateData>): void {
+        const payload = state.entityStateData;
+        self.setEntityStateData({ state, payload });
+      },
+      setEntityStatePromise(state: IEntityState<EntityStateData>): void {
+        const promise = state.entityStatePromise;
+        self.setEntityStatePromise({ state, promise });
+      },
+    };
+    const extendedModuleMutations = this._getModuleMutationsTemplate();
+    const moduleMutations = { ...baseModuleMutations, ...extendedModuleMutations };
+    return moduleMutations;
+  };
+
   public setEntityStateData = (props: {
     state: IEntityState<EntityStateData>;
     payload: EntityStateData;
@@ -16,25 +33,6 @@ abstract class AbstractModuleMutation<EntityStateData> {
   }) => {
     const { state, promise } = props;
     state.entityStatePromise = promise;
-  };
-
-  public getModuleMutations = (): MutationTree<IEntityState<EntityStateData>> => {
-    const self = this;
-    const baseModuleMutations: MutationTree<IEntityState<EntityStateData>> = {
-      setEntityStateData(entityState: IEntityState<EntityStateData>): void {
-        const state = entityState;
-        const payload = entityState.entityStateData;
-        self.setEntityStateData({ state, payload });
-      },
-      setEntityStatePromise(entityState: IEntityState<EntityStateData>): void {
-        const state = entityState;
-        const promise = entityState.entityStatePromise;
-        self.setEntityStatePromise({ state, promise });
-      },
-    };
-    const extendedModuleMutations = this._getModuleMutationsTemplate();
-    const moduleMutations = { ...baseModuleMutations, ...extendedModuleMutations };
-    return moduleMutations;
   };
 
   protected _getModuleMutationsTemplate = (): MutationTree<IEntityState<EntityStateData>> => {

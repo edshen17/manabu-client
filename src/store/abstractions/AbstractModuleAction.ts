@@ -9,6 +9,21 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
 {
   protected _axios!: any;
 
+  public getModuleActions = (): ActionTree<IEntityState<EntityStateData>, IRootState> => {
+    const self = this;
+    const baseModuleActions = {
+      async getEntityStateData(
+        props: ActionContext<IEntityState<EntityStateData>, IRootState>,
+        payload: StringKeyObject
+      ) {
+        return self.getEntityStateData(props, payload);
+      },
+    };
+    const extendedModuleActions = this._getModuleActionsTemplate();
+    const moduleActions = { ...baseModuleActions, ...extendedModuleActions };
+    return moduleActions;
+  };
+
   public getEntityStateData = async (
     props: ActionContext<IEntityState<EntityStateData>, IRootState>,
     payload: StringKeyObject
@@ -47,21 +62,6 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
         commit('setEntityStateData', entityStateData);
       }
     } catch (err) {}
-  };
-
-  public getModuleActions = (): ActionTree<IEntityState<EntityStateData>, IRootState> => {
-    const self = this;
-    const baseModuleActions = {
-      async getEntityStateData(
-        props: ActionContext<IEntityState<EntityStateData>, IRootState>,
-        payload: StringKeyObject
-      ) {
-        return self.getEntityStateData(props, payload);
-      },
-    };
-    const extendedModuleActions = this._getModuleActionsTemplate();
-    const moduleActions = { ...baseModuleActions, ...extendedModuleActions };
-    return moduleActions;
   };
 
   protected _getModuleActionsTemplate = (): ActionTree<

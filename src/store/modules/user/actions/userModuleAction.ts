@@ -1,37 +1,45 @@
+import { LocaleHandler } from '@/plugins/utils/localeHandler/localeHandler';
 import { AbstractModuleAction } from '@/store/abstractions/AbstractModuleAction';
+import { IEntityState } from '@/store/abstractions/IEntityState';
 import { ModuleActionInitParams } from '@/store/abstractions/IModuleAction';
+import { IRootState } from '@/store/abstractions/IRootState';
 import { UserEntityStateData } from '@/store/modules/user/types';
+import { StringKeyObject } from '@server/types/custom';
+import { ActionContext, ActionTree } from 'vuex';
 
-type OptionalUserModuleActionInitParams = { dayjs: any; i18n: any };
+type OptionalUserModuleActionInitParams = { makeLocaleHandler: LocaleHandler; i18n: any };
 
 class UserModuleAction extends AbstractModuleAction<
   OptionalUserModuleActionInitParams,
   UserEntityStateData
 > {
-  private _dayjs!: any;
+  private _localeHandler!: LocaleHandler;
   private _i18n!: any;
 
-  public updateSettings = (props: {
-    commit: any;
-    newValue: string;
-    settingsProperty: string;
-  }): void => {
-    const { commit, newValue, settingsProperty } = props;
-    if (settingsProperty == 'locale') {
-      this._handleLocaleChange(newValue);
-    } else if (settingsProperty == 'currency') {
-      // _handleCurrencyChange
-    }
-    commit('SET_ENTITY_STATE_SETTINGS', {
-      newValue,
-      settingsProperty,
-    });
+  protected _getModuleActionsTemplate = (): ActionTree<
+    IEntityState<UserEntityStateData>,
+    IRootState
+  > => {
+    const self = this;
+    const extendedModuleActions = {
+      updateLocale(
+        props: ActionContext<IEntityState<UserEntityStateData>, IRootState>,
+        payload: StringKeyObject
+      ) {
+        return self.updateLocale(props, payload);
+      },
+    };
+    return extendedModuleActions;
   };
 
-  private _handleLocaleChange = (newValue: string) => {
-    this._i18n.locale = newValue;
-    require(`dayjs/locale/${newValue}`); // require again in case not required
-    this._dayjs.locale(newValue);
+  public updateLocale = (
+    props: ActionContext<IEntityState<UserEntityStateData>, IRootState>,
+    payload: StringKeyObject
+  ) => {
+    const { commit } = props;
+    const { locale } = payload;
+    this._localeHandler.updateLocale({ i18n: this._i18n, locale });
+    commit('updateSettings', { locale });
   };
 
   protected _initTemplate = async (
@@ -40,8 +48,8 @@ class UserModuleAction extends AbstractModuleAction<
       'axios'
     >
   ): Promise<void> => {
-    const { dayjs, i18n } = optionalModuleActionInitParams;
-    this._dayjs = dayjs;
+    const { makeLocaleHandler, i18n } = optionalModuleActionInitParams;
+    this._localeHandler = makeLocaleHandler;
     this._i18n = i18n;
   };
 }

@@ -7,7 +7,7 @@
         <div class="absolute top-0 w-full h-full bg-cover bg-main lg:bg-fixed bg-left-bottom">
           <span
             id="blackOverlay"
-            class="w-full h-full absolute opacity-30 bg-black"
+            class="w-full h-full absolute opacity-40 bg-black"
           ></span>
         </div>
         <div class="container relative mx-auto">

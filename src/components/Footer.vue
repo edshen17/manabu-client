@@ -39,10 +39,7 @@
         </div>
         <div class="col-span-12 mt-2 md:col-span-3 md:mt-0">
           <label class="block border-2 border-gray-300 rounded-md">
-            <select
-              class="block w-full rounded-md"
-              :v-model="selectedLocale"
-            >
+            <select v-model="userLocale" class="block w-full rounded-md">
               <option v-for="(localeName, localeCode) in SUPPORTED_LOCALES" :key="localeCode" :value="localeCode">{{localeName}}</option>
             </select>
           </label>
@@ -64,23 +61,19 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import { SUPPORTED_LOCALES } from '../plugins/i18n';
 
 export default Vue.extend({
   name: 'Footer',
   computed: {
-    selectedLocale: {
+    ...mapGetters(['user/settings', 'user/entityStateData']),
+    userLocale: {
       get: function(): string {
-        console.log(this.$store.state.user.entityStateData.settings.locale)
-        return 'en'
-        // return this.$store.state.user.userData.settings.locale;
+        return this['user/settings'].locale
       },
-      set: function(newLocale: string): void {
-        // const props = {
-        //   newValue: newLocale,
-        //   settingsProperty: 'locale'
-        // }
-        // this.$store.dispatch('changeUserSettings', props);
+      set: function(locale: string): void {
+        this.$store.dispatch('user/updateLocale', { locale });
       }
     },
     iconData: {
@@ -143,6 +136,7 @@ export default Vue.extend({
     return {
       currentYear: new Date().getFullYear(),
       SUPPORTED_LOCALES,
+      selected: '',
     }
   },
 });
