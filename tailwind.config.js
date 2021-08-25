@@ -7,7 +7,7 @@ module.exports = {
         'noto-sans': ['"Noto Sans JP"'],
       },
       backgroundImage: {
-        main: "url('../img/home2.jpg')",
+        main: "url('../img/home.jpg')",
       },
     },
   },

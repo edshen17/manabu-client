@@ -1,3 +1,4 @@
+import { UserEntityState } from '@/store/modules/user/types';
 import { StringKeyObject } from '@server/types/custom';
 import { LocaleMessages } from 'vue-i18n';
 
@@ -21,11 +22,12 @@ class LocaleHandler {
     }
   };
 
-  public getStoredLocale = (): string => {
+  public getStoredLocale = (): string | undefined => {
     try {
       const secureLsConfig = this._secureLsConfig;
       const localStorage = new this._secureLs(secureLsConfig);
-      const storedLocale = JSON.parse(localStorage.get('user')).user.userData.settings.locale;
+      const storedUser: UserEntityState = JSON.parse(localStorage.get('vuex')).user;
+      const storedLocale = storedUser.entityStateData.settings.locale;
       return storedLocale;
     } catch (err) {
       return this._fallbackLocale;
@@ -47,6 +49,7 @@ class LocaleHandler {
   };
 
   // pass i18n because otherwise circular dependency
+  // TODO: extend to update db user
   public updateLocale = (props: { i18n: any; locale: string }): void => {
     const { i18n, locale } = props;
     i18n.locale = locale;

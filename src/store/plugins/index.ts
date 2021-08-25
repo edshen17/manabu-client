@@ -6,7 +6,7 @@ const ls = new SecureLS(secureLsConfig);
 
 export const plugins = [
   createPersistedState({
-    key: 'user',
+    key: 'vuex',
     storage: {
       getItem: (key) => {
         ls.get(key);

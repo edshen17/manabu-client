@@ -1,6 +1,6 @@
 <template>
   <div>
-    <main class="leading-5">
+    <main>
       <div
         class="relative h-full flex content-center items-center justify-center"
       >
@@ -29,7 +29,7 @@
               <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
                   {{ $t('homepage.visionStatementTitle') }}
                 </h2>
-                <p class="text-xl m-4">
+                <p class="text-xl m-4 md:leading-8">
                   {{ $t('homepage.visionStatementText') }}
                 </p>
                 <hr class="my-10 border-gray-300"/>
@@ -52,7 +52,7 @@
                       >{{feature.title}}</span
                     >
                   </div>
-                  <p class="text-xl py-5">{{feature.text}}</p>
+                  <p class="text-xl py-5 md:leading-8">{{feature.text}}</p>
                 </div>
               </div>
             </div>
@@ -93,7 +93,7 @@
               <button class="bg-red-400 text-white font-bold py-2 px-4 rounded">
                 {{ $t('homepage.findTeacher') }}
               </button>
-              <p class="leading-relaxed py-8 text-white">
+              <p class="py-8 text-white md:leading-8">
                 {{ $t('homepage.beta') }}
               </p>
             </div>
