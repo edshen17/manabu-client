@@ -1,7 +1,7 @@
 <template>
-  <div class="LayoutDefault" id="LayoutDefault">
+  <div class="flex flex-col h-screen" id="LayoutDefault">
     <navbar-component></navbar-component> 
-    <main class="LayoutDefault_main relative">
+    <main class="LayoutDefault_main relative flex-grow">
       <slot />
     </main>
     <footer-component class="bg-light text-black">
@@ -11,8 +11,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import NavbarComponent from "../Navbar.vue";
-import FooterComponent from "../Footer.vue";
+import NavbarComponent from "./Navbar.vue";
+import FooterComponent from "./Footer.vue";
 export default Vue.extend({
   name: "LayoutDefault",
   components: {

@@ -1,5 +1,5 @@
 <template>
-  <footer class="relative bg-white pt-8 pb-6">
+  <footer class="relative bg-white pt-8 pb-6 border-t border-gray-400">
     <div
       class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
       style="height: 80px"
@@ -38,7 +38,7 @@
           </ul>
         </div>
         <div class="col-span-12 mt-2 md:col-span-3 md:mt-0">
-          <label class="block border-2 border-gray-300 rounded-md">
+          <label class="form-border">
             <select v-model="userLocale" class="block w-full rounded-md">
               <option v-for="(localeName, localeCode) in SUPPORTED_LOCALES" :key="localeCode" :value="localeCode">{{localeName}}</option>
             </select>
@@ -136,7 +136,6 @@ export default Vue.extend({
     return {
       currentYear: new Date().getFullYear(),
       SUPPORTED_LOCALES,
-      selected: '',
     }
   },
 });

@@ -104,9 +104,11 @@
   </div>
 </template>
 
-<script>
-import LayoutDefault from '../components/layouts/LayoutDefault';
-export default {
+<script lang="ts">
+import Vue from 'vue';
+import LayoutDefault from '../components/LayoutDefault.vue';
+
+export default Vue.extend({
   name: 'Home',
   created() {
     this.$emit('update:layout', LayoutDefault);
@@ -156,6 +158,13 @@ export default {
         ]
       }
     },
+  },
+  data() {
+    return {
+    }
+  },
+  mounted() {
+    console.log(this.$route.name)
   }
-};
+});
 </script>
