@@ -163,8 +163,5 @@ export default Vue.extend({
     return {
     }
   },
-  mounted() {
-    console.log(this.$route.name)
-  }
 });
 </script>

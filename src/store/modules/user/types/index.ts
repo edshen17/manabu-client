@@ -13,7 +13,7 @@ type LoggedOutUser = {
 };
 
 enum USER_ENTITY_STATE_DISPATCH_PAYLOAD {
-  ENDPOINT = 'users/self',
+  ENDPOINT = '/users/self',
 }
 
 export { UserEntityState, UserEntityStateData, USER_ENTITY_STATE_DISPATCH_PAYLOAD };

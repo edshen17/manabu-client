@@ -26,6 +26,7 @@
           v-for="routerLink in routerLinks"
           :key="routerLink.title"
           class="mr-3"
+          @click="showMenu = !showMenu"
         >
           <router-link
             :to="routerLink.link"

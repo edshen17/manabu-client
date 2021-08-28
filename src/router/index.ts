@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '../views/Home.vue';
-import AuthForm from '../components/AuthForm.vue';
+import UserAuthForm from '../views/UserAuthForm.vue';
+import Dashboard from '../views/Dashboard.vue';
 
 Vue.use(VueRouter);
 
@@ -14,7 +15,17 @@ const routes: Array<RouteConfig> = [
   {
     path: '/signup',
     name: 'Signup',
-    component: AuthForm
+    component: UserAuthForm
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: UserAuthForm
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard
   }
 ];
 

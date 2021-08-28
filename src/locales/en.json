@@ -22,7 +22,8 @@
     "beta": "As a special thanks to beta testers, if you sign up now and purchase a lesson plan you will receive permanent free access to ALL premium features we release in the future. Happy learning!",
     "findTeacher": "Find a Teacher Now!"
   },
-  "login": {
+  "userAuth": {
+    "name": "Name",
     "email": "Email address",
     "password": "Password",
     "login": "Log In",
@@ -32,13 +33,17 @@
     "signupHere": "Sign up here",
     "loginHere": "Log in here",
     "googleLogin": "Continue With Google",
-    "name": "Name"
+    "errors": {
+      "name": "You must input a name.",
+      "email": "You must input a valid email address.",
+      "password": "Your password must be at least 8 characters."
+    }
   },
   "nav": {
     "findTeacher": "Find a Teacher",
     "becomeTeacher": "Become a Teacher",
-    "login": "@:login.login",
-    "signup": "@:login.signup",
+    "login": "@:userAuth.login",
+    "signup": "@:userAuth.signup",
     "logout": "Logout",
     "guidelines": "Manabu Guidelines"
   },
@@ -62,8 +67,6 @@
       "shortAppoint": "Your appointments must be at least 30 minutes."
     }
   },
-
-
   "modal": {
     "cancel": "Cancel",
     "delete": "Delete",

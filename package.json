@@ -22,6 +22,7 @@
     "portal-vue": "^2.1.7",
     "secure-ls": "^1.2.6",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
+    "url-join": "^4.0.1",
     "v-mask": "^2.2.4",
     "vue": "^2.6.11",
     "vue-advanced-cropper": "^1.2.4",
@@ -38,6 +39,8 @@
   },
   "devDependencies": {
     "@intlify/vue-i18n-loader": "^1.0.0",
+    "@types/url-join": "^4.0.1",
+    "@types/vuelidate": "^0.7.15",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-typescript": "^4.5.13",
     "@vue/cli-service": "^4.5.13",
