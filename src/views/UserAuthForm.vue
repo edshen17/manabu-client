@@ -85,6 +85,16 @@ export default Vue.extend({
         return isSignupPage;
       }
     },
+    GOOGLE_AUTH_URL: {
+      get(): string {
+        const isProduction = process.env.NODE_ENV == 'production';
+        let GOOGLE_AUTH_URL = process.env.VUE_APP_GOOGLE_AUTH_URL!;
+        if (!isProduction) {
+          GOOGLE_AUTH_URL =  process.env.VUE_APP_GOOGLE_AUTH_URL_DEV!;
+        }
+        return GOOGLE_AUTH_URL
+      }
+    }
   },
   data() {
     return {
@@ -134,7 +144,7 @@ export default Vue.extend({
 
     },
     async handleGoogleLogin(): Promise<void> {
-      location.href = 'http://google.com'
+      location.href = this.GOOGLE_AUTH_URL;
     }
   }
 });
