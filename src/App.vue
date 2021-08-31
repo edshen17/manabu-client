@@ -23,9 +23,9 @@ export default Vue.extend({
   },
   created() {
     this.$store.dispatch('user/getEntityStateData', {
-      endpoint: USER_ENTITY_STATE_DISPATCH_PAYLOAD.ENDPOINT
+      endpoint: USER_ENTITY_STATE_DISPATCH_PAYLOAD.ENDPOINT,
     });
-  }
+  },
 });
 </script>
 

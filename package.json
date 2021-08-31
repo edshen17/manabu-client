@@ -28,6 +28,7 @@
     "vue-advanced-cropper": "^1.2.4",
     "vue-cookies": "^1.7.4",
     "vue-facebook-login-component": "^3.0.0",
+    "vue-focus": "^2.1.0",
     "vue-i18n": "^8.22.3",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.4.9",
