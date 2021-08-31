@@ -14,7 +14,8 @@
               for="name"
               autocomplete="name"
               :placeholder="$t('userAuth.name')"
-              v-focus="isFocusing('name')"
+              v-focus="focusedInputName == 'name'"
+              @focus="focusedInputName = 'name'"
             />
           </span>
           <p class="text-sm text-red-400 mt-2" v-show="$v.name.$error">
@@ -29,7 +30,8 @@
               type="email"
               autocomplete="email"
               :placeholder="$t('userAuth.email')"
-              v-focus="isFocusing('email')"
+              v-focus="focusedInputName == 'email'"
+              @focus="focusedInputName = 'email'"
             />
           </span>
           <p class="text-sm text-red-400 mt-2" v-show="$v.email.$error">
@@ -42,10 +44,12 @@
           >
             <input
               v-model="password"
+              name="password"
               class="w-full h-10 pl-3 pr-32 text-base placeholder-gray-600"
               :type="showPassword ? 'text' : 'password'"
               autocomplete="on"
               :placeholder="$t('userAuth.password')"
+              @focus="focusedInputName = 'password'"
             />
           </span>
           <span
@@ -123,13 +127,25 @@ export default Vue.extend({
       },
     },
     GOOGLE_AUTH_URL: {
-      get(): string {
+      get: function (): string {
         const isProduction = process.env.NODE_ENV == 'production';
         let GOOGLE_AUTH_URL = process.env.VUE_APP_GOOGLE_AUTH_URL!;
         if (!isProduction) {
           GOOGLE_AUTH_URL = process.env.VUE_APP_GOOGLE_AUTH_URL_DEV!;
         }
         return GOOGLE_AUTH_URL;
+      },
+    },
+    focusedInputName: {
+      get: function (): string {
+        const startFocusInputName = this.isSignupPage ? 'name' : 'email';
+        const focusedInputName = this.$data._focusedInputName
+          ? this.$data._focusedInputName
+          : startFocusInputName;
+        return focusedInputName;
+      },
+      set: function (newInputName: string): void {
+        this.$data._focusedInputName = newInputName;
       },
     },
   },
@@ -139,7 +155,8 @@ export default Vue.extend({
       email: '',
       password: '',
       showPassword: false,
-      focused: true,
+      key: this.$route.path,
+      _focusedInputName: '',
     };
   },
   validations: {
@@ -194,10 +211,10 @@ export default Vue.extend({
     async handleGoogleLogin(): Promise<void> {
       location.href = this.GOOGLE_AUTH_URL;
     },
-    isFocusing(inputName: string): boolean {
-      return (
-        (this.isSignupPage && inputName == 'name') || (!this.isSignupPage && inputName == 'email')
-      );
+  },
+  watch: {
+    $route() {
+      this.focusedInputName = this.isSignupPage ? 'name' : 'email';
     },
   },
 });
