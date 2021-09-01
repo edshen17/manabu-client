@@ -1,9 +1,9 @@
 function imageSourceEdit(imgSrc) {
-   if (imgSrc == '') {
+  if (imgSrc == '') {
     return require('../images/no-profile.webp');
-   } else {
+  } else {
     return imgSrc;
-   }
   }
-  
+}
+
 export default imageSourceEdit;

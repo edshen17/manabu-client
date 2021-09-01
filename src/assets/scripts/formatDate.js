@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.extend(relativeTime)
+dayjs.extend(relativeTime);
 
 const formatDate = (dateStr, format) => {
-    if (format == 'fromNow') {
-        return dayjs(dateStr).fromNow();
-    } else {
-        return dayjs(dateStr).format(format);
-    }
-}
+  if (format == 'fromNow') {
+    return dayjs(dateStr).fromNow();
+  } else {
+    return dayjs(dateStr).format(format);
+  }
+};
 
 export default formatDate;

@@ -9,27 +9,27 @@ module.exports = {
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
-        changeOrigin: true
-      }
-    }
+        changeOrigin: true,
+      },
+    },
     // https: false,
     // hotOnly: false,
   },
   css: {
     loaderOptions: {
       scss: {
-        prependData: `@import "@/styles/_variables.scss";`
-      }
-    }
+        prependData: `@import "@/styles/_variables.scss";`,
+      },
+    },
   },
   pluginOptions: {
     i18n: {
       locale: 'en',
       fallbackLocale: 'en',
       localeDir: 'src/locales',
-      enableInSFC: true
-    }
+      enableInSFC: true,
+    },
   },
 
-  transpileDependencies: ['vuetify']
+  transpileDependencies: ['vuetify'],
 };

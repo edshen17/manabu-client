@@ -1,6 +1,18 @@
 <template>
   <nav
-    class="flex items-center justify-between flex-wrap p-6 lg:sticky w-full z-10 top-0 bg-white shadow-md"
+    class="
+      flex
+      items-center
+      justify-between
+      flex-wrap
+      p-6
+      lg:sticky
+      w-full
+      z-10
+      top-0
+      bg-white
+      shadow-md
+    "
   >
     <div class="flex items-center flex-shrink-0 text-white mr-6">
       <router-link to="/" class="text-black no-underline"
@@ -8,7 +20,20 @@
       >
     </div>
     <button
-      class="cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
+      class="
+        cursor-pointer
+        text-xl
+        leading-none
+        px-3
+        py-1
+        border border-solid border-transparent
+        rounded
+        bg-transparent
+        block
+        lg:hidden
+        outline-none
+        focus:outline-none
+      "
       type="button"
       v-on:click="toggleNavbar()"
     >
@@ -16,12 +41,10 @@
     </button>
     <div
       class="w-full flex-grow lg:flex lg:items-center lg:w-auto"
-      :class="{'hidden': !showMenu, 'block': showMenu}"
+      :class="{ hidden: !showMenu, block: showMenu }"
       x-show.transition="true"
     >
-      <ul
-        class="pt-6 lg:pt-0 list-reset lg:flex justify-end flex-1 items-center"
-      >
+      <ul class="pt-6 lg:pt-0 list-reset lg:flex justify-end flex-1 items-center">
         <li
           v-for="routerLink in routerLinks"
           :key="routerLink.title"
@@ -31,7 +54,7 @@
           <router-link
             :to="routerLink.link"
             class="inline-block py-2 px-4 text-black no-underline"
-            >{{routerLink.title}}</router-link
+            >{{ routerLink.title }}</router-link
           >
         </li>
       </ul>
@@ -47,7 +70,7 @@ export default Vue.extend({
   name: 'Navbar',
   computed: {
     routerLinks: {
-      get: function (): Array<{ title: TranslateResult, link: string }> {
+      get: function (): Array<{ title: TranslateResult; link: string }> {
         return [
           {
             title: this.$t('nav.becomeTeacher'),
@@ -67,17 +90,17 @@ export default Vue.extend({
           },
         ];
       },
-    }
+    },
   },
   data() {
     return {
-      showMenu: false
-    }
+      showMenu: false,
+    };
   },
   methods: {
-    toggleNavbar: function(){
+    toggleNavbar: function () {
       this.showMenu = !this.showMenu;
-    }
-  }
-})
+    },
+  },
+});
 </script>

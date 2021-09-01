@@ -10,28 +10,28 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
   },
   {
     path: '/signup',
     name: 'Signup',
-    component: UserAuthForm
+    component: UserAuthForm,
   },
   {
     path: '/login',
     name: 'Login',
-    component: UserAuthForm
+    component: UserAuthForm,
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: Dashboard
-  }
+    component: Dashboard,
+  },
 ];
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  mode: 'history',
 });
 
 export default router;

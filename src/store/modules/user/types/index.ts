@@ -1,7 +1,7 @@
 import { IEntityState } from '@/store/abstractions/IEntityState';
 import { JoinedUserDoc } from '@server/models/User';
 
-interface UserEntityState extends IEntityState<UserEntityStateData> {}
+type UserEntityState = IEntityState<UserEntityStateData>;
 
 type UserEntityStateData = JoinedUserDoc | LoggedOutUser;
 

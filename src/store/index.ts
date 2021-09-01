@@ -9,9 +9,9 @@ Vue.use(Vuex);
 const store: StoreOptions<IRootState> = {
   state: {},
   modules: {
-    user
+    user,
   },
-  plugins
+  plugins,
 };
 
 export default new Vuex.Store<IRootState>(store);
