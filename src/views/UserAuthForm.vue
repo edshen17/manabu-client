@@ -9,16 +9,16 @@
           <span class="form-border">
             <input
               v-model="name"
+              v-focus="focusedInputName == 'name'"
               name="name"
               type="text"
               for="name"
               autocomplete="name"
               :placeholder="$t('userAuth.name')"
-              v-focus="focusedInputName == 'name'"
               @focus="focusedInputName = 'name'"
             />
           </span>
-          <p class="text-sm text-red-400 mt-2" v-show="$v.name.$error">
+          <p v-show="$v.name.$error" class="text-sm text-red-400 mt-2">
             {{ $t('userAuth.errors.name') }}
           </p>
         </div>
@@ -26,15 +26,15 @@
           <span class="form-border">
             <input
               v-model="email"
+              v-focus="focusedInputName == 'email'"
               name="email"
               type="email"
               autocomplete="email"
               :placeholder="$t('userAuth.email')"
-              v-focus="focusedInputName == 'email'"
               @focus="focusedInputName = 'email'"
             />
           </span>
-          <p class="text-sm text-red-400 mt-2" v-show="$v.email.$error">
+          <p v-show="$v.email.$error" class="text-sm text-red-400 mt-2">
             {{ $t('userAuth.errors.email') }}
           </p>
         </div>
@@ -60,13 +60,13 @@
               type="button"
               @click="togglePasswordView"
             >
-              <i class="fas fa-eye text-gray-600" v-show="showPassword"></i>
-              <i class="fas fa-eye-slash text-gray-600" v-show="!showPassword"></i>
+              <i v-show="showPassword" class="fas fa-eye text-gray-600"></i>
+              <i v-show="!showPassword" class="fas fa-eye-slash text-gray-600"></i>
             </button>
           </span>
         </div>
       </form>
-      <p class="text-sm text-red-400 my-1" v-show="$v.password.$error">
+      <p v-show="$v.password.$error" class="text-sm text-red-400 my-1">
         {{ $t('userAuth.errors.password') }}
       </p>
       <button
@@ -115,8 +115,14 @@ import { StringKeyObject } from '../../../server/types/custom';
 export default Vue.extend({
   name: 'UserAuthForm',
   directives: { focus },
-  created() {
-    this.$emit('update:layout', LayoutDefault);
+  data() {
+    return {
+      name: '',
+      email: '',
+      password: '',
+      showPassword: false,
+      _focusedInputName: '',
+    };
   },
   computed: {
     isSignupPage: {
@@ -149,18 +155,12 @@ export default Vue.extend({
       },
     },
   },
-  data() {
-    return {
-      name: '',
-      email: '',
-      password: '',
-      showPassword: false,
-      _focusedInputName: '',
-    };
+  created() {
+    this.$emit('update:layout', LayoutDefault);
   },
   validations: {
     name: {
-      required: function (): any {
+      required: function (): boolean {
         return !this.isSignupPage;
       },
     },
