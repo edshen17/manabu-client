@@ -1,13 +1,13 @@
-import Vue from 'vue';
 import axios from 'axios';
+import urljoin from 'url-join';
+import Vue from 'vue';
 import Vuelidate from 'vuelidate';
 import App from './App.vue';
-import router from './router';
-import store from './store/index';
+import './assets/css/tailwind.css';
 import i18n from './plugins/i18n';
 import vuetify from './plugins/vuetify/vuetify';
-import './assets/css/tailwind.css';
-import urljoin from 'url-join';
+import router from './router';
+import store from './store/index';
 const isAbsoluteURLRegex = /^(?:\w+:)\/\//;
 const API_HOST = '/api/v1';
 
@@ -26,6 +26,9 @@ axios.defaults.validateStatus = (status: number) => {
 
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
+Vue.config.errorHandler = (err, vm, info) => {
+  return err;
+};
 
 new Vue({
   router,

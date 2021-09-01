@@ -118,8 +118,8 @@ import LayoutDefault from '../components/LayoutDefault.vue';
 
 export default Vue.extend({
   name: 'Home',
-  created() {
-    this.$emit('update:layout', LayoutDefault);
+  data() {
+    return {};
   },
   computed: {
     cardData: {
@@ -167,8 +167,8 @@ export default Vue.extend({
       },
     },
   },
-  data() {
-    return {};
+  created() {
+    this.$emit('update:layout', LayoutDefault);
   },
 });
 </script>

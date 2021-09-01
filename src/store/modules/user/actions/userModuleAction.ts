@@ -7,14 +7,14 @@ import { UserEntityStateData } from '@/store/modules/user/types';
 import { StringKeyObject } from '@server/types/custom';
 import { ActionContext, ActionTree } from 'vuex';
 
-type OptionalUserModuleActionInitParams = { makeLocaleHandler: LocaleHandler; i18n: any };
+type OptionalUserModuleActionInitParams = { makeLocaleHandler: LocaleHandler; i18n: unknown };
 
 class UserModuleAction extends AbstractModuleAction<
   OptionalUserModuleActionInitParams,
   UserEntityStateData
 > {
   private _localeHandler!: LocaleHandler;
-  private _i18n!: any;
+  private _i18n!: unknown;
 
   protected _getModuleActionsTemplate = (): ActionTree<
     IEntityState<UserEntityStateData>,
@@ -35,7 +35,7 @@ class UserModuleAction extends AbstractModuleAction<
   public updateLocale = (
     props: ActionContext<IEntityState<UserEntityStateData>, IRootState>,
     payload: StringKeyObject
-  ) => {
+  ): void => {
     const { commit } = props;
     const { locale } = payload;
     this._localeHandler.updateLocale({ i18n: this._i18n, locale });

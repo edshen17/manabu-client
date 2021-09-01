@@ -67,24 +67,29 @@
         </div>
       </form>
       <p v-show="$v.password.$error" class="text-sm text-red-400 my-1">
-        {{ $t('userAuth.errors.password') }}
+        <span v-if="isSignupPage">{{ $t('userAuth.errors.password.length') }}</span>
+        <span v-else>{{ $t('userAuth.errors.password.required') }}</span>
       </p>
       <button
-        class="bg-gray-700 text-white font-bold py-3 px-4 rounded w-full my-6"
+        class="bg-gray-700 py-3 px-4 rounded w-full my-6"
         type="button"
         @click="handleAuthFormSubmit"
       >
-        <span v-if="isSignupPage">{{ $t('userAuth.signup') }}</span>
-        <span v-else>{{ $t('userAuth.login') }}</span>
+        <div class="text-white font-bold">
+          <span v-if="isSignupPage">{{ $t('userAuth.signup') }}</span>
+          <span v-else>{{ $t('userAuth.login') }}</span>
+        </div>
       </button>
       <hr class="my-1 border-gray-300" />
       <button
-        class="bg-red-500 text-white font-bold py-3 px-4 rounded w-full my-6"
+        class="bg-red-500 py-3 px-4 rounded w-full my-6"
         type="button"
         @click="handleGoogleLogin"
       >
-        <i class="fab fa-google mr-3"></i>
-        {{ $t('userAuth.googleLogin') }}
+        <div class="text-white font-bold">
+          <i class="fab fa-google mr-3"></i>
+          <span>{{ $t('userAuth.googleLogin') }}</span>
+        </div>
       </button>
       <p class="float-right">
         <span v-if="isSignupPage">
@@ -155,6 +160,11 @@ export default Vue.extend({
       },
     },
   },
+  watch: {
+    $route() {
+      this.focusedInputName = this.isSignupPage ? 'name' : 'email';
+    },
+  },
   created() {
     this.$emit('update:layout', LayoutDefault);
   },
@@ -211,11 +221,6 @@ export default Vue.extend({
     },
     async handleGoogleLogin(): Promise<void> {
       location.href = this.GOOGLE_AUTH_URL;
-    },
-  },
-  watch: {
-    $route() {
-      this.focusedInputName = this.isSignupPage ? 'name' : 'email';
     },
   },
 });
