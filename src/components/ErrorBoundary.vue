@@ -1,7 +1,9 @@
 <template>
   <div>
     <slot name="navbar" />
-    <popup-alert-component>{{ err }}</popup-alert-component>
+    <popup-alert-component v-show="showPopup" @popup-close="showPopup = false">{{
+      errorMessage
+    }}</popup-alert-component>
     <slot name="main" />
     <slot name="footer" />
   </div>
@@ -9,6 +11,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
 import PopupAlertComponent from './PopupAlert.vue';
 
 export default Vue.extend({
@@ -19,15 +22,30 @@ export default Vue.extend({
   },
   data() {
     return {
-      err: false,
-      vm: null,
-      info: null,
+      err: new Error(),
+      _showPopup: false,
     };
   },
-  errorCaptured(err: any, vm: any, info: any): any {
+  computed: {
+    showPopup: {
+      get: function (): boolean {
+        return this.err && this.$data._showPopup;
+      },
+      set: function (newVal: boolean): void {
+        this.$data._showPopup = newVal;
+      },
+    },
+    errorMessage: {
+      get: function (): string | TranslateResult {
+        const errorMessage = this.err.message;
+        const errorMessageLocale = this.$t(errorMessage) ? this.$t(errorMessage) : errorMessage;
+        return errorMessageLocale;
+      },
+    },
+  },
+  errorCaptured(err: Error): boolean {
     this.err = err;
-    this.vm = vm;
-    this.info = info;
+    this.$data._showPopup = true;
     return !this.stopPropagation;
   },
 });

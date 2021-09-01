@@ -19,7 +19,7 @@
             />
           </span>
           <p v-show="$v.name.$error" class="text-sm text-red-400 mt-2">
-            {{ $t('userAuth.errors.name') }}
+            {{ $t('error.name') }}
           </p>
         </div>
         <div>
@@ -35,7 +35,7 @@
             />
           </span>
           <p v-show="$v.email.$error" class="text-sm text-red-400 mt-2">
-            {{ $t('userAuth.errors.email') }}
+            {{ $t('error.email') }}
           </p>
         </div>
         <div class="grid grid-cols-12">
@@ -67,8 +67,8 @@
         </div>
       </form>
       <p v-show="$v.password.$error" class="text-sm text-red-400 my-1">
-        <span v-if="isSignupPage">{{ $t('userAuth.errors.password.length') }}</span>
-        <span v-else>{{ $t('userAuth.errors.password.required') }}</span>
+        <span v-if="isSignupPage">{{ $t('error.password.length') }}</span>
+        <span v-else>{{ $t('error.password.required') }}</span>
       </p>
       <button
         class="bg-gray-700 py-3 px-4 rounded w-full my-6"
@@ -113,7 +113,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import { focus } from 'vue-focus';
-import { email, minLength, required } from 'vuelidate/lib/validators';
+import { email, minLength, required, requiredIf } from 'vuelidate/lib/validators';
 import LayoutDefault from '../components/LayoutDefault.vue';
 import { StringKeyObject } from '../../../server/types/custom';
 
@@ -155,8 +155,8 @@ export default Vue.extend({
           : startFocusInputName;
         return focusedInputName;
       },
-      set: function (newInputName: string): void {
-        this.$data._focusedInputName = newInputName;
+      set: function (newVal: string): void {
+        this.$data._focusedInputName = newVal;
       },
     },
   },
@@ -170,9 +170,9 @@ export default Vue.extend({
   },
   validations: {
     name: {
-      required: function (): boolean {
-        return !this.isSignupPage;
-      },
+      required: requiredIf(function (vm) {
+        return vm.isSignupPage;
+      }),
     },
     email: {
       required,
@@ -190,34 +190,33 @@ export default Vue.extend({
     async handleAuthFormSubmit(): Promise<void> {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        if (this.isSignupPage) {
-          await this._handleSignup();
-        } else {
-          await this._handleBaseLogin();
-        }
+        await this._handleLogin();
       }
     },
-    async _handleSignup(): Promise<void> {
-      const body = {
-        name: this.name,
+    async _handleLogin(): Promise<void> {
+      let body: StringKeyObject = {
         email: this.email,
         password: this.password,
       };
-      const endpoint = '/users/create';
-      await this._redirectToDashboard({ body, endpoint });
+      let endpoint = '/users/auth/base/login';
+      if (this.isSignupPage) {
+        body = { ...body, name: this.name };
+        endpoint = '/users/create';
+      }
+      await this._authorizeUser({ body, endpoint });
+      this.$router.push('/dashboard');
     },
-    async _redirectToDashboard(props: { body: StringKeyObject; endpoint: string }): Promise<void> {
+    async _authorizeUser(props: { body: StringKeyObject; endpoint: string }): Promise<void> {
       const { body, endpoint } = props;
-      await axios.post(endpoint, body);
-      // this.$router.push('/dashboard');
-    },
-    async _handleBaseLogin(): Promise<void> {
-      const body = {
-        email: this.email,
-        password: this.password,
-      };
-      const endpoint = '/users/auth/base/login';
-      await this._redirectToDashboard({ body, endpoint });
+      try {
+        await axios.post(endpoint, body);
+      } catch (err: any) {
+        const hasErrorResponse = err.response;
+        const httpStatusCode = hasErrorResponse ? err.response.status : undefined;
+        const isLoginError = hasErrorResponse && httpStatusCode == 401;
+        const apiErrorMsgLocale: string = isLoginError ? 'error.login.invalid' : 'error.general';
+        throw new Error(apiErrorMsgLocale);
+      }
     },
     async handleGoogleLogin(): Promise<void> {
       location.href = this.GOOGLE_AUTH_URL;

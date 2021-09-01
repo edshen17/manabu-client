@@ -32,15 +32,19 @@
     "haveAccount": "以前アカウントを作った方",
     "signupHere": "ここに登録",
     "loginHere": "ここにログイン",
-    "googleLogin": "Googleで続ける",
-    "errors": {
-      "name": "名前を入力してください。",
-      "email": "メールアドレスを正しく入力して下さい。",
-      "password": {
-        "length": "最低8文字のパスワードを入力して下さい。",
-        "required": "パスワードを入力して下さい。"
-      }
-    }
+    "googleLogin": "Googleで続ける"
+  },
+  "error": {
+    "name": "名前を入力してください。",
+    "email": "メールアドレスを正しく入力して下さい。",
+    "password": {
+      "length": "最低8文字のパスワードを入力して下さい。",
+      "required": "パスワードを入力して下さい。"
+    },
+    "login": {
+      "invalid": "パスワードかメールアドレスが間違っています。"
+    },
+    "general": "Oops, something went wrong. Please try again. If the problem persists, please contact support@manabu.com or reach out on social media."
   },
   "nav": {
     "findTeacher": "先生を見つける",

@@ -1,27 +1,44 @@
 <template>
-  <div class="text-white px-6 py-4 border-0 rounded relative mb-4 bg-pink-500" :class="mainClass">
-    <span class="text-xl inline-block mr-5 align-middle">
-      <i :class="alertIcon" />
-    </span>
-    <span class="inline-block align-middle mr-8">
+  <div
+    class="
+      m-auto
+      grid grid-cols-12
+      text-red-800 text-lg
+      px-6
+      py-2
+      my-6
+      border-0
+      rounded
+      relative
+      mb-4
+      bg-red-200
+      w-11/12
+      md:w-6/12
+      align-middle
+    "
+    :class="mainClass"
+  >
+    <span class="mr-8 col-span-11 text-left">
       <slot />
     </span>
     <button
       class="
         absolute
         bg-transparent
-        text-2xl
+        text-xl
         font-semibold
         leading-none
         right-0
         top-0
-        mt-4
+        py-3
         mr-6
         outline-none
         focus:outline-none
+        col-span-1
       "
+      @click="popupClose"
     >
-      <span>×</span>
+      <i class="fas fa-times"></i>
     </button>
   </div>
 </template>
@@ -32,8 +49,19 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'PopupAlert',
   props: {
-    mainClass: String,
-    alertIcon: String,
+    mainClass: {
+      type: String,
+      default: '',
+    },
+    alertIcon: {
+      type: String,
+      default: '',
+    },
+  },
+  methods: {
+    popupClose() {
+      this.$emit('popup-close');
+    },
   },
 });
 </script>

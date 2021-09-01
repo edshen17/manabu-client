@@ -32,15 +32,7 @@
     "haveAccount": "Already have an account?",
     "signupHere": "Sign up here",
     "loginHere": "Log in here",
-    "googleLogin": "Continue With Google",
-    "errors": {
-      "name": "You must input a name.",
-      "email": "You must input a valid email address.",
-      "password": {
-        "length": "Your password must be at least 8 characters.",
-        "required": "You must input a password."
-      }
-    }
+    "googleLogin": "Continue With Google"
   },
   "nav": {
     "findTeacher": "Find a Teacher",
@@ -49,6 +41,18 @@
     "signup": "@:userAuth.signup",
     "logout": "Logout",
     "guidelines": "Manabu Guidelines"
+  },
+  "error": {
+    "name": "You must input a name.",
+    "email": "You must input a valid email address.",
+    "password": {
+      "length": "Your password must be at least 8 characters.",
+      "required": "You must input a password."
+    },
+    "login": {
+      "invalid": "Invalid username or password."
+    },
+    "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
   },
   "footer": {
     "titles": {
