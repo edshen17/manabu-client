@@ -155,13 +155,14 @@ export default Vue.extend({
       email: '',
       password: '',
       showPassword: false,
-      key: this.$route.path,
       _focusedInputName: '',
     };
   },
   validations: {
     name: {
-      required,
+      required: function (): any {
+        return !this.isSignupPage;
+      },
     },
     email: {
       required,
@@ -198,11 +199,11 @@ export default Vue.extend({
     async _redirectToDashboard(props: { body: StringKeyObject; endpoint: string }): Promise<void> {
       const { body, endpoint } = props;
       await axios.post(endpoint, body);
-      this.$router.push('/dashboard');
+      // this.$router.push('/dashboard');
     },
     async _handleBaseLogin(): Promise<void> {
       const body = {
-        name: this.name,
+        email: this.email,
         password: this.password,
       };
       const endpoint = '/users/auth/base/login';
