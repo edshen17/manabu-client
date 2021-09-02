@@ -1,9 +1,9 @@
-import { LocaleHandler } from './localeHandler';
-import secureLs from 'secure-ls';
-import { fallbackLocale } from '@/plugins/i18n';
-import dayjs from 'dayjs';
-import { StringKeyObject } from '@server/types/custom';
 import { secureLsConfig } from '@/config/secureLsConfig';
+import { fallbackLocale } from '@/plugins/i18n';
+import { StringKeyObject } from '@server/types/custom';
+import dayjs from 'dayjs';
+import secureLs from 'secure-ls';
+import { LocaleHandler } from './localeHandler';
 
 const dateLocales: StringKeyObject = {
   ja: () => import('dayjs/locale/ja'),

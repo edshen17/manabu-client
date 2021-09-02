@@ -31,7 +31,7 @@
         </div>
         <div class="col-span-12 mt-2 md:col-span-3 md:mt-0">
           <span class="block uppercase text-gray-600 text-md font-semibold mb-2">Useful Links</span>
-          <ul class="list-unstyled" v-for="usefulLink in usefulLinkData" :key="usefulLink.title">
+          <ul v-for="usefulLink in usefulLinkData" :key="usefulLink.title" class="list-unstyled">
             <li class="my-2">
               <router-link :to="usefulLink.link">{{ usefulLink.title }}</router-link>
             </li>
@@ -70,6 +70,12 @@ import { SUPPORTED_LOCALES } from '../plugins/i18n';
 
 export default Vue.extend({
   name: 'Footer',
+  data() {
+    return {
+      currentYear: new Date().getFullYear(),
+      SUPPORTED_LOCALES,
+    };
+  },
   computed: {
     ...mapGetters(['user/settings', 'user/entityStateData']),
     userLocale: {
@@ -135,12 +141,6 @@ export default Vue.extend({
         ];
       },
     },
-  },
-  data() {
-    return {
-      currentYear: new Date().getFullYear(),
-      SUPPORTED_LOCALES,
-    };
   },
 });
 </script>

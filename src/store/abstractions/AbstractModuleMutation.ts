@@ -30,7 +30,7 @@ abstract class AbstractModuleMutation<EntityStateData> {
   public setEntityStatePromise = (props: {
     state: IEntityState<EntityStateData>;
     promise?: Promise<EntityStateData>;
-  }) => {
+  }): void => {
     const { state, promise } = props;
     state.entityStatePromise = promise;
   };

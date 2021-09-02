@@ -35,7 +35,7 @@
         focus:outline-none
       "
       type="button"
-      v-on:click="toggleNavbar()"
+      @click="toggleNavbar()"
     >
       <i class="text-black fas fa-bars"></i>
     </button>
@@ -68,6 +68,11 @@ import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
   name: 'Navbar',
+  data() {
+    return {
+      showMenu: false,
+    };
+  },
   computed: {
     routerLinks: {
       get: function (): Array<{ title: TranslateResult; link: string }> {
@@ -91,11 +96,6 @@ export default Vue.extend({
         ];
       },
     },
-  },
-  data() {
-    return {
-      showMenu: false,
-    };
   },
   methods: {
     toggleNavbar: function () {

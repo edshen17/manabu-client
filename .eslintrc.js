@@ -65,5 +65,6 @@ module.exports = {
         "renderError"
       ]
     }]
-  }
+  },
+  "@typescript-eslint/no-empty-interface": "off"
 }

@@ -83,7 +83,9 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
       ModuleActionInitParams<OptionalModuleActionInitParams>,
       'axios'
     >
-  ): void => {};
+  ): void => {
+    return;
+  };
 }
 
 export { AbstractModuleAction };

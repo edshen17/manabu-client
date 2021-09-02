@@ -1,10 +1,10 @@
-import { Module } from 'vuex';
 import { locale } from '@/plugins/i18n';
-import { UserEntityState } from './types';
 import { IRootState } from '@/store/abstractions/IRootState';
+import { Module } from 'vuex';
 import { userModuleActions } from './actions';
-import { userModuleMutations } from './mutations';
 import { userModuleGetters } from './getters';
+import { userModuleMutations } from './mutations';
+import { UserEntityState } from './types';
 
 const userEntityState: UserEntityState = {
   entityStateData: {

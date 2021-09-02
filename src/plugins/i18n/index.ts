@@ -1,7 +1,7 @@
+import { StringKeyObject } from '@server/types/custom/';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import { StringKeyObject } from '@server/types/custom/';
-import { makeLocaleHandler } from '../utils/localeHandler';
+import { makeLocaleHandler } from './utils/localeHandler';
 
 Vue.use(VueI18n);
 

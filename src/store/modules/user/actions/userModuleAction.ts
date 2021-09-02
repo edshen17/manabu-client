@@ -1,4 +1,4 @@
-import { LocaleHandler } from '@/plugins/utils/localeHandler/localeHandler';
+import { LocaleHandler } from '@/plugins/i18n/utils/localeHandler/localeHandler';
 import { AbstractModuleAction } from '@/store/abstractions/AbstractModuleAction';
 import { IEntityState } from '@/store/abstractions/IEntityState';
 import { ModuleActionInitParams } from '@/store/abstractions/IModuleAction';

@@ -1,5 +1,5 @@
-import createPersistedState from 'vuex-persistedstate';
 import SecureLS from 'secure-ls';
+import createPersistedState from 'vuex-persistedstate';
 import { secureLsConfig } from '../../config/secureLsConfig';
 
 const ls = new SecureLS(secureLsConfig);

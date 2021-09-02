@@ -9,7 +9,10 @@ class LocaleHandler {
   private _dateLocales!: StringKeyObject;
   private _secureLsConfig!: StringKeyObject;
 
-  public getStartingLocale = (SUPPORTED_LOCALES: {}, fallbackLocale: string): string => {
+  public getStartingLocale = (
+    SUPPORTED_LOCALES: StringKeyObject,
+    fallbackLocale: string
+  ): string => {
     const storedLocale = this.getStoredLocale();
     if (storedLocale) {
       return storedLocale;
@@ -62,7 +65,7 @@ class LocaleHandler {
   };
 
   public loadLocaleMessages = (): LocaleMessages => {
-    const locales = require.context('../../../locales', true, /[A-Za-z0-9-_,\s]+\.json$/i);
+    const locales = require.context('../../../../locales', true, /[A-Za-z0-9-_,\s]+\.json$/i);
     const messages: LocaleMessages = {};
     locales.keys().forEach((key) => {
       const matched = key.match(/([A-Za-z0-9-_]+)\./i);

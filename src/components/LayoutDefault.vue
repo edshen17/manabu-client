@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen" id="LayoutDefault">
+  <div id="LayoutDefault" class="flex flex-col h-screen">
     <error-boundary-component>
       <template v-slot:navbar>
         <navbar-component></navbar-component>
