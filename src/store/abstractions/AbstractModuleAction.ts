@@ -56,10 +56,10 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     const { commit } = props;
     try {
       const entityStatePromise = await this._axios.get(payload.endpoint);
-      const entityStateData = entityStatePromise && entityStatePromise.data;
+      const entityStatePayload = entityStatePromise && entityStatePromise.data;
       commit('setEntityStatePromise', entityStatePromise);
-      if (entityStateData) {
-        commit('setEntityStateData', entityStateData);
+      if (entityStatePayload) {
+        commit('setEntityStateData', entityStatePayload);
       }
     } catch (err) {}
   };

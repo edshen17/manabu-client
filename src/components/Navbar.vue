@@ -64,6 +64,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
@@ -74,24 +75,36 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapGetters(['user/settings', 'user/entityStateData']),
+    isLoggedIn: {
+      get: function (): boolean {
+        const user = this['user/settings'];
+        const isLoggedIn = user._id;
+        return isLoggedIn;
+      },
+    },
     routerLinks: {
-      get: function (): Array<{ title: TranslateResult; link: string }> {
+      get: function (): Array<{ title: TranslateResult; link: string; show: boolean }> {
         return [
           {
             title: this.$t('nav.becomeTeacher'),
             link: '/apply',
+            show: !this.isLoggedIn,
           },
           {
             title: this.$t('nav.findTeacher'),
             link: '/teachers',
+            show: !this.isLoggedIn,
           },
           {
             title: this.$t('nav.login'),
             link: '/login',
+            show: !this.isLoggedIn,
           },
           {
             title: this.$t('nav.signup'),
             link: '/signup',
+            show: !this.isLoggedIn,
           },
         ];
       },

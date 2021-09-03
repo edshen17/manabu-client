@@ -80,7 +80,9 @@ export default Vue.extend({
     ...mapGetters(['user/settings', 'user/entityStateData']),
     userLocale: {
       get: function (): string {
-        return this['user/settings'].locale;
+        const user = this['user/settings'];
+        const userLocale = user.locale;
+        return userLocale;
       },
       set: function (locale: string): void {
         this.$store.dispatch('user/updateLocale', { locale });

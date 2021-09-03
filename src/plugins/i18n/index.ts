@@ -14,10 +14,10 @@ const fallbackLocale = process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en';
 const locale = localeHandler.getStartingLocale(SUPPORTED_LOCALES, fallbackLocale);
 localeHandler.loadDateLocale(locale);
 
-export default new VueI18n({
+const i18n = new VueI18n({
   locale,
   fallbackLocale,
   messages: localeHandler.loadLocaleMessages(),
 });
 
-export { SUPPORTED_LOCALES, fallbackLocale, locale };
+export { SUPPORTED_LOCALES, fallbackLocale, locale, i18n };

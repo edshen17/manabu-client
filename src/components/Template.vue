@@ -17,6 +17,9 @@ export default Vue.extend({
   mounted() {
     return;
   },
+  // created() {
+  //   this.$emit('update:layout', LayoutDefault);
+  // },
   methods: {},
 });
 </script>

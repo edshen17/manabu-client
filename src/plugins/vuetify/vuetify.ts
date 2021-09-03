@@ -3,4 +3,6 @@ import Vuetify from 'vuetify/lib/framework';
 
 Vue.use(Vuetify);
 
-export default new Vuetify({});
+const vuetify = new Vuetify({});
+
+export { vuetify };

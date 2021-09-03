@@ -4,10 +4,10 @@ import Vue from 'vue';
 import Vuelidate from 'vuelidate';
 import App from './App.vue';
 import './assets/css/tailwind.css';
-import i18n from './plugins/i18n';
-import vuetify from './plugins/vuetify/vuetify';
-import router from './router';
-import store from './store/index';
+import { i18n } from './plugins/i18n';
+import { vuetify } from './plugins/vuetify/vuetify';
+import { router } from './router';
+import { store } from './store/index';
 const isAbsoluteURLRegex = /^(?:\w+:)\/\//;
 const API_HOST = '/api/v1';
 

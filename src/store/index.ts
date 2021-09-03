@@ -6,7 +6,7 @@ import { plugins } from './plugins';
 
 Vue.use(Vuex);
 
-const store: StoreOptions<IRootState> = {
+const _store: StoreOptions<IRootState> = {
   state: {},
   modules: {
     user,
@@ -14,4 +14,6 @@ const store: StoreOptions<IRootState> = {
   plugins,
 };
 
-export default new Vuex.Store<IRootState>(store);
+const store = new Vuex.Store<IRootState>(_store);
+
+export { store };
