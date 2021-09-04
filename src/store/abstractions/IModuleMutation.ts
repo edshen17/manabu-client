@@ -3,6 +3,7 @@ import { MutationTree } from 'vuex';
 import { IEntityState } from './IEntityState';
 
 interface IModuleMutation<EntityStateData> {
+  getModuleMutations: () => MutationTree<IEntityState<EntityStateData>>;
   setEntityStateData: (props: {
     state: IEntityState<EntityStateData>;
     entityStateData: EntityStateData;
@@ -12,7 +13,6 @@ interface IModuleMutation<EntityStateData> {
     state: IEntityState<EntityStateData>;
     promise: Promise<EntityStateData>;
   }) => void;
-  getModuleMutations: () => MutationTree<IEntityState<EntityStateData>>;
 }
 
 export { IModuleMutation };

@@ -16,7 +16,8 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
         props: ActionContext<IEntityState<EntityStateData>, IRootState>,
         payload: StringKeyObject
       ) {
-        return self.getEntityStateData(props, payload);
+        const entityStateData = await self.getEntityStateData(props, payload);
+        return entityStateData;
       },
     };
     const extendedModuleActions = this._getModuleActionsTemplate();

@@ -3,7 +3,6 @@ import { makeLocaleHandler } from '@/plugins/i18n/utils/localeHandler';
 import axios from 'axios';
 import { UserModuleAction } from './userModuleAction';
 
-const userModuleAction = new UserModuleAction().init({ axios, makeLocaleHandler, i18n });
-const userModuleActions = userModuleAction.getModuleActions();
+const makeUserModuleAction = new UserModuleAction().init({ axios, makeLocaleHandler, i18n });
 
-export { userModuleActions };
+export { makeUserModuleAction };

@@ -1,9 +1,11 @@
 <template>
-  <div>sasa</div>
+  <div>{{ userData }}</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
+import LayoutDefault from '../components/LayoutDefault.vue';
 
 export default Vue.extend({
   name: '',
@@ -13,9 +15,16 @@ export default Vue.extend({
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      userData: 'user/entityStateData',
+    }),
+  },
   mounted() {
     return;
+  },
+  created() {
+    this.$emit('update:layout', LayoutDefault);
   },
   methods: {},
 });

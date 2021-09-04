@@ -52,6 +52,7 @@
           @click="showMenu = !showMenu"
         >
           <router-link
+            v-show="routerLink.isShowing"
             :to="routerLink.link"
             class="inline-block py-2 px-4 text-black no-underline"
             >{{ routerLink.title }}</router-link
@@ -75,36 +76,42 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters(['user/settings', 'user/entityStateData']),
+    ...mapGetters({
+      userData: 'user/entityStateData',
+    }),
     isLoggedIn: {
       get: function (): boolean {
-        const user = this['user/settings'];
-        const isLoggedIn = user._id;
+        const isLoggedIn = this.userData._id;
         return isLoggedIn;
       },
     },
     routerLinks: {
-      get: function (): Array<{ title: TranslateResult; link: string; show: boolean }> {
+      get: function (): Array<{ title: TranslateResult; link: string; isShowing: boolean }> {
         return [
           {
             title: this.$t('nav.becomeTeacher'),
             link: '/apply',
-            show: !this.isLoggedIn,
+            isShowing: !this.isLoggedIn,
           },
           {
             title: this.$t('nav.findTeacher'),
             link: '/teachers',
-            show: !this.isLoggedIn,
+            isShowing: true,
           },
           {
             title: this.$t('nav.login'),
             link: '/login',
-            show: !this.isLoggedIn,
+            isShowing: !this.isLoggedIn,
           },
           {
             title: this.$t('nav.signup'),
             link: '/signup',
-            show: !this.isLoggedIn,
+            isShowing: !this.isLoggedIn,
+          },
+          {
+            title: this.$t('nav.logout'),
+            link: '/logout',
+            isShowing: this.isLoggedIn,
           },
         ];
       },

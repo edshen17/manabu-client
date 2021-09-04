@@ -2,7 +2,7 @@ import { AbstractModuleMutation } from '@/store/abstractions/AbstractModuleMutat
 import { IEntityState } from '@/store/abstractions/IEntityState';
 import { StringKeyObject } from '@server/types/custom';
 import { MutationTree } from 'vuex';
-import { UserEntityStateData } from '../types';
+import { UserEntityStateData } from '../state/userModuleState';
 
 class UserModuleMutation extends AbstractModuleMutation<UserEntityStateData> {
   public getEntityStateData = (entityStatePayload: StringKeyObject): UserEntityStateData => {

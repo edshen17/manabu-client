@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { USER_ENTITY_STATE_DISPATCH_PAYLOAD } from './store/modules/user/types';
+import { USER_ENTITY_STATE_ENDPOINT } from './store/modules/user/state/userModuleState';
 
 export default Vue.extend({
   name: 'App',
@@ -23,7 +23,7 @@ export default Vue.extend({
   },
   created() {
     this.$store.dispatch('user/getEntityStateData', {
-      endpoint: USER_ENTITY_STATE_DISPATCH_PAYLOAD.ENDPOINT,
+      endpoint: USER_ENTITY_STATE_ENDPOINT,
     });
   },
 });

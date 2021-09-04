@@ -77,11 +77,12 @@ export default Vue.extend({
     };
   },
   computed: {
-    ...mapGetters(['user/settings', 'user/entityStateData']),
+    ...mapGetters({
+      userData: 'user/entityStateData',
+    }),
     userLocale: {
       get: function (): string {
-        const user = this['user/settings'];
-        const userLocale = user.locale;
+        const userLocale = this.userData.settings.locale;
         return userLocale;
       },
       set: function (locale: string): void {

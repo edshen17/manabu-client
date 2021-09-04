@@ -16,12 +16,12 @@ type GetEntityStateDataResponse<EntityStateData> =
   | undefined;
 
 interface IModuleAction<OptionalModuleActionInitParams, EntityStateData> {
+  getModuleActions: () => ActionTree<IEntityState<EntityStateData>, IRootState>;
   getEntityStateData: (
     props: ActionContext<IEntityState<EntityStateData>, IRootState>,
     payload: StringKeyObject
   ) => Promise<GetEntityStateDataResponse<EntityStateData>>;
   init: (initParams: ModuleActionInitParams<OptionalModuleActionInitParams>) => this;
-  getModuleActions: () => ActionTree<IEntityState<EntityStateData>, IRootState>;
 }
 
 export { IModuleAction, ModuleActionInitParams, GetEntityStateDataResponse };

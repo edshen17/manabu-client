@@ -1,4 +1,4 @@
-import { UserEntityState } from '@/store/modules/user/types';
+import { UserEntityState } from '@/store/modules/user/state/userModuleState';
 import { StringKeyObject } from '@server/types/custom';
 import { LocaleMessages } from 'vue-i18n';
 

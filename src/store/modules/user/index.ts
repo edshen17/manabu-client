@@ -1,26 +1,16 @@
-import { locale } from '@/plugins/i18n';
-import { IRootState } from '@/store/abstractions/IRootState';
-import { Module } from 'vuex';
-import { userModuleActions } from './actions';
-import { userModuleGetters } from './getters';
-import { userModuleMutations } from './mutations';
-import { UserEntityState } from './types';
+import { makeUserModuleAction } from './actions';
+import { makeUserModuleGetter } from './getters';
+import { makeUserModuleMutation } from './mutations';
+import { makeUserModuleState } from './state';
+import { UserModuleFactory } from './userModuleFactory';
 
-const userEntityState: UserEntityState = {
-  entityStateData: {
-    settings: {
-      currency: 'SGD',
-      locale,
-    },
-  },
-};
+const makeUserModuleFactory = new UserModuleFactory().init({
+  makeModuleState: makeUserModuleState,
+  makeModuleAction: makeUserModuleAction,
+  makeModuleGetter: makeUserModuleGetter,
+  makeModuleMutation: makeUserModuleMutation,
+});
 
-const user: Module<UserEntityState, IRootState> = {
-  state: userEntityState,
-  actions: userModuleActions,
-  mutations: userModuleMutations,
-  getters: userModuleGetters,
-  namespaced: true,
-};
+const makeUserModule = makeUserModuleFactory.build();
 
-export { user, userEntityState };
+export { makeUserModule };

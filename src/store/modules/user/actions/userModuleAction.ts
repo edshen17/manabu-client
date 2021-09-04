@@ -3,9 +3,9 @@ import { AbstractModuleAction } from '@/store/abstractions/AbstractModuleAction'
 import { IEntityState } from '@/store/abstractions/IEntityState';
 import { ModuleActionInitParams } from '@/store/abstractions/IModuleAction';
 import { IRootState } from '@/store/abstractions/IRootState';
-import { UserEntityStateData } from '@/store/modules/user/types';
 import { StringKeyObject } from '@server/types/custom';
 import { ActionContext, ActionTree } from 'vuex';
+import { UserEntityStateData } from '../state/userModuleState';
 
 type OptionalUserModuleActionInitParams = { makeLocaleHandler: LocaleHandler; i18n: unknown };
 
