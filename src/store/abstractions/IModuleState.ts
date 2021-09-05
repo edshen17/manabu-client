@@ -7,6 +7,7 @@ type RequiredModuleStateInitParams = {};
 
 interface IModuleState<OptionalModuleStateInitParams, EntityStateData> {
   getModuleState: () => IEntityState<EntityStateData>;
+  getDefaultEntityStateData: () => EntityStateData;
   init: (initParams: ModuleStateInitParams<OptionalModuleStateInitParams>) => this;
 }
 

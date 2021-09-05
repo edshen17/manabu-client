@@ -6,7 +6,7 @@ import { IRootState } from './IRootState';
 abstract class AbstractModuleGetter<EntityStateData> implements IModuleGetter<EntityStateData> {
   public getModuleGetters = (): GetterTree<IEntityState<EntityStateData>, IRootState> => {
     const baseModuleGetters = {
-      entityStateData(state: IEntityState<EntityStateData>) {
+      entityStateData(state: IEntityState<EntityStateData>): EntityStateData {
         return state.entityStateData;
       },
     };

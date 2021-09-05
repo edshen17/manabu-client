@@ -1,23 +1,34 @@
 import { StringKeyObject } from '@server/types/custom';
 import { ActionContext, ActionTree } from 'vuex';
 import { IEntityState } from './IEntityState';
-import { GetEntityStateDataResponse, IModuleAction, ModuleActionInitParams } from './IModuleAction';
+import {
+  GetEntityStateDataResponse,
+  IModuleAction,
+  ModuleActionContext,
+  ModuleActionInitParams,
+} from './IModuleAction';
+import { IModuleState } from './IModuleState';
 import { IRootState } from './IRootState';
 
 abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateData>
   implements IModuleAction<OptionalModuleActionInitParams, EntityStateData>
 {
   protected _axios!: any;
+  protected _moduleState!: IModuleState<any, EntityStateData>;
+  protected _moduleName!: string;
 
   public getModuleActions = (): ActionTree<IEntityState<EntityStateData>, IRootState> => {
     const self = this;
     const baseModuleActions = {
       async getEntityStateData(
-        props: ActionContext<IEntityState<EntityStateData>, IRootState>,
+        props: ModuleActionContext<EntityStateData>,
         payload: StringKeyObject
-      ) {
+      ): Promise<EntityStateData | undefined> {
         const entityStateData = await self.getEntityStateData(props, payload);
         return entityStateData;
+      },
+      resetEntityStateData(props: ModuleActionContext<EntityStateData>): void {
+        self.resetEntityStateData(props);
       },
     };
     const extendedModuleActions = this._getModuleActionsTemplate();
@@ -50,14 +61,15 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     }
   };
 
-  protected _setEntityStateData = async (
+  private _setEntityStateData = async (
     props: ActionContext<IEntityState<EntityStateData>, IRootState>,
     payload: StringKeyObject
   ): Promise<void> => {
     const { commit } = props;
+    const { endpoint } = payload;
     try {
-      const entityStatePromise = await this._axios.get(payload.endpoint);
-      const entityStatePayload = entityStatePromise && entityStatePromise.data;
+      const entityStatePromise = await this._axios.get(endpoint);
+      const entityStatePayload = entityStatePromise && entityStatePromise.data[this._moduleName];
       commit('setEntityStatePromise', entityStatePromise);
       if (entityStatePayload) {
         commit('setEntityStateData', entityStatePayload);
@@ -72,9 +84,17 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     return {};
   };
 
+  public resetEntityStateData = (props: ModuleActionContext<EntityStateData>) => {
+    const { commit } = props;
+    const entityStatePayload = this._moduleState.getDefaultEntityStateData();
+    commit('setEntityStateData', entityStatePayload);
+  };
+
   public init = (initParams: ModuleActionInitParams<OptionalModuleActionInitParams>): this => {
-    const { axios, ...optionalModuleActionInitParams } = initParams;
+    const { axios, makeModuleState, moduleName, ...optionalModuleActionInitParams } = initParams;
     this._axios = axios;
+    this._moduleState = makeModuleState;
+    this._moduleName = moduleName;
     this._initTemplate(optionalModuleActionInitParams);
     return this;
   };
@@ -82,7 +102,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
   protected _initTemplate = (
     optionalModuleActionInitParams: Omit<
       ModuleActionInitParams<OptionalModuleActionInitParams>,
-      'axios'
+      'axios' | 'makeModuleState' | 'moduleName'
     >
   ): void => {
     return;

@@ -45,7 +45,7 @@ class UserModuleAction extends AbstractModuleAction<
   protected _initTemplate = async (
     optionalModuleActionInitParams: Omit<
       ModuleActionInitParams<OptionalUserModuleActionInitParams>,
-      'axios'
+      'axios' | 'makeModuleState' | 'moduleName'
     >
   ): Promise<void> => {
     const { makeLocaleHandler, i18n } = optionalModuleActionInitParams;

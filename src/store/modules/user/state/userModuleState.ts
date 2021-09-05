@@ -24,7 +24,7 @@ class UserModuleState extends AbstractModuleState<
 > {
   private _locale!: string;
 
-  protected _getDefaultEntityStateData = (): UserEntityStateData => {
+  public getDefaultEntityStateData = (): UserEntityStateData => {
     const defaultEntityStateData = {
       settings: {
         currency: 'SGD',

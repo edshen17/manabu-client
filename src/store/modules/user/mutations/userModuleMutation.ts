@@ -6,7 +6,9 @@ import { UserEntityStateData } from '../state/userModuleState';
 
 class UserModuleMutation extends AbstractModuleMutation<UserEntityStateData> {
   public getEntityStateData = (entityStatePayload: StringKeyObject): UserEntityStateData => {
-    const userEntityStateData = entityStatePayload.user;
+    const userEntityStateData = entityStatePayload.user
+      ? entityStatePayload.user
+      : entityStatePayload;
     return userEntityStateData;
   };
 

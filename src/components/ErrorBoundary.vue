@@ -44,6 +44,7 @@ export default Vue.extend({
     },
   },
   errorCaptured(err: Error): boolean {
+    console.log(err);
     this.err = err;
     this.$data._showPopup = true;
     return !this.stopPropagation;

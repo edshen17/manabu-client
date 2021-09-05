@@ -6,6 +6,10 @@ import { IModuleMutation } from './IModuleMutation';
 import { IModuleState } from './IModuleState';
 import { IRootState } from './IRootState';
 
+enum MODULE_NAME {
+  USER = 'user',
+}
+
 interface IModuleFactory<EntityStateData> {
   build(): Module<IEntityState<EntityStateData>, IRootState>;
   init(initParams: {
@@ -16,4 +20,4 @@ interface IModuleFactory<EntityStateData> {
   }): this;
 }
 
-export { IModuleFactory };
+export { IModuleFactory, MODULE_NAME };

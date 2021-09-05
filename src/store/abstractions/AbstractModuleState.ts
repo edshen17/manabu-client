@@ -5,14 +5,14 @@ abstract class AbstractModuleState<OptionalModuleStateInitParams, EntityStateDat
   implements IModuleState<OptionalModuleStateInitParams, EntityStateData>
 {
   public getModuleState = (): IEntityState<EntityStateData> => {
-    const entityStateData = this._getDefaultEntityStateData();
+    const entityStateData = this.getDefaultEntityStateData();
     const moduleState = {
       entityStateData,
     };
     return moduleState;
   };
 
-  protected abstract _getDefaultEntityStateData(): EntityStateData;
+  public abstract getDefaultEntityStateData(): EntityStateData;
 
   public init = (initParams: ModuleStateInitParams<OptionalModuleStateInitParams>): this => {
     const { ...optionalModuleStateInitParams } = initParams;

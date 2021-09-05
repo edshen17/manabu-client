@@ -1,4 +1,3 @@
-import { StringKeyObject } from '@server/types/custom';
 import { MutationTree } from 'vuex';
 import { IEntityState } from './IEntityState';
 import { IModuleMutation } from './IModuleMutation';
@@ -9,9 +8,8 @@ abstract class AbstractModuleMutation<EntityStateData> implements IModuleMutatio
     const baseModuleMutations: MutationTree<IEntityState<EntityStateData>> = {
       setEntityStateData(
         state: IEntityState<EntityStateData>,
-        entityStatePayload: StringKeyObject
+        entityStateData: EntityStateData
       ): void {
-        const entityStateData = self.getEntityStateData(entityStatePayload);
         self.setEntityStateData({ state, entityStateData });
       },
       setEntityStatePromise(state: IEntityState<EntityStateData>): void {
@@ -23,8 +21,6 @@ abstract class AbstractModuleMutation<EntityStateData> implements IModuleMutatio
     const moduleMutations = { ...baseModuleMutations, ...extendedModuleMutations };
     return moduleMutations;
   };
-
-  public abstract getEntityStateData(entityStatePayload: StringKeyObject): EntityStateData;
 
   public setEntityStateData = (props: {
     state: IEntityState<EntityStateData>;
