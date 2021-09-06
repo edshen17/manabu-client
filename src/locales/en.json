@@ -1,7 +1,9 @@
 {
   "homepage": {
-    "visionStatementTitle": "Our Vision",
-    "visionStatementText": "We strive to connect the world through personalized language learning. Above all, we value multicultural communication, friendship, and long-lasting relationships between students and teachers. We work to develop the best digital resources available and are committed to adjusting our lessons to fit students' goals. We also take feedback seriously and frequently update the website with requested features.",
+    "visionStatement": {
+      "title": "Our Vision",
+      "text": "We strive to connect the world through personalized language learning. Above all, we value multicultural communication, friendship, and long-lasting relationships between students and teachers. We work to develop the best digital resources available and are committed to adjusting our lessons to fit students' goals. We also take feedback seriously and frequently update the website with requested features."
+    },
     "chooseUsTitle": "Why Choose Us?",
     "valueProp": {
       "tailoredLessonsTitle": "Tailored Lessons",

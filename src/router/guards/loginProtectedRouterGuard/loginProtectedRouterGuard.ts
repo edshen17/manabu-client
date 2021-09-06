@@ -15,14 +15,13 @@ class LoginProtectedRouterGuard extends AbstractRouterGuard {
     const user = this._store.getters['user/entityStateData'];
     const isLoggedIn = user._id;
     const isHomePage = to.path == '/';
-    if (isHomePage) {
+    if (!isLoggedIn && !isHomePage) {
+      next('/');
+    }
+    if (isLoggedIn && isHomePage) {
       next('/dashboard');
     }
-    if (isLoggedIn) {
-      next();
-    } else {
-      next('/login');
-    }
+    next();
   };
 }
 

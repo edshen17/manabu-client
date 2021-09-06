@@ -32,10 +32,10 @@
           <div class="flex flex-wrap justify-center mb-8">
             <div class="w-full lg:w-8/12 px-4">
               <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
-                {{ $t('homepage.visionStatementTitle') }}
+                {{ $t('homepage.vision.title') }}
               </h2>
               <p class="text-xl m-4 md:leading-8">
-                {{ $t('homepage.visionStatementText') }}
+                {{ $t('homepage.vision.text') }}
               </p>
               <hr class="my-10 border-gray-300" />
               <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
