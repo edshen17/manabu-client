@@ -17,6 +17,7 @@ const routes: Array<RouteConfig> = [
     path: '/',
     name: 'Home',
     component: Home,
+    beforeEnter: loginProtectedRouterGuard.consume(),
   },
   {
     path: '/signup',

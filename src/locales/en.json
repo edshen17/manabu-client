@@ -55,11 +55,13 @@
     "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
   },
   "footer": {
-    "titles": {
-      "about": "About",
-      "more": "More"
+    "questions": {
+      "title": "Questions?",
+      "text": "Find us on any of these platforms! We usually respond in 1-2 business days."
     },
-    "aboutText": "Minato Manabu (Pte. Ltd) is a startup focused on empowering people through education. Its headquarters are located in Singapore and the company strives to provide students with innovative learning tools and high quality lessons.",
+    "usefulLinks": {
+      "title": "Useful Links"
+    },
     "copyright": "Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved."
   },
   "calendar": {

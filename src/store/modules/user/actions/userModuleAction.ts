@@ -7,6 +7,8 @@ import { StringKeyObject } from '@server/types/custom';
 import { ActionContext, ActionTree } from 'vuex';
 import { UserEntityStateData } from '../state/userModuleState';
 
+type UpdateLocaleParams = { locale: string; settings: StringKeyObject; _id: string };
+
 type OptionalUserModuleActionInitParams = { makeLocaleHandler: LocaleHandler; i18n: unknown };
 
 class UserModuleAction extends AbstractModuleAction<
@@ -24,7 +26,7 @@ class UserModuleAction extends AbstractModuleAction<
     const extendedModuleActions = {
       updateLocale(
         props: ActionContext<IEntityState<UserEntityStateData>, IRootState>,
-        payload: StringKeyObject
+        payload: UpdateLocaleParams
       ) {
         return self.updateLocale(props, payload);
       },
@@ -34,11 +36,13 @@ class UserModuleAction extends AbstractModuleAction<
 
   public updateLocale = (
     props: ActionContext<IEntityState<UserEntityStateData>, IRootState>,
-    payload: StringKeyObject
+    payload: UpdateLocaleParams
   ): void => {
     const { commit } = props;
-    const { locale } = payload;
+    const { locale, settings, _id } = payload;
+    const updatedSettings = { ...settings, locale };
     this._localeHandler.updateLocale({ i18n: this._i18n, locale });
+    this._axios.patch(`users/${_id}`, { settings: updatedSettings });
     commit('updateSettings', { locale });
   };
 

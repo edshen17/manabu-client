@@ -12,9 +12,11 @@ abstract class AbstractModuleMutation<EntityStateData> implements IModuleMutatio
       ): void {
         self.setEntityStateData({ state, entityStateData });
       },
-      setEntityStatePromise(state: IEntityState<EntityStateData>): void {
-        const promise = state.entityStatePromise;
-        self.setEntityStatePromise({ state, promise });
+      setEntityStatePromise(
+        state: IEntityState<EntityStateData>,
+        entityStatePromise: Promise<EntityStateData>
+      ): void {
+        self.setEntityStatePromise({ state, entityStatePromise });
       },
     };
     const extendedModuleMutations = this._getModuleMutationsTemplate();
@@ -32,10 +34,10 @@ abstract class AbstractModuleMutation<EntityStateData> implements IModuleMutatio
 
   public setEntityStatePromise = (props: {
     state: IEntityState<EntityStateData>;
-    promise?: Promise<EntityStateData>;
+    entityStatePromise: Promise<EntityStateData>;
   }): void => {
-    const { state, promise } = props;
-    state.entityStatePromise = promise;
+    const { state, entityStatePromise } = props;
+    state.entityStatePromise = entityStatePromise;
   };
 
   protected _getModuleMutationsTemplate = (): MutationTree<IEntityState<EntityStateData>> => {

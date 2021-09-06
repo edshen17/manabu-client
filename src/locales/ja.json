@@ -55,11 +55,13 @@
     "guidelines": "Manabu ガイドライン"
   },
   "footer": {
-    "titles": {
-      "about": "Manabuについて",
-      "more": "その他"
+    "questions": {
+      "title": "Questions?",
+      "text": "以下のツールから運営に連絡できます。2営業日以内に返信します。"
     },
-    "aboutText": "Minato Manabu（Pte。Ltd）は、教育を通したエンパワメントに焦点を当てたスタートアップです。 本社はシンガポールにあり、同社は生徒さんの成長を1番に考えて、ハイテクな学習ツールと質の高いレッスンを提供するよう努めています。",
+    "usefulLinks": {
+      "title": "Useful Links"
+    },
     "copyright": "Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved."
   },
   "calendar": {

@@ -9,7 +9,7 @@ interface IModuleMutation<EntityStateData> {
   }) => void;
   setEntityStatePromise: (props: {
     state: IEntityState<EntityStateData>;
-    promise: Promise<EntityStateData>;
+    entityStatePromise: Promise<EntityStateData>;
   }) => void;
 }
 

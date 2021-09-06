@@ -17,9 +17,9 @@
     <div class="container mx-auto px-4">
       <div class="grid grid-cols-12">
         <div class="col-span-12 md:col-span-6">
-          <h4 class="text-xl font-semibold">Questions?</h4>
+          <h4 class="text-xl font-semibold">{{ $t('footer.questions.title') }}</h4>
           <h5 class="text-lg mt-2 mb-4 text-gray-700">
-            Find us on any of these platforms! We usually respond in 1-2 business days.
+            {{ $t('footer.questions.text') }}
           </h5>
           <div class="grid grid-cols-12 gap-10 md:gap-4">
             <div v-for="icon in iconData" :key="icon.mediaName">
@@ -86,7 +86,9 @@ export default Vue.extend({
         return userLocale;
       },
       set: function (locale: string): void {
-        this.$store.dispatch('user/updateLocale', { locale });
+        const _id = this.userData._id;
+        const settings = this.userData.settings;
+        this.$store.dispatch('user/updateLocale', { locale, _id, settings });
       },
     },
     iconData: {
@@ -135,11 +137,11 @@ export default Vue.extend({
         return [
           {
             link: '/apply',
-            title: 'Become a Teacher',
+            title: this.$t('nav.becomeTeacher'),
           },
           {
             link: '/teachers',
-            title: 'Find a Teacher',
+            title: this.$t('nav.findTeacher'),
           },
         ];
       },
