@@ -23,22 +23,41 @@
       <div
         v-show="showDropdown"
         v-click-outside="closeDropdown"
-        class="absolute right-0 mt-2 py-2 w-80 bg-gray-800 rounded-sm shadow-xl"
+        class="absolute right-0 mt-2 py-2 w-96 bg-gray-800 rounded-md shadow-xl text-white"
       >
-        <ul>
-          <li
-            v-for="routerLink in innerRouterLinks"
-            :key="routerLink.title"
-            class="px-4 py-2 text-white hover:text-white"
-          >
-            <router-link
-              v-show="routerLink.isShowing"
-              :to="routerLink.link"
-              class="inline-block py-3 md:py-2 px-4 text-white no-underline"
-              >{{ routerLink.title }}</router-link
+        <div class="w-11/12 mx-auto">
+          <div class="grid grid-flow-col grid-cols-3 justify-center">
+            <div class="col-span-1">
+              <img
+                class="my-4 mx-5 h-20 w-20 relative z-10 block rounded-full object-cover"
+                src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
+              />
+            </div>
+            <div class="col-span-2 mt-6 ml-1 font-semi-bold justify-center">
+              <p class="text-lg">greencopter4444</p>
+              <div class="flex flex-wrap space-x-4 mt-3">
+                <p>Level 53</p>
+                <span class="border-l-2 border-gray-400"></span>
+                <p>Lifetime</p>
+              </div>
+            </div>
+          </div>
+          <hr class="my-1 px-3 border-gray-400 mx-auto" />
+          <ul class="my-2">
+            <li
+              v-for="routerLink in innerRouterLinks"
+              :key="routerLink.title"
+              class="px-2 py-1 text-white hover:bg-gray-600 rounded-md"
             >
-          </li>
-        </ul>
+              <router-link
+                v-show="routerLink.isShowing"
+                :to="routerLink.link"
+                class="inline-block py-3 md:py-2 px-4 no-underline"
+                >{{ routerLink.title }}</router-link
+              >
+            </li>
+          </ul>
+        </div>
       </div>
     </fade-in-out>
   </div>
@@ -60,7 +79,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      showDropdown: false,
+      showDropdown: true,
     };
   },
   computed: {},

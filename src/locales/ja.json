@@ -56,7 +56,8 @@
     "login": "@:userAuth.login",
     "signup": "@:userAuth.signup",
     "logout": "ログアウト",
-    "guidelines": "Manabu ガイドライン"
+    "guidelines": "Manabu ガイドライン",
+    "profile": "プロフィール"
   },
   "footer": {
     "questions": {

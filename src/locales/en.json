@@ -42,7 +42,8 @@
     "login": "@:userAuth.login",
     "signup": "@:userAuth.signup",
     "logout": "Logout",
-    "guidelines": "Manabu Guidelines"
+    "guidelines": "Manabu Guidelines",
+    "profile": "Profile"
   },
   "error": {
     "name": "You must input a name.",

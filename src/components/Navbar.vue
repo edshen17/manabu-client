@@ -86,7 +86,12 @@ import { mapGetters } from 'vuex';
 import { TranslateResult } from 'vue-i18n';
 import AccountDropdown from './AccountDropdown.vue';
 
-type RouterLink = { title: TranslateResult; link: string; isShowing: boolean };
+type RouterLink = {
+  title: TranslateResult;
+  link: string;
+  isShowing: boolean;
+  children?: RouterLink[];
+};
 
 export default Vue.extend({
   name: 'Navbar',
@@ -131,6 +136,23 @@ export default Vue.extend({
     innerRouterLinks: {
       get: function (): RouterLink[] {
         return [
+          {
+            title: this.$t('nav.profile'),
+            link: '/profile',
+            isShowing: this.isLoggedIn,
+          },
+          {
+            title: this.$t('nav.settings'),
+            link: '/settings',
+            isShowing: this.isLoggedIn,
+            children: [
+              {
+                title: this.$t('nav.logout'),
+                link: '/logout',
+                isShowing: this.isLoggedIn,
+              },
+            ],
+          },
           {
             title: this.$t('nav.logout'),
             link: '/logout',
