@@ -44,7 +44,6 @@
     <div
       class="w-full flex-grow lg:flex lg:items-center lg:w-auto"
       :class="{ hidden: !showDropdown, block: showDropdown }"
-      x-show.transition="true"
     >
       <ul class="pt-6 lg:pt-0 list-reset lg:flex justify-end flex-1 items-center">
         <li v-for="routerLink in outerRouterLinks" :key="routerLink.title" @click="toggleDropdown">
