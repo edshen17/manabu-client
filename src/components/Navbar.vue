@@ -50,51 +50,20 @@
           <router-link
             v-show="routerLink.isShowing"
             :to="routerLink.link"
-            class="px-3 py-4 md:py-2 inline-block no-underline"
+            class="px-3 py-4 lg:py-2 lg:px-5 inline-block no-underline"
             >{{ routerLink.title }}</router-link
           >
         </li>
-        <account-dropdown
+        <extended-account-dropdown
           v-show="isLoggedIn"
           class="hidden lg:block"
           :inner-router-links="innerRouterLinks"
-        ></account-dropdown>
-        <div v-show="isLoggedIn" class="h-2/6 lg:hidden border-red-50 my-4">
-          <div class="w-11/12 mx-auto">
-            <hr class="my-1 border-gray-400 mx-auto" />
-            <div class="grid grid-flow-col grid-cols-12">
-              <div class="col-span-4">
-                <img
-                  class="my-4 mx-4 h-16 w-16 relative z-10 block rounded-full object-cover"
-                  src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
-                />
-              </div>
-              <div class="col-span-8 my-3 font-semi-bold">
-                <p class="text-lg">greencopter4444</p>
-                <div class="flex flex-wrap space-x-4 mt-3">
-                  <p>Level 53</p>
-                  <span class="border-l-2 border-gray-400"></span>
-                  <p>Lifetime</p>
-                </div>
-              </div>
-            </div>
-            <hr class="my-1 border-gray-400 mx-auto" />
-            <ul class="my-4">
-              <li
-                v-for="routerLink in innerRouterLinks"
-                :key="routerLink.title"
-                class="lg:hover:bg-gray-600 rounded-md"
-              >
-                <router-link
-                  v-show="routerLink.isShowing"
-                  :to="routerLink.link"
-                  class="py-4 md:py-2 text-black inline-block no-underline"
-                  >{{ routerLink.title }}</router-link
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
+        ></extended-account-dropdown>
+        <basic-account-dropdown
+          v-show="isLoggedIn"
+          :inner-router-links="innerRouterLinks"
+          class="h-2/6 lg:hidden my-4"
+        ></basic-account-dropdown>
       </ul>
     </div>
   </nav>
@@ -104,7 +73,8 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { TranslateResult } from 'vue-i18n';
-import AccountDropdown from './AccountDropdown.vue';
+import ExtendedAccountDropdown from './AccountDropdown/ExtendedAccountDropdown.vue';
+import BasicAccountDropdown from './AccountDropdown/BasicAccountDropdown.vue';
 
 type RouterLink = {
   title: TranslateResult;
@@ -116,7 +86,8 @@ type RouterLink = {
 export default Vue.extend({
   name: 'Navbar',
   components: {
-    AccountDropdown,
+    ExtendedAccountDropdown,
+    BasicAccountDropdown,
   },
   data() {
     return {

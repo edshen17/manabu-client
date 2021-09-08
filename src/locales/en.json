@@ -50,6 +50,7 @@
     "login": "@:userAuth.login",
     "signup": "@:userAuth.signup",
     "logout": "Logout",
+    "settings": "Settings",
     "guidelines": "Manabu Guidelines",
     "profile": "Profile"
   },
