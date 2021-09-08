@@ -16,7 +16,6 @@
       md:w-6/12
       align-middle
     "
-    :class="mainClass"
   >
     <span class="mr-8 col-span-11 text-left">
       <slot />
@@ -49,10 +48,6 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'PopupAlert',
   props: {
-    mainClass: {
-      type: String,
-      default: '',
-    },
     alertIcon: {
       type: String,
       default: '',

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import urljoin from 'url-join';
+import vClickOutside from 'v-click-outside';
 import Vue from 'vue';
 import VueCookies from 'vue-cookies';
 import Vuelidate from 'vuelidate';
@@ -9,7 +10,6 @@ import { i18n } from './plugins/i18n';
 import { vuetify } from './plugins/vuetify/vuetify';
 import { router } from './router';
 import { store } from './store/index';
-
 const isAbsoluteURLRegex = /^(?:\w+:)\/\//;
 const API_HOST = '/api/v1';
 
@@ -33,6 +33,7 @@ Vue.config.errorHandler = (err, vm, info) => {
 };
 Vue.use(VueCookies);
 Vue.$cookies.config('7d');
+Vue.use(vClickOutside);
 
 new Vue({
   router,

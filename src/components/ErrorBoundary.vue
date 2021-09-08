@@ -18,7 +18,10 @@ export default Vue.extend({
   name: 'ErrorBoundary',
   components: { PopupAlertComponent },
   props: {
-    stopPropagation: Boolean,
+    stopPropagation: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

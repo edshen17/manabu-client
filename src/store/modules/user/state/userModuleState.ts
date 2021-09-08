@@ -4,7 +4,6 @@ import { ModuleStateInitParams } from '@/store/abstractions/IModuleState';
 import { JoinedUserDoc } from '@server/models/User';
 
 type UserEntityState = IEntityState<UserEntityStateData>;
-
 type UserEntityStateData = JoinedUserDoc | LoggedOutUser;
 
 type LoggedOutUser = {

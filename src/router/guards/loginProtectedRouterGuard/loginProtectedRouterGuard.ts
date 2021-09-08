@@ -12,8 +12,7 @@ class LoginProtectedRouterGuard extends AbstractRouterGuard {
     await this._store.dispatch('user/getEntityStateData', {
       endpoint: USER_ENTITY_STATE_ENDPOINT,
     });
-    const user = this._store.getters['user/entityStateData'];
-    const isLoggedIn = user._id;
+    const isLoggedIn = this._store.getters['user/isLoggedIn'];
     const isHomePage = to.path == '/';
     if (!isLoggedIn && !isHomePage) {
       next('/');

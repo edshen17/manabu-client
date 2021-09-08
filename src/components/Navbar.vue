@@ -1,5 +1,6 @@
 <template>
   <nav
+    v-click-outside="closeDropdown"
     class="
       flex
       items-center
@@ -14,8 +15,6 @@
       shadow-md
       relative
     "
-    tabindex="0"
-    @focusout="showMenu = false"
   >
     <div class="flex items-center flex-shrink-0 text-white mr-6">
       <router-link to="/" class="text-black no-underline"
@@ -25,7 +24,7 @@
     <button
       class="
         cursor-pointer
-        text-xl
+        text-3xl
         leading-none
         px-3
         py-1
@@ -38,17 +37,17 @@
         focus:outline-none
       "
       type="button"
-      @click="toggleNavbar()"
+      @click="toggleDropdown"
     >
       <i class="text-black fas fa-bars"></i>
     </button>
     <div
       class="w-full flex-grow lg:flex lg:items-center lg:w-auto"
-      :class="{ hidden: !showMenu, block: showMenu }"
+      :class="{ hidden: !showDropdown, block: showDropdown }"
       x-show.transition="true"
     >
       <ul class="pt-6 lg:pt-0 list-reset lg:flex justify-end flex-1 items-center">
-        <li v-for="routerLink in routerLinks" :key="routerLink.title" @click="showMenu = !showMenu">
+        <li v-for="routerLink in outerRouterLinks" :key="routerLink.title" @click="toggleDropdown">
           <router-link
             v-show="routerLink.isShowing"
             :to="routerLink.link"
@@ -56,20 +55,25 @@
             >{{ routerLink.title }}</router-link
           >
         </li>
-        <account-dropdown class="hidden sm:block"></account-dropdown>
-        <div class="px-4 py-5 sm:hidden">
+        <hr v-show="isLoggedIn" class="my-4 border-gray-300" />
+        <account-dropdown
+          v-show="isLoggedIn"
+          class="hidden lg:block"
+          :inner-router-links="innerRouterLinks"
+        ></account-dropdown>
+        <div v-show="isLoggedIn" class="px-4 h-32 lg:hidden">
           <div class="flex items-center">
             <img
-              class="h-16 w-16 object-cover border-2 border-gray-600 rounded-full"
+              class="h-14 w-14 object-cover rounded-full"
               src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
             />
-            <span class="ml-3 font-semi-bold"> Jane Doe </span>
-          </div>
-          <div class="">
-            <ul class="mt-4">
-              <li class="text-gray-400 mt-2">ssa</li>
-              <li class="text-gray-400 mt-2">ssa</li>
-            </ul>
+            <span class="relative">
+              <p class="ml-3 font-semi-bold">Jane Doe</p>
+              <ul class="mt-3 block absolute left-6 border-l-2 border-gray-300">
+                <li class="text-gray-400 mt-2 pl-2 right-0">ssa</li>
+                <li class="text-gray-400 mt-2 pl-2">ssa</li>
+              </ul>
+            </span>
           </div>
         </div>
       </ul>
@@ -83,6 +87,8 @@ import { mapGetters } from 'vuex';
 import { TranslateResult } from 'vue-i18n';
 import AccountDropdown from './AccountDropdown.vue';
 
+type RouterLink = { title: TranslateResult; link: string; isShowing: boolean };
+
 export default Vue.extend({
   name: 'Navbar',
   components: {
@@ -90,21 +96,15 @@ export default Vue.extend({
   },
   data() {
     return {
-      showMenu: false,
+      showDropdown: false,
     };
   },
   computed: {
     ...mapGetters({
-      userData: 'user/entityStateData',
+      isLoggedIn: 'user/isLoggedIn',
     }),
-    isLoggedIn: {
-      get: function (): boolean {
-        const isLoggedIn = this.userData._id;
-        return isLoggedIn;
-      },
-    },
-    routerLinks: {
-      get: function (): Array<{ title: TranslateResult; link: string; isShowing: boolean }> {
+    outerRouterLinks: {
+      get: function (): RouterLink[] {
         return [
           {
             title: this.$t('nav.becomeTeacher'),
@@ -126,6 +126,12 @@ export default Vue.extend({
             link: '/signup',
             isShowing: !this.isLoggedIn,
           },
+        ];
+      },
+    },
+    innerRouterLinks: {
+      get: function (): RouterLink[] {
+        return [
           {
             title: this.$t('nav.logout'),
             link: '/logout',
@@ -136,9 +142,14 @@ export default Vue.extend({
     },
   },
   methods: {
-    toggleNavbar: function () {
-      this.showMenu = !this.showMenu;
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+    closeDropdown() {
+      this.showDropdown = false;
     },
   },
 });
+
+export { RouterLink };
 </script>
