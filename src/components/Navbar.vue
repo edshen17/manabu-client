@@ -18,7 +18,7 @@
   >
     <div class="flex items-center flex-shrink-0 text-white mr-6">
       <router-link to="/" class="text-black no-underline"
-        ><span class="text-3xl pl-2 font-sans font-bold">Manabu</span></router-link
+        ><span class="text-4xl pl-2 font-sans font-bold">Manabu</span></router-link
       >
     </div>
     <button
@@ -42,37 +42,57 @@
       <i class="text-black fas fa-bars"></i>
     </button>
     <div
-      class="w-full flex-grow lg:flex lg:items-center lg:w-auto"
+      class="w-full flex-grow lg:flex lg:w-auto"
       :class="{ hidden: !showDropdown, block: showDropdown }"
     >
-      <ul class="pt-6 lg:pt-0 list-reset lg:flex justify-end flex-1 items-center">
+      <ul class="pt-4 lg:pt-0 list-reset lg:flex justify-end flex-1">
         <li v-for="routerLink in outerRouterLinks" :key="routerLink.title" @click="toggleDropdown">
           <router-link
             v-show="routerLink.isShowing"
             :to="routerLink.link"
-            class="inline-block py-3 md:py-2 px-4 text-black no-underline"
+            class="px-3 py-4 md:py-2 inline-block no-underline"
             >{{ routerLink.title }}</router-link
           >
         </li>
-        <hr v-show="isLoggedIn" class="my-4 border-gray-300" />
         <account-dropdown
           v-show="isLoggedIn"
           class="hidden lg:block"
           :inner-router-links="innerRouterLinks"
         ></account-dropdown>
-        <div v-show="isLoggedIn" class="px-4 h-32 lg:hidden">
-          <div class="flex items-center">
-            <img
-              class="h-14 w-14 object-cover rounded-full"
-              src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
-            />
-            <span class="relative">
-              <p class="ml-3 font-semi-bold">Jane Doe</p>
-              <ul class="mt-3 block absolute left-6 border-l-2 border-gray-300">
-                <li class="text-gray-400 mt-2 pl-2 right-0">ssa</li>
-                <li class="text-gray-400 mt-2 pl-2">ssa</li>
-              </ul>
-            </span>
+        <div v-show="isLoggedIn" class="h-2/6 lg:hidden border-red-50 my-4">
+          <div class="w-11/12 mx-auto">
+            <hr class="my-1 border-gray-400 mx-auto" />
+            <div class="grid grid-flow-col grid-cols-12">
+              <div class="col-span-4">
+                <img
+                  class="my-4 mx-4 h-16 w-16 relative z-10 block rounded-full object-cover"
+                  src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
+                />
+              </div>
+              <div class="col-span-8 my-3 font-semi-bold">
+                <p class="text-lg">greencopter4444</p>
+                <div class="flex flex-wrap space-x-4 mt-3">
+                  <p>Level 53</p>
+                  <span class="border-l-2 border-gray-400"></span>
+                  <p>Lifetime</p>
+                </div>
+              </div>
+            </div>
+            <hr class="my-1 border-gray-400 mx-auto" />
+            <ul class="my-4">
+              <li
+                v-for="routerLink in innerRouterLinks"
+                :key="routerLink.title"
+                class="lg:hover:bg-gray-600 rounded-md"
+              >
+                <router-link
+                  v-show="routerLink.isShowing"
+                  :to="routerLink.link"
+                  class="py-4 md:py-2 text-black inline-block no-underline"
+                  >{{ routerLink.title }}</router-link
+                >
+              </li>
+            </ul>
           </div>
         </div>
       </ul>

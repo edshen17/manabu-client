@@ -39,7 +39,7 @@
               </p>
               <hr class="my-10 border-gray-300" />
               <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
-                {{ $t('homepage.chooseUsTitle') }}
+                {{ $t('homepage.chooseUs.title') }}
               </h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 md:gap-y-7">
                 <div v-for="feature in chooseUsData" :key="feature.title">
@@ -64,7 +64,7 @@
           <div class="flex flex-wrap text-center justify-center">
             <div class="w-full lg:w-6/12 px-4">
               <h2 class="text-4xl font-semibold text-white tracking-wide">
-                {{ $t('homepage.valueProp.innovativeResources.title') }}
+                {{ $t('homepage.chooseUs.innovativeResources.title') }}
               </h2>
             </div>
           </div>
@@ -126,15 +126,15 @@ export default Vue.extend({
       get() {
         return [
           {
-            title: this.$t('homepage.valueProp.innovativeResources.flashcards'),
+            title: this.$t('homepage.chooseUs.innovativeResources.flashcards'),
             imgSrc: require('../assets/img/feature_1.jpg'),
           },
           {
-            title: this.$t('homepage.valueProp.innovativeResources.reports'),
+            title: this.$t('homepage.chooseUs.innovativeResources.reports'),
             imgSrc: require('../assets/img/feature_2.jpg'),
           },
           {
-            title: this.$t('homepage.valueProp.innovativeResources.tools'),
+            title: this.$t('homepage.chooseUs.innovativeResources.tools'),
             imgSrc: require('../assets/img/feature_3.jpg'),
           },
         ];
@@ -144,23 +144,23 @@ export default Vue.extend({
       get() {
         return [
           {
-            title: this.$t('homepage.valueProp.tailoredLessonsTitle'),
-            text: this.$t('homepage.valueProp.tailoredLessonsText'),
+            title: this.$t('homepage.chooseUs.tailoredLessons.title'),
+            text: this.$t('homepage.chooseUs.tailoredLessons.text'),
             class: 'fas fa-circle fa-language',
           },
           {
-            title: this.$t('homepage.valueProp.immersionTitle'),
-            text: this.$t('homepage.valueProp.immersionText'),
+            title: this.$t('homepage.chooseUs.immersion.title'),
+            text: this.$t('homepage.chooseUs.immersion.text'),
             class: 'fas fa-circle fa-headphones',
           },
           {
-            title: this.$t('homepage.valueProp.dataAnalyticsTitle'),
-            text: this.$t('homepage.valueProp.dataAnalyticsText'),
+            title: this.$t('homepage.chooseUs.dataAnalytics.title'),
+            text: this.$t('homepage.chooseUs.dataAnalytics.text'),
             class: 'fas fa-chart-bar',
           },
           {
-            title: this.$t('homepage.valueProp.communityTitle'),
-            text: this.$t('homepage.valueProp.communityText'),
+            title: this.$t('homepage.chooseUs.community.title'),
+            text: this.$t('homepage.chooseUs.community.text'),
             class: 'fas fa-hands-helping',
           },
         ];

@@ -1,19 +1,27 @@
 {
   "homepage": {
-    "visionStatement": {
+    "vision": {
       "title": "Our Vision",
       "text": "We strive to connect the world through personalized language learning. Above all, we value multicultural communication, friendship, and long-lasting relationships between students and teachers. We work to develop the best digital resources available and are committed to adjusting our lessons to fit students' goals. We also take feedback seriously and frequently update the website with requested features."
     },
-    "chooseUsTitle": "Why Choose Us?",
-    "valueProp": {
-      "tailoredLessonsTitle": "Tailored Lessons",
-      "tailoredLessonsText": "Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are customized specifically for you.",
-      "immersionTitle": "Immersion",
-      "immersionText": "We focus on getting students into a habit of constant learning. We are confident that we can help you immerse and achieve your fluency goals.",
-      "dataAnalyticsTitle": "Data Analytics",
-      "dataAnalyticsText": "Through Manabu, you can visualize your progress and growth. This can not only a way to stay motivated, but can also help you find areas of improvement.",
-      "communityTitle": "Community",
-      "communityText": "Learning a language can be difficult, so if you ever feel stuck we are happy to guide you! We have a supportive community of teachers and staff that will aid you throughout your studies.",
+    "chooseUs": {
+      "title": "Why Choose Us?",
+      "tailoredLessons": {
+        "title": "Tailored Lessons",
+        "text": "Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are customized specifically for you."
+      },
+      "immersion": {
+        "title": "Immersion",
+        "text": "We focus on getting students into a habit of constant learning. We are confident that we can help you immerse and achieve your fluency goals."
+      },
+      "dataAnalytics": {
+        "title": "Data Analytics",
+        "text": "Through Manabu, you can visualize your progress and growth. This can not only a way to stay motivated, but can also help you find areas of improvement."
+      },
+      "community": {
+        "title": "Community",
+        "text": "Learning a language can be difficult, so if you ever feel stuck we are happy to guide you! We have a supportive community of teachers and staff that will aid you throughout your studies."
+      },
       "innovativeResources": {
         "title": "Innovative Digital Resources",
         "flashcards": "Digital Flashcards",
