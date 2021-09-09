@@ -17,7 +17,7 @@
         <basic-account-dropdown
           v-click-outside="closeDropdown"
           :inner-router-links="innerRouterLinks"
-          @linkClick="closeDropdown"
+          @linkClick="showDropdown = false"
         ></basic-account-dropdown>
       </div>
     </fade-in-out>

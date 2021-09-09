@@ -99,7 +99,7 @@
           <div class="flex flex-wrap mt-12 justify-center text-center text-xl">
             <div class="w-full lg:w-6/12 px-4">
               <button class="bg-red-400 text-white font-bold py-2 px-4 rounded">
-                {{ $t('homepage.findTeacher') }}
+                <router-link to="/teachers">{{ $t('homepage.findTeacher') }}</router-link>
               </button>
               <p class="py-8 text-white md:leading-8">
                 {{ $t('homepage.beta') }}
