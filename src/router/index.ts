@@ -23,11 +23,13 @@ const routes: Array<RouteConfig> = [
     path: '/signup',
     name: 'Signup',
     component: UserAuthForm,
+    beforeEnter: loginProtectedRouterGuard.consume(),
   },
   {
     path: '/login',
     name: 'Login',
     component: UserAuthForm,
+    beforeEnter: loginProtectedRouterGuard.consume(),
   },
   {
     path: '/dashboard',

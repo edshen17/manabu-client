@@ -35,7 +35,8 @@ export default Vue.extend({
     routerLinkClass: {
       required: false,
       type: String,
-      default: 'py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full',
+      default:
+        'py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full lg:hover:bg-gray-700 lg:rounded-md',
     },
   },
   data() {
@@ -43,7 +44,7 @@ export default Vue.extend({
   },
   computed: {},
   mounted() {
-    console.log(this.$route.path);
+    return;
   },
   methods: {},
 });

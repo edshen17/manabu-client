@@ -26,7 +26,7 @@
         src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
       />
       <div class="col-span-9 my-3 font-semi-bold">
-        <p class="text-lg">greencopter4444</p>
+        <p class="text-lg">Not Zak</p>
         <div class="flex flex-wrap space-x-4 mt-3">
           <p>Level 53</p>
           <span class="border-l-2 border-gray-400"></span>

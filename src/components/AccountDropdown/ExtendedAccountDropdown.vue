@@ -1,17 +1,10 @@
 <template>
   <div class="relative" @keydown.esc="showDropdown = false">
     <button
-      class="
-        h-12
-        w-12
-        mx-4
-        relative
-        z-10
-        block
-        rounded-full
-        overflow-hidden
-        focus:outline-none focus:ring-2 focus:ring-pink-600 focus:border-transparent
-      "
+      class="h-12 w-12 mx-4 relative z-10 block rounded-full overflow-hidden"
+      :class="{
+        'outline-none ring-2 ring-pink-600 border-transparent': showDropdown,
+      }"
       @click="toggleDropdown"
     >
       <img
@@ -20,12 +13,12 @@
       />
     </button>
     <fade-in-out>
-      <div
-        v-show="showDropdown"
-        v-click-outside="closeDropdown"
-        class="absolute right-0 mt-2 py-2 w-96 bg-gray-800 rounded-md shadow-xl"
-      >
-        <basic-account-dropdown :inner-router-links="innerRouterLinks"></basic-account-dropdown>
+      <div v-show="showDropdown" class="absolute m-3 right-0 w-96 bg-gray-800 rounded-md shadow-xl">
+        <basic-account-dropdown
+          v-click-outside="closeDropdown"
+          :inner-router-links="innerRouterLinks"
+          @linkClick="closeDropdown"
+        ></basic-account-dropdown>
       </div>
     </fade-in-out>
   </div>
@@ -60,7 +53,8 @@ export default Vue.extend({
       this.showDropdown = !this.showDropdown;
     },
     closeDropdown(event: any) {
-      const isClickingProfileImage = event!.target.tagName.toLowerCase() == 'img';
+      const itemClicked = event!.target.tagName.toLowerCase();
+      const isClickingProfileImage = ['img', 'button'].includes(itemClicked);
       if (this.showDropdown && !isClickingProfileImage) {
         this.showDropdown = false;
       }
