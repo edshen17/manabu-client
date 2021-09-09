@@ -1,19 +1,10 @@
 <template>
-  <div class="w-full px-3 mx-auto sm:text-black lg:text-white">
-    <div class="mb-6 lg:my-2">
-      <span
-        v-for="routerLink in outerRouterLinks"
-        :key="routerLink.title"
-        class="lg:px-2 lg:py-1 lg:hover:bg-gray-600 rounded-md"
-      >
-        <router-link
-          v-show="routerLink.isShowing"
-          :to="routerLink.link"
-          class="py-4 lg:py-3 lg:px-4 inline-block no-underline"
-          >{{ routerLink.title }}</router-link
-        >
-      </span>
-    </div>
+  <div class="w-full px-3 mx-auto lg:text-white">
+    <basic-account-dropdown-link
+      :router-links="outerRouterLinks"
+      class="my-6 lg:my-2"
+      @linkClick="$emit('linkClick')"
+    ></basic-account-dropdown-link>
     <hr class="border-gray-400 mx-auto lg:hidden" />
     <div class="grid grid-flow-col grid-cols-12">
       <img
@@ -44,29 +35,23 @@
       </div>
     </div>
     <hr class="border-gray-400 mx-auto" />
-    <div class="my-6 lg:my-2">
-      <span
-        v-for="routerLink in innerRouterLinks"
-        :key="routerLink.title"
-        class="lg:px-2 lg:py-1 lg:hover:bg-gray-600 rounded-md block cursor-pointer"
-      >
-        <router-link
-          v-show="routerLink.isShowing"
-          :to="routerLink.link"
-          class="py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full"
-          >{{ routerLink.title }}</router-link
-        >
-      </span>
-    </div>
+    <basic-account-dropdown-link
+      :router-links="innerRouterLinks"
+      class="my-6 lg:my-2"
+      @linkClick="$emit('linkClick')"
+    ></basic-account-dropdown-link>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import BasicAccountDropdownLink from './BasicAccountDropdownLink.vue';
 
 export default Vue.extend({
   name: 'BasicAccountDropdown',
-  components: {},
+  components: {
+    BasicAccountDropdownLink,
+  },
   model: {},
   props: {
     innerRouterLinks: {

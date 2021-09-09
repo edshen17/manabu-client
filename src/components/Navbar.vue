@@ -16,9 +16,12 @@
       relative
     "
   >
-    <div class="flex items-center flex-shrink-0 text-white mr-6">
-      <router-link to="/" class="text-black no-underline"
-        ><span class="text-4xl pl-2 font-sans font-bold">Manabu</span></router-link
+    <div class="flex items-center flex-shrink-0 mr-6">
+      <router-link
+        to="/"
+        class="text-black no-underline text-4xl pl-2 font-sans font-bold"
+        @click="closeDropdown"
+        >Manabu</router-link
       >
     </div>
     <button
@@ -45,19 +48,13 @@
       class="py-2 w-full flex-grow lg:flex lg:w-auto"
       :class="{ hidden: !showDropdown, block: showDropdown }"
     >
-      <div class="list-reset lg:flex justify-end flex-1 block items-center">
-        <span
-          v-for="routerLink in outerRouterLinks"
-          :key="routerLink.title"
-          @click="toggleDropdown"
-        >
-          <router-link
-            v-show="routerLink.isShowing"
-            :to="routerLink.link"
-            class="px-3 py-4 lg:py-2 lg:px-5 block no-underline"
-            >{{ routerLink.title }}</router-link
-          >
-        </span>
+      <div class="lg:flex justify-end flex-1 block items-center">
+        <basic-account-dropdown-link
+          :router-links="outerRouterLinks"
+          div-class="block lg:inline-block"
+          router-link-class="px-3 py-4 lg:py-2 lg:px-5 block no-underline"
+          @linkClick="closeDropdown"
+        ></basic-account-dropdown-link>
         <extended-account-dropdown
           v-show="isLoggedIn"
           class="hidden lg:block"
@@ -67,6 +64,7 @@
           v-show="isLoggedIn"
           :inner-router-links="innerRouterLinks"
           class="h-2/6 lg:hidden my-4"
+          @linkClick="closeDropdown"
         ></basic-account-dropdown>
       </div>
     </div>
@@ -79,6 +77,7 @@ import { mapGetters } from 'vuex';
 import { TranslateResult } from 'vue-i18n';
 import ExtendedAccountDropdown from './AccountDropdown/ExtendedAccountDropdown.vue';
 import BasicAccountDropdown from './AccountDropdown/BasicAccountDropdown.vue';
+import BasicAccountDropdownLink from './AccountDropdown/BasicAccountDropdownLink.vue';
 
 type RouterLink = {
   title: TranslateResult;
@@ -92,6 +91,7 @@ export default Vue.extend({
   components: {
     ExtendedAccountDropdown,
     BasicAccountDropdown,
+    BasicAccountDropdownLink,
   },
   data() {
     return {
