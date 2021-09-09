@@ -16,12 +16,12 @@
     ></div>
     <div class="container mx-auto px-4">
       <div class="grid grid-cols-12">
-        <div class="col-span-12 md:col-span-6">
+        <div class="col-span-12 lg:col-span-6">
           <h4 class="text-xl font-semibold">{{ $t('footer.questions.title') }}</h4>
           <h5 class="text-lg mt-2 mb-4 text-gray-700">
             {{ $t('footer.questions.text') }}
           </h5>
-          <div class="grid grid-cols-12 gap-10 md:gap-4">
+          <div class="grid grid-cols-12 gap-10 lg:gap-4">
             <div v-for="icon in iconData" :key="icon.mediaName">
               <a :href="icon.link" :title="icon.mediaName" target="_blank">
                 <i class="mr-7 mb-4 text-2xl" :class="icon.class"></i>
@@ -29,7 +29,7 @@
             </div>
           </div>
         </div>
-        <div class="col-span-12 mt-2 md:col-span-3 md:mt-0">
+        <div class="col-span-12 mt-2 lg:col-span-3 lg:mt-0">
           <span class="block uppercase text-gray-600 text-md font-semibold mb-2">{{
             $t('footer.usefulLinks.title')
           }}</span>
@@ -39,7 +39,7 @@
             </li>
           </ul>
         </div>
-        <div class="col-span-12 mt-2 md:col-span-3 md:mt-0">
+        <div class="col-span-12 mt-2 lg:col-span-3 lg:mt-0">
           <label class="form-border">
             <select v-model="userLocale" class="block w-full rounded-md">
               <option
@@ -54,8 +54,8 @@
         </div>
       </div>
       <hr class="my-6 border-gray-400" />
-      <div class="flex flex-wrap items-center md:justify-between justify-center">
-        <div class="w-full md:w-4/12 px-4 mx-auto text-center">
+      <div class="flex flex-wrap items-center lg:justify-between justify-center">
+        <div class="w-full lg:w-4/12 px-4 mx-auto text-center">
           <div class="text-sm text-black font-semibold py-1">
             Copyright © {{ currentYear }}. {{ $t('footer.copyright') }}
           </div>

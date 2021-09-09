@@ -6,7 +6,7 @@
       items-center
       justify-between
       flex-wrap
-      p-6
+      p-4
       lg:sticky
       w-full
       z-20
@@ -16,11 +16,9 @@
       relative
     "
   >
-    <div class="flex items-center flex-shrink-0 text-white mr-6">
-      <router-link to="/" class="text-black no-underline"
-        ><span class="text-4xl pl-2 font-sans font-bold">Manabu</span></router-link
-      >
-    </div>
+    <router-link to="/" class="text-black no-underline"
+      ><span class="text-4xl pl-2 font-sans font-bold">Manabu</span></router-link
+    >
     <button
       class="
         cursor-pointer
@@ -42,18 +40,23 @@
       <i class="text-black fas fa-bars"></i>
     </button>
     <div
-      class="w-full flex-grow lg:flex lg:w-auto"
+      class="w-full flex-grow lg:flex lg:w-auto h-full"
       :class="{ hidden: !showDropdown, block: showDropdown }"
     >
-      <ul class="pt-4 lg:pt-0 list-reset lg:flex justify-end flex-1">
-        <li v-for="routerLink in outerRouterLinks" :key="routerLink.title" @click="toggleDropdown">
+      <div class="list-reset lg:flex justify-end flex-1 block items-center">
+        <span
+          v-for="routerLink in outerRouterLinks"
+          :key="routerLink.title"
+          class="hidden lg:block"
+          @click="toggleDropdown"
+        >
           <router-link
             v-show="routerLink.isShowing"
             :to="routerLink.link"
-            class="px-3 py-4 lg:py-2 lg:px-5 inline-block no-underline"
+            class="px-6 inline-block no-underline"
             >{{ routerLink.title }}</router-link
           >
-        </li>
+        </span>
         <extended-account-dropdown
           v-show="isLoggedIn"
           class="hidden lg:block"
@@ -62,9 +65,10 @@
         <basic-account-dropdown
           v-show="isLoggedIn"
           :inner-router-links="innerRouterLinks"
+          :outer-router-links="outerRouterLinks"
           class="h-2/6 lg:hidden my-4"
         ></basic-account-dropdown>
-      </ul>
+      </div>
     </div>
   </nav>
 </template>

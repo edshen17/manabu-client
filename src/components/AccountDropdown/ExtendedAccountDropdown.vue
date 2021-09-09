@@ -48,7 +48,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      showDropdown: true,
+      showDropdown: false,
     };
   },
   computed: {},
