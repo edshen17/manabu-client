@@ -53,7 +53,7 @@
         <router-link
           v-show="routerLink.isShowing"
           :to="routerLink.link"
-          class="py-4 lg:py-3 lg:px-4 inline-block no-underline"
+          class="py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full"
           >{{ routerLink.title }}</router-link
         >
       </span>
