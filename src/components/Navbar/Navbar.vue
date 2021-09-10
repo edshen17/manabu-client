@@ -82,7 +82,7 @@ import BasicAccountDropdownLink from '../AccountDropdown/BasicAccountDropdownLin
 
 type RouterLink = {
   title: TranslateResult;
-  link: string;
+  path: string;
   isShowing: boolean;
   children?: RouterLink[];
 };
@@ -108,22 +108,22 @@ export default Vue.extend({
         return [
           {
             title: this.$t('nav.becomeTeacher'),
-            link: '/apply',
+            path: '/apply',
             isShowing: !this.isLoggedIn,
           },
           {
             title: this.$t('nav.findTeacher'),
-            link: '/teachers',
+            path: '/teachers',
             isShowing: true,
           },
           {
             title: this.$t('nav.login'),
-            link: '/login',
+            path: '/login',
             isShowing: !this.isLoggedIn,
           },
           {
             title: this.$t('nav.signup'),
-            link: '/signup',
+            path: '/signup',
             isShowing: !this.isLoggedIn,
           },
         ];
@@ -134,24 +134,24 @@ export default Vue.extend({
         return [
           {
             title: this.$t('nav.profile'),
-            link: '/profile',
+            path: '/profile',
             isShowing: this.isLoggedIn,
           },
           {
             title: this.$t('nav.settings'),
-            link: '/settings',
+            path: '/settings',
             isShowing: this.isLoggedIn,
             children: [
               {
                 title: this.$t('nav.logout'),
-                link: '/logout',
+                path: '/logout',
                 isShowing: this.isLoggedIn,
               },
             ],
           },
           {
             title: this.$t('nav.logout'),
-            link: '/logout',
+            path: '/logout',
             isShowing: this.isLoggedIn,
           },
         ];

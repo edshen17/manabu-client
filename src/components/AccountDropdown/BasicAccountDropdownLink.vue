@@ -8,8 +8,8 @@
     >
       <router-link
         v-show="routerLink.isShowing"
-        :to="routerLink.link"
-        :class="[routerLinkClass, $route.path == routerLink.link ? activeRouterLinkClass : '']"
+        :to="routerLink.path"
+        :class="[routerLinkClass, $route.path == routerLink.path ? activeRouterLinkClass : '']"
         >{{ routerLink.title }}</router-link
       >
     </div>
@@ -49,7 +49,6 @@ export default Vue.extend({
   },
   computed: {},
   mounted() {
-    console.log(this.activeRouterLinkClass);
     return;
   },
   methods: {},
