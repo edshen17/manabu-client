@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import PopupAlertComponent from './PopupAlert.vue';
+import PopupAlertComponent from '../PopupAlert/PopupAlert.vue';
 
 export default Vue.extend({
   name: 'ErrorBoundary',

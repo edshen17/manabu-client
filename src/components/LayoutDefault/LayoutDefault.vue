@@ -18,9 +18,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import NavbarComponent from './Navbar.vue';
-import FooterComponent from './Footer.vue';
-import ErrorBoundaryComponent from './ErrorBoundary.vue';
+import NavbarComponent from '../Navbar/Navbar.vue';
+import FooterComponent from '../Footer/Footer.vue';
+import ErrorBoundaryComponent from '../ErrorBoundary/ErrorBoundary.vue';
 
 export default Vue.extend({
   name: 'LayoutDefault',

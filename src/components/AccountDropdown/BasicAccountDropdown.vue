@@ -26,7 +26,7 @@
         src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
       />
       <div class="col-span-9 my-3 font-semi-bold">
-        <p class="text-lg">Not Zak</p>
+        <p class="text-lg">Test User</p>
         <div class="flex flex-wrap space-x-4 mt-3">
           <p>Level 53</p>
           <span class="border-l-2 border-gray-400"></span>
@@ -38,6 +38,8 @@
     <basic-account-dropdown-link
       :router-links="innerRouterLinks"
       class="my-6 lg:my-2"
+      :router-link-class="routerLinkClass"
+      :active-router-link-class="activeRouterLinkClass"
       @linkClick="$emit('linkClick')"
     ></basic-account-dropdown-link>
   </div>
@@ -61,6 +63,14 @@ export default Vue.extend({
     outerRouterLinks: {
       required: false,
       type: Array,
+    },
+    routerLinkClass: {
+      required: false,
+      type: String,
+    },
+    activeRouterLinkClass: {
+      required: false,
+      type: String,
     },
   },
   data() {

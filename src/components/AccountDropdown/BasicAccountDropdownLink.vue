@@ -6,11 +6,12 @@
       :class="divClass"
       @click="$emit('linkClick')"
     >
-      <span :class="{ 'text-purple-400': $route.path == routerLink.link }">
-        <router-link v-show="routerLink.isShowing" :to="routerLink.link" :class="routerLinkClass">{{
-          routerLink.title
-        }}</router-link>
-      </span>
+      <router-link
+        v-show="routerLink.isShowing"
+        :to="routerLink.link"
+        :class="[routerLinkClass, $route.path == routerLink.link ? activeRouterLinkClass : '']"
+        >{{ routerLink.title }}</router-link
+      >
     </div>
   </div>
 </template>
@@ -30,13 +31,17 @@ export default Vue.extend({
     divClass: {
       required: false,
       type: String,
-      default: 'py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full',
+      default: 'py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full text-gray-500',
     },
     routerLinkClass: {
       required: false,
       type: String,
-      default:
-        'py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full lg:hover:bg-gray-700 lg:rounded-md',
+      default: '',
+    },
+    activeRouterLinkClass: {
+      required: false,
+      type: String,
+      default: 'text-black',
     },
   },
   data() {
@@ -44,6 +49,7 @@ export default Vue.extend({
   },
   computed: {},
   mounted() {
+    console.log(this.activeRouterLinkClass);
     return;
   },
   methods: {},

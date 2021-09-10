@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import LayoutDefault from '../components/LayoutDefault.vue';
+import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 
 export default Vue.extend({
   name: '',

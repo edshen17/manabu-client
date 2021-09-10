@@ -4,66 +4,73 @@
     <div
       class="py-10 px-6 shadow-2xl rounded-lg sm:px-10 w-11/12 md:w-6/12 xl:w-4/12 2xl:w-1/5 mb-28"
     >
-      <form class="mb-0 space-y-6" @keyup.13="handleAuthFormSubmit">
+      <form class="mb-0 space-y-6">
         <div v-if="isSignupPage">
-          <span class="form-border">
-            <input
-              v-model="name"
-              v-focus="focusedInputName == 'name'"
-              name="name"
-              type="text"
-              for="name"
-              autocomplete="name"
-              :placeholder="$t('userAuth.name')"
-              @focus="focusedInputName = 'name'"
-            />
-          </span>
+          <input
+            v-model="name"
+            v-focus="focusedInputName == 'name'"
+            class="form-border"
+            name="name"
+            type="text"
+            for="name"
+            autocomplete="name"
+            :placeholder="$t('userAuth.name')"
+            @focus="focusedInputName = 'name'"
+          />
           <p v-show="$v.name.$error" class="text-sm text-red-400 mt-2">
             {{ $t('error.name') }}
           </p>
         </div>
-        <div>
-          <span class="form-border">
-            <input
-              v-model="email"
-              v-focus="focusedInputName == 'email'"
-              name="email"
-              type="email"
-              autocomplete="email"
-              :placeholder="$t('userAuth.email')"
-              @focus="focusedInputName = 'email'"
-            />
-          </span>
-          <p v-show="$v.email.$error" class="text-sm text-red-400 mt-2">
-            {{ $t('error.email') }}
-          </p>
-        </div>
+        <input
+          v-model="email"
+          v-focus="focusedInputName == 'email'"
+          name="email"
+          type="email"
+          autocomplete="email"
+          :placeholder="$t('userAuth.email')"
+          class="form-border"
+          @focus="focusedInputName = 'email'"
+        />
+        <p v-show="$v.email.$error" class="text-sm text-red-400 mt-2">
+          {{ $t('error.email') }}
+        </p>
         <div class="grid grid-cols-12">
-          <span
-            class="block border-2 border-r-0 border-gray-300 rounded-md rounded-r-none col-span-10"
+          <input
+            v-model="password"
+            name="password"
+            autocomplete="password"
+            class="
+              col-span-10
+              border-r-0
+              rounded-r-none
+              block
+              border-2 border-gray-300
+              rounded-md
+              border-solid
+            "
+            :type="showPassword ? 'text' : 'password'"
+            :placeholder="$t('userAuth.password')"
+            @focus="focusedInputName = 'password'"
+            @keyup.13="handleAuthFormSubmit"
+          />
+          <button
+            class="
+              flex-grow
+              block
+              border-2 border-gray-300
+              rounded-md
+              border-solid
+              rounded-l-none
+              col-span-2
+            "
+            type="button"
+            @click="togglePasswordView"
           >
-            <input
-              v-model="password"
-              name="password"
-              class="w-full h-10 pl-3 pr-32 text-base placeholder-gray-600"
-              :type="showPassword ? 'text' : 'password'"
-              autocomplete="on"
-              :placeholder="$t('userAuth.password')"
-              @focus="focusedInputName = 'password'"
-            />
-          </span>
-          <span
-            class="border-2 border-gray-300 rounded-md rounded-l-none col-span-2 text-center flex"
-          >
-            <button
-              class="bg-white border-2 border-gray-300 rounded-md rounded-l-none flex-grow"
-              type="button"
-              @click="togglePasswordView"
-            >
-              <i v-show="showPassword" class="fas fa-eye text-gray-600"></i>
-              <i v-show="!showPassword" class="fas fa-eye-slash text-gray-600"></i>
-            </button>
-          </span>
+            <span class="text-gray-600">
+              <i v-show="showPassword" class="fas fa-eye"></i>
+              <i v-show="!showPassword" class="fas fa-eye-slash"></i>
+            </span>
+          </button>
         </div>
       </form>
       <p v-show="$v.password.$error" class="text-sm text-red-400 my-1">
@@ -114,7 +121,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import { focus } from 'vue-focus';
 import { email, minLength, required, requiredIf } from 'vuelidate/lib/validators';
-import LayoutDefault from '../components/LayoutDefault.vue';
+import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import { StringKeyObject } from '../../../server/types/custom';
 
 export default Vue.extend({

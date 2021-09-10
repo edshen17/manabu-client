@@ -51,7 +51,7 @@
       <div class="lg:flex justify-end flex-1 block items-center">
         <basic-account-dropdown-link
           :router-links="outerRouterLinks"
-          div-class="block lg:inline-block"
+          div-class="block lg:inline-block text-gray-500"
           router-link-class="px-3 py-4 lg:py-2 lg:px-5 block no-underline"
           @linkClick="closeDropdown"
         ></basic-account-dropdown-link>
@@ -64,6 +64,7 @@
           v-show="isLoggedIn"
           :inner-router-links="innerRouterLinks"
           class="h-2/6 lg:hidden my-4"
+          div-class="text-gray-500"
           @linkClick="closeDropdown"
         ></basic-account-dropdown>
       </div>
@@ -75,9 +76,9 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { TranslateResult } from 'vue-i18n';
-import ExtendedAccountDropdown from './AccountDropdown/ExtendedAccountDropdown.vue';
-import BasicAccountDropdown from './AccountDropdown/BasicAccountDropdown.vue';
-import BasicAccountDropdownLink from './AccountDropdown/BasicAccountDropdownLink.vue';
+import ExtendedAccountDropdown from '../AccountDropdown/ExtendedAccountDropdown.vue';
+import BasicAccountDropdown from '../AccountDropdown/BasicAccountDropdown.vue';
+import BasicAccountDropdownLink from '../AccountDropdown/BasicAccountDropdownLink.vue';
 
 type RouterLink = {
   title: TranslateResult;

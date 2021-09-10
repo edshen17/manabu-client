@@ -114,7 +114,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import LayoutDefault from '../components/LayoutDefault.vue';
+import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 
 export default Vue.extend({
   name: 'Home',

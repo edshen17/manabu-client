@@ -40,17 +40,15 @@
           </ul>
         </div>
         <div class="col-span-12 mt-2 lg:col-span-3 lg:mt-0">
-          <label class="form-border">
-            <select v-model="userLocale" class="block w-full rounded-md">
-              <option
-                v-for="(localeName, localeCode) in SUPPORTED_LOCALES"
-                :key="localeCode"
-                :value="localeCode"
-              >
-                {{ localeName }}
-              </option>
-            </select>
-          </label>
+          <select v-model="userLocale" class="block w-full rounded-md form-border">
+            <option
+              v-for="(localeName, localeCode) in SUPPORTED_LOCALES"
+              :key="localeCode"
+              :value="localeCode"
+            >
+              {{ localeName }}
+            </option>
+          </select>
         </div>
       </div>
       <hr class="my-6 border-gray-400" />
@@ -68,7 +66,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import { SUPPORTED_LOCALES } from '../plugins/i18n';
+import { SUPPORTED_LOCALES } from '../../plugins/i18n';
 
 export default Vue.extend({
   name: 'Footer',

@@ -17,6 +17,8 @@
         <basic-account-dropdown
           v-click-outside="closeDropdown"
           :inner-router-links="innerRouterLinks"
+          router-link-class="py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full lg:hover:bg-gray-700 lg:rounded-md text-white"
+          active-router-link-class="bg-gray-700"
           @linkClick="showDropdown = false"
         ></basic-account-dropdown>
       </div>
@@ -26,7 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import FadeInOut from '../FadeInOut.vue';
+import FadeInOut from '../FadeInOut/FadeInOut.vue';
 import BasicAccountDropdown from './BasicAccountDropdown.vue';
 
 export default Vue.extend({
