@@ -13,97 +13,102 @@
           </div>
         </div>
       </div>
-      <section class="relative py-8">
-        <div
-          class="
-            bottom-auto
-            top-0
-            left-0
-            right-0
-            w-full
-            absolute
-            pointer-events-none
-            overflow-hidden
-            -mt-20
-          "
-          style="height: 80px"
-        ></div>
-        <div class="container mx-auto px-4">
-          <div class="flex flex-wrap justify-center mb-8">
-            <div class="w-full lg:w-9/12 px-4">
-              <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
+      <section class="relative">
+        <div class="container mx-auto">
+          <div class="flex flex-wrap justify-center">
+            <div class="w-full lg:w-8/12">
+              <h2 class="text-3xl font-semibold text-center tracking-wide py-8">
                 {{ $t('homepage.vision.title') }}
               </h2>
-              <p class="text-xl">
+              <p class="text-lg lg:text-xl leading-8 lg:leading-loose px-4">
                 {{ $t('homepage.vision.text') }}
               </p>
-              <hr class="my-10 border-gray-300" />
-              <h2 class="text-3xl font-semibold text-center tracking-wide mb-10">
+              <hr class="my-10 mx-4 border-gray-300" />
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="relative mb-10 lg:mb-16">
+        <div class="container mx-auto">
+          <div class="flex flex-wrap justify-center">
+            <div class="w-full lg:w-8/12 px-4">
+              <h2 class="text-3xl font-semibold text-center tracking-wide pb-7">
                 {{ $t('homepage.chooseUs.title') }}
               </h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-4 md:gap-y-7">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:gap-y-7 lg:gap-x-16">
                 <div v-for="feature in chooseUsData" :key="feature.title">
-                  <div class="text-center">
+                  <div class="py-2 text-center">
                     <span class="fa-stack fa-2x">
                       <i class="fas fa-circle fa-stack-2x text-pink-100"></i>
                       <i :class="`${feature.class} fa-stack-1x text-red-400`"></i>
                     </span>
-                    <span class="text-xl text-center uppercase text-gray-600 px-2 font-semibold">{{
-                      feature.title
-                    }}</span>
+                    <span
+                      class="
+                        text-lg
+                        lg:text-xl
+                        uppercase
+                        text-gray-600
+                        px-2
+                        font-semibold
+                        tracking-wide
+                      "
+                      >{{ feature.title }}</span
+                    >
                   </div>
-                  <p class="text-xl py-5">{{ feature.text }}</p>
+                  <p class="text-lg lg:text-xl pt-2 pb-6 leading-8 lg:leading-loose">
+                    {{ feature.text }}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <section class="relative block bg-gray-600">
-        <div class="container mx-auto px-4 py-8">
+      <section class="relative bg-gray-600">
+        <div class="container mx-auto px-4 py-2 lg:pt-4 lg:pb-10">
           <div class="flex flex-wrap text-center justify-center">
-            <div class="w-full lg:w-6/12 px-4">
-              <h2 class="text-4xl font-semibold text-white tracking-wide">
+            <div class="w-full lg:w-8/12">
+              <h2 class="text-3xl font-semibold text-center tracking-wide py-8 text-white">
                 {{ $t('homepage.chooseUs.innovativeResources.title') }}
               </h2>
             </div>
           </div>
-          <div class="flex flex-wrap mt-12 justify-center">
-            <section class="grid lg:grid-cols-2 2xl:grid-cols-3 grid-cols-1 gap-12">
-              <article
+          <div class="flex flex-wrap">
+            <section class="grid grid-cols-1 gap-12 lg:grid-cols-2 2xl:grid-cols-3">
+              <div
                 v-for="card in cardData"
                 :key="card.title"
                 class="
-                  mx-auto
-                  max-w-sm
                   pb-8
+                  w-7/12
+                  lg:w-10/12
+                  mx-auto
                   bg-white
                   transform
                   duration-500
                   hover:-translate-y-1
-                  shadow-2xl
                   rounded-xl
                 "
               >
-                <h2 class="text-center text-3xl my-6 min-h-18 px-12 select-none">
+                <h2 class="py-3 lg:py-5 text-center text-2xl lg:text-3xl select-none">
                   {{ card.title }}
                 </h2>
                 <img
-                  class="mx-auto h-90 pointer-events-none select-none"
+                  class="mx-auto pointer-events-none select-none"
                   :src="card.imgSrc"
                   :alt="card.title"
                 />
-              </article>
+              </div>
             </section>
-          </div>
-          <div class="flex flex-wrap mt-12 justify-center text-center text-xl">
-            <div class="w-full lg:w-6/12 px-4">
-              <button class="bg-red-400 text-white font-bold py-2 px-4 rounded">
-                <router-link to="/teachers">{{ $t('homepage.findTeacher') }}</router-link>
-              </button>
-              <p class="py-8 text-white">
-                {{ $t('homepage.beta') }}
-              </p>
+            <div class="flex flex-wrap mt-12 justify-center text-center text-xl">
+              <div class="w-full lg:w-6/12 px-4">
+                <button class="bg-red-400 text-white font-bold py-2 px-4 rounded">
+                  <router-link to="/teachers">{{ $t('homepage.findTeacher') }}</router-link>
+                </button>
+                <p class="py-8 text-white">
+                  {{ $t('homepage.beta') }}
+                </p>
+              </div>
             </div>
           </div>
         </div>
