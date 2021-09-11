@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap mx-auto h-96"></div>
+  <div class="flex flex-wrap mx-auto h-96">{{ userData }}</div>
 </template>
 
 <script lang="ts">

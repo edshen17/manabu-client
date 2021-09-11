@@ -23,10 +23,10 @@
           rounded-full
           object-cover
         "
-        src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
+        :src="userData.profileImageUrl"
       />
       <div class="col-span-9 my-3 font-semi-bold">
-        <p class="text-lg">Test User</p>
+        <p class="text-lg">{{ userData.name }}</p>
         <div class="flex flex-wrap space-x-4 mt-3">
           <p>Level 53</p>
           <span class="border-l-2 border-gray-400"></span>
@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import BasicAccountDropdownLink from './BasicAccountDropdownLink.vue';
 
 export default Vue.extend({
@@ -76,7 +77,11 @@ export default Vue.extend({
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      userData: 'user/entityStateData',
+    }),
+  },
   mounted() {
     return;
   },

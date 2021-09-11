@@ -7,10 +7,7 @@
       }"
       @click="toggleDropdown"
     >
-      <img
-        class="h-full w-full object-cover"
-        src="https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c"
-      />
+      <img class="h-full w-full object-cover" :src="userData.profileImageUrl" />
     </button>
     <fade-in-out>
       <div v-show="showDropdown" class="absolute m-3 right-0 w-96 bg-gray-800 rounded-md shadow-xl">
@@ -29,6 +26,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import FadeInOut from '../FadeInOut/FadeInOut.vue';
+import { mapGetters } from 'vuex';
 import BasicAccountDropdown from './BasicAccountDropdown.vue';
 
 export default Vue.extend({
@@ -46,7 +44,11 @@ export default Vue.extend({
       showDropdown: false,
     };
   },
-  computed: {},
+  computed: {
+    ...mapGetters({
+      userData: 'user/entityStateData',
+    }),
+  },
   mounted() {
     return;
   },
