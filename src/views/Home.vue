@@ -35,7 +35,7 @@
               <h2 class="text-3xl font-semibold text-center tracking-wide pb-7">
                 {{ $t('homepage.chooseUs.title') }}
               </h2>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:gap-y-7 lg:gap-x-16">
+              <div class="grid grid-cols-1 md:grid-cols-2 md:gap-y-7 md:gap-x-16">
                 <div v-for="feature in chooseUsData" :key="feature.title">
                   <div class="py-2 text-center">
                     <span class="fa-stack fa-2x">
@@ -65,7 +65,7 @@
         </div>
       </section>
       <section class="relative bg-gray-600">
-        <div class="container mx-auto px-4 py-2 lg:pt-4 lg:pb-10">
+        <div class="container mx-auto px-4 py-2 lg:pt-4 lg:pb-6">
           <div class="flex flex-wrap text-center justify-center">
             <div class="w-full lg:w-8/12">
               <h2 class="text-3xl font-semibold text-center tracking-wide py-8 text-white">
@@ -81,6 +81,7 @@
                 class="
                   pb-8
                   w-7/12
+                  md:w-6/12
                   lg:w-10/12
                   mx-auto
                   bg-white
@@ -105,7 +106,7 @@
                 <button class="bg-red-400 text-white font-bold py-2 px-4 rounded">
                   <router-link to="/teachers">{{ $t('homepage.findTeacher') }}</router-link>
                 </button>
-                <p class="py-8 text-white">
+                <p class="py-10 text-white">
                   {{ $t('homepage.beta') }}
                 </p>
               </div>
