@@ -129,11 +129,6 @@
       </div>
     </div>
   </div>
-
-  <!-- <div class="flex flex-wrap justify-center">
-    <img src="../assets/img/torii-lg.png" class="object-contain h-36 w-full my-10" />
-    
-  </div> -->
 </template>
 
 <script lang="ts">
