@@ -1,15 +1,18 @@
 <template>
   <div class="pb-24 lg:h-screen">
-    <progress-bar ref="progressBar" class="pt-10" />
+    <progress-bar ref="progressBar" class="pt-8 md:pt-10" @step-backward="step('backward')" />
     <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
       :language-offerings="languageOfferings"
-      @step-forward="setTargetLanguage"
+      emitted-value-name="targetLanguageName"
     />
     <language-level-step
       v-show="stepIndex == 1"
-      :step-title="$t('onboarding.languageLevel', { language: $t(`localeCode.${targetLanguage}`) })"
+      :step-title="
+        $t('onboarding.languageLevel', { language: $t(`localeCode.${targetLanguageName}`) })
+      "
+      emitted-value-name="targetLanguageLevel"
     />
   </div>
 </template>
@@ -22,6 +25,7 @@ import LanguageNameStep from '../components/OnboardingSteps/LanguageNameStep.vue
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import LanguageLevelStep from '../components/OnboardingSteps/LanguageLevelStep.vue';
+import { EventBus } from '../components/EventBus/EventBus';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -36,7 +40,8 @@ export default Vue.extend({
   props: {},
   data() {
     return {
-      targetLanguage: '',
+      targetLanguageName: '',
+      targetLanguageLevel: '',
       stepIndex: 0,
       stepTotal: 10,
     };
@@ -94,15 +99,24 @@ export default Vue.extend({
     },
   },
   mounted() {
-    return;
+    EventBus.$on('item-clicked', this.handleStepForward());
+    EventBus.$on('step-forward', this.handleStepForward());
   },
   created() {
     this.$emit('update:layout', LayoutDefault);
   },
   methods: {
-    setTargetLanguage(value: string): void {
-      this.targetLanguage = value;
-      this.step('forward');
+    handleStepForward(): (payload: { value: any; emittedValueName: string }) => void {
+      const self = this;
+      return function (payload: { value: any; emittedValueName: string }) {
+        const { value, emittedValueName } = payload;
+        self.setData({ propertyName: emittedValueName, value });
+        self.step('forward');
+      };
+    },
+    setData(props: { propertyName: string; value: any }): void {
+      const { propertyName, value } = props;
+      (this as any)[propertyName] = value;
     },
     step(direction: string): void {
       const isForward = direction == 'forward';

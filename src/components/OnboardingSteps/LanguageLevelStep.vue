@@ -1,17 +1,26 @@
 <template>
-  <grid-list-layout :step-title="stepTitle" :list-items="languageLevels" />
+  <grid-list-layout
+    :step-title="stepTitle"
+    :list-items="languageLevels"
+    parent-name="language-level"
+    :emitted-value-name="emittedValueName"
+  />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import GridListLayout, { ListItems } from './GridListLayout.vue';
-import NextBackButtons from './NextBackButtons.vue';
 
 export default Vue.extend({
   name: 'LanguageLevelStep',
-  components: { GridListLayout, NextBackButtons },
+  components: { GridListLayout },
   props: {
     stepTitle: {
+      type: String,
+      default: '',
+      required: true,
+    },
+    emittedValueName: {
       type: String,
       default: '',
       required: true,

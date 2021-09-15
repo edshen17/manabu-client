@@ -19,7 +19,7 @@
           'hover:bg-gray-700': languageOffering.isTeachable,
         }"
         :title="languageOffering.isTeachable ? '' : $t('onboarding.comingSoon')"
-        @click="$emit('step-forward', languageOffering.localeCode)"
+        @click="emitStepForward(languageOffering.localeCode)"
       >
         <flag-icon icon-class="text-6xl rounded-md" :country-code="languageOffering.countryCode" />
         <p class="flex justify-center text-white py-2">
@@ -35,12 +35,18 @@ import Vue from 'vue';
 import 'flag-icon-css/css/flag-icon.css';
 import FlagIcon from '../FlagIcon/FlagIcon.vue';
 import GridColLayout from './GridColLayout.vue';
+import { EventBus } from '../EventBus/EventBus';
 
 export default Vue.extend({
   name: 'LanguageNameStep',
   components: { FlagIcon, GridColLayout },
   props: {
     stepTitle: {
+      type: String,
+      default: '',
+      required: true,
+    },
+    emittedValueName: {
       type: String,
       default: '',
       required: true,
@@ -58,6 +64,10 @@ export default Vue.extend({
   mounted() {
     return;
   },
-  methods: {},
+  methods: {
+    emitStepForward(value: string): void {
+      EventBus.$emit('step-forward', { value, emittedValueName: this.emittedValueName });
+    },
+  },
 });
 </script>

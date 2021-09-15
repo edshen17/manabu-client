@@ -30,7 +30,16 @@
           </ul>
         </div>
         <div class="col-span-12 lg:col-span-3 my-2 lg:mt-0">
-          <select v-model="userLocale" class="block w-full rounded-md form-border">
+          <select
+            v-model="userLocale"
+            class="
+              block
+              w-full
+              rounded-md
+              form-border
+              focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50
+            "
+          >
             <option
               v-for="(localeName, localeCode) in SUPPORTED_LOCALES"
               :key="localeCode"

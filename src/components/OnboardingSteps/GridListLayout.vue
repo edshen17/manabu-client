@@ -22,9 +22,9 @@
             'rounded-t-lg rounded-l-lg rounded-r-lg rounded-bl-none rounded-br-none': index == 0,
             'border-b-2 rounded-b-lg': index == listItems.length - 1,
           }"
-          @click="$emit('item-clicked', listItem)"
+          @click="emitItemClicked(listItem.value)"
         >
-          {{ listItem.content }}
+          <button>{{ listItem.content }}</button>
         </li>
       </ul>
     </div>
@@ -33,6 +33,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { EventBus } from '../EventBus/EventBus';
+
 type ListItems = { content: unknown; value: unknown }[];
 
 export default Vue.extend({
@@ -40,6 +42,11 @@ export default Vue.extend({
   components: {},
   props: {
     stepTitle: {
+      type: String,
+      default: '',
+      required: true,
+    },
+    emittedValueName: {
       type: String,
       default: '',
       required: true,
@@ -57,7 +64,11 @@ export default Vue.extend({
   mounted() {
     return;
   },
-  methods: {},
+  methods: {
+    emitItemClicked(value: any): void {
+      EventBus.$emit('item-clicked', { value, emittedValueName: this.emittedValueName });
+    },
+  },
 });
 
 export { ListItems };
