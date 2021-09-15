@@ -1,6 +1,6 @@
 <template>
   <div class="pb-24 lg:h-screen">
-    <progress-bar ref="progressBar" class="pt-8 md:pt-10" @step-backward="step('backward')" />
+    <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
     <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
@@ -25,7 +25,7 @@ import LanguageNameStep from '../components/OnboardingSteps/LanguageNameStep.vue
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import LanguageLevelStep from '../components/OnboardingSteps/LanguageLevelStep.vue';
-import { EventBus } from '../components/EventBus/EventBus';
+import { EventBus, EventBusPayload } from '../components/EventBus/EventBus';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -101,17 +101,24 @@ export default Vue.extend({
   mounted() {
     EventBus.$on('item-clicked', this.handleStepForward());
     EventBus.$on('step-forward', this.handleStepForward());
+    EventBus.$on('step-backward', this.handleStepBackward());
   },
   created() {
     this.$emit('update:layout', LayoutDefault);
   },
   methods: {
-    handleStepForward(): (payload: { value: any; emittedValueName: string }) => void {
+    handleStepForward(): (payload: EventBusPayload) => void {
       const self = this;
-      return function (payload: { value: any; emittedValueName: string }) {
+      return function (payload: EventBusPayload) {
         const { value, emittedValueName } = payload;
         self.setData({ propertyName: emittedValueName, value });
         self.step('forward');
+      };
+    },
+    handleStepBackward(): () => void {
+      const self = this;
+      return function () {
+        self.step('handleStepBackward');
       };
     },
     setData(props: { propertyName: string; value: any }): void {
