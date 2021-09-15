@@ -1,6 +1,6 @@
 <template>
   <grid-col-layout :step-title="stepTitle">
-    <div v-for="languageOffering in languageOfferings" :key="languageOffering.localeCode">
+    <div v-for="languageOffering in languageOfferings" :key="languageOffering.languageCode">
       <button
         class="
           bg-gray-800
@@ -19,7 +19,7 @@
           'hover:bg-gray-700': languageOffering.isTeachable,
         }"
         :title="languageOffering.isTeachable ? '' : $t('onboarding.comingSoon')"
-        @click="emitStepForward(languageOffering.localeCode)"
+        @click="emitStepForward(languageOffering.languageCode)"
       >
         <flag-icon icon-class="text-6xl rounded-md" :country-code="languageOffering.countryCode" />
         <p class="flex justify-center text-white py-2">

@@ -79,6 +79,7 @@
     "learningTargetLanguage": "習いたい言語は？",
     "teachingTargetLanguage": "教えたい言語は？",
     "languageLevel": "{language}能力は？",
+    "speakingNonTargetLanguage": "話せる言語は？",
     "languageLevels": {
       "beginner": "超初級（A1）",
       "elementary": "初級（A2）",

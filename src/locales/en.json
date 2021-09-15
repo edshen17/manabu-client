@@ -79,6 +79,7 @@
   "onboarding": {
     "learningTargetLanguage": "I want to learn...",
     "teachingTargetLanguage": "I want to teach...",
+    "speakingNonTargetLanguage": "I can speak...",
     "languageLevel": "My {language} level is",
     "languageLevels": {
       "beginner": "Beginner (A1)",

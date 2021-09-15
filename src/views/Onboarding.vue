@@ -4,15 +4,28 @@
     <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
-      :language-offerings="languageOfferings"
-      emitted-value-name="targetLanguageName"
+      :language-offerings="targetLanguageOfferings"
+      emitted-value-name="targetLanguageCode"
     />
     <language-level-step
       v-show="stepIndex == 1"
       :step-title="
-        $t('onboarding.languageLevel', { language: $t(`localeCode.${targetLanguageName}`) })
+        $t('onboarding.languageLevel', { language: $t(`localeCode.${targetLanguageCode}`) })
       "
       emitted-value-name="targetLanguageLevel"
+    />
+    <language-name-step
+      v-show="stepIndex == 2"
+      :step-title="nonTargetLanguageText"
+      :language-offerings="nonTargetLanguageOfferings"
+      emitted-value-name="nonTargetLanguageCode"
+    />
+    <language-level-step
+      v-show="stepIndex == 3"
+      :step-title="
+        $t('onboarding.languageLevel', { language: $t(`localeCode.${nonTargetLanguageCode}`) })
+      "
+      emitted-value-name="nonTargetLanguageLevel"
     />
   </div>
 </template>
@@ -29,7 +42,7 @@ import { EventBus, EventBusPayload } from '../components/EventBus/EventBus';
 
 type LanguageOfferings = {
   name: TranslateResult;
-  localeCode: string;
+  languageCode: string;
   countryCode: string;
   isTeachable: boolean;
 }[];
@@ -40,8 +53,10 @@ export default Vue.extend({
   props: {},
   data() {
     return {
-      targetLanguageName: '',
+      targetLanguageCode: '',
       targetLanguageLevel: '',
+      nonTargetLanguageCode: '',
+      nonTargetLanguageLevel: '',
       stepIndex: 0,
       stepTotal: 10,
     };
@@ -60,41 +75,57 @@ export default Vue.extend({
         return targetLanguageText;
       },
     },
+    nonTargetLanguageText: {
+      get(): TranslateResult {
+        const nonTargetLanguageText = this.$t('onboarding.speakingNonTargetLanguage');
+        return nonTargetLanguageText;
+      },
+    },
     fluentLanguageText: {
       get(): TranslateResult {
         const fluentLanguageText = this.$t('onboarding.fluentLanguage');
         return fluentLanguageText;
       },
     },
-    languageOfferings: {
+    targetLanguageOfferings: {
       get(): LanguageOfferings {
-        const languageOfferings = [
+        const targetLanguageOfferings = [
           {
             name: this.$t('localeCode.ja'),
-            localeCode: 'ja',
+            languageCode: 'ja',
             countryCode: 'jp',
             isTeachable: true,
           },
           {
             name: this.$t('localeCode.en'),
-            localeCode: 'en',
+            languageCode: 'en',
             countryCode: 'us',
             isTeachable: true,
           },
           {
             name: this.$t('localeCode.cn'),
-            localeCode: 'cn',
+            languageCode: 'cn',
             countryCode: 'cn',
             isTeachable: false,
           },
           {
             name: this.$t('localeCode.kr'),
-            localeCode: 'kr',
+            languageCode: 'kr',
             countryCode: 'kr',
             isTeachable: false,
           },
         ];
-        return languageOfferings;
+        return targetLanguageOfferings;
+      },
+    },
+    nonTargetLanguageOfferings: {
+      get(): LanguageOfferings {
+        const targetLanguageOfferings = this.targetLanguageOfferings;
+        const nonTargetLanguageOfferings = targetLanguageOfferings.filter((languageOffering) => {
+          return languageOffering.languageCode != this.targetLanguageCode;
+        });
+        console.log(nonTargetLanguageOfferings);
+        return nonTargetLanguageOfferings;
       },
     },
   },
