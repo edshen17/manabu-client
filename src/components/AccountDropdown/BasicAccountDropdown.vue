@@ -55,7 +55,6 @@ export default Vue.extend({
   components: {
     BasicAccountDropdownLink,
   },
-  model: {},
   props: {
     innerRouterLinks: {
       required: false,

@@ -32,7 +32,6 @@ import BasicAccountDropdown from './BasicAccountDropdown.vue';
 export default Vue.extend({
   name: 'ExtendedAccountDropdown',
   components: { FadeInOut, BasicAccountDropdown },
-  model: {},
   props: {
     innerRouterLinks: {
       required: false,

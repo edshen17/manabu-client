@@ -5,6 +5,7 @@ import { makeLogoutRouterGuard } from './guards/logoutRouterGuard';
 
 const Dashboard = () => import('../views/Dashboard.vue');
 const Home = () => import('../views/Home.vue');
+const Onboarding = () => import('../views/Onboarding.vue');
 const UserAuthForm = () => import('../views/UserAuthForm.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
@@ -41,6 +42,11 @@ const routes: Array<RouteConfig> = [
     path: '/logout',
     name: 'Logout',
     beforeEnter: logoutRouterGuard.consume(),
+  },
+  {
+    path: '/onboarding',
+    name: 'Onboarding',
+    component: Onboarding,
   },
 ];
 

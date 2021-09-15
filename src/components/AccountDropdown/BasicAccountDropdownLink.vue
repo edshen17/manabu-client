@@ -22,7 +22,6 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'BasicAccountDropdownLink',
   components: {},
-  model: {},
   props: {
     routerLinks: {
       required: false,

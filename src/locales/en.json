@@ -76,6 +76,20 @@
     },
     "copyright": "Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved."
   },
+  "onboarding": {
+    "learningTargetLanguage": "I want to learn...",
+    "teachingTargetLanguage": "I want to teach...",
+    "languageLevel": "My {language} level is",
+    "languageLevels": {
+      "beginner": "Beginner (A1)",
+      "elementary": "Elementary (A2)",
+      "intermediate": "Intermediate (B1)",
+      "upperIntermediate": "Upper Intermediate (B2)",
+      "advanced": "Advanced (C1)",
+      "proficient": "Proficient (C2)"
+    },
+    "comingSoon": "Coming soon!"
+  },
   "calendar": {
     "lessonTime": "Lesson Time",
     "commTool": "Communication Tool",
@@ -162,8 +176,10 @@
       "bookNow": "BOOK NOW"
     }
   },
-  "localeCodes": {
+  "localeCode": {
     "en": "English",
-    "ja": "Japanese"
+    "ja": "Japanese",
+    "kr": "Korean",
+    "cn": "Chinese"
   }
 }

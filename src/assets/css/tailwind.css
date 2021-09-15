@@ -31,3 +31,6 @@
     @apply block border-2 border-gray-300 rounded-md border-solid;
 }
 
+.progress-bar-transition {
+    transition: width 0.3s linear;
+}

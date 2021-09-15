@@ -16,7 +16,6 @@ import Vue from 'vue';
 export default Vue.extend({
   name: 'FadeInOut',
   components: {},
-  model: {},
   props: {},
   data() {
     return {};

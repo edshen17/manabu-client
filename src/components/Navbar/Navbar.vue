@@ -102,6 +102,7 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       isLoggedIn: 'user/isLoggedIn',
+      userData: 'user/entityStateData',
     }),
     outerRouterLinks: {
       get: function (): RouterLink[] {

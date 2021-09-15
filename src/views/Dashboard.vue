@@ -10,7 +10,6 @@ import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 export default Vue.extend({
   name: '',
   components: {},
-  model: {},
   props: {},
   data() {
     return {};

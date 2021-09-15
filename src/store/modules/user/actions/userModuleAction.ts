@@ -38,12 +38,14 @@ class UserModuleAction extends AbstractModuleAction<
     props: ActionContext<IEntityState<UserEntityStateData>, IRootState>,
     payload: UpdateLocaleParams
   ): void => {
-    const { commit } = props;
+    const { commit, getters } = props;
     const { locale, settings, _id } = payload;
     const updatedSettings = { ...settings, locale };
     this._localeHandler.updateLocale({ i18n: this._i18n, locale });
-    this._axios.patch(`users/${_id}`, { settings: updatedSettings });
     commit('updateSettings', { locale });
+    if (getters.isLoggedIn) {
+      this._axios.patch(`users/${_id}`, { settings: updatedSettings });
+    }
   };
 
   protected _initTemplate = async (

@@ -27,6 +27,7 @@ module.exports = {
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
     "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
     "vue/no-reserved-keys": "off",
+    "vue/no-unused-components": "off",
     "@typescript-eslint/no-this-alias": "off",
     "vue/order-in-components": ["error", {
       "order": [

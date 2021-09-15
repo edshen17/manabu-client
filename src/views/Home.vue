@@ -74,7 +74,7 @@
             </div>
           </div>
           <div class="flex flex-wrap">
-            <section class="grid grid-cols-1 gap-12 lg:grid-cols-2 2xl:grid-cols-3">
+            <section class="grid grid-cols-1 gap-12 lg:grid-cols-3">
               <div
                 v-for="card in cardData"
                 :key="card.title"
@@ -82,7 +82,8 @@
                   pb-8
                   w-7/12
                   md:w-6/12
-                  lg:w-10/12
+                  lg:w-11/12
+                  2xl:w-10/12
                   mx-auto
                   bg-white
                   transform
@@ -120,6 +121,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 
 export default Vue.extend({
@@ -147,7 +149,7 @@ export default Vue.extend({
       },
     },
     chooseUsData: {
-      get() {
+      get(): { title: TranslateResult; text: TranslateResult; class: string }[] {
         return [
           {
             title: this.$t('homepage.chooseUs.tailoredLessons.title'),
