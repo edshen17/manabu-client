@@ -33,9 +33,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import 'flag-icon-css/css/flag-icon.css';
-import FlagIcon from '../FlagIcon/FlagIcon.vue';
-import GridColLayout from './GridColLayout.vue';
-import { EventBus } from '../EventBus/EventBus';
+import FlagIcon from '../../FlagIcon/FlagIcon.vue';
+import GridColLayout from '../Layouts/GridColLayout.vue';
+import { EventBus } from '../../EventBus/EventBus';
 
 export default Vue.extend({
   name: 'LanguageNameStep',

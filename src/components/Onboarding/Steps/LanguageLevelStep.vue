@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import GridListLayout, { ListItems } from './GridListLayout.vue';
+import GridListLayout, { ListItems } from '../Layouts/GridListLayout.vue';
 
 export default Vue.extend({
   name: 'LanguageLevelStep',

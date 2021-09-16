@@ -27,6 +27,7 @@
       "
       emitted-value-name="nonTargetLanguageLevel"
     />
+    <region-step v-show="stepIndex == 4" />
   </div>
 </template>
 
@@ -34,11 +35,12 @@
 import Vue from 'vue';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import ProgressBar from '../components/ProgressBar/ProgressBar.vue';
-import LanguageNameStep from '../components/OnboardingSteps/LanguageNameStep.vue';
+import LanguageNameStep from '../components/Onboarding/Steps/LanguageNameStep.vue';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
-import LanguageLevelStep from '../components/OnboardingSteps/LanguageLevelStep.vue';
+import LanguageLevelStep from '../components/Onboarding/Steps/LanguageLevelStep.vue';
 import { EventBus, EventBusPayload } from '../components/EventBus/EventBus';
+import RegionStep from '../components/Onboarding/Steps/RegionStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -49,7 +51,7 @@ type LanguageOfferings = {
 
 export default Vue.extend({
   name: 'Onboarding',
-  components: { ProgressBar, LanguageNameStep, LanguageLevelStep },
+  components: { ProgressBar, LanguageNameStep, LanguageLevelStep, RegionStep },
   props: {},
   data() {
     return {
@@ -124,7 +126,6 @@ export default Vue.extend({
         const nonTargetLanguageOfferings = targetLanguageOfferings.filter((languageOffering) => {
           return languageOffering.languageCode != this.targetLanguageCode;
         });
-        console.log(nonTargetLanguageOfferings);
         return nonTargetLanguageOfferings;
       },
     },

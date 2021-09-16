@@ -89,6 +89,8 @@
       "advanced": "Advanced (C1)",
       "proficient": "Proficient (C2)"
     },
+    "region": "I live in...",
+    "timezone": "My timezone is...",
     "comingSoon": "Coming soon!"
   },
   "calendar": {

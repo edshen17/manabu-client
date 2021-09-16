@@ -88,6 +88,8 @@
       "advanced": "上級（C1）",
       "proficient": "堪能（C2）"
     },
+    "region": "お住まいは？",
+    "timezone": "タイムゾーンは？",
     "comingSoon": "近日公開！"
   },
   "calendar": {

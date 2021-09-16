@@ -1,8 +1,5 @@
 <template>
-  <div class="container w-11/12 lg:w-4/12 mx-auto">
-    <h2 class="flex justify-center text-2xl font-bold my-4 pb-8 lg:text-3xl lg:my-16">
-      {{ stepTitle }}
-    </h2>
+  <grid-base-layout :step-title="stepTitle">
     <div class="w-full place-items-center">
       <ul class="px-0">
         <li
@@ -28,18 +25,19 @@
         </li>
       </ul>
     </div>
-  </div>
+  </grid-base-layout>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { EventBus } from '../EventBus/EventBus';
+import { EventBus } from '../../EventBus/EventBus';
+import GridBaseLayout from './GridBaseLayout.vue';
 
 type ListItems = { content: unknown; value: unknown }[];
 
 export default Vue.extend({
   name: 'GridRectLayout',
-  components: {},
+  components: { GridBaseLayout },
   props: {
     stepTitle: {
       type: String,
