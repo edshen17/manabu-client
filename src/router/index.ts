@@ -19,34 +19,41 @@ const routes: Array<RouteConfig> = [
     name: 'Home',
     component: Home,
     beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: { requiresRedirectOnAuth: true },
   },
   {
     path: '/signup',
     name: 'Signup',
     component: UserAuthForm,
     beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: { requiresRedirectOnAuth: true },
   },
   {
     path: '/login',
     name: 'Login',
     component: UserAuthForm,
     beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: { requiresRedirectOnAuth: true },
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
     beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: { requiresAuth: true },
   },
   {
     path: '/logout',
     name: 'Logout',
     beforeEnter: logoutRouterGuard.consume(),
+    meta: { requiresAuth: true },
   },
   {
     path: '/onboarding',
     name: 'Onboarding',
     component: Onboarding,
+    beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: { requiresAuth: true },
   },
 ];
 

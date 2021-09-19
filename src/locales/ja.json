@@ -81,12 +81,15 @@
     "languageLevel": "{language}能力は？",
     "speakingNonTargetLanguage": "話せる言語は？",
     "languageLevels": {
-      "beginner": "超初級（A1）",
+      "beginner": "ゼロ初級（A1）",
       "elementary": "初級（A2）",
       "intermediate": "中級（B1）",
       "upperIntermediate": "中上級（B2）",
       "advanced": "上級（C1）",
       "proficient": "堪能（C2）"
+    },
+    "buttons": {
+      "next": "次へ"
     },
     "region": "お住まいは？",
     "timezone": "タイムゾーンは？",

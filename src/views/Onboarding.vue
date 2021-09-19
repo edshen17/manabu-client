@@ -1,5 +1,5 @@
 <template>
-  <div class="pb-24 lg:h-screen">
+  <div class="pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
     <language-name-step
       v-show="stepIndex == 0"
@@ -16,7 +16,7 @@
     />
     <language-name-step
       v-show="stepIndex == 2"
-      :step-title="nonTargetLanguageText"
+      :step-title="$t('onboarding.speakingNonTargetLanguage')"
       :language-offerings="nonTargetLanguageOfferings"
       emitted-value-name="nonTargetLanguageCode"
     />
@@ -75,18 +75,6 @@ export default Vue.extend({
           targetLanguageText = this.$t('onboarding.teachingTargetLanguage');
         }
         return targetLanguageText;
-      },
-    },
-    nonTargetLanguageText: {
-      get(): TranslateResult {
-        const nonTargetLanguageText = this.$t('onboarding.speakingNonTargetLanguage');
-        return nonTargetLanguageText;
-      },
-    },
-    fluentLanguageText: {
-      get(): TranslateResult {
-        const fluentLanguageText = this.$t('onboarding.fluentLanguage');
-        return fluentLanguageText;
       },
     },
     targetLanguageOfferings: {

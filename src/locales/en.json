@@ -89,6 +89,9 @@
       "advanced": "Advanced (C1)",
       "proficient": "Proficient (C2)"
     },
+    "buttons": {
+      "next": "Next"
+    },
     "region": "I live in...",
     "timezone": "My timezone is...",
     "comingSoon": "Coming soon!"

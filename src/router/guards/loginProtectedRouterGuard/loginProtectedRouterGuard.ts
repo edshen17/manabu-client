@@ -8,18 +8,22 @@ class LoginProtectedRouterGuard extends AbstractRouterGuard {
     from: Route,
     next: NavigationGuardNext<any>
   ): Promise<void> => {
-    // need this because state may be the default on redirect (async)
     await this._store.dispatch('user/getEntityStateData', {
       endpoint: USER_ENTITY_STATE_ENDPOINT,
     });
     const isLoggedIn = this._store.getters['user/isLoggedIn'];
-    const toHomePage = to.path == '/';
-    const userAuthPaths = ['/signup', '/login'];
-    const toUserAuthPage = userAuthPaths.includes(to.path);
-    if (!isLoggedIn && !toHomePage && !toUserAuthPage) {
+    const requiresAuth = to.meta.requiresAuth;
+    const requiresRedirectOnAuth = to.meta.requiresRedirectOnAuth;
+    if (!requiresAuth && !requiresRedirectOnAuth) {
+      next();
+    }
+    if (requiresAuth && !isLoggedIn) {
       next('/');
     }
-    if (isLoggedIn && (toHomePage || toUserAuthPage)) {
+    if (requiresRedirectOnAuth && !isLoggedIn) {
+      next();
+    }
+    if (requiresRedirectOnAuth && isLoggedIn) {
       next('/dashboard');
     }
     next();

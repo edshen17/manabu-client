@@ -1,5 +1,5 @@
 <template>
-  <div class="container w-11/12 mx-auto min-h-screen">
+  <div class="container w-11/12 mx-auto">
     <h2 class="flex justify-center text-2xl font-bold my-4 pb-8 lg:text-3xl lg:my-16">
       {{ stepTitle }}
     </h2>

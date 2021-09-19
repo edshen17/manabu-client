@@ -5,27 +5,9 @@
       :options="selectCountries"
       label="name"
       :reduce="(country) => country.code"
-      class="w-11/12 md:w-9/12 lg:w-6/12 mx-auto text-lg lg:text-xl mb-96"
+      class="w-11/12 md:w-9/12 lg:w-6/12 mx-auto text-lg lg:text-xl"
     ></v-select>
-    <button
-      class="
-        mt-28
-        py-2
-        flex
-        w-full
-        md:w-9/12
-        lg:w-6/12
-        mx-auto
-        border-solid border
-        rounded-lg
-        bg-green-700
-        text-white
-        justify-center
-        text-uppercase
-      "
-    >
-      next
-    </button>
+    <grid-button class="mt-96" :button-text="$t('onboarding.buttons.next')" @click="test" />
   </grid-base-layout>
 </template>
 
@@ -36,10 +18,11 @@ import ct from 'countries-and-timezones';
 import 'vue-select/dist/vue-select.css';
 import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import { StringKeyObject } from '../../../../../server/types/custom';
+import GridButton from '../Common/GridButton.vue';
 
 export default Vue.extend({
   name: 'RegionStep',
-  components: { GridBaseLayout, vSelect },
+  components: { GridBaseLayout, vSelect, GridButton },
   data() {
     return {
       country: 'SG',
@@ -65,6 +48,10 @@ export default Vue.extend({
   mounted() {
     return;
   },
-  methods: {},
+  methods: {
+    test(): void {
+      console.log('hi');
+    },
+  },
 });
 </script>

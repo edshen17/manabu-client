@@ -65,7 +65,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     props: ActionContext<IEntityState<EntityStateData>, IRootState>,
     payload: StringKeyObject
   ): Promise<void> => {
-    const { commit } = props;
+    const { state, commit } = props;
     const { endpoint } = payload;
     try {
       const entityStatePromise = await this._axios.get(endpoint);
@@ -74,7 +74,12 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
       if (entityStatePayload) {
         commit('setEntityStateData', entityStatePayload);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      const entityStatePromise = err.response;
+      entityStatePromise.data = {};
+      entityStatePromise.data[this._moduleName] = state.entityStateData;
+      commit('setEntityStatePromise', entityStatePromise);
+    }
   };
 
   protected _getModuleActionsTemplate = (): ActionTree<

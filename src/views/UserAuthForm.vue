@@ -1,23 +1,10 @@
 <template>
   <div class="min-h-screen">
     <div class="flex flex-wrap justify-center">
-      <img src="../assets/img/torii-lg.png" class="object-contain h-36 w-full my-10" />
+      <img src="../assets/img/torii-lg.png" class="object-contain h-36 w-full mt-3 md:mt-10" />
     </div>
     <div class="flex flex-wrap justify-center">
-      <div
-        class="
-          py-10
-          px-6
-          shadow-2xl
-          rounded-lg
-          sm:px-10
-          w-11/12
-          md:w-6/12
-          xl:w-4/12
-          2xl:w-1/5
-          mb-28
-        "
-      >
+      <div class="pt-10 px-6 rounded-lg w-11/12 md:w-6/12 xl:w-4/12 2xl:w-1/5 mb-28">
         <form class="mb-0 space-y-6">
           <div v-if="isSignupPage">
             <input
