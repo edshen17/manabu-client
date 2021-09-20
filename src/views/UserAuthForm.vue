@@ -218,6 +218,7 @@ export default Vue.extend({
     async _authorizeUser(props: { body: StringKeyObject; endpoint: string }): Promise<void> {
       const { body, endpoint } = props;
       try {
+        this.$store.dispatch('user/resetEntityState');
         await axios.post(endpoint, body);
       } catch (err: any) {
         const hasErrorResponse = err.response;

@@ -27,8 +27,15 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
         const entityStateData = await self.getEntityStateData(props, payload);
         return entityStateData;
       },
+      resetEntityState(props: ModuleActionContext<EntityStateData>): void {
+        self.resetEntityStateData(props);
+        self.resetEntityStatePromise(props);
+      },
       resetEntityStateData(props: ModuleActionContext<EntityStateData>): void {
         self.resetEntityStateData(props);
+      },
+      resetEntityStatePromise(props: ModuleActionContext<EntityStateData>): void {
+        self.resetEntityStatePromise(props);
       },
     };
     const extendedModuleActions = this._getModuleActionsTemplate();
@@ -93,6 +100,12 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     const { commit } = props;
     const entityStatePayload = this._moduleState.getDefaultEntityStateData();
     commit('setEntityStateData', entityStatePayload);
+  };
+
+  public resetEntityStatePromise = (props: ModuleActionContext<EntityStateData>) => {
+    const { commit } = props;
+    const entityStatePromise = undefined;
+    commit('setEntityStatePromise', entityStatePromise);
   };
 
   public init = (initParams: ModuleActionInitParams<OptionalModuleActionInitParams>): this => {

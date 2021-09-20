@@ -14,14 +14,11 @@ class LoginProtectedRouterGuard extends AbstractRouterGuard {
     const isLoggedIn = this._store.getters['user/isLoggedIn'];
     const requiresAuth = to.meta.requiresAuth;
     const requiresRedirectOnAuth = to.meta.requiresRedirectOnAuth;
-    if (!requiresAuth && !requiresRedirectOnAuth) {
+    if ((!requiresAuth && !requiresRedirectOnAuth) || (requiresRedirectOnAuth && !isLoggedIn)) {
       next();
     }
     if (requiresAuth && !isLoggedIn) {
       next('/');
-    }
-    if (requiresRedirectOnAuth && !isLoggedIn) {
-      next();
     }
     if (requiresRedirectOnAuth && isLoggedIn) {
       next('/dashboard');
