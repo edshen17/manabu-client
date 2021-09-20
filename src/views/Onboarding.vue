@@ -28,6 +28,7 @@
       emitted-value-name="nonTargetLanguageLevel"
     />
     <region-step v-show="stepIndex == 4" />
+    <timezone-step v-show="stepIndex == 5" :region="region" />
   </div>
 </template>
 
@@ -41,6 +42,7 @@ import { mapGetters } from 'vuex';
 import LanguageLevelStep from '../components/Onboarding/Steps/LanguageLevelStep.vue';
 import { EventBus, EventBusPayload } from '../components/EventBus/EventBus';
 import RegionStep from '../components/Onboarding/Steps/RegionStep.vue';
+import TimezoneStep from '../components/Onboarding/Steps/TimezoneStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -51,7 +53,7 @@ type LanguageOfferings = {
 
 export default Vue.extend({
   name: 'Onboarding',
-  components: { ProgressBar, LanguageNameStep, LanguageLevelStep, RegionStep },
+  components: { ProgressBar, LanguageNameStep, LanguageLevelStep, RegionStep, TimezoneStep },
   props: {},
   data() {
     return {
@@ -59,6 +61,8 @@ export default Vue.extend({
       targetLanguageLevel: '',
       nonTargetLanguageCode: '',
       nonTargetLanguageLevel: '',
+      region: '',
+      timezone: '',
       stepIndex: 0,
       stepTotal: 10,
     };
@@ -119,7 +123,6 @@ export default Vue.extend({
     },
   },
   mounted() {
-    EventBus.$on('item-clicked', this.handleStepForward());
     EventBus.$on('step-forward', this.handleStepForward());
     EventBus.$on('step-backward', this.handleStepBackward());
   },

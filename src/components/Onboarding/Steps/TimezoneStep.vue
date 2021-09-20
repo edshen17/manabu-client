@@ -1,17 +1,16 @@
 <template>
-  <grid-base-layout :step-title="$t('onboarding.region')">
+  <grid-base-layout :step-title="$t('onboarding.timezone')">
     <v-select
-      v-model="region"
-      :options="selectRegions"
-      label="name"
-      :reduce="(region) => region.code"
+      v-model="timezone"
+      :options="selectTimezones"
+      label="timezone"
       class="w-11/12 md:w-9/12 lg:w-6/12 mx-auto text-lg lg:text-xl"
     ></v-select>
     <div class="h-40v md:h-30v lg:h-40v"></div>
     <grid-button
       class="uppercase md:text-lg"
       :button-text="$t('onboarding.buttons.next')"
-      @click="emitRegionSelection"
+      @click="emitTimezoneSelection"
     />
   </grid-base-layout>
 </template>
@@ -22,41 +21,42 @@ import vSelect from 'vue-select';
 import ct from 'countries-and-timezones';
 import 'vue-select/dist/vue-select.css';
 import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
-import { StringKeyObject } from '../../../../../server/types/custom';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 
 export default Vue.extend({
-  name: 'RegionStep',
+  name: 'TimezoneStep',
   components: { GridBaseLayout, vSelect, GridButton },
+  props: {
+    region: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      region: 'SG',
       timezone: '',
     };
   },
   computed: {
-    selectRegions: {
-      get(): { code: string; name: string }[] {
-        const countries: StringKeyObject = ct.getAllCountries();
-        const selectRegions = [];
-        for (const code in countries) {
-          const region = {
-            code,
-            name: `${countries[code].name} - ${code}`,
-          };
-          selectRegions.push(region);
-        }
-        return selectRegions;
+    selectTimezones: {
+      get(): string[] {
+        const selectTimezones = ct.getCountry(this.region)!.timezones;
+        return selectTimezones;
       },
+    },
+  },
+  watch: {
+    region: function () {
+      this.timezone = this.selectTimezones[0];
     },
   },
   mounted() {
     return;
   },
   methods: {
-    emitRegionSelection(): void {
-      EventBus.$emit('step-forward', { value: this.region, emittedValueName: 'region' });
+    emitTimezoneSelection(): void {
+      EventBus.$emit('step-forward', { value: this.timezone, emittedValueName: 'timezone' });
     },
   },
 });

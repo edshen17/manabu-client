@@ -64,7 +64,7 @@ export default Vue.extend({
   },
   methods: {
     emitItemClicked(value: any): void {
-      EventBus.$emit('item-clicked', { value, emittedValueName: this.emittedValueName });
+      EventBus.$emit('step-forward', { value, emittedValueName: this.emittedValueName });
     },
   },
 });

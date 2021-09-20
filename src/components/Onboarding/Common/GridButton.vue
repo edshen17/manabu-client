@@ -8,7 +8,7 @@
       lg:w-6/12
       mx-auto
       border-solid border
-      rounded-lg
+      rounded-md
       bg-green-700
       text-white
       justify-center
