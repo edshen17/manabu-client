@@ -30,7 +30,7 @@ export default Vue.extend({
     divClass: {
       required: false,
       type: String,
-      default: 'py-4 lg:py-3 lg:px-4 inline-block no-underline w-full h-full text-gray-500',
+      default: 'py-4 lg:py-3 lg:px-3 inline-block no-underline w-full h-full text-gray-500',
     },
     routerLinkClass: {
       required: false,

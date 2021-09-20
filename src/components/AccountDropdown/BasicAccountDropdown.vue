@@ -14,10 +14,8 @@
           lg:col-span-4
           my-4
           mx-4
-          lg:mx-5
           h-16
           w-16
-          lg:h-20 lg:w-20
           z-10
           block
           rounded-full
@@ -25,7 +23,7 @@
         "
         :src="userData.profileImageUrl"
       />
-      <div class="col-span-9 my-3 font-semi-bold">
+      <div class="col-span-9 my-3 mx-6 md:mx-0 font-semi-bold">
         <p class="text-lg">{{ userData.name }}</p>
         <div class="flex flex-wrap space-x-4 mt-3">
           <p>Level 53</p>

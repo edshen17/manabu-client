@@ -125,9 +125,11 @@ import { focus } from 'vue-focus';
 import { email, minLength, required, requiredIf } from 'vuelidate/lib/validators';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import { StringKeyObject } from '../../../server/types/custom';
+import { StatusCodes } from 'http-status-codes';
 
 export default Vue.extend({
   name: 'UserAuthForm',
+  components: {},
   directives: { focus },
   data() {
     return {
@@ -223,8 +225,12 @@ export default Vue.extend({
       } catch (err: any) {
         const hasErrorResponse = err.response;
         const httpStatusCode = hasErrorResponse ? err.response.status : undefined;
-        const isLoginError = hasErrorResponse && httpStatusCode == 401;
-        const apiErrorMsgLocale: string = isLoginError ? 'error.login.invalid' : 'error.general';
+        let apiErrorMsgLocale = 'error.general';
+        if (httpStatusCode == StatusCodes.INTERNAL_SERVER_ERROR) {
+          apiErrorMsgLocale = 'error.login.emailExists';
+        } else if (httpStatusCode == StatusCodes.UNAUTHORIZED) {
+          apiErrorMsgLocale = 'error.login.invalid';
+        }
         throw new Error(apiErrorMsgLocale);
       }
     },

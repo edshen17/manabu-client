@@ -26,13 +26,15 @@ export default Vue.extend({
   data() {
     return {
       err: new Error(),
+      errEmitPage: '',
       _showPopup: false,
     };
   },
   computed: {
     showPopup: {
       get: function (): boolean {
-        return this.err && this.$data._showPopup;
+        const showPopup = this.err && this.$data._showPopup && this.$route.path == this.errEmitPage;
+        return showPopup;
       },
       set: function (newVal: boolean): void {
         this.$data._showPopup = newVal;
@@ -49,6 +51,7 @@ export default Vue.extend({
   errorCaptured(err: Error): boolean {
     this.err = err;
     this.$data._showPopup = true;
+    this.errEmitPage = this.$route.path;
     return !this.stopPropagation;
   },
 });

@@ -51,7 +51,8 @@
       "required": "パスワードを入力して下さい。"
     },
     "login": {
-      "invalid": "パスワードかメールアドレスが間違っています。"
+      "invalid": "パスワードかメールアドレスが間違っています。",
+      "emailExists": "このメールアドレスを持つアカウントがすでに存在しています。"
     },
     "general": "Oops, something went wrong. Please try again. If the problem persists, please contact support@manabu.com or reach out on social media."
   },

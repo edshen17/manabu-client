@@ -10,7 +10,7 @@
       <img class="h-full w-full object-cover" :src="userData.profileImageUrl" />
     </button>
     <fade-in-out>
-      <div v-show="showDropdown" class="absolute m-3 right-0 w-96 bg-gray-800 rounded-md shadow-xl">
+      <div v-show="showDropdown" class="absolute m-3 right-0 w-80 bg-gray-800 rounded-md shadow-xl">
         <basic-account-dropdown
           v-click-outside="closeDropdown"
           :inner-router-links="innerRouterLinks"
