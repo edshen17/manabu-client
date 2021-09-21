@@ -17,12 +17,10 @@ export default Vue.extend({
   props: {
     stepTitle: {
       type: String,
-      default: '',
       required: true,
     },
     emittedValueName: {
       type: String,
-      default: '',
       required: true,
     },
   },

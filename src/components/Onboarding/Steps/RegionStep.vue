@@ -1,19 +1,17 @@
 <template>
-  <grid-base-layout :step-title="$t('onboarding.region')">
-    <v-select
-      v-model="region"
-      :options="selectRegions"
-      label="name"
-      :reduce="(region) => region.code"
-      class="w-11/12 md:w-9/12 lg:w-6/12 mx-auto text-lg lg:text-xl"
-    ></v-select>
-    <div class="h-40v md:h-30v lg:h-40v"></div>
-    <grid-button
-      class="uppercase md:text-lg"
-      :button-text="$t('onboarding.buttons.next')"
-      @click="emitRegionSelection"
-    />
-  </grid-base-layout>
+  <grid-select-layout :step-title="$t('onboarding.region')">
+    <template v-slot:select>
+      <v-select
+        v-model="region"
+        :options="selectRegions"
+        label="name"
+        :reduce="(region) => region.code"
+      ></v-select>
+    </template>
+    <template v-slot:button>
+      <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitRegionSelection" />
+    </template>
+  </grid-select-layout>
 </template>
 
 <script lang="ts">
@@ -25,10 +23,11 @@ import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import { StringKeyObject } from '../../../../../server/types/custom';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
+import GridSelectLayout from '../Layouts/GridSelectLayout.vue';
 
 export default Vue.extend({
   name: 'RegionStep',
-  components: { GridBaseLayout, vSelect, GridButton },
+  components: { GridBaseLayout, vSelect, GridButton, GridSelectLayout },
   data() {
     return {
       region: 'SG',
@@ -38,12 +37,12 @@ export default Vue.extend({
   computed: {
     selectRegions: {
       get(): { code: string; name: string }[] {
-        const countries: StringKeyObject = ct.getAllCountries();
+        const regions: StringKeyObject = ct.getAllCountries();
         const selectRegions = [];
-        for (const code in countries) {
+        for (const code in regions) {
           const region = {
             code,
-            name: `${countries[code].name} - ${code}`,
+            name: `${regions[code].name} - ${code}`,
           };
           selectRegions.push(region);
         }
