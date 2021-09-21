@@ -40,15 +40,18 @@ export default Vue.extend({
   },
   computed: {
     selectTimezones: {
-      get(): string[] {
-        const selectTimezones = ct.getCountry(this.region)!.timezones;
-        return selectTimezones;
+      get(): string[] | undefined {
+        if (this.region) {
+          const selectTimezones = ct.getCountry(this.region)!.timezones;
+          return selectTimezones;
+        }
+        return undefined;
       },
     },
   },
   watch: {
     region: function () {
-      this.timezone = this.selectTimezones[0];
+      this.timezone = this.selectTimezones![0];
     },
   },
   mounted() {
