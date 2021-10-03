@@ -1,7 +1,7 @@
 <template>
   <div class="relative" @keydown.esc="showDropdown = false">
     <button
-      class="h-12 w-12 mx-4 relative z-10 block rounded-full overflow-hidden"
+      class="h-10 w-10 mx-4 relative z-10 block rounded-full overflow-hidden"
       :class="{
         'outline-none ring-2 ring-pink-600 border-transparent': showDropdown,
       }"

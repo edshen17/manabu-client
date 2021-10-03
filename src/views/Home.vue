@@ -102,10 +102,30 @@
                 />
               </div>
             </section>
-            <div class="flex flex-wrap mt-12 justify-center text-center text-xl">
+            <div
+              class="
+                flex flex-wrap
+                mt-12
+                justify-center
+                text-center text-xl
+                leading-8
+                lg:leading-loose
+              "
+            >
               <div class="w-full lg:w-6/12 px-4">
-                <button class="bg-red-400 text-white font-bold py-2 px-4 rounded">
-                  <router-link to="/teachers">{{ $t('homepage.findTeacher') }}</router-link>
+                <button
+                  class="
+                    bg-blue-400
+                    text-white
+                    font-bold
+                    py-2
+                    px-4
+                    rounded
+                    text-center
+                    align-middle
+                  "
+                >
+                  <router-link to="/signup">{{ $t('homepage.signUpNow') }}</router-link>
                 </button>
                 <p class="py-10 text-white">
                   {{ $t('homepage.beta') }}

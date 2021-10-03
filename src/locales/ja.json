@@ -29,7 +29,7 @@
       }
     },
     "beta": "Manabuを一緒に育てる『ベータテスター』になって、貴方の意見をレッスンやウェブサイトに反映してくれませんか？期間限定で、レッスンプランを購入された皆様に全てのプレミアム機能とこれから私たちがマーケットを拡大した際のサービスへの永久無料アクセスをご提供しております。みなさまのご応募を心よりお待ちしております。",
-    "findTeacher": "今すぐ先生を見つける！"
+    "signUpNow": "今すぐ登録！"
   },
   "userAuth": {
     "name": "お名前",
@@ -54,7 +54,7 @@
       "invalid": "パスワードかメールアドレスが間違っています。",
       "emailExists": "このメールアドレスを持つアカウントがすでに存在しています。"
     },
-    "general": "Oops, something went wrong. Please try again. If the problem persists, please contact support@manabu.com or reach out on social media."
+    "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
   },
   "nav": {
     "findTeacher": "先生を見つける",
