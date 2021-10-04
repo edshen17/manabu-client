@@ -1,14 +1,17 @@
 <template>
-  <div class="flex flex-wrap mx-auto" data-app>
-    <v-sheet height="64">
+  <div data-app>
+    <v-sheet height="64" class="flex flex-wrap mx-auto">
       <v-toolbar flat>
+        <v-btn outlined class="mx-4" color="grey darken-2" @click="setToday">
+          Today / translate</v-btn
+        >
         <v-btn fab text small color="grey darken-2" @click="prev">
           <v-icon small> mdi-chevron-left </v-icon>
         </v-btn>
         <v-btn fab text small color="grey darken-2" @click="next">
           <v-icon small> mdi-chevron-right </v-icon>
         </v-btn>
-        <v-toolbar-title v-if="$refs.calendar" class="mr-4">
+        <v-toolbar-title v-if="$refs.calendar" class="mx-4">
           {{ $refs.calendar.title }}
         </v-toolbar-title>
         <v-menu bottom right>
@@ -20,13 +23,13 @@
           </template>
           <v-list>
             <v-list-item @click="type = 'day'">
-              <v-list-item-title>Day</v-list-item-title>
+              <v-list-item-title>Day /translate</v-list-item-title>
             </v-list-item>
             <v-list-item @click="type = 'week'">
-              <v-list-item-title>Week</v-list-item-title>
+              <v-list-item-title>Week /translate</v-list-item-title>
             </v-list-item>
             <v-list-item @click="type = '4day'">
-              <v-list-item-title>4 days</v-list-item-title>
+              <v-list-item-title>4 days /translate</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -34,18 +37,23 @@
     </v-sheet>
     <v-calendar
       ref="calendar"
-      v-model="value"
-      class="w-screen h-screen"
-      color="primary"
+      v-model="focus"
+      style="overflow: hidden"
+      class="w-screen h-screen text-white"
+      color="blue"
       :type="type"
       :events="events"
       :event-color="getEventColor"
-      :event-ripple="false"
+      event-text-color="white"
+      @click:date="viewDay"
+      @click:event="showEvent"
       @change="getEvents"
       @mousedown:event="startDrag"
       @mousedown:time="startTime"
       @mousemove:time="mouseMove"
       @mouseup:time="endDrag"
+      @mouseup:event="openPopup"
+      @touchend:event="openPopup"
       @mouseleave.native="cancelDrag"
     >
       <template v-slot:event="{ event, timed, eventSummary }">
@@ -60,12 +68,43 @@
         ></div>
       </template>
     </v-calendar>
+    <v-menu
+      v-model="selectedOpen"
+      :close-on-content-click="false"
+      :activator="selectedElement"
+      :offset-x="type != 'day'"
+      max-width="700px"
+    >
+      <v-card color="grey lighten-4" flat>
+        <v-toolbar :color="selectedEvent.color" dark>
+          <v-btn icon>
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon>
+            <v-icon>mdi-heart</v-icon>
+          </v-btn>
+          <v-btn icon>
+            <v-icon>mdi-dots-vertical</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-card-text>
+          <span v-html="selectedEvent.details"></span>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn text color="secondary" @click="selectedOpen = false"> Cancel </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-menu>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
+import { StringKeyObject } from '../../../../server/types/custom';
 
 export default Vue.extend({
   name: 'Calendar',
@@ -73,18 +112,26 @@ export default Vue.extend({
   props: {},
   data() {
     return {
-      value: '',
       ready: false,
-      events: [] as any[],
-      colors: ['#2196F3', '#3F51B5', '#673AB7', '#00BCD4', '#4CAF50', '#FF9800', '#757575'] as any,
-      names: [] as any,
+      events: [] as StringKeyObject[],
+      colors: [
+        '#2196F3',
+        '#3F51B5',
+        '#673AB7',
+        '#00BCD4',
+        '#4CAF50',
+        '#FF9800',
+        '#757575',
+      ] as any[],
+      names: [] as string[],
       dragEvent: null as any,
       dragStart: null as any,
       dragTime: 0 as any,
       createEvent: null as any,
       createStart: null as any,
       extendOriginal: null as any,
-      focus: '',
+      today: new Date().toISOString().substr(0, 10),
+      focus: new Date().toISOString().substr(0, 10),
       type: 'week',
       typeToLabel: {
         week: 'Week',
@@ -110,18 +157,22 @@ export default Vue.extend({
         return this.cal ? this.cal.timeToY(this.cal.times.now) + 'px' : '-10px';
       },
     },
+    availableTimeTextLocale: {
+      get(): TranslateResult {
+        return this.$t('calendar.availableTime');
+      },
+    },
   },
   mounted() {
     this.ready = true;
-    (this.$refs.calendar as any).checkChange();
   },
   methods: {
-    viewDay({ date }: any) {
+    viewDay({ date }: { date: string }) {
       this.focus = date;
       this.type = 'day';
     },
     setToday() {
-      this.focus = '';
+      this.focus = this.today;
     },
     prev() {
       (this.$refs.calendar as any).prev();
@@ -129,47 +180,24 @@ export default Vue.extend({
     next() {
       (this.$refs.calendar as any).next();
     },
+    test() {
+      console.log('touchstart event');
+    },
     showEvent({ nativeEvent, event }: any) {
-      const open = () => {
-        this.selectedEvent = event;
-        this.selectedElement = nativeEvent.target;
-        requestAnimationFrame(() => requestAnimationFrame(() => (this.selectedOpen = true)));
-      };
-
       if (this.selectedOpen) {
         this.selectedOpen = false;
-        requestAnimationFrame(() => requestAnimationFrame(() => open()));
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => this.openPopup({ nativeEvent, event }))
+        );
       } else {
-        open();
+        this.openPopup({ nativeEvent, event });
       }
-
       nativeEvent.stopPropagation();
     },
-    updateRange({ start, end }: any) {
-      const events = [];
-
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      const days = (max.getTime() - min.getTime()) / 86400000;
-      const eventCount = this.rnd(days, days + 20);
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          timed: !allDay,
-        });
-      }
-
-      this.events = events;
+    openPopup({ nativeEvent, event }: any) {
+      this.selectedEvent = event;
+      this.selectedElement = nativeEvent.target;
+      requestAnimationFrame(() => requestAnimationFrame(() => (this.selectedOpen = true)));
     },
     getCurrentTime() {
       return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0;
@@ -189,18 +217,21 @@ export default Vue.extend({
         this.extendOriginal = null;
       }
     },
-    startTime(tms: number) {
+    startTime(tms: StringKeyObject) {
       const mouse = this.toTime(tms);
+      this.selectedOpen = false;
+      this.selectedEvent = {};
+      this.selectedElement = null;
       if (this.dragEvent && this.dragTime === null) {
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
       } else {
         this.createStart = this.roundTime(mouse);
         this.createEvent = {
-          name: `Event #${this.events.length}`,
+          name: this.availableTimeTextLocale,
           color: this.rndElement(this.colors),
           start: this.createStart,
-          end: this.createStart,
+          end: this.createStart + 60 * 60 * 1000,
           timed: true,
         };
         this.events.push(this.createEvent);
@@ -254,7 +285,7 @@ export default Vue.extend({
       this.dragEvent = null;
     },
     roundTime(time: number, down = true) {
-      const roundTo = 15; // minutes
+      const roundTo = 30; // minutes
       const roundDownTime = roundTo * 60 * 1000;
       return down ? time - (time % roundDownTime) : time + (roundDownTime - (time % roundDownTime));
     },
@@ -273,26 +304,26 @@ export default Vue.extend({
         : event.color;
     },
     getEvents({ start, end }: any) {
-      const events = [];
-      const min = new Date(`${start.date}T00:00:00`).getTime();
-      const max = new Date(`${end.date}T23:59:59`).getTime();
-      const days = (max - min) / 86400000;
-      const eventCount = this.rnd(days, days + 20);
-      for (let i = 0; i < eventCount; i++) {
-        const timed = this.rnd(0, 3) !== 0;
-        const firstTimestamp = this.rnd(min, max);
-        const secondTimestamp = this.rnd(2, timed ? 8 : 288) * 900000;
-        const start = firstTimestamp - (firstTimestamp % 900000);
-        const end = start + secondTimestamp;
-        events.push({
-          name: this.rndElement(this.names),
-          color: this.rndElement(this.colors),
-          start,
-          end,
-          timed,
-        });
-      }
-      this.events = events;
+      // const events = [];
+      // const min = new Date(`${start.date}T00:00:00`).getTime();
+      // const max = new Date(`${end.date}T23:59:59`).getTime();
+      // const days = (max - min) / 86400000;
+      // const eventCount = this.rnd(days, days + 20);
+      // for (let i = 0; i < eventCount; i++) {
+      //   const timed = this.rnd(0, 3) !== 0;
+      //   const firstTimestamp = this.rnd(min, max);
+      //   const secondTimestamp = this.rnd(2, timed ? 8 : 288) * 900000;
+      //   const start = firstTimestamp - (firstTimestamp % 900000);
+      //   const end = start + secondTimestamp;
+      //   events.push({
+      //     name: this.rndElement(this.names),
+      //     color: this.rndElement(this.colors),
+      //     start,
+      //     end,
+      //     timed,
+      //   });
+      // }
+      // this.events = events;
     },
     rnd(a: number, b: number) {
       return Math.floor((b - a + 1) * Math.random()) + a;

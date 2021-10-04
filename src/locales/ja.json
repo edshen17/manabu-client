@@ -97,6 +97,7 @@
     "comingSoon": "近日公開！"
   },
   "calendar": {
+    "availableTime": "都合がつく時間",
     "lessonTime": "レッスン時間",
     "commTool": "コミュニケーションツール",
     "rejectReason": "アポイントメント拒否の理由",

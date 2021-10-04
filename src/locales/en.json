@@ -98,6 +98,7 @@
     "comingSoon": "Coming soon!"
   },
   "calendar": {
+    "availableTime": "Available",
     "lessonTime": "Lesson Time",
     "commTool": "Communication Tool",
     "rejectReason": "Reason for rejecting appointment",

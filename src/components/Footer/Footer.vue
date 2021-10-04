@@ -80,11 +80,11 @@ export default Vue.extend({
       userData: 'user/entityStateData',
     }),
     userLocale: {
-      get: function (): string {
+      get(): string {
         const userLocale = this.userData.settings.locale;
         return userLocale;
       },
-      set: function (locale: string): void {
+      set(locale: string): void {
         const _id = this.userData._id;
         const settings = this.userData.settings;
         this.$store.dispatch('user/updateLocale', { locale, _id, settings });
