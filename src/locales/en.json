@@ -98,6 +98,12 @@
     "comingSoon": "Coming soon!"
   },
   "calendar": {
+    "today": "Today",
+    "save":"Save",
+    "cancel": "Cancel",
+    "day":"Day",
+    "week":"Week",
+    "fourDays":"4 days",
     "availableTime": "Available",
     "lessonTime": "Lesson Time",
     "commTool": "Communication Tool",

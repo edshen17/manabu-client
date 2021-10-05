@@ -3,7 +3,7 @@
     <v-sheet height="64" class="flex flex-wrap mx-auto">
       <v-toolbar flat>
         <v-btn outlined class="mx-4" color="grey darken-2" @click="setToday">
-          Today / translate</v-btn
+          {{ $t('calendar.today') }}</v-btn
         >
         <v-btn fab text small color="grey darken-2" @click="prev">
           <v-icon small> mdi-chevron-left </v-icon>
@@ -23,13 +23,13 @@
           </template>
           <v-list>
             <v-list-item @click="type = 'day'">
-              <v-list-item-title>Day /translate</v-list-item-title>
+              <v-list-item-title>{{ $t('calendar.day') }}</v-list-item-title>
             </v-list-item>
             <v-list-item @click="type = 'week'">
-              <v-list-item-title>Week /translate</v-list-item-title>
+              <v-list-item-title>{{ $t('calendar.week') }}</v-list-item-title>
             </v-list-item>
             <v-list-item @click="type = '4day'">
-              <v-list-item-title>4 days /translate</v-list-item-title>
+              <v-list-item-title>{{ $t('calendar.fourDays') }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -58,8 +58,10 @@
       @mouseleave.native="cancelDrag"
     >
       <template v-slot:event="{ event, timed, eventSummary }">
-        <div class="v-event-draggable" v-html="eventSummary()"></div>
-        <div v-if="timed" class="v-event-drag-bottom" @mousedown.stop="extendBottom(event)"></div>
+        <div :ref="event.attributes.id">
+          <div class="v-event-draggable" v-html="eventSummary()"></div>
+          <div v-if="timed" class="v-event-drag-bottom" @mousedown.stop="extendBottom(event)"></div>
+        </div>
       </template>
       <template v-slot:day-body="{ date, week }">
         <div
@@ -77,58 +79,47 @@
       min-width="400px"
     >
       <v-card color="grey lighten-4" flat>
-        <!-- <v-toolbar :color="selectedEvent.color" dark>
-          <v-btn icon>
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn icon>
-            <v-icon>mdi-heart</v-icon>
-          </v-btn>
-          <v-btn icon>
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </v-toolbar> -->
-        <!-- <v-card-actions>
-          <p>sa</p>
-        </v-card-actions> -->
         <v-card-text>
           <p class="text-black text-lg tracking-wide">{{ selectedEvent.name }}</p>
-          <p class="cursor-pointer hover:bg-gray-100 opacity-90 mt-1">
-            {{ formatDate({ startDate: selectedEvent.start, endDate: selectedEvent.end }) }}
-          </p>
-          <v-menu
-            v-model="menu2"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            transition="scale-transition"
-            offset-y
-            min-width="auto"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="date"
-                prepend-icon="mdi-calendar"
-                readonly
-                v-bind="attrs"
-                class="w-28"
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="date"
-              no-title
-              scrollable
-              @input="menu2 = false"
-            ></v-date-picker>
-          </v-menu>
-          <v-select :items="[1, 2]" label="Standard" dense></v-select>
+          <span>
+            <v-menu
+              v-model="menu2"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <p
+                  class="inline cursor-pointer hover:bg-gray-100 opacity-90 my-2 mr-3"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  {{ formatDate({ date: selectedEvent.start, formatString: 'dddd, MMMM D' }) }}
+                </p>
+              </template>
+              <v-date-picker
+                v-model="datePickerDate"
+                no-title
+                scrollable
+                @input="menu2 = false"
+                @change="onDatePickerChange"
+              ></v-date-picker>
+            </v-menu>
+            <v-menu> </v-menu>
+            <p class="inline cursor-pointer hover:bg-gray-100 opacity-90 my-2">1:30pm</p>
+            <p class="inline mt-1 mx-3">–</p>
+            <p class="inline cursor-pointer hover:bg-gray-100 opacity-90 my-2 mr-3">2:00pm</p>
+          </span>
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" class="m-0" @click="selectedOpen = false">
-            Save / translate
+            {{ $t('calendar.save') }}
           </v-btn>
-          <v-btn text color="secondary" @click="selectedOpen = false"> Cancel / translate </v-btn>
+          <v-btn text color="secondary" @click="selectedOpen = false">
+            {{ $t('calendar.cancel') }}
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-menu>
@@ -149,9 +140,7 @@ export default Vue.extend({
   data() {
     return {
       ready: false,
-      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-        .toISOString()
-        .substr(0, 10),
+      datePickerDate: new Date().toISOString().substr(0, 10),
       menu: false,
       modal: false,
       menu2: false,
@@ -172,16 +161,11 @@ export default Vue.extend({
       createEvent: null as any,
       createStart: null as any,
       extendOriginal: null as any,
-      today: new Date().toISOString().substr(0, 10),
-      focus: new Date().toISOString().substr(0, 10),
+      today: '',
+      focus: '',
       type: 'week',
-      typeToLabel: {
-        week: 'Week',
-        day: 'Day',
-        '4day': '4 Days',
-      },
-      selectedEvent: {},
-      selectedElement: null,
+      selectedEvent: {} as StringKeyObject,
+      selectedElement: null as any,
       selectedOpen: false,
     };
   },
@@ -192,6 +176,15 @@ export default Vue.extend({
     cal: {
       get(): any {
         return this.ready ? this.$refs.calendar : null;
+      },
+    },
+    typeToLabel: {
+      get(): StringKeyObject {
+        return {
+          week: this.$t('calendar.week'),
+          day: this.$t('calendar.day'),
+          '4day': this.$t('calendar.fourDays'),
+        };
       },
     },
     nowY: {
@@ -209,16 +202,45 @@ export default Vue.extend({
     this.ready = true;
   },
   methods: {
+    formatDate(props: { date: Date; formatString: string }): string {
+      const { date, formatString } = props;
+      const formattedDate = dayjs(date).format(formatString);
+      return formattedDate;
+    },
+    onDatePickerChange() {
+      this._updateNewStartEndTimes();
+      // move to new date
+    },
+    _updateNewStartEndTimes(): void {
+      const selectedEventStart = dayjs(this.selectedEvent.start);
+      const selectedEventEnd = dayjs(this.selectedEvent.end);
+      const newStartTime = dayjs(this.datePickerDate)
+        .hour(selectedEventStart.hour())
+        .minute(selectedEventStart.minute())
+        .toDate();
+      const newEndTime = dayjs(this.datePickerDate)
+        .hour(selectedEventEnd.hour())
+        .minute(selectedEventEnd.minute())
+        .toDate();
+      // this.focus = newStartTime.toISOString();
+      this._updateSelectedEvent({ field: 'start', value: newStartTime });
+      this._updateSelectedEvent({ field: 'end', value: newEndTime });
+      this.selectedOpen = false;
+      setTimeout(() => {
+        // need this timeout or else new calendar element isn't rendered yet...
+        this.selectedElement = this.$refs[this.selectedEvent.attributes.id];
+        requestAnimationFrame(() => requestAnimationFrame(() => (this.selectedOpen = true)));
+      });
+      this.focus = this.formatDate({ date: newStartTime, formatString: 'YYYY-MM-DD' });
+    },
+    _updateSelectedEvent(props: { field: string; value: unknown }): void {
+      const { field, value } = props;
+      this.selectedEvent[field] = value;
+    },
+    // below are the vuetify calendar methods
     viewDay({ date }: { date: string }) {
       this.focus = date;
       this.type = 'day';
-    },
-    formatDate(props: { startDate: Date; endDate: Date }): string {
-      const { startDate, endDate } = props;
-      const formattedDate = `${dayjs(startDate).format('dddd, MMMM D ⋅ h:mma –')} ${dayjs(
-        endDate
-      ).format('h:mma')}`;
-      return formattedDate;
     },
     setToday() {
       this.focus = this.today;
@@ -232,12 +254,8 @@ export default Vue.extend({
     showEvent({ nativeEvent, event }: any) {
       if (this.selectedOpen) {
         this.selectedOpen = false;
-        requestAnimationFrame(() =>
-          requestAnimationFrame(() => this.openPopup({ nativeEvent, event }))
-        );
-      } else {
-        this.openPopup({ nativeEvent, event });
       }
+      this.openPopup({ nativeEvent, event });
       nativeEvent.stopPropagation();
     },
     openPopup({ nativeEvent, event }: any) {
@@ -276,9 +294,12 @@ export default Vue.extend({
         this.createEvent = {
           name: this.availableTimeTextLocale,
           color: this.rndElement(this.colors),
-          start: this.createStart,
-          end: this.createStart + 60 * 60 * 1000,
+          start: new Date(this.createStart),
+          end: new Date(this.createStart + 60 * 60 * 1000),
           timed: true,
+          attributes: {
+            id: `event_${this.events.length + 1}`,
+          },
         };
         this.events.push(this.createEvent);
       }

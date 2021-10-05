@@ -97,6 +97,12 @@
     "comingSoon": "近日公開！"
   },
   "calendar": {
+    "today": "今日",
+    "save":"保存",
+    "cancel": "キャンセル",
+    "day":"日",
+    "week":"週",
+    "fourDays":"４日",
     "availableTime": "都合がつく時間",
     "lessonTime": "レッスン時間",
     "commTool": "コミュニケーションツール",
