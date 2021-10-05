@@ -18,6 +18,14 @@ class UserModuleGetter extends AbstractModuleGetter<UserEntityStateData> {
         const isTeacher = 'teacherData' in state.entityStateData;
         return isTeacher;
       },
+      locale(state: IEntityState<UserEntityStateData>): string {
+        const locale = state.entityStateData.settings.locale!;
+        return locale;
+      },
+      currency(state: IEntityState<UserEntityStateData>): string {
+        const currency = state.entityStateData.settings.currency!;
+        return currency;
+      },
     };
     return extendedModuleGetters;
   };

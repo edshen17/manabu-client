@@ -31,6 +31,14 @@
     @apply block border-2 border-gray-300 rounded-md border-solid;
 }
 
+.accent {
+    @apply text-blue-500 !important
+}
+
+.v-btn:not(.v-btn--outlined).primary {
+    @apply text-white bg-blue-500 !important;
+}
+
 .progress-bar-transition {
     transition: width 0.3s linear;
 }

@@ -40,10 +40,11 @@
       v-model="focus"
       style="overflow: hidden"
       class="w-screen h-screen text-white"
-      color="blue"
       :type="type"
+      color="primary"
       :events="events"
       :event-color="getEventColor"
+      :locale="locale"
       event-text-color="white"
       @click:date="viewDay"
       @click:event="showEvent"
@@ -73,14 +74,13 @@
       :close-on-content-click="false"
       :activator="selectedElement"
       :offset-x="type != 'day'"
-      max-width="700px"
+      min-width="400px"
     >
       <v-card color="grey lighten-4" flat>
-        <v-toolbar :color="selectedEvent.color" dark>
+        <!-- <v-toolbar :color="selectedEvent.color" dark>
           <v-btn icon>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon>
             <v-icon>mdi-heart</v-icon>
@@ -88,12 +88,47 @@
           <v-btn icon>
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
-        </v-toolbar>
+        </v-toolbar> -->
+        <!-- <v-card-actions>
+          <p>sa</p>
+        </v-card-actions> -->
         <v-card-text>
-          <span v-html="selectedEvent.details"></span>
+          <p class="text-black text-lg tracking-wide">{{ selectedEvent.name }}</p>
+          <p class="cursor-pointer hover:bg-gray-100 opacity-90 mt-1">
+            {{ formatDate({ startDate: selectedEvent.start, endDate: selectedEvent.end }) }}
+          </p>
+          <v-menu
+            v-model="menu2"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="date"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                class="w-28"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="date"
+              no-title
+              scrollable
+              @input="menu2 = false"
+            ></v-date-picker>
+          </v-menu>
+          <v-select :items="[1, 2]" label="Standard" dense></v-select>
         </v-card-text>
         <v-card-actions>
-          <v-btn text color="secondary" @click="selectedOpen = false"> Cancel </v-btn>
+          <v-btn text color="secondary" class="m-0" @click="selectedOpen = false">
+            Save / translate
+          </v-btn>
+          <v-btn text color="secondary" @click="selectedOpen = false"> Cancel / translate </v-btn>
         </v-card-actions>
       </v-card>
     </v-menu>
@@ -105,6 +140,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import { StringKeyObject } from '../../../../server/types/custom';
+import dayjs from 'dayjs';
 
 export default Vue.extend({
   name: 'Calendar',
@@ -113,6 +149,12 @@ export default Vue.extend({
   data() {
     return {
       ready: false,
+      date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
+      menu: false,
+      modal: false,
+      menu2: false,
       events: [] as StringKeyObject[],
       colors: [
         '#2196F3',
@@ -145,7 +187,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters({
-      userData: 'user/entityStateData',
+      locale: 'user/locale',
     }),
     cal: {
       get(): any {
@@ -171,6 +213,13 @@ export default Vue.extend({
       this.focus = date;
       this.type = 'day';
     },
+    formatDate(props: { startDate: Date; endDate: Date }): string {
+      const { startDate, endDate } = props;
+      const formattedDate = `${dayjs(startDate).format('dddd, MMMM D ⋅ h:mma –')} ${dayjs(
+        endDate
+      ).format('h:mma')}`;
+      return formattedDate;
+    },
     setToday() {
       this.focus = this.today;
     },
@@ -179,9 +228,6 @@ export default Vue.extend({
     },
     next() {
       (this.$refs.calendar as any).next();
-    },
-    test() {
-      console.log('touchstart event');
     },
     showEvent({ nativeEvent, event }: any) {
       if (this.selectedOpen) {
@@ -335,7 +381,7 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .v-event-draggable {
   padding-left: 6px;
 }
