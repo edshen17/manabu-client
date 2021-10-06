@@ -112,6 +112,7 @@
               {{ formatDate({ date: selectedEvent.start, formatString: 'hh:mma' }) }}
             </p>
             <v-autocomplete
+              v-model="autoCompleteStartModel"
               dense
               :hide-no-data="true"
               append-icon=""
@@ -144,9 +145,11 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import { StringKeyObject } from '../../../../server/types/custom';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import vSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 export default Vue.extend({
   name: 'Calendar',
@@ -213,19 +216,26 @@ export default Vue.extend({
       },
     },
     selectTimeIntervalItems: {
-      get(): StringKeyObject[] {
+      get(): string[] {
         let startTime = dayjs().hour(0).minute(0);
         const endTime = startTime.add(1, 'day');
         const allTimes = [];
         while (startTime.isBefore(endTime)) {
-          const time = {
-            text: startTime.format('hh:mma'),
-            value: startTime,
-          };
+          const formattedTime = startTime.format('hh:mma');
+          const time = formattedTime;
           allTimes.push(time);
           startTime = startTime.add(30, 'minutes');
         }
         return allTimes;
+      },
+    },
+    autoCompleteStartModel: {
+      get(): string {
+        const selectedEventStart = this.selectedEvent.start;
+        return selectedEventStart ? dayjs(selectedEventStart).format('hh:mma') : '';
+      },
+      set(val: string): void {
+        return;
       },
     },
   },
@@ -266,10 +276,11 @@ export default Vue.extend({
       });
       this.focus = this.formatDate({ date: this.selectedEvent.start, formatString: 'YYYY-MM-DD' });
     },
-    onAutoCompleteChange(newDate: Dayjs, type: string) {
+    onAutoCompleteChange(value: string, type: string) {
       const isStartDate = type == 'start';
       const selectedEventStart = dayjs(this.selectedEvent.start);
       const selectedEventEnd = dayjs(this.selectedEvent.end);
+      const newDate = dayjs(value, 'hh:mma');
       if (!isStartDate) {
         //edit end
       }
