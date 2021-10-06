@@ -6,6 +6,7 @@
         :options="selectRegions"
         label="name"
         :reduce="(region) => region.code"
+        :clearable="false"
       ></v-select>
     </template>
     <template v-slot:button>

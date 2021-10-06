@@ -1,5 +1,5 @@
 <template>
-  <div data-app>
+  <div data-app class="select-none">
     <v-sheet height="64" class="flex flex-wrap mx-auto">
       <v-toolbar flat>
         <v-btn outlined class="mx-4" color="grey darken-2" @click="setToday">
@@ -81,7 +81,7 @@
       <v-card color="grey lighten-4" flat>
         <v-card-text>
           <p class="text-black text-lg tracking-wide">{{ selectedEvent.name }}</p>
-          <span>
+          <div class="flex flex-wrap content-start">
             <v-menu
               v-model="menu2"
               :close-on-content-click="false"
@@ -92,7 +92,7 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <p
-                  class="inline cursor-pointer hover:bg-gray-100 opacity-90 my-2 mr-3"
+                  class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2"
                   v-bind="attrs"
                   v-on="on"
                 >
@@ -107,11 +107,24 @@
                 @change="onDatePickerChange"
               ></v-date-picker>
             </v-menu>
-            <v-menu> </v-menu>
-            <p class="inline cursor-pointer hover:bg-gray-100 opacity-90 my-2">1:30pm</p>
-            <p class="inline mt-1 mx-3">–</p>
-            <p class="inline cursor-pointer hover:bg-gray-100 opacity-90 my-2 mr-3">2:00pm</p>
-          </span>
+            <p class="mx-1 py-1 text-lg font-bold">⋅</p>
+            <p class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2">
+              {{ formatDate({ date: selectedEvent.start, formatString: 'hh:mma' }) }}
+            </p>
+            <v-autocomplete
+              dense
+              :hide-no-data="true"
+              append-icon=""
+              class="w-14"
+              :items="selectTimeIntervalItems"
+              @change="onAutoCompleteChange($event, 'start')"
+            ></v-autocomplete>
+
+            <p class="mx-1 py-1 text-lg font-thin">-</p>
+            <p class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2 mr-3">
+              {{ formatDate({ date: selectedEvent.end, formatString: 'hh:mma' }) }}
+            </p>
+          </div>
         </v-card-text>
         <v-card-actions>
           <v-btn text color="secondary" class="m-0" @click="selectedOpen = false">
@@ -131,11 +144,13 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import { StringKeyObject } from '../../../../server/types/custom';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import vSelect from 'vue-select';
+import 'vue-select/dist/vue-select.css';
 
 export default Vue.extend({
   name: 'Calendar',
-  components: {},
+  components: { vSelect },
   props: {},
   data() {
     return {
@@ -197,6 +212,22 @@ export default Vue.extend({
         return this.$t('calendar.availableTime');
       },
     },
+    selectTimeIntervalItems: {
+      get(): StringKeyObject[] {
+        let startTime = dayjs().hour(0).minute(0);
+        const endTime = startTime.add(1, 'day');
+        const allTimes = [];
+        while (startTime.isBefore(endTime)) {
+          const time = {
+            text: startTime.format('hh:mma'),
+            value: startTime,
+          };
+          allTimes.push(time);
+          startTime = startTime.add(30, 'minutes');
+        }
+        return allTimes;
+      },
+    },
   },
   mounted() {
     this.ready = true;
@@ -208,10 +239,6 @@ export default Vue.extend({
       return formattedDate;
     },
     onDatePickerChange() {
-      this._updateNewStartEndTimes();
-      // move to new date
-    },
-    _updateNewStartEndTimes(): void {
       const selectedEventStart = dayjs(this.selectedEvent.start);
       const selectedEventEnd = dayjs(this.selectedEvent.end);
       const newStartTime = dayjs(this.datePickerDate)
@@ -222,20 +249,37 @@ export default Vue.extend({
         .hour(selectedEventEnd.hour())
         .minute(selectedEventEnd.minute())
         .toDate();
-      // this.focus = newStartTime.toISOString();
       this._updateSelectedEvent({ field: 'start', value: newStartTime });
       this._updateSelectedEvent({ field: 'end', value: newEndTime });
+    },
+    _updateSelectedEvent(props: { field: string; value: unknown }): void {
+      const { field, value } = props;
+      this.selectedEvent[field] = value;
+      this._onUpdateSelectedEvent();
+    },
+    _onUpdateSelectedEvent() {
       this.selectedOpen = false;
       setTimeout(() => {
         // need this timeout or else new calendar element isn't rendered yet...
         this.selectedElement = this.$refs[this.selectedEvent.attributes.id];
         requestAnimationFrame(() => requestAnimationFrame(() => (this.selectedOpen = true)));
       });
-      this.focus = this.formatDate({ date: newStartTime, formatString: 'YYYY-MM-DD' });
+      this.focus = this.formatDate({ date: this.selectedEvent.start, formatString: 'YYYY-MM-DD' });
     },
-    _updateSelectedEvent(props: { field: string; value: unknown }): void {
-      const { field, value } = props;
-      this.selectedEvent[field] = value;
+    onAutoCompleteChange(newDate: Dayjs, type: string) {
+      const isStartDate = type == 'start';
+      const selectedEventStart = dayjs(this.selectedEvent.start);
+      const selectedEventEnd = dayjs(this.selectedEvent.end);
+      if (!isStartDate) {
+        //edit end
+      }
+      const newStartTime = selectedEventStart.hour(newDate.hour()).minute(newDate.minute());
+      this._updateSelectedEvent({ field: 'start', value: newStartTime.toDate() });
+      if (newStartTime.isAfter(selectedEventStart)) {
+        const diff = newStartTime.diff(selectedEventStart);
+        const newEndTime = selectedEventEnd.add(diff);
+        this._updateSelectedEvent({ field: 'end', value: newEndTime.toDate() });
+      }
     },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }) {
@@ -403,6 +447,10 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
+.vs__no-options {
+  display: none !important;
+}
+
 .v-event-draggable {
   padding-left: 6px;
 }

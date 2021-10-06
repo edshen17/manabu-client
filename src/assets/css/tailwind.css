@@ -31,6 +31,7 @@
     @apply block border-2 border-gray-300 rounded-md border-solid;
 }
 
+
 .accent {
     @apply text-blue-500 !important
 }

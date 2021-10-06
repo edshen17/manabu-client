@@ -12,7 +12,7 @@
       bg-green-700
       text-white
       justify-center
-      text-uppercase
+      uppercase
     "
     @click="$emit('click')"
   >

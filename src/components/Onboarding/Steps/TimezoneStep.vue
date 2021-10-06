@@ -1,7 +1,12 @@
 <template>
   <grid-select-layout :step-title="$t('onboarding.timezone')">
     <template v-slot:select>
-      <v-select v-model="timezone" :options="selectTimezones" label="timezone"></v-select>
+      <v-select
+        v-model="timezone"
+        :options="selectTimezones"
+        label="timezone"
+        :clearable="false"
+      ></v-select>
     </template>
     <template v-slot:button>
       <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitTimezoneSelection" />
