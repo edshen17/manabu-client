@@ -31,6 +31,20 @@
     @apply block border-2 border-gray-300 rounded-md border-solid;
 }
 
+.calendar .v-select__slot input {
+    @apply border-none ring-opacity-0 !important;
+}
+
+.calendar .v-input__control {
+    @apply max-w-0 !important;
+}
+.calendar .v-text-field__details {
+    @apply hidden !important;
+}
+
+.calendar .v-text-field.v-input--dense {
+    @apply text-black opacity-60 text-xs w-2 !important;
+}
 
 .accent {
     @apply text-blue-500 !important

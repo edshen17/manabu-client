@@ -34,7 +34,6 @@ Vue.config.errorHandler = (err, vm, info) => {
 Vue.use(VueCookies);
 Vue.$cookies.config('7d');
 Vue.use(vClickOutside);
-
 new Vue({
   router,
   store,

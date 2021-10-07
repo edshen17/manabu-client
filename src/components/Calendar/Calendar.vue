@@ -1,5 +1,5 @@
 <template>
-  <div data-app class="select-none">
+  <div data-app class="select-none calendar">
     <v-sheet height="64" class="flex flex-wrap mx-auto">
       <v-toolbar flat>
         <v-btn outlined class="mx-4" color="grey darken-2" @click="setToday">
@@ -37,7 +37,7 @@
     </v-sheet>
     <v-calendar
       ref="calendar"
-      v-model="focus"
+      v-model="calendarFocusDate"
       style="overflow: hidden"
       class="w-screen h-screen text-white"
       :type="type"
@@ -91,13 +91,13 @@
               min-width="auto"
             >
               <template v-slot:activator="{ on, attrs }">
-                <p
+                <button
                   class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2"
                   v-bind="attrs"
                   v-on="on"
                 >
                   {{ formatDate({ date: selectedEvent.start, formatString: 'dddd, MMMM D' }) }}
-                </p>
+                </button>
               </template>
               <v-date-picker
                 v-model="datePickerDate"
@@ -108,23 +108,38 @@
               ></v-date-picker>
             </v-menu>
             <p class="mx-1 py-1 text-lg font-bold">⋅</p>
-            <p class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2">
-              {{ formatDate({ date: selectedEvent.start, formatString: 'hh:mma' }) }}
-            </p>
+            <button
+              v-show="!autoCompleteVisibility.start"
+              class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2"
+              @click="toggleAutoCompleteStartVisibility"
+            >
+              {{ formatDate({ date: selectedEvent.start, formatString: 'h:mma' }) }}
+            </button>
             <v-autocomplete
+              v-show="autoCompleteVisibility.start"
+              ref="autoCompleteStart"
               v-model="autoCompleteStartModel"
+              auto-select-first
               dense
               :hide-no-data="true"
               append-icon=""
               class="w-14"
               :items="selectTimeIntervalItems"
-              @change="onAutoCompleteChange($event, 'start')"
+              @input="onAutoCompleteInput($event, 'start')"
             ></v-autocomplete>
-
             <p class="mx-1 py-1 text-lg font-thin">-</p>
-            <p class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2 mr-3">
-              {{ formatDate({ date: selectedEvent.end, formatString: 'hh:mma' }) }}
-            </p>
+            <button
+              class="
+                inline
+                cursor-pointer
+                hover:bg-gray-100
+                focus:border-red-300 focus:ring-red-300
+                py-2
+                mr-3
+              "
+            >
+              {{ formatDate({ date: selectedEvent.end, formatString: 'h:mma' }) }}
+            </button>
           </div>
         </v-card-text>
         <v-card-actions>
@@ -142,18 +157,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { focus } from 'vue-focus';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import { StringKeyObject } from '../../../../server/types/custom';
 import dayjs from 'dayjs';
-import vSelect from 'vue-select';
-import 'vue-select/dist/vue-select.css';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 
 export default Vue.extend({
   name: 'Calendar',
-  components: { vSelect },
+  directives: { focus },
   props: {},
   data() {
     return {
@@ -180,11 +194,15 @@ export default Vue.extend({
       createStart: null as any,
       extendOriginal: null as any,
       today: '',
-      focus: '',
+      calendarFocusDate: '',
       type: 'week',
       selectedEvent: {} as StringKeyObject,
       selectedElement: null as any,
       selectedOpen: false,
+      autoCompleteVisibility: {
+        start: false,
+        end: false,
+      } as StringKeyObject,
     };
   },
   computed: {
@@ -221,7 +239,7 @@ export default Vue.extend({
         const endTime = startTime.add(1, 'day');
         const allTimes = [];
         while (startTime.isBefore(endTime)) {
-          const formattedTime = startTime.format('hh:mma');
+          const formattedTime = startTime.format('h:mma');
           const time = formattedTime;
           allTimes.push(time);
           startTime = startTime.add(30, 'minutes');
@@ -232,7 +250,7 @@ export default Vue.extend({
     autoCompleteStartModel: {
       get(): string {
         const selectedEventStart = this.selectedEvent.start;
-        return selectedEventStart ? dayjs(selectedEventStart).format('hh:mma') : '';
+        return selectedEventStart ? dayjs(selectedEventStart).format('h:mma') : '';
       },
       set(val: string): void {
         return;
@@ -274,13 +292,16 @@ export default Vue.extend({
         this.selectedElement = this.$refs[this.selectedEvent.attributes.id];
         requestAnimationFrame(() => requestAnimationFrame(() => (this.selectedOpen = true)));
       });
-      this.focus = this.formatDate({ date: this.selectedEvent.start, formatString: 'YYYY-MM-DD' });
+      this.calendarFocusDate = this.formatDate({
+        date: this.selectedEvent.start,
+        formatString: 'YYYY-MM-DD',
+      });
     },
-    onAutoCompleteChange(value: string, type: string) {
+    onAutoCompleteInput(value: string, type: string) {
       const isStartDate = type == 'start';
       const selectedEventStart = dayjs(this.selectedEvent.start);
       const selectedEventEnd = dayjs(this.selectedEvent.end);
-      const newDate = dayjs(value, 'hh:mma');
+      const newDate = dayjs(value, 'h:mma');
       if (!isStartDate) {
         //edit end
       }
@@ -291,14 +312,35 @@ export default Vue.extend({
         const newEndTime = selectedEventEnd.add(diff);
         this._updateSelectedEvent({ field: 'end', value: newEndTime.toDate() });
       }
+      this.resetAutoCompleteVisibility();
+    },
+    toggleAutoCompleteStartVisibility() {
+      this._toggleAutoCompleteVisibility({ type: 'start', refName: 'autoCompleteStart' });
+    },
+    toggleAutoCompleteEndVisibility() {
+      this._toggleAutoCompleteVisibility({ type: 'end', refName: 'autoCompleteEnd' });
+    },
+    _toggleAutoCompleteVisibility(props: { type: string; refName: string }): void {
+      const { type, refName } = props;
+      this.autoCompleteVisibility[type] = !this.autoCompleteVisibility[type];
+      const inputField = (this.$refs[refName] as any).$refs.input;
+      setTimeout(() => {
+        inputField.click();
+      });
+    },
+    resetAutoCompleteVisibility(): void {
+      this.autoCompleteVisibility = {
+        start: false,
+        end: false,
+      };
     },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }) {
-      this.focus = date;
+      this.calendarFocusDate = date;
       this.type = 'day';
     },
     setToday() {
-      this.focus = this.today;
+      this.calendarFocusDate = this.today;
     },
     prev() {
       (this.$refs.calendar as any).prev();
@@ -358,6 +400,7 @@ export default Vue.extend({
         };
         this.events.push(this.createEvent);
       }
+      this.resetAutoCompleteVisibility();
     },
     extendBottom(event: any) {
       this.createEvent = event;
@@ -460,6 +503,10 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .vs__no-options {
   display: none !important;
+}
+
+.calendar .v-text-field.v-input--dense {
+  max-width: 60px;
 }
 
 .v-event-draggable {
