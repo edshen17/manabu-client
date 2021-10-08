@@ -252,13 +252,17 @@ export default Vue.extend({
       },
     },
     autoCompleteStartIntervals: {
-      get(): string[] {
+      get(): StringKeyObject[] {
         let startTime = dayjs().hour(0).minute(0);
         const endTime = startTime.add(1, 'day');
         const startIntervals = [];
         while (startTime.isBefore(endTime)) {
           const formattedTime = startTime.format('h:mma');
-          startIntervals.push(formattedTime);
+          const time = {
+            text: formattedTime,
+            value: startTime.format('D h:mma'),
+          };
+          startIntervals.push(time);
           startTime = startTime.add(30, 'minutes');
         }
         return startIntervals;
@@ -272,14 +276,14 @@ export default Vue.extend({
         const hasSelectedEvent = selectedEventStart && selectedEventEnd;
         if (hasSelectedEvent) {
           let startTime = dayjs(selectedEventStart);
-          let endTime = startTime.add(1, 'day').hour(0).minute(0);
+          let endTime = startTime.add(1, 'day');
           while (startTime.isBefore(endTime)) {
             const formattedTime = startTime.format('h:mma');
             const diffBetweenSelectedEventStart =
               startTime.diff(selectedEventStart, 'minutes') / 60;
             const time = {
               text: `${formattedTime} (${diffBetweenSelectedEventStart} hr)`,
-              value: formattedTime,
+              value: startTime.format('D h:mma'),
             };
             endIntervals.push(time);
             startTime = startTime.add(30, 'minutes');
@@ -292,7 +296,7 @@ export default Vue.extend({
       get(): string {
         const selectedEventStart = this.selectedEvent.start;
         return selectedEventStart
-          ? this.formatDate({ date: selectedEventStart, formatString: 'h:mma' })
+          ? this.formatDate({ date: selectedEventStart, formatString: 'D h:mma' })
           : '';
       },
       set(val: string): void {
@@ -303,7 +307,7 @@ export default Vue.extend({
       get(): string {
         const selectedEventEnd = this.selectedEvent.end;
         return selectedEventEnd
-          ? this.formatDate({ date: selectedEventEnd, formatString: 'h:mma' })
+          ? this.formatDate({ date: selectedEventEnd, formatString: 'D h:mma' })
           : '';
       },
       set(val: string): void {
@@ -355,16 +359,22 @@ export default Vue.extend({
       const isStartDate = type == 'start';
       const selectedEventStart = dayjs(this.selectedEvent.start);
       const selectedEventEnd = dayjs(this.selectedEvent.end);
-      const isValidDateStr = dayjs(value, 'h:mma', true).isValid();
-      const newDate = dayjs(value, 'h:mma');
+      const isValidDateStr = dayjs(value, 'D h:mma', true).isValid();
+      const newDate = dayjs(value, 'D h:mma');
       if (!isValidDateStr) {
         return;
       }
       if (!isStartDate) {
-        const newEndTime = selectedEventEnd.hour(newDate.hour()).minute(newDate.minute());
+        const newEndTime = selectedEventEnd
+          .day(newDate.day())
+          .hour(newDate.hour())
+          .minute(newDate.minute());
         this._updateSelectedEvent({ field: 'end', value: newEndTime.toDate() });
       } else {
-        const newStartTime = selectedEventStart.hour(newDate.hour()).minute(newDate.minute());
+        const newStartTime = selectedEventStart
+          .day(newDate.day())
+          .hour(newDate.hour())
+          .minute(newDate.minute());
         this._updateSelectedEvent({ field: 'start', value: newStartTime.toDate() });
         if (newStartTime.isAfter(selectedEventStart)) {
           const diff = newStartTime.diff(selectedEventStart);
@@ -578,7 +588,7 @@ export default Vue.extend({
 }
 
 .calendar .v-text-field.v-input--dense {
-  max-width: 100px;
+  max-width: 120px;
 }
 
 .v-event-draggable {
