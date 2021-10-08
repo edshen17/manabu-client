@@ -267,11 +267,12 @@ export default Vue.extend({
     autoCompleteEndIntervals: {
       get(): StringKeyObject[] {
         const endIntervals: StringKeyObject[] = [];
-        const hasSelectedEvent = this.selectedEvent.start && this.selectedEvent.end;
+        const selectedEventStart = this.selectedEvent.start;
+        const selectedEventEnd = this.selectedEvent.end;
+        const hasSelectedEvent = selectedEventStart && selectedEventEnd;
         if (hasSelectedEvent) {
-          let startTime = dayjs(this.selectedEvent.end);
+          let startTime = dayjs(selectedEventStart);
           let endTime = startTime.add(1, 'day').hour(0).minute(0);
-          const selectedEventStart = dayjs(this.selectedEvent.start);
           while (startTime.isBefore(endTime)) {
             const formattedTime = startTime.format('h:mma');
             const diffBetweenSelectedEventStart =
@@ -354,16 +355,22 @@ export default Vue.extend({
       const isStartDate = type == 'start';
       const selectedEventStart = dayjs(this.selectedEvent.start);
       const selectedEventEnd = dayjs(this.selectedEvent.end);
+      const isValidDateStr = dayjs(value, 'h:mma', true).isValid();
       const newDate = dayjs(value, 'h:mma');
-      if (!isStartDate) {
-        //edit end
+      if (!isValidDateStr) {
+        return;
       }
-      const newStartTime = selectedEventStart.hour(newDate.hour()).minute(newDate.minute());
-      this._updateSelectedEvent({ field: 'start', value: newStartTime.toDate() });
-      if (newStartTime.isAfter(selectedEventStart)) {
-        const diff = newStartTime.diff(selectedEventStart);
-        const newEndTime = selectedEventEnd.add(diff);
+      if (!isStartDate) {
+        const newEndTime = selectedEventEnd.hour(newDate.hour()).minute(newDate.minute());
         this._updateSelectedEvent({ field: 'end', value: newEndTime.toDate() });
+      } else {
+        const newStartTime = selectedEventStart.hour(newDate.hour()).minute(newDate.minute());
+        this._updateSelectedEvent({ field: 'start', value: newStartTime.toDate() });
+        if (newStartTime.isAfter(selectedEventStart)) {
+          const diff = newStartTime.diff(selectedEventStart);
+          const newEndTime = selectedEventEnd.add(diff);
+          this._updateSelectedEvent({ field: 'end', value: newEndTime.toDate() });
+        }
       }
       this.resetAutoCompleteVisibility();
     },
@@ -387,11 +394,17 @@ export default Vue.extend({
       this.resetAutoCompleteStartVisibility();
       this.resetAutoCompleteEndVisibility();
     },
-    resetAutoCompleteStartVisibility(): void {
-      this.autoCompleteVisibility.start = false;
+    resetAutoCompleteStartVisibility(event?: any): void {
+      const isClickingInput = event && event.target.tagName == 'INPUT';
+      if (!isClickingInput) {
+        this.autoCompleteVisibility.start = false;
+      }
     },
-    resetAutoCompleteEndVisibility(): void {
-      this.autoCompleteVisibility.end = false;
+    resetAutoCompleteEndVisibility(event?: any): void {
+      const isClickingInput = event && event.target.tagName == 'INPUT';
+      if (!isClickingInput) {
+        this.autoCompleteVisibility.end = false;
+      }
     },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }) {
