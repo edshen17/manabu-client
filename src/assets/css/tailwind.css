@@ -35,9 +35,6 @@
     @apply border-none ring-opacity-0 !important;
 }
 
-.calendar .v-input__control {
-    @apply max-w-0 !important;
-}
 .calendar .v-text-field__details {
     @apply hidden !important;
 }

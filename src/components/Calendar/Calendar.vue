@@ -110,6 +110,8 @@
             <p class="mx-1 py-1 text-lg font-bold">⋅</p>
             <button
               v-show="!autoCompleteVisibility.start"
+              id="startTimeBtn"
+              v-click-outside="resetAutoCompleteStartVisibility"
               class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2"
               @click="toggleAutoCompleteStartVisibility"
             >
@@ -124,11 +126,14 @@
               :hide-no-data="true"
               append-icon=""
               class="w-14"
-              :items="selectTimeIntervalItems"
+              :items="autoCompleteStartIntervals"
               @input="onAutoCompleteInput($event, 'start')"
             ></v-autocomplete>
             <p class="mx-1 py-1 text-lg font-thin">-</p>
             <button
+              v-show="!autoCompleteVisibility.end"
+              id="endTimeBtn"
+              v-click-outside="resetAutoCompleteEndVisibility"
               class="
                 inline
                 cursor-pointer
@@ -137,9 +142,22 @@
                 py-2
                 mr-3
               "
+              @click="toggleAutoCompleteEndVisibility"
             >
               {{ formatDate({ date: selectedEvent.end, formatString: 'h:mma' }) }}
             </button>
+            <v-autocomplete
+              v-show="autoCompleteVisibility.end"
+              ref="autoCompleteEnd"
+              v-model="autoCompleteEndModel"
+              auto-select-first
+              dense
+              :hide-no-data="true"
+              append-icon=""
+              class="w-14"
+              :items="autoCompleteEndIntervals"
+              @input="onAutoCompleteInput($event, 'End')"
+            ></v-autocomplete>
           </div>
         </v-card-text>
         <v-card-actions>
@@ -233,24 +251,59 @@ export default Vue.extend({
         return this.$t('calendar.availableTime');
       },
     },
-    selectTimeIntervalItems: {
+    autoCompleteStartIntervals: {
       get(): string[] {
         let startTime = dayjs().hour(0).minute(0);
         const endTime = startTime.add(1, 'day');
-        const allTimes = [];
+        const startIntervals = [];
         while (startTime.isBefore(endTime)) {
           const formattedTime = startTime.format('h:mma');
-          const time = formattedTime;
-          allTimes.push(time);
+          startIntervals.push(formattedTime);
           startTime = startTime.add(30, 'minutes');
         }
-        return allTimes;
+        return startIntervals;
+      },
+    },
+    autoCompleteEndIntervals: {
+      get(): StringKeyObject[] {
+        const endIntervals: StringKeyObject[] = [];
+        const hasSelectedEvent = this.selectedEvent.start && this.selectedEvent.end;
+        if (hasSelectedEvent) {
+          let startTime = dayjs(this.selectedEvent.end);
+          let endTime = startTime.add(1, 'day').hour(0).minute(0);
+          const selectedEventStart = dayjs(this.selectedEvent.start);
+          while (startTime.isBefore(endTime)) {
+            const formattedTime = startTime.format('h:mma');
+            const diffBetweenSelectedEventStart =
+              startTime.diff(selectedEventStart, 'minutes') / 60;
+            const time = {
+              text: `${formattedTime} (${diffBetweenSelectedEventStart} hr)`,
+              value: formattedTime,
+            };
+            endIntervals.push(time);
+            startTime = startTime.add(30, 'minutes');
+          }
+        }
+        return endIntervals;
       },
     },
     autoCompleteStartModel: {
       get(): string {
         const selectedEventStart = this.selectedEvent.start;
-        return selectedEventStart ? dayjs(selectedEventStart).format('h:mma') : '';
+        return selectedEventStart
+          ? this.formatDate({ date: selectedEventStart, formatString: 'h:mma' })
+          : '';
+      },
+      set(val: string): void {
+        return;
+      },
+    },
+    autoCompleteEndModel: {
+      get(): string {
+        const selectedEventEnd = this.selectedEvent.end;
+        return selectedEventEnd
+          ? this.formatDate({ date: selectedEventEnd, formatString: 'h:mma' })
+          : '';
       },
       set(val: string): void {
         return;
@@ -314,25 +367,31 @@ export default Vue.extend({
       }
       this.resetAutoCompleteVisibility();
     },
-    toggleAutoCompleteStartVisibility() {
-      this._toggleAutoCompleteVisibility({ type: 'start', refName: 'autoCompleteStart' });
+    toggleAutoCompleteStartVisibility(event: any) {
+      this._toggleAutoCompleteVisibility({ type: 'start', refName: 'autoCompleteStart', event });
     },
-    toggleAutoCompleteEndVisibility() {
-      this._toggleAutoCompleteVisibility({ type: 'end', refName: 'autoCompleteEnd' });
+    toggleAutoCompleteEndVisibility(event: any) {
+      this._toggleAutoCompleteVisibility({ type: 'end', refName: 'autoCompleteEnd', event });
     },
-    _toggleAutoCompleteVisibility(props: { type: string; refName: string }): void {
-      const { type, refName } = props;
+    _toggleAutoCompleteVisibility(props: { type: string; refName: string; event: any }): void {
+      const { type, refName, event } = props;
       this.autoCompleteVisibility[type] = !this.autoCompleteVisibility[type];
-      const inputField = (this.$refs[refName] as any).$refs.input;
-      setTimeout(() => {
-        inputField.click();
-      });
+      if (event.path[0].id.includes('TimeBtn')) {
+        const inputField = (this.$refs[refName] as any).$refs.input;
+        setTimeout(() => {
+          inputField.click();
+        });
+      }
     },
     resetAutoCompleteVisibility(): void {
-      this.autoCompleteVisibility = {
-        start: false,
-        end: false,
-      };
+      this.resetAutoCompleteStartVisibility();
+      this.resetAutoCompleteEndVisibility();
+    },
+    resetAutoCompleteStartVisibility(): void {
+      this.autoCompleteVisibility.start = false;
+    },
+    resetAutoCompleteEndVisibility(): void {
+      this.autoCompleteVisibility.end = false;
     },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }) {
@@ -506,7 +565,7 @@ export default Vue.extend({
 }
 
 .calendar .v-text-field.v-input--dense {
-  max-width: 60px;
+  max-width: 100px;
 }
 
 .v-event-draggable {
