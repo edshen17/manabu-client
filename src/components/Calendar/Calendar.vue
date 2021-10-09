@@ -49,8 +49,8 @@
       @click:date="viewDay"
       @click:event="showEvent"
       @change="getEvents"
-      @mousedown:event="startDrag"
-      @mousedown:time="startTime"
+      @mousedown:event="startMouseDrag"
+      @mousedown:time="createNewEvent"
       @mousemove:time="mouseMove"
       @mouseup:time="endDrag"
       @mouseup:event="openPopup"
@@ -72,7 +72,7 @@
       </template>
     </v-calendar>
     <v-menu
-      v-model="selectedOpen"
+      v-model="showSelectedEventMenu"
       :close-on-content-click="false"
       :activator="selectedElement"
       :offset-x="type != 'day'"
@@ -161,10 +161,10 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn text color="secondary" class="m-0" @click="selectedOpen = false">
+          <v-btn text color="secondary" class="m-0" @click="showSelectedEventMenu = false">
             {{ $t('calendar.save') }}
           </v-btn>
-          <v-btn text color="secondary" @click="selectedOpen = false">
+          <v-btn text color="secondary" @click="cancelEvent">
             {{ $t('calendar.cancel') }}
           </v-btn>
         </v-card-actions>
@@ -216,7 +216,7 @@ export default Vue.extend({
       type: 'week',
       selectedEvent: {} as StringKeyObject,
       selectedElement: null as any,
-      selectedOpen: false,
+      showSelectedEventMenu: false,
       autoCompleteVisibility: {
         start: false,
         end: false,
@@ -253,7 +253,8 @@ export default Vue.extend({
     },
     autoCompleteStartIntervals: {
       get(): StringKeyObject[] {
-        let startTime = dayjs().hour(0).minute(0);
+        const selectedEventStart = this.selectedEvent.start;
+        let startTime = dayjs(selectedEventStart).hour(0).minute(0);
         const endTime = startTime.add(1, 'day');
         const startIntervals = [];
         while (startTime.isBefore(endTime)) {
@@ -344,11 +345,13 @@ export default Vue.extend({
       this._onUpdateSelectedEvent();
     },
     _onUpdateSelectedEvent() {
-      this.selectedOpen = false;
+      this.showSelectedEventMenu = false;
       setTimeout(() => {
         // need this timeout or else new calendar element isn't rendered yet...
         this.selectedElement = this.$refs[this.selectedEvent.attributes.id];
-        requestAnimationFrame(() => requestAnimationFrame(() => (this.selectedOpen = true)));
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => (this.showSelectedEventMenu = true))
+        );
       });
       this.calendarFocusDate = this.formatDate({
         date: this.selectedEvent.start,
@@ -371,10 +374,7 @@ export default Vue.extend({
           .minute(newDate.minute());
         this._updateSelectedEvent({ field: 'end', value: newEndTime.toDate() });
       } else {
-        const newStartTime = selectedEventStart
-          .day(newDate.day())
-          .hour(newDate.hour())
-          .minute(newDate.minute());
+        const newStartTime = selectedEventStart.hour(newDate.hour()).minute(newDate.minute());
         this._updateSelectedEvent({ field: 'start', value: newStartTime.toDate() });
         if (newStartTime.isAfter(selectedEventStart)) {
           const diff = newStartTime.diff(selectedEventStart);
@@ -383,22 +383,6 @@ export default Vue.extend({
         }
       }
       this.resetAutoCompleteVisibility();
-    },
-    toggleAutoCompleteStartVisibility(event: any) {
-      this._toggleAutoCompleteVisibility({ type: 'start', refName: 'autoCompleteStart', event });
-    },
-    toggleAutoCompleteEndVisibility(event: any) {
-      this._toggleAutoCompleteVisibility({ type: 'end', refName: 'autoCompleteEnd', event });
-    },
-    _toggleAutoCompleteVisibility(props: { type: string; refName: string; event: any }): void {
-      const { type, refName, event } = props;
-      this.autoCompleteVisibility[type] = !this.autoCompleteVisibility[type];
-      if (event.path[0].id.includes('TimeBtn')) {
-        const inputField = (this.$refs[refName] as any).$refs.input;
-        setTimeout(() => {
-          inputField.click();
-        });
-      }
     },
     resetAutoCompleteVisibility(): void {
       this.resetAutoCompleteStartVisibility();
@@ -416,6 +400,28 @@ export default Vue.extend({
         this.autoCompleteVisibility.end = false;
       }
     },
+    toggleAutoCompleteStartVisibility(event: any) {
+      this._toggleAutoCompleteVisibility({ type: 'start', refName: 'autoCompleteStart', event });
+    },
+    toggleAutoCompleteEndVisibility(event: any) {
+      this._toggleAutoCompleteVisibility({ type: 'end', refName: 'autoCompleteEnd', event });
+    },
+    _toggleAutoCompleteVisibility(props: { type: string; refName: string; event: any }): void {
+      const { type, refName, event } = props;
+      this.autoCompleteVisibility[type] = !this.autoCompleteVisibility[type];
+      if (event.path[0].id.includes('TimeBtn')) {
+        const inputField = (this.$refs[refName] as any).$refs.input;
+        setTimeout(() => {
+          inputField.click();
+        });
+      }
+    },
+    cancelEvent() {
+      this.events = this.events.filter((event) => {
+        return event.attributes.id != this.selectedEvent.attributes.id;
+      });
+      this.showSelectedEventMenu = false;
+    },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }) {
       this.calendarFocusDate = date;
@@ -431,8 +437,8 @@ export default Vue.extend({
       (this.$refs.calendar as any).next();
     },
     showEvent({ nativeEvent, event }: any) {
-      if (this.selectedOpen) {
-        this.selectedOpen = false;
+      if (this.showSelectedEventMenu) {
+        this.showSelectedEventMenu = false;
       }
       this.openPopup({ nativeEvent, event });
       nativeEvent.stopPropagation();
@@ -440,7 +446,7 @@ export default Vue.extend({
     openPopup({ nativeEvent, event }: any) {
       this.selectedEvent = event;
       this.selectedElement = nativeEvent.target;
-      requestAnimationFrame(() => requestAnimationFrame(() => (this.selectedOpen = true)));
+      requestAnimationFrame(() => requestAnimationFrame(() => (this.showSelectedEventMenu = true)));
     },
     getCurrentTime() {
       return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0;
@@ -453,16 +459,16 @@ export default Vue.extend({
     updateTime() {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
-    startDrag({ event, timed }: any) {
+    startMouseDrag({ event, timed }: any) {
       if (event && timed) {
         this.dragEvent = event;
         this.dragTime = null;
         this.extendOriginal = null;
       }
     },
-    startTime(tms: StringKeyObject) {
+    createNewEvent(tms: StringKeyObject) {
       const mouse = this.toTime(tms);
-      this.selectedOpen = false;
+      this.showSelectedEventMenu = false;
       this.selectedEvent = {};
       this.selectedElement = null;
       if (this.dragEvent && this.dragTime === null) {
@@ -478,6 +484,7 @@ export default Vue.extend({
           timed: true,
           attributes: {
             id: `event_${this.events.length + 1}`,
+            creationStatus: 'pending',
           },
         };
         this.events.push(this.createEvent);
