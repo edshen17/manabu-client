@@ -111,7 +111,7 @@
             <button
               v-show="!autoCompleteVisibility.start"
               id="startTimeBtn"
-              v-click-outside="resetAutoCompleteStartVisibility"
+              v-click-outside="resetAutoCompleteVisibility"
               class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2"
               @click="toggleAutoCompleteStartVisibility"
             >
@@ -161,7 +161,7 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn text color="secondary" class="m-0" @click="showSelectedEventMenu = false">
+          <v-btn text color="secondary" class="m-0" @click="saveEvent">
             {{ $t('calendar.save') }}
           </v-btn>
           <v-btn text color="secondary" @click="cancelEvent">
@@ -349,9 +349,7 @@ export default Vue.extend({
       setTimeout(() => {
         // need this timeout or else new calendar element isn't rendered yet...
         this.selectedElement = this.$refs[this.selectedEvent.attributes.id];
-        requestAnimationFrame(() =>
-          requestAnimationFrame(() => (this.showSelectedEventMenu = true))
-        );
+        requestAnimationFrame(() => (this.showSelectedEventMenu = true));
       });
       this.calendarFocusDate = this.formatDate({
         date: this.selectedEvent.start,
@@ -422,6 +420,11 @@ export default Vue.extend({
       });
       this.showSelectedEventMenu = false;
     },
+    saveEvent() {
+      this.selectedEvent.attributes.creationStatus = 'saved';
+      this.showSelectedEventMenu = false;
+      // save to db
+    },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }) {
       this.calendarFocusDate = date;
@@ -468,12 +471,18 @@ export default Vue.extend({
     },
     createNewEvent(tms: StringKeyObject) {
       const mouse = this.toTime(tms);
-      this.showSelectedEventMenu = false;
+      const hasNotSavedPreviousEvent =
+        this.selectedEvent.attributes && this.selectedEvent.attributes.creationStatus == 'pending';
       this.selectedEvent = {};
-      this.selectedElement = null;
+      // this.showSelectedEventMenu = false;
+      // this.selectedElement = null;
       if (this.dragEvent && this.dragTime === null) {
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
+      } else if (hasNotSavedPreviousEvent) {
+        this.events = this.events.filter((event) => {
+          return event.attributes.creationStatus != 'pending';
+        });
       } else {
         this.createStart = this.roundTime(mouse);
         this.createEvent = {
