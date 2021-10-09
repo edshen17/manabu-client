@@ -74,6 +74,7 @@
     <v-menu
       v-model="showSelectedEventMenu"
       :close-on-content-click="false"
+      :close-on-click="false"
       :activator="selectedElement"
       :offset-x="type != 'day'"
       min-width="400px"
@@ -111,7 +112,7 @@
             <button
               v-show="!autoCompleteVisibility.start"
               id="startTimeBtn"
-              v-click-outside="resetAutoCompleteVisibility"
+              v-click-outside="resetAutoCompleteStartVisibility"
               class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2"
               @click="toggleAutoCompleteStartVisibility"
             >
@@ -126,9 +127,12 @@
               :hide-no-data="true"
               append-icon=""
               class="w-14"
+              :menu-props="autoCompleteMenuProps"
               :items="autoCompleteStartIntervals"
               @input="onAutoCompleteInput($event, 'start')"
-            ></v-autocomplete>
+            >
+              <template v-slot:default> sasaa </template>
+            </v-autocomplete>
             <p class="mx-1 py-1 text-lg font-thin">-</p>
             <button
               v-show="!autoCompleteVisibility.end"
@@ -154,6 +158,7 @@
               dense
               :hide-no-data="true"
               append-icon=""
+              :menu-props="autoCompleteMenuProps"
               class="w-14"
               :items="autoCompleteEndIntervals"
               @input="onAutoCompleteInput($event, 'End')"
@@ -315,6 +320,16 @@ export default Vue.extend({
         return;
       },
     },
+    autoCompleteMenuProps: {
+      get(): StringKeyObject {
+        const autoCompleteMenuProps = {
+          closeOnClick: true,
+          closeOnContentClick: true,
+          transition: true,
+        };
+        return autoCompleteMenuProps;
+      },
+    },
   },
   mounted() {
     this.ready = true;
@@ -349,7 +364,9 @@ export default Vue.extend({
       setTimeout(() => {
         // need this timeout or else new calendar element isn't rendered yet...
         this.selectedElement = this.$refs[this.selectedEvent.attributes.id];
-        requestAnimationFrame(() => (this.showSelectedEventMenu = true));
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => (this.showSelectedEventMenu = true))
+        );
       });
       this.calendarFocusDate = this.formatDate({
         date: this.selectedEvent.start,
@@ -440,9 +457,6 @@ export default Vue.extend({
       (this.$refs.calendar as any).next();
     },
     showEvent({ nativeEvent, event }: any) {
-      if (this.showSelectedEventMenu) {
-        this.showSelectedEventMenu = false;
-      }
       this.openPopup({ nativeEvent, event });
       nativeEvent.stopPropagation();
     },
@@ -474,8 +488,8 @@ export default Vue.extend({
       const hasNotSavedPreviousEvent =
         this.selectedEvent.attributes && this.selectedEvent.attributes.creationStatus == 'pending';
       this.selectedEvent = {};
-      // this.showSelectedEventMenu = false;
-      // this.selectedElement = null;
+      this.selectedElement = null;
+      this.showSelectedEventMenu = false;
       if (this.dragEvent && this.dragTime === null) {
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
