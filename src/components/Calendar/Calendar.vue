@@ -59,7 +59,16 @@
     >
       <template v-slot:event="{ event, timed }">
         <div :ref="event.attributes.id">
-          <div class="v-event-draggable">ss</div>
+          <div class="v-event-draggable">
+            <span>
+              {{ getEventTitle(event) }}
+            </span>
+            <br />
+            <span
+              >{{ formatDate({ date: event.start, formatString: 'h:mma' }) }} -
+              {{ formatDate({ date: event.end, formatString: 'h:mma' }) }}</span
+            >
+          </div>
           <div v-if="timed" class="v-event-drag-bottom" @mousedown.stop="extendBottom(event)"></div>
         </div>
       </template>
@@ -83,7 +92,7 @@
     >
       <v-card color="grey lighten-4" flat>
         <v-card-text>
-          <p class="text-black text-lg tracking-wide">{{ selectedEvent.name }}</p>
+          <p class="text-black text-lg tracking-wide">{{ getEventTitle(selectedEvent) }}</p>
           <div class="flex flex-wrap content-start">
             <v-menu
               v-model="menu2"
@@ -356,7 +365,7 @@ export default Vue.extend({
       const formattedDate = dayjs(date).format(formatString);
       return formattedDate;
     },
-    onDatePickerChange() {
+    onDatePickerChange(): void {
       const selectedEventStart = dayjs(this.selectedEvent.start);
       const selectedEventEnd = dayjs(this.selectedEvent.end);
       const newStartTime = dayjs(this.datePickerDate)
@@ -375,7 +384,7 @@ export default Vue.extend({
       this.selectedEvent[field] = value;
       this._onUpdateSelectedEvent();
     },
-    _onUpdateSelectedEvent() {
+    _onUpdateSelectedEvent(): void {
       this.showSelectedEventMenu = false;
       setTimeout(() => {
         // need this timeout or else new calendar element isn't rendered yet...
@@ -389,7 +398,7 @@ export default Vue.extend({
         formatString: 'YYYY-MM-DD',
       });
     },
-    onAutoCompleteInput(value: string, type: string) {
+    onAutoCompleteInput(value: string, type: string): void {
       const isStartDate = type == 'start';
       const selectedEventStart = dayjs(this.selectedEvent.start);
       const selectedEventEnd = dayjs(this.selectedEvent.end);
@@ -431,10 +440,10 @@ export default Vue.extend({
         this.autoCompleteVisibility.end = false;
       }
     },
-    toggleAutoCompleteStartVisibility(event: any) {
+    toggleAutoCompleteStartVisibility(event: any): void {
       this._toggleAutoCompleteVisibility({ type: 'start', refName: 'autoCompleteStart', event });
     },
-    toggleAutoCompleteEndVisibility(event: any) {
+    toggleAutoCompleteEndVisibility(event: any): void {
       this._toggleAutoCompleteVisibility({ type: 'end', refName: 'autoCompleteEnd', event });
     },
     _toggleAutoCompleteVisibility(props: { type: string; refName: string; event: any }): void {
@@ -447,59 +456,67 @@ export default Vue.extend({
         });
       }
     },
-    cancelEvent() {
+    cancelEvent(): void {
+      this.selectedEvent.attributes.creationStatus = 'pending';
+      this.showSelectedEventMenu = false;
       this.events = this.events.filter((event) => {
         return event.attributes.id != this.selectedEvent.attributes.id;
       });
-      this.showSelectedEventMenu = false;
     },
-    saveEvent() {
+    saveEvent(): void {
       this.selectedEvent.attributes.creationStatus = 'saved';
       this.showSelectedEventMenu = false;
       // save to db
     },
+    getEventTitle(event: any): TranslateResult {
+      const isAvailableTime = event.attributes && event.attributes.type == 'availableTime';
+      const eventTitle = isAvailableTime
+        ? this.$t('calendar.availableTime')
+        : this.$t('calendar.appointment');
+      return eventTitle;
+    },
     // below are the vuetify calendar methods
-    viewDay({ date }: { date: string }) {
+    viewDay({ date }: { date: string }): void {
       this.calendarFocusDate = date;
       this.type = 'day';
     },
-    setToday() {
+    setToday(): void {
       this.calendarFocusDate = this.today;
     },
-    prev() {
+    prev(): void {
       (this.$refs.calendar as any).prev();
     },
-    next() {
+    next(): void {
       (this.$refs.calendar as any).next();
     },
-    showEvent({ nativeEvent, event }: any) {
+    showEvent({ nativeEvent, event }: any): void {
       this.openPopup({ nativeEvent, event });
       nativeEvent.stopPropagation();
     },
-    openPopup({ nativeEvent, event }: any) {
+    openPopup({ nativeEvent, event }: any): void {
       this.selectedEvent = event;
       this.selectedElement = nativeEvent.target;
       requestAnimationFrame(() => requestAnimationFrame(() => (this.showSelectedEventMenu = true)));
     },
-    getCurrentTime() {
+    getCurrentTime(): number {
       return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0;
     },
-    scrollToTime() {
+    scrollToTime(): void {
       const time = this.getCurrentTime();
       const first = Math.max(0, time - (time % 30) - 30);
       this.cal.scrollToTime(first);
     },
-    updateTime() {
+    updateTime(): void {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
-    startMouseDrag({ event, timed }: any) {
+    startMouseDrag({ event, timed }: any): void {
       if (event && timed) {
         this.dragEvent = event;
         this.dragTime = null;
         this.extendOriginal = null;
       }
     },
-    createNewEvent(tms: StringKeyObject) {
+    createNewEvent(tms: StringKeyObject): void {
       const mouse = this.toTime(tms);
       const hasNotSavedPreviousEvent =
         this.selectedEvent.attributes && this.selectedEvent.attributes.creationStatus == 'pending';
@@ -509,14 +526,14 @@ export default Vue.extend({
       if (this.dragEvent && this.dragTime === null) {
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
-      } else if (hasNotSavedPreviousEvent) {
+      }
+      if (hasNotSavedPreviousEvent) {
         this.events = this.events.filter((event) => {
           return event.attributes.creationStatus != 'pending';
         });
       } else {
         this.createStart = this.roundTime(mouse);
         this.createEvent = {
-          name: this.availableTimeTextLocale,
           color: this.rndElement(this.colors),
           start: new Date(this.createStart),
           end: new Date(this.createStart + 60 * 60 * 1000),
@@ -524,18 +541,20 @@ export default Vue.extend({
           attributes: {
             id: `event_${this.events.length + 1}`,
             creationStatus: 'pending',
+            type: 'availableTime',
           },
         };
         this.events.push(this.createEvent);
+        this.selectedEvent = this.createEvent;
       }
       this.resetAutoCompleteVisibility();
     },
-    extendBottom(event: any) {
+    extendBottom(event: any): void {
       this.createEvent = event;
       this.createStart = event.start;
       this.extendOriginal = event.end;
     },
-    mouseMove(tms: any) {
+    mouseMove(tms: any): void {
       const mouse = this.toTime(tms);
       if (this.dragEvent && this.dragTime !== null) {
         const start = this.dragEvent.start;
@@ -554,14 +573,14 @@ export default Vue.extend({
         this.createEvent.end = max;
       }
     },
-    endDrag() {
+    endDrag(): void {
       this.dragTime = null;
       this.dragEvent = null;
       this.createEvent = null;
       this.createStart = null;
       this.extendOriginal = null;
     },
-    cancelDrag() {
+    cancelDrag(): void {
       if (this.createEvent) {
         if (this.extendOriginal) {
           this.createEvent.end = this.extendOriginal;
@@ -577,15 +596,15 @@ export default Vue.extend({
       this.dragTime = null;
       this.dragEvent = null;
     },
-    roundTime(time: number, down = true) {
+    roundTime(time: number, down = true): number {
       const roundTo = 30; // minutes
       const roundDownTime = roundTo * 60 * 1000;
       return down ? time - (time % roundDownTime) : time + (roundDownTime - (time % roundDownTime));
     },
-    toTime(tms: any) {
+    toTime(tms: any): number {
       return new Date(tms.year, tms.month - 1, tms.day, tms.hour, tms.minute).getTime();
     },
-    getEventColor(event: any): any {
+    getEventColor(event: any): string {
       const rgb = parseInt(event.color.substring(1), 16);
       const r = (rgb >> 16) & 0xff;
       const g = (rgb >> 8) & 0xff;
@@ -596,7 +615,7 @@ export default Vue.extend({
         ? `rgba(${r}, ${g}, ${b}, 0.7)`
         : event.color;
     },
-    getEvents({ start, end }: any) {
+    getEvents({ start, end }: any): void {
       // const events = [];
       // const min = new Date(`${start.date}T00:00:00`).getTime();
       // const max = new Date(`${end.date}T23:59:59`).getTime();
@@ -618,10 +637,10 @@ export default Vue.extend({
       // }
       // this.events = events;
     },
-    rnd(a: number, b: number) {
+    rnd(a: number, b: number): number {
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
-    rndElement(arr: number[]) {
+    rndElement(arr: number[]): number {
       return arr[this.rnd(0, arr.length - 1)];
     },
   },
