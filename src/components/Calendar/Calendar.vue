@@ -57,9 +57,9 @@
       @touchend:event="openPopup"
       @mouseleave.native="cancelDrag"
     >
-      <template v-slot:event="{ event, timed, eventSummary }">
+      <template v-slot:event="{ event, timed }">
         <div :ref="event.attributes.id">
-          <div class="v-event-draggable" v-html="eventSummary()"></div>
+          <div class="v-event-draggable">ss</div>
           <div v-if="timed" class="v-event-drag-bottom" @mousedown.stop="extendBottom(event)"></div>
         </div>
       </template>
@@ -76,7 +76,9 @@
       :close-on-content-click="false"
       :close-on-click="false"
       :activator="selectedElement"
-      :offset-x="type != 'day'"
+      offset-x
+      :left="showPopupMenuOnLeft"
+      :transition="false"
       min-width="400px"
     >
       <v-card color="grey lighten-4" flat>
@@ -87,7 +89,6 @@
               v-model="menu2"
               :close-on-content-click="false"
               :nudge-right="40"
-              transition="scale-transition"
               offset-y
               min-width="auto"
             >
@@ -325,9 +326,24 @@ export default Vue.extend({
         const autoCompleteMenuProps = {
           closeOnClick: true,
           closeOnContentClick: true,
-          transition: true,
+          transition: false,
         };
         return autoCompleteMenuProps;
+      },
+    },
+    showPopupMenuOnLeft: {
+      get(): boolean {
+        let showPopupMenuOnLeft = false;
+        if (this.selectedElement) {
+          const windowWidth = Math.max(
+            document.documentElement.clientWidth,
+            window.innerWidth || 0
+          );
+          const selectedElementPositions = this.selectedElement.getBoundingClientRect();
+          const selectedElementX = selectedElementPositions.left;
+          showPopupMenuOnLeft = selectedElementX > windowWidth / 2;
+        }
+        return showPopupMenuOnLeft;
       },
     },
   },
