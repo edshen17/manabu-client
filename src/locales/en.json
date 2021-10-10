@@ -116,6 +116,12 @@
       "shortAppoint": "Your appointments must be at least 30 minutes."
     }
   },
+  "dateFormat": {
+    "dayHour": "D h:mma",
+    "hour": "h:mma",
+    "hourWithDuration": "h:mma ({hours} hrs)",
+    "abridgedDate": "dddd, MMMM D"
+  },
   "modal": {
     "cancel": "Cancel",
     "delete": "Delete",

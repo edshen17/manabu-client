@@ -65,8 +65,8 @@
             </span>
             <br />
             <span
-              >{{ formatDate({ date: event.start, formatString: 'h:mma' }) }} -
-              {{ formatDate({ date: event.end, formatString: 'h:mma' }) }}</span
+              >{{ formatDate({ date: event.start, dateFormat: 'hour' }) }} -
+              {{ formatDate({ date: event.end, dateFormat: 'hour' }) }}</span
             >
           </div>
           <div v-if="timed" class="v-event-drag-bottom" @mousedown.stop="extendBottom(event)"></div>
@@ -83,7 +83,7 @@
     <v-menu
       v-model="showSelectedEventMenu"
       :close-on-content-click="false"
-      :close-on-click="false"
+      :close-on-click="true"
       :activator="selectedElement"
       offset-x
       :left="showPopupMenuOnLeft"
@@ -107,13 +107,14 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  {{ formatDate({ date: selectedEvent.start, formatString: 'dddd, MMMM D' }) }}
+                  {{ formatDate({ date: selectedEvent.start, dateFormat: 'abridgedDate' }) }}
                 </button>
               </template>
               <v-date-picker
                 v-model="datePickerDate"
                 no-title
                 scrollable
+                :locale="locale"
                 @input="menu2 = false"
                 @change="onDatePickerChange"
               ></v-date-picker>
@@ -126,7 +127,7 @@
               class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2"
               @click="toggleAutoCompleteStartVisibility"
             >
-              {{ formatDate({ date: selectedEvent.start, formatString: 'h:mma' }) }}
+              {{ formatDate({ date: selectedEvent.start, dateFormat: 'hour' }) }}
             </button>
             <v-autocomplete
               v-show="autoCompleteVisibility.start"
@@ -141,7 +142,6 @@
               :items="autoCompleteStartIntervals"
               @input="onAutoCompleteInput($event, 'start')"
             >
-              <template v-slot:default> sasaa </template>
             </v-autocomplete>
             <p class="mx-1 py-1 text-lg font-thin">-</p>
             <button
@@ -158,7 +158,7 @@
               "
               @click="toggleAutoCompleteEndVisibility"
             >
-              {{ formatDate({ date: selectedEvent.end, formatString: 'h:mma' }) }}
+              {{ formatDate({ date: selectedEvent.end, dateFormat: 'hour' }) }}
             </button>
             <v-autocomplete
               v-show="autoCompleteVisibility.end"
@@ -196,6 +196,8 @@ import { mapGetters } from 'vuex';
 import { StringKeyObject } from '../../../../server/types/custom';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandler';
+
 dayjs.extend(customParseFormat);
 
 export default Vue.extend({
@@ -236,6 +238,7 @@ export default Vue.extend({
         start: false,
         end: false,
       } as StringKeyObject,
+      dateFormatHandler: makeDateFormatHandler,
     };
   },
   computed: {
@@ -294,11 +297,16 @@ export default Vue.extend({
           let startTime = dayjs(selectedEventStart);
           let endTime = startTime.add(1, 'day');
           while (startTime.isBefore(endTime)) {
-            const formattedTime = startTime.format('h:mma');
             const diffBetweenSelectedEventStart =
               startTime.diff(selectedEventStart, 'minutes') / 60;
+            const formattedTime = this.formatDate({
+              date: startTime.toDate(),
+              dateFormat: 'hourWithDuration',
+              translationProps: { hours: diffBetweenSelectedEventStart },
+            });
+
             const time = {
-              text: `${formattedTime} (${diffBetweenSelectedEventStart} hr)`,
+              text: formattedTime,
               value: startTime.format('D h:mma'),
             };
             endIntervals.push(time);
@@ -312,7 +320,7 @@ export default Vue.extend({
       get(): string {
         const selectedEventStart = this.selectedEvent.start;
         return selectedEventStart
-          ? this.formatDate({ date: selectedEventStart, formatString: 'D h:mma' })
+          ? this.formatDate({ date: selectedEventStart, dateFormat: 'dayHour' })
           : '';
       },
       set(val: string): void {
@@ -323,7 +331,7 @@ export default Vue.extend({
       get(): string {
         const selectedEventEnd = this.selectedEvent.end;
         return selectedEventEnd
-          ? this.formatDate({ date: selectedEventEnd, formatString: 'D h:mma' })
+          ? this.formatDate({ date: selectedEventEnd, dateFormat: 'dayHour' })
           : '';
       },
       set(val: string): void {
@@ -360,9 +368,19 @@ export default Vue.extend({
     this.ready = true;
   },
   methods: {
-    formatDate(props: { date: Date; formatString: string }): string {
-      const { date, formatString } = props;
-      const formattedDate = dayjs(date).format(formatString);
+    formatDate(props: {
+      date: Date;
+      dateFormat?: string;
+      formatString?: string;
+      translationProps?: StringKeyObject;
+    }): string {
+      const { date, dateFormat, formatString, translationProps } = props;
+      const dateFormatString: any =
+        formatString || this.$t(`dateFormat.${dateFormat}`, translationProps);
+      const formattedDate = this.dateFormatHandler.formatDate({
+        date,
+        formatString: dateFormatString,
+      });
       return formattedDate;
     },
     onDatePickerChange(): void {
@@ -515,22 +533,16 @@ export default Vue.extend({
         this.dragTime = null;
         this.extendOriginal = null;
       }
+      this.selectedEvent = event;
     },
     createNewEvent(tms: StringKeyObject): void {
       const mouse = this.toTime(tms);
-      const hasNotSavedPreviousEvent =
-        this.selectedEvent.attributes && this.selectedEvent.attributes.creationStatus == 'pending';
       this.selectedEvent = {};
       this.selectedElement = null;
       this.showSelectedEventMenu = false;
       if (this.dragEvent && this.dragTime === null) {
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
-      }
-      if (hasNotSavedPreviousEvent) {
-        this.events = this.events.filter((event) => {
-          return event.attributes.creationStatus != 'pending';
-        });
       } else {
         this.createStart = this.roundTime(mouse);
         this.createEvent = {
@@ -539,13 +551,19 @@ export default Vue.extend({
           end: new Date(this.createStart + 60 * 60 * 1000),
           timed: true,
           attributes: {
-            id: `event_${this.events.length + 1}`,
+            id: `availableTime_${new Date(this.createStart).toISOString()}`,
             creationStatus: 'pending',
             type: 'availableTime',
           },
         };
-        this.events.push(this.createEvent);
         this.selectedEvent = this.createEvent;
+        this.events.push(this.createEvent);
+        this.events = this.events.filter((event) => {
+          return (
+            event.attributes.id == this.selectedEvent.attributes.id ||
+            event.attributes.creationStatus != 'pending'
+          );
+        });
       }
       this.resetAutoCompleteVisibility();
     },

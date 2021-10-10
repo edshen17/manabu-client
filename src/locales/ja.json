@@ -115,6 +115,12 @@
       "shortAppoint": "アポイントメントは最低30分以上にしてください"
     }
   },
+  "dateFormat": {
+    "dayHour": "DD ah:mm",
+    "hour": "ah:mm",
+    "hourWithDuration": "ah:mm ({hours}時間)",
+    "abridgedDate": "MMMM D日 (dddd)"
+  },
   "modal": {
     "cancel": "キャンセル",
     "delete": "削除",

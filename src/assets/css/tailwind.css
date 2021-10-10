@@ -51,6 +51,10 @@
     @apply text-white bg-blue-500 !important;
 }
 
+.calendar .v-text-field.v-input--dense {
+    @apply flex flex-grow
+}
+
 .progress-bar-transition {
     transition: width 0.3s linear;
 }

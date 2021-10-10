@@ -51,8 +51,6 @@ class LocaleHandler {
     return trimmedLocale;
   };
 
-  // pass i18n because otherwise circular dependency
-  // TODO: extend to update db user
   public updateLocale = (props: { i18n: any; locale: string }): void => {
     const { i18n, locale } = props;
     i18n.locale = locale;
