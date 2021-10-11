@@ -11,10 +11,13 @@
   "dependencies": {
     "@tailwindcss/forms": "^0.3.3",
     "@tailwindcss/postcss7-compat": "^2.0.2",
+    "@types/clone-deep": "^4.0.1",
     "autoprefixer": "^9",
     "axios": "^0.21.0",
+    "clone-deep": "^4.0.1",
     "core-js": "^3.6.5",
     "countries-and-timezones": "^3.2.2",
+    "crypto-random-string": "^4.0.0",
     "dayjs": "^1.10.4",
     "firebase": "^8.2.4",
     "flag-icon-css": "^3.5.0",

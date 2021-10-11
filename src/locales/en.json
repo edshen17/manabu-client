@@ -114,12 +114,13 @@
       "unevenAppoint": "Your appointments must be in 30 minute to 1 hour intervals.",
       "badStart": "You cannot start your appointments at that time (must be at the start of the hour or 30 minutes in)",
       "shortAppoint": "Your appointments must be at least 30 minutes."
-    }
+    },
+    "appointment": "Appointment"
   },
   "dateFormat": {
     "dayHour": "D h:mma",
     "hour": "h:mma",
-    "hourWithDuration": "h:mma ({hours} hrs)",
+    "hourWithDuration": "h:mma ({hours} [hrs])",
     "abridgedDate": "dddd, MMMM D"
   },
   "modal": {

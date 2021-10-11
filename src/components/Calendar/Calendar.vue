@@ -83,7 +83,7 @@
     <v-menu
       v-model="showSelectedEventMenu"
       :close-on-content-click="false"
-      :close-on-click="true"
+      :close-on-click="false"
       :activator="selectedElement"
       offset-x
       :left="showPopupMenuOnLeft"
@@ -176,8 +176,8 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn text color="secondary" class="m-0" @click="saveEvent">
-            {{ $t('calendar.save') }}
+          <v-btn text color="secondary" class="m-0 animate-pulse" @click="saveEvent">
+            <span class="text-blue-600">{{ $t('calendar.save') }}</span>
           </v-btn>
           <v-btn text color="secondary" @click="cancelEvent">
             {{ $t('calendar.cancel') }}
@@ -190,7 +190,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { focus } from 'vue-focus';
+import cloneDeep from 'clone-deep';
+import cryptoRandomString from 'crypto-random-string';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import { StringKeyObject } from '../../../../server/types/custom';
@@ -202,7 +203,6 @@ dayjs.extend(customParseFormat);
 
 export default Vue.extend({
   name: 'Calendar',
-  directives: { focus },
   props: {},
   data() {
     return {
@@ -320,7 +320,7 @@ export default Vue.extend({
       get(): string {
         const selectedEventStart = this.selectedEvent.start;
         return selectedEventStart
-          ? this.formatDate({ date: selectedEventStart, dateFormat: 'dayHour' })
+          ? this.formatDate({ date: selectedEventStart, formatString: 'D h:mma' })
           : '';
       },
       set(val: string): void {
@@ -331,7 +331,7 @@ export default Vue.extend({
       get(): string {
         const selectedEventEnd = this.selectedEvent.end;
         return selectedEventEnd
-          ? this.formatDate({ date: selectedEventEnd, dateFormat: 'dayHour' })
+          ? this.formatDate({ date: selectedEventEnd, formatString: 'D h:mma' })
           : '';
       },
       set(val: string): void {
@@ -400,15 +400,15 @@ export default Vue.extend({
     _updateSelectedEvent(props: { field: string; value: unknown }): void {
       const { field, value } = props;
       this.selectedEvent[field] = value;
-      this._onUpdateSelectedEvent();
+      this._onUpdateSelectedEvent(true);
     },
-    _onUpdateSelectedEvent(): void {
+    _onUpdateSelectedEvent(showSelectedEventMenu: boolean): void {
       this.showSelectedEventMenu = false;
       setTimeout(() => {
         // need this timeout or else new calendar element isn't rendered yet...
         this.selectedElement = this.$refs[this.selectedEvent.attributes.id];
         requestAnimationFrame(() =>
-          requestAnimationFrame(() => (this.showSelectedEventMenu = true))
+          requestAnimationFrame(() => (this.showSelectedEventMenu = showSelectedEventMenu))
         );
       });
       this.calendarFocusDate = this.formatDate({
@@ -475,14 +475,23 @@ export default Vue.extend({
       }
     },
     cancelEvent(): void {
-      this.selectedEvent.attributes.creationStatus = 'pending';
+      const wasEventSaved = this.selectedEvent.attributes.creationStatus == 'saved';
+      const selectedEventId = this.selectedEvent.attributes.id;
+      if (!wasEventSaved) {
+        this.events = this.events.filter((event) => {
+          return event.attributes.id != selectedEventId;
+        });
+      } else {
+        const originalEvent = this.selectedEvent.attributes.originalEvent;
+        this.selectedEvent.start = originalEvent.start;
+        this.selectedEvent.end = originalEvent.end;
+        this._onUpdateSelectedEvent(false);
+      }
       this.showSelectedEventMenu = false;
-      this.events = this.events.filter((event) => {
-        return event.attributes.id != this.selectedEvent.attributes.id;
-      });
     },
     saveEvent(): void {
       this.selectedEvent.attributes.creationStatus = 'saved';
+      this.selectedEvent.attributes.originalEvent = cloneDeep(this.selectedEvent);
       this.showSelectedEventMenu = false;
       // save to db
     },
@@ -540,23 +549,28 @@ export default Vue.extend({
       this.selectedEvent = {};
       this.selectedElement = null;
       this.showSelectedEventMenu = false;
-      if (this.dragEvent && this.dragTime === null) {
+      const isClickingExistingEvent = this.dragEvent && this.dragTime === null;
+      if (isClickingExistingEvent) {
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
       } else {
         this.createStart = this.roundTime(mouse);
-        this.createEvent = {
+        const newEvent = {
           color: this.rndElement(this.colors),
-          start: new Date(this.createStart),
-          end: new Date(this.createStart + 60 * 60 * 1000),
+          start: this.createStart,
+          end: this.createStart + 60 * 60 * 1000,
           timed: true,
           attributes: {
-            id: `availableTime_${new Date(this.createStart).toISOString()}`,
+            id: cryptoRandomString({ length: 20 }),
             creationStatus: 'pending',
             type: 'availableTime',
+            originalEvent: {},
           },
         };
+        this.createEvent = cloneDeep(newEvent);
+        this.createEvent.attributes.originalEvent = cloneDeep(newEvent);
         this.selectedEvent = this.createEvent;
+        console.log(this.selectedEvent.start, this.selectedEvent.end, 'creat');
         this.events.push(this.createEvent);
         this.events = this.events.filter((event) => {
           return (

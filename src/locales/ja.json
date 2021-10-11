@@ -113,7 +113,8 @@
       "unevenAppoint": "30分から1時間の間隔でアポイントメントが取れます",
       "badStart": "この時間でアポイントメントを設定することはできません",
       "shortAppoint": "アポイントメントは最低30分以上にしてください"
-    }
+    },
+    "appointment": "予約"
   },
   "dateFormat": {
     "dayHour": "DD ah:mm",
