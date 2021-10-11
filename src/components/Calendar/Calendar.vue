@@ -400,9 +400,9 @@ export default Vue.extend({
     _updateSelectedEvent(props: { field: string; value: unknown }): void {
       const { field, value } = props;
       this.selectedEvent[field] = value;
-      this._onUpdateSelectedEvent(true);
+      this._openPopup(true);
     },
-    _onUpdateSelectedEvent(showSelectedEventMenu: boolean): void {
+    _openPopup(showSelectedEventMenu: boolean): void {
       this.showSelectedEventMenu = false;
       setTimeout(() => {
         // need this timeout or else new calendar element isn't rendered yet...
@@ -485,13 +485,16 @@ export default Vue.extend({
         const originalEvent = this.selectedEvent.attributes.originalEvent;
         this.selectedEvent.start = originalEvent.start;
         this.selectedEvent.end = originalEvent.end;
-        this._onUpdateSelectedEvent(false);
+        this._openPopup(false);
       }
       this.showSelectedEventMenu = false;
     },
     saveEvent(): void {
       this.selectedEvent.attributes.creationStatus = 'saved';
-      this.selectedEvent.attributes.originalEvent = cloneDeep(this.selectedEvent);
+      this.selectedEvent.attributes.originalEvent = {
+        start: this.selectedEvent.start,
+        end: this.selectedEvent.end,
+      };
       this.showSelectedEventMenu = false;
       // save to db
     },
@@ -524,6 +527,12 @@ export default Vue.extend({
       this.selectedEvent = event;
       this.selectedElement = nativeEvent.target;
       requestAnimationFrame(() => requestAnimationFrame(() => (this.showSelectedEventMenu = true)));
+      this.events = this.events.filter((event) => {
+        return (
+          event.attributes.id == this.selectedEvent.attributes.id ||
+          event.attributes.creationStatus != 'pending'
+        );
+      });
     },
     getCurrentTime(): number {
       return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0;
@@ -546,7 +555,6 @@ export default Vue.extend({
     },
     createNewEvent(tms: StringKeyObject): void {
       const mouse = this.toTime(tms);
-      this.selectedEvent = {};
       this.selectedElement = null;
       this.showSelectedEventMenu = false;
       const isClickingExistingEvent = this.dragEvent && this.dragTime === null;
@@ -564,13 +572,14 @@ export default Vue.extend({
             id: cryptoRandomString({ length: 20 }),
             creationStatus: 'pending',
             type: 'availableTime',
-            originalEvent: {},
+            originalEvent: {
+              start: this.createStart,
+              end: this.createStart + 60 * 60 * 1000,
+            },
           },
         };
         this.createEvent = cloneDeep(newEvent);
-        this.createEvent.attributes.originalEvent = cloneDeep(newEvent);
         this.selectedEvent = this.createEvent;
-        console.log(this.selectedEvent.start, this.selectedEvent.end, 'creat');
         this.events.push(this.createEvent);
         this.events = this.events.filter((event) => {
           return (
@@ -606,6 +615,7 @@ export default Vue.extend({
       }
     },
     endDrag(): void {
+      this._openPopup(true);
       this.dragTime = null;
       this.dragEvent = null;
       this.createEvent = null;
