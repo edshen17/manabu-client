@@ -47,14 +47,14 @@
       :locale="locale"
       event-text-color="white"
       @click:date="viewDay"
-      @click:event="showEvent"
+      @click:event="onEventClick"
       @change="getEvents"
       @mousedown:event="startMouseDrag"
-      @mousedown:time="createNewEvent"
+      @mousedown:time="createEvent"
       @mousemove:time="mouseMove"
       @mouseup:time="endDrag"
-      @mouseup:event="openPopup"
-      @touchend:event="openPopup"
+      @mouseup:event="onMouseUp"
+      @touchend:event="onMouseUp"
       @mouseleave.native="cancelDrag"
     >
       <template v-slot:event="{ event, timed }">
@@ -86,16 +86,29 @@
       :close-on-click="false"
       :activator="selectedElement"
       offset-x
-      :left="showPopupMenuOnLeft"
+      :left="showSelectedEventMenuOnLeft"
       :transition="false"
       min-width="400px"
     >
       <v-card color="grey lighten-4" flat>
         <v-card-text>
-          <p class="text-black text-lg tracking-wide">{{ getEventTitle(selectedEvent) }}</p>
+          <div class="flex">
+            <div class="flex-grow">
+              <p class="text-black text-lg tracking-wide inline">
+                {{ getEventTitle(selectedEvent) }}
+              </p>
+            </div>
+            <button
+              v-if="getSelectedEventCreationStatus(selectedEvent) == 'saved'"
+              class="float-right"
+              @click="deleteEvent(selectedEvent.attributes.id)"
+            >
+              <i class="fas fa-trash-alt text-lg"></i>
+            </button>
+          </div>
           <div class="flex flex-wrap content-start">
             <v-menu
-              v-model="menu2"
+              v-model="showDatePicker"
               :close-on-content-click="false"
               :nudge-right="40"
               offset-y
@@ -115,7 +128,7 @@
                 no-title
                 scrollable
                 :locale="locale"
-                @input="menu2 = false"
+                @input="showDatePicker = false"
                 @change="onDatePickerChange"
               ></v-date-picker>
             </v-menu>
@@ -175,7 +188,7 @@
             ></v-autocomplete>
           </div>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions v-show="wasSelectedEventEdited(selectedEvent)">
           <v-btn text color="secondary" class="m-0 animate-pulse" @click="saveEvent">
             <span class="text-blue-600">{{ $t('calendar.save') }}</span>
           </v-btn>
@@ -210,7 +223,7 @@ export default Vue.extend({
       datePickerDate: new Date().toISOString().substr(0, 10),
       menu: false,
       modal: false,
-      menu2: false,
+      showDatePicker: false,
       events: [] as StringKeyObject[],
       colors: [
         '#2196F3',
@@ -225,7 +238,7 @@ export default Vue.extend({
       dragEvent: null as any,
       dragStart: null as any,
       dragTime: 0 as any,
-      createEvent: null as any,
+      createdEvent: null as any,
       createStart: null as any,
       extendOriginal: null as any,
       today: '',
@@ -348,9 +361,9 @@ export default Vue.extend({
         return autoCompleteMenuProps;
       },
     },
-    showPopupMenuOnLeft: {
+    showSelectedEventMenuOnLeft: {
       get(): boolean {
-        let showPopupMenuOnLeft = false;
+        let showSelectedEventMenuOnLeft = false;
         if (this.selectedElement) {
           const windowWidth = Math.max(
             document.documentElement.clientWidth,
@@ -358,9 +371,9 @@ export default Vue.extend({
           );
           const selectedElementPositions = this.selectedElement.getBoundingClientRect();
           const selectedElementX = selectedElementPositions.left;
-          showPopupMenuOnLeft = selectedElementX > windowWidth / 2;
+          showSelectedEventMenuOnLeft = selectedElementX > windowWidth / 2;
         }
-        return showPopupMenuOnLeft;
+        return showSelectedEventMenuOnLeft;
       },
     },
   },
@@ -400,9 +413,9 @@ export default Vue.extend({
     _updateSelectedEvent(props: { field: string; value: unknown }): void {
       const { field, value } = props;
       this.selectedEvent[field] = value;
-      this._openPopup(true);
+      this._showSelectedEventPopup(true);
     },
-    _openPopup(showSelectedEventMenu: boolean): void {
+    _showSelectedEventPopup(showSelectedEventMenu: boolean): void {
       this.showSelectedEventMenu = false;
       setTimeout(() => {
         // need this timeout or else new calendar element isn't rendered yet...
@@ -478,15 +491,20 @@ export default Vue.extend({
       const wasEventSaved = this.selectedEvent.attributes.creationStatus == 'saved';
       const selectedEventId = this.selectedEvent.attributes.id;
       if (!wasEventSaved) {
-        this.events = this.events.filter((event) => {
-          return event.attributes.id != selectedEventId;
-        });
+        this.deleteEvent(selectedEventId);
       } else {
         const originalEvent = this.selectedEvent.attributes.originalEvent;
         this.selectedEvent.start = originalEvent.start;
         this.selectedEvent.end = originalEvent.end;
-        this._openPopup(false);
+        this._showSelectedEventPopup(false);
       }
+      this.showSelectedEventMenu = false;
+    },
+    deleteEvent(eventId: string) {
+      //delete in db if saved, else just filter out
+      this.events = this.events.filter((event) => {
+        return event.attributes.id != eventId;
+      });
       this.showSelectedEventMenu = false;
     },
     saveEvent(): void {
@@ -505,6 +523,27 @@ export default Vue.extend({
         : this.$t('calendar.appointment');
       return eventTitle;
     },
+    getSelectedEventCreationStatus(): string {
+      let selectedEventCreationStatus = '';
+      if (this.selectedEvent.attributes) {
+        selectedEventCreationStatus = this.selectedEvent.attributes.creationStatus;
+      }
+      return selectedEventCreationStatus;
+    },
+    wasSelectedEventEdited(): boolean {
+      if (this.selectedEvent.attributes) {
+        const selectedEvent = this.selectedEvent;
+        const selectedEventAttributes = selectedEvent.attributes;
+        const wasSelectedEventEdited =
+          selectedEventAttributes.creationStatus == 'pending' ||
+          !(
+            selectedEvent.start == selectedEventAttributes.originalEvent.start &&
+            selectedEvent.end == selectedEventAttributes.originalEvent.end
+          );
+        return wasSelectedEventEdited;
+      }
+      return false;
+    },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }): void {
       this.calendarFocusDate = date;
@@ -519,11 +558,11 @@ export default Vue.extend({
     next(): void {
       (this.$refs.calendar as any).next();
     },
-    showEvent({ nativeEvent, event }: any): void {
-      this.openPopup({ nativeEvent, event });
+    onEventClick({ nativeEvent, event }: any): void {
+      this.onMouseUp({ nativeEvent, event });
       nativeEvent.stopPropagation();
     },
-    openPopup({ nativeEvent, event }: any): void {
+    onMouseUp({ nativeEvent, event }: any): void {
       this.selectedEvent = event;
       this.selectedElement = nativeEvent.target;
       requestAnimationFrame(() => requestAnimationFrame(() => (this.showSelectedEventMenu = true)));
@@ -553,7 +592,7 @@ export default Vue.extend({
       }
       this.selectedEvent = event;
     },
-    createNewEvent(tms: StringKeyObject): void {
+    createEvent(tms: StringKeyObject): void {
       const mouse = this.toTime(tms);
       this.selectedElement = null;
       this.showSelectedEventMenu = false;
@@ -578,9 +617,9 @@ export default Vue.extend({
             },
           },
         };
-        this.createEvent = cloneDeep(newEvent);
-        this.selectedEvent = this.createEvent;
-        this.events.push(this.createEvent);
+        this.createdEvent = cloneDeep(newEvent);
+        this.selectedEvent = this.createdEvent;
+        this.events.push(this.createdEvent);
         this.events = this.events.filter((event) => {
           return (
             event.attributes.id == this.selectedEvent.attributes.id ||
@@ -591,7 +630,7 @@ export default Vue.extend({
       this.resetAutoCompleteVisibility();
     },
     extendBottom(event: any): void {
-      this.createEvent = event;
+      this.createdEvent = event;
       this.createStart = event.start;
       this.extendOriginal = event.end;
     },
@@ -606,34 +645,34 @@ export default Vue.extend({
         const newEnd = newStart + duration;
         this.dragEvent.start = newStart;
         this.dragEvent.end = newEnd;
-      } else if (this.createEvent && this.createStart !== null) {
+      } else if (this.createdEvent && this.createStart !== null) {
         const mouseRounded = this.roundTime(mouse, false);
         const min = Math.min(mouseRounded, this.createStart);
         const max = Math.max(mouseRounded, this.createStart);
-        this.createEvent.start = min;
-        this.createEvent.end = max;
+        this.createdEvent.start = min;
+        this.createdEvent.end = max;
       }
     },
     endDrag(): void {
-      this._openPopup(true);
+      this._showSelectedEventPopup(true);
       this.dragTime = null;
       this.dragEvent = null;
-      this.createEvent = null;
+      this.createdEvent = null;
       this.createStart = null;
       this.extendOriginal = null;
     },
     cancelDrag(): void {
-      if (this.createEvent) {
+      if (this.createdEvent) {
         if (this.extendOriginal) {
-          this.createEvent.end = this.extendOriginal;
+          this.createdEvent.end = this.extendOriginal;
         } else {
-          const i = this.events.indexOf(this.createEvent);
+          const i = this.events.indexOf(this.createdEvent);
           if (i !== -1) {
             this.events.splice(i, 1);
           }
         }
       }
-      this.createEvent = null;
+      this.createdEvent = null;
       this.createStart = null;
       this.dragTime = null;
       this.dragEvent = null;
@@ -653,7 +692,7 @@ export default Vue.extend({
       const b = (rgb >> 0) & 0xff;
       return event === this.dragEvent
         ? `rgba(${r}, ${g}, ${b}, 0.7)`
-        : event === this.createEvent
+        : event === this.createdEvent
         ? `rgba(${r}, ${g}, ${b}, 0.7)`
         : event.color;
     },
