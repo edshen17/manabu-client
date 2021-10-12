@@ -25,11 +25,11 @@
             <v-list-item @click="type = 'day'">
               <v-list-item-title>{{ $t('calendar.day') }}</v-list-item-title>
             </v-list-item>
-            <v-list-item @click="type = 'week'">
-              <v-list-item-title>{{ $t('calendar.week') }}</v-list-item-title>
-            </v-list-item>
             <v-list-item @click="type = '4day'">
               <v-list-item-title>{{ $t('calendar.fourDays') }}</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="type = 'week'">
+              <v-list-item-title>{{ $t('calendar.week') }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -54,7 +54,6 @@
       @mousemove:time="mouseMove"
       @mouseup:time="endDrag"
       @mouseup:event="onMouseUp"
-      @touchend:event="onMouseUp"
       @mouseleave.native="cancelDrag"
     >
       <template v-slot:event="{ event, timed }">
@@ -184,7 +183,7 @@
               :menu-props="autoCompleteMenuProps"
               class="w-14"
               :items="autoCompleteEndIntervals"
-              @input="onAutoCompleteInput($event, 'End')"
+              @input="onAutoCompleteInput($event, 'end')"
             ></v-autocomplete>
           </div>
         </v-card-text>
