@@ -17,19 +17,18 @@
         <v-menu bottom right>
           <template v-slot:activator="{ on, attrs }">
             <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
-              <span>{{ typeToLabel[type] }}</span>
+              <span>{{ typeToLabel[type].text }}</span>
               <v-icon right> mdi-menu-down </v-icon>
             </v-btn>
           </template>
           <v-list>
-            <v-list-item @click="type = 'day'">
-              <v-list-item-title>{{ $t('calendar.day') }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="type = '4day'">
-              <v-list-item-title>{{ $t('calendar.fourDays') }}</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="type = 'week'">
-              <v-list-item-title>{{ $t('calendar.week') }}</v-list-item-title>
+            <v-list-item
+              v-for="(value, propertyName) in typeToLabel"
+              v-show="(!isMobile && value.showIfDesktop) || (isMobile && value.showIfMobile)"
+              :key="propertyName"
+              @click="type = propertyName"
+            >
+              <v-list-item-title>{{ value.text }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -242,7 +241,7 @@ export default Vue.extend({
       extendOriginal: null as any,
       today: '',
       calendarFocusDate: '',
-      type: 'week',
+      type: '',
       selectedEvent: {} as StringKeyObject,
       selectedElement: null as any,
       showSelectedEventMenu: false,
@@ -265,9 +264,21 @@ export default Vue.extend({
     typeToLabel: {
       get(): StringKeyObject {
         return {
-          week: this.$t('calendar.week'),
-          day: this.$t('calendar.day'),
-          '4day': this.$t('calendar.fourDays'),
+          week: {
+            text: this.$t('calendar.week'),
+            showIfDesktop: true,
+            showIfMobile: false,
+          },
+          day: {
+            text: this.$t('calendar.day'),
+            showIfDesktop: true,
+            showIfMobile: true,
+          },
+          '4day': {
+            text: this.$t('calendar.fourDays'),
+            showIfDesktop: true,
+            showIfMobile: true,
+          },
         };
       },
     },
@@ -306,8 +317,8 @@ export default Vue.extend({
         const selectedEventEnd = this.selectedEvent.end;
         const hasSelectedEvent = selectedEventStart && selectedEventEnd;
         if (hasSelectedEvent) {
-          let startTime = dayjs(selectedEventStart);
-          let endTime = startTime.add(1, 'day');
+          let startTime = dayjs(selectedEventStart).add(30, 'minutes');
+          let endTime = startTime.add(23.5, 'hours');
           while (startTime.isBefore(endTime)) {
             const diffBetweenSelectedEventStart =
               startTime.diff(selectedEventStart, 'minutes') / 60;
@@ -316,7 +327,6 @@ export default Vue.extend({
               dateFormat: 'hourWithDuration',
               translationProps: { hours: diffBetweenSelectedEventStart },
             });
-
             const time = {
               text: formattedTime,
               value: startTime.format('D h:mma'),
@@ -376,10 +386,22 @@ export default Vue.extend({
       },
     },
   },
+  watch: {
+    isMobile: function (newValue) {
+      this.onMobile(newValue);
+    },
+  },
+  created() {
+    const isMobile = (this as any).isMobile;
+    this.onMobile(isMobile);
+  },
   mounted() {
     this.ready = true;
   },
   methods: {
+    onMobile(isMobile: boolean): void {
+      isMobile ? (this.type = 'day') : (this.type = 'week');
+    },
     formatDate(props: {
       date: Date;
       dateFormat?: string;
@@ -479,7 +501,7 @@ export default Vue.extend({
     _toggleAutoCompleteVisibility(props: { type: string; refName: string; event: any }): void {
       const { type, refName, event } = props;
       this.autoCompleteVisibility[type] = !this.autoCompleteVisibility[type];
-      if (event.path[0].id.includes('TimeBtn')) {
+      if (event.target.id.includes('TimeBtn')) {
         const inputField = (this.$refs[refName] as any).$refs.input;
         setTimeout(() => {
           inputField.click();
