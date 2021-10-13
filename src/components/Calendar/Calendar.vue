@@ -84,9 +84,9 @@
       :close-on-click="false"
       :activator="selectedElement"
       offset-x
+      :offset-y="isMobile"
       :left="showSelectedEventMenuOnLeft"
-      :transition="false"
-      min-width="400px"
+      :min-width="menuWidth"
     >
       <v-card color="grey lighten-4" flat>
         <v-card-text>
@@ -140,7 +140,8 @@
             >
               {{ formatDate({ date: selectedEvent.start, dateFormat: 'hour' }) }}
             </button>
-            <v-autocomplete
+            <component
+              :is="selectTimeElement"
               v-show="autoCompleteVisibility.start"
               ref="autoCompleteStart"
               v-model="autoCompleteStartModel"
@@ -148,12 +149,11 @@
               dense
               :hide-no-data="true"
               append-icon=""
-              class="w-14"
               :menu-props="autoCompleteMenuProps"
+              class="w-14"
               :items="autoCompleteStartIntervals"
               @input="onAutoCompleteInput($event, 'start')"
-            >
-            </v-autocomplete>
+            ></component>
             <p class="mx-1 py-1 text-lg font-thin">-</p>
             <button
               v-show="!autoCompleteVisibility.end"
@@ -171,7 +171,8 @@
             >
               {{ formatDate({ date: selectedEvent.end, dateFormat: 'hour' }) }}
             </button>
-            <v-autocomplete
+            <component
+              :is="selectTimeElement"
               v-show="autoCompleteVisibility.end"
               ref="autoCompleteEnd"
               v-model="autoCompleteEndModel"
@@ -183,7 +184,7 @@
               class="w-14"
               :items="autoCompleteEndIntervals"
               @input="onAutoCompleteInput($event, 'end')"
-            ></v-autocomplete>
+            ></component>
           </div>
         </v-card-text>
         <v-card-actions v-show="wasSelectedEventEdited(selectedEvent)">
@@ -209,11 +210,13 @@ import { StringKeyObject } from '../../../../server/types/custom';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandler';
+import { VAutocomplete, VSelect } from 'vuetify/lib';
 
 dayjs.extend(customParseFormat);
 
 export default Vue.extend({
   name: 'Calendar',
+  components: { VAutocomplete, VSelect },
   props: {},
   data() {
     return {
@@ -256,6 +259,18 @@ export default Vue.extend({
     ...mapGetters({
       locale: 'user/locale',
     }),
+    menuWidth: {
+      get(): string {
+        const menuWidth = (this as any).isMobile ? '350px' : '400px';
+        return menuWidth;
+      },
+    },
+    selectTimeElement: {
+      get(): string {
+        const timeElement = (this as any).isMobile ? 'VSelect' : 'VAutocomplete';
+        return timeElement;
+      },
+    },
     cal: {
       get(): any {
         return this.ready ? this.$refs.calendar : null;
@@ -623,18 +638,20 @@ export default Vue.extend({
         this.dragTime = mouse - start;
       } else {
         this.createStart = this.roundTime(mouse);
+        const start = new Date(this.createStart);
+        const end = new Date(this.createStart + 60 * 60 * 1000);
         const newEvent = {
           color: this.rndElement(this.colors),
-          start: this.createStart,
-          end: this.createStart + 60 * 60 * 1000,
+          start,
+          end,
           timed: true,
           attributes: {
             id: cryptoRandomString({ length: 20 }),
             creationStatus: 'pending',
             type: 'availableTime',
             originalEvent: {
-              start: this.createStart,
-              end: this.createStart + 60 * 60 * 1000,
+              start,
+              end,
             },
           },
         };
