@@ -412,6 +412,7 @@ export default Vue.extend({
   },
   mounted() {
     this.ready = true;
+    this.scrollToTime();
   },
   methods: {
     onMobile(isMobile: boolean): void {
