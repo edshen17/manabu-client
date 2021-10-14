@@ -11,7 +11,7 @@
         <v-btn fab text small color="grey darken-2" @click="next">
           <v-icon small> mdi-chevron-right </v-icon>
         </v-btn>
-        <v-toolbar-title v-if="$refs.calendar" class="mx-4">
+        <v-toolbar-title v-if="$refs.calendar && !isMobile" class="mx-4">
           {{ $refs.calendar.title }}
         </v-toolbar-title>
         <v-menu bottom right>
@@ -56,7 +56,7 @@
       @mouseleave.native="cancelDrag"
     >
       <template v-slot:event="{ event, timed }">
-        <div :ref="event.attributes.id">
+        <div :ref="event.attributes.id" :class="{ 'opacity-60': isPast(event.start) }">
           <div class="v-event-draggable">
             <span>
               {{ getEventTitle(event) }}
@@ -225,6 +225,11 @@ export default Vue.extend({
       menu: false,
       modal: false,
       showDatePicker: false,
+      currentTime: {
+        hour: 0,
+        minute: 0,
+      },
+      intervalTimerId: 0 as any,
       events: [] as StringKeyObject[],
       colors: [
         '#2196F3',
@@ -299,7 +304,7 @@ export default Vue.extend({
     },
     nowY: {
       get(): string {
-        return this.cal ? this.cal.timeToY(this.cal.times.now) + 'px' : '-10px';
+        return this.cal ? this.cal.timeToY(this.currentTime) + 'px' : '-10px';
       },
     },
     availableTimeTextLocale: {
@@ -409,12 +414,31 @@ export default Vue.extend({
   created() {
     const isMobile = (this as any).isMobile;
     this.onMobile(isMobile);
+    this.intervalTimerId = setInterval(() => {
+      this.setCurrentTime();
+    }, 60 * 1000);
   },
   mounted() {
     this.ready = true;
-    this.scrollToTime();
+    this.setCurrentTime();
+  },
+  destroyed() {
+    this.clearIntervals();
   },
   methods: {
+    clearIntervals() {
+      clearInterval(this.intervalTimerId);
+    },
+    setCurrentTime() {
+      this.currentTime = {
+        hour: dayjs().hour(),
+        minute: dayjs().minute(),
+      };
+    },
+    isPast(start: Date) {
+      const isPast = dayjs(start).isBefore(dayjs());
+      return isPast;
+    },
     onMobile(isMobile: boolean): void {
       isMobile ? (this.type = 'day') : (this.type = 'week');
     },
@@ -496,28 +520,36 @@ export default Vue.extend({
       this.resetAutoCompleteStartVisibility();
       this.resetAutoCompleteEndVisibility();
     },
-    resetAutoCompleteStartVisibility(event?: any): void {
-      const isClickingInput = event && event.target.tagName == 'INPUT';
+    resetAutoCompleteStartVisibility(nativeEvent?: any): void {
+      const isClickingInput = nativeEvent && nativeEvent.target.tagName == 'INPUT';
       if (!isClickingInput) {
         this.autoCompleteVisibility.start = false;
       }
     },
-    resetAutoCompleteEndVisibility(event?: any): void {
-      const isClickingInput = event && event.target.tagName == 'INPUT';
+    resetAutoCompleteEndVisibility(nativeEvent?: any): void {
+      const isClickingInput = nativeEvent && nativeEvent.target.tagName == 'INPUT';
       if (!isClickingInput) {
         this.autoCompleteVisibility.end = false;
       }
     },
-    toggleAutoCompleteStartVisibility(event: any): void {
-      this._toggleAutoCompleteVisibility({ type: 'start', refName: 'autoCompleteStart', event });
+    toggleAutoCompleteStartVisibility(nativeEvent: any): void {
+      this._toggleAutoCompleteVisibility({
+        type: 'start',
+        refName: 'autoCompleteStart',
+        nativeEvent,
+      });
     },
-    toggleAutoCompleteEndVisibility(event: any): void {
-      this._toggleAutoCompleteVisibility({ type: 'end', refName: 'autoCompleteEnd', event });
+    toggleAutoCompleteEndVisibility(nativeEvent: any): void {
+      this._toggleAutoCompleteVisibility({ type: 'end', refName: 'autoCompleteEnd', nativeEvent });
     },
-    _toggleAutoCompleteVisibility(props: { type: string; refName: string; event: any }): void {
-      const { type, refName, event } = props;
+    _toggleAutoCompleteVisibility(props: {
+      type: string;
+      refName: string;
+      nativeEvent: any;
+    }): void {
+      const { type, refName, nativeEvent } = props;
       this.autoCompleteVisibility[type] = !this.autoCompleteVisibility[type];
-      if (event.target.id.includes('TimeBtn')) {
+      if (nativeEvent.target.id.includes('TimeBtn')) {
         const inputField = (this.$refs[refName] as any).$refs.input;
         setTimeout(() => {
           inputField.click();
@@ -612,14 +644,6 @@ export default Vue.extend({
     },
     getCurrentTime(): number {
       return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0;
-    },
-    scrollToTime(): void {
-      const time = this.getCurrentTime();
-      const first = Math.max(0, time - (time % 30) - 30);
-      this.cal.scrollToTime(first);
-    },
-    updateTime(): void {
-      setInterval(() => this.cal.updateTimes(), 60 * 1000);
     },
     startMouseDrag({ event, timed }: any): void {
       if (event && timed) {
