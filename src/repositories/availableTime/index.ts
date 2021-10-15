@@ -1,4 +1,4 @@
-import { makeQueryStringHandler } from '@server/components/usecases/utils/queryStringHandler';
+import { makeQueryStringHandler } from '../../../../server/components/usecases/utils/queryStringHandler/index';
 import axios from '../clients/axios';
 import { AvailableTimeRepository } from './availableTimeRepository';
 
