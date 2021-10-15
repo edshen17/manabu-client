@@ -211,13 +211,19 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandler';
 import { VAutocomplete, VSelect } from 'vuetify/lib';
-
+import { makeAvailableTimeRepository } from '../../repositories/availableTime/index';
 dayjs.extend(customParseFormat);
 
 export default Vue.extend({
   name: 'Calendar',
   components: { VAutocomplete, VSelect },
-  props: {},
+  props: {
+    userId: {
+      type: String,
+      default: '',
+      required: true,
+    },
+  },
   data() {
     return {
       ready: false,
@@ -765,7 +771,12 @@ export default Vue.extend({
         ? `rgba(${r}, ${g}, ${b}, 0.7)`
         : event.color;
     },
-    getEvents({ start, end }: any): void {
+    async getEvents({ start, end }: any): Promise<void> {
+      const availableTimeRepository = makeAvailableTimeRepository;
+      const { data } = await availableTimeRepository.getById(this.userId);
+      console.log(data);
+      // const { data } = await availableTimeRepository.
+      // console.log(data);
       // const events = [];
       // const min = new Date(`${start.date}T00:00:00`).getTime();
       // const max = new Date(`${end.date}T23:59:59`).getTime();

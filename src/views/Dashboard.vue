@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <calendar />
+    <calendar :user-id="userData._id" />
   </div>
 </template>
 

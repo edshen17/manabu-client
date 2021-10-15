@@ -39,8 +39,8 @@ const routes: Array<RouteConfig> = [
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
-    // beforeEnter: loginProtectedRouterGuard.consume(),
-    // meta: { requiresAuth: true },
+    beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: { requiresAuth: true },
   },
   {
     path: '/logout',
