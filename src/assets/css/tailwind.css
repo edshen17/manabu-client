@@ -55,6 +55,10 @@
     @apply flex flex-grow
 }
 
+.calendar .v-event-timed {
+    @apply max-w-6xl !important;
+}
+
 .progress-bar-transition {
     transition: width 0.3s linear;
 }

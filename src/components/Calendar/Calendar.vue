@@ -16,7 +16,7 @@
         </v-toolbar-title>
         <v-menu bottom right>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
+            <v-btn v-show="!isMobile" outlined color="grey darken-2" v-bind="attrs" v-on="on">
               <span>{{ typeToLabel[type].text }}</span>
               <v-icon right> mdi-menu-down </v-icon>
             </v-btn>
@@ -291,11 +291,6 @@ export default Vue.extend({
           },
           day: {
             text: this.$t('calendar.day'),
-            showIfDesktop: true,
-            showIfMobile: true,
-          },
-          '4day': {
-            text: this.$t('calendar.fourDays'),
             showIfDesktop: true,
             showIfMobile: true,
           },
@@ -622,10 +617,19 @@ export default Vue.extend({
       this.calendarFocusDate = this.today;
     },
     prev(): void {
-      (this.$refs.calendar as any).prev();
+      this._moveCalendar('backward');
     },
     next(): void {
-      (this.$refs.calendar as any).next();
+      this._moveCalendar('forward');
+    },
+    _moveCalendar(direction: string) {
+      const isMovingForward = direction == 'forward';
+      const calendar = this.$refs.calendar as any;
+      isMovingForward ? calendar.next() : calendar.prev();
+      this.showSelectedEventMenu = false;
+      this.events = this.events.filter((event) => {
+        return event.attributes.creationStatus != 'pending';
+      });
     },
     onEventClick({ nativeEvent, event }: any): void {
       this.onMouseUp({ nativeEvent, event });
@@ -699,7 +703,9 @@ export default Vue.extend({
     },
     mouseMove(tms: any): void {
       const mouse = this.toTime(tms);
-      if (this.dragEvent && this.dragTime !== null) {
+      const isMovingEvent = this.dragEvent && this.dragTime !== null;
+      const isExtendingEvent = this.createdEvent && this.createStart !== null;
+      if (isMovingEvent) {
         const start = this.dragEvent.start;
         const end = this.dragEvent.end;
         const duration = end - start;
@@ -708,7 +714,7 @@ export default Vue.extend({
         const newEnd = newStart + duration;
         this.dragEvent.start = newStart;
         this.dragEvent.end = newEnd;
-      } else if (this.createdEvent && this.createStart !== null) {
+      } else if (isExtendingEvent) {
         const mouseRounded = this.roundTime(mouse, false);
         const min = Math.min(mouseRounded, this.createStart);
         const max = Math.max(mouseRounded, this.createStart);
