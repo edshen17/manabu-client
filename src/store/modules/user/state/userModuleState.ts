@@ -13,8 +13,6 @@ type LoggedOutUser = {
   };
 };
 
-const USER_ENTITY_STATE_ENDPOINT = '/users/self';
-
 type OptionalUserModuleStateInitParams = { locale: string };
 
 class UserModuleState extends AbstractModuleState<
@@ -44,4 +42,4 @@ class UserModuleState extends AbstractModuleState<
   };
 }
 
-export { UserModuleState, UserEntityState, UserEntityStateData, USER_ENTITY_STATE_ENDPOINT };
+export { UserModuleState, UserEntityState, UserEntityStateData };

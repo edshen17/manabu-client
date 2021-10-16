@@ -5,7 +5,11 @@ interface IRepository {
   get: (query?: StringKeyObject) => Promise<StringKeyObject>;
   getById: (props: { _id: string; customResourcePath?: string }) => Promise<StringKeyObject>;
   getSelf: () => Promise<StringKeyObject>;
-  create: (props: StringKeyObject) => Promise<StringKeyObject>;
+  create: (props: {
+    customResourcePath?: string;
+    query?: StringKeyObject;
+    payload: StringKeyObject;
+  }) => Promise<StringKeyObject>;
   updateById: (props: { _id: string; updateParams: StringKeyObject }) => Promise<StringKeyObject>;
   deleteById: (_id: string) => Promise<StringKeyObject>;
   init: (initParams: {

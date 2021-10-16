@@ -1,5 +1,3 @@
-import axios from 'axios';
-import urljoin from 'url-join';
 import vClickOutside from 'v-click-outside';
 import Vue from 'vue';
 import VueCookies from 'vue-cookies';
@@ -12,8 +10,6 @@ import { vuetify } from './plugins/vuetify/vuetify';
 import { router } from './router';
 import { store } from './store/index';
 
-const isAbsoluteURLRegex = /^(?:\w+:)\/\//;
-const API_HOST = '/api/v1';
 const myMixin = {
   computed: {
     isMobile: {
@@ -22,19 +18,6 @@ const myMixin = {
       },
     },
   },
-};
-
-axios.defaults.headers.common = {
-  'X-Requested-With': 'XMLHttpRequest',
-};
-axios.interceptors.request.use((config: any) => {
-  if (!isAbsoluteURLRegex.test(config.url)) {
-    config.url = urljoin(API_HOST, config.url);
-  }
-  return config;
-});
-axios.defaults.validateStatus = (status: number) => {
-  return status >= 200 && status < 300;
 };
 
 Vue.config.productionTip = false;

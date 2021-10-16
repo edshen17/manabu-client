@@ -1,3 +1,4 @@
+import { IRepository } from '@/repositories/abstractions/IRepository';
 import { StringKeyObject } from '@server/types/custom';
 import { ActionContext, ActionTree } from 'vuex';
 import { IEntityState } from './IEntityState';
@@ -8,7 +9,7 @@ type ModuleActionInitParams<OptionalModuleActionInitParams> = RequiredModuleActi
   OptionalModuleActionInitParams;
 
 type RequiredModuleActionInitParams = {
-  axios: any;
+  makeRepository: IRepository;
   makeModuleState: IModuleState<any, any>;
   moduleName: string;
 };

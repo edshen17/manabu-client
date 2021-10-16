@@ -120,12 +120,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import axios from 'axios';
 import { focus } from 'vue-focus';
 import { email, minLength, required, requiredIf } from 'vuelidate/lib/validators';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import { StringKeyObject } from '../../../server/types/custom';
 import { StatusCodes } from 'http-status-codes';
+import { makeUserRepository } from '../repositories/user/index';
+const userRepository = makeUserRepository;
 
 export default Vue.extend({
   name: 'UserAuthForm',
@@ -221,7 +222,11 @@ export default Vue.extend({
       const { body, endpoint } = props;
       try {
         this.$store.dispatch('user/resetEntityState');
-        await axios.post(endpoint, body);
+        const t = await userRepository.create({
+          payload: body,
+          customResourcePath: endpoint,
+        });
+        console.log(t);
       } catch (err: any) {
         const hasErrorResponse = err.response;
         const httpStatusCode = hasErrorResponse ? err.response.status : undefined;

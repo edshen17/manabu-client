@@ -26,8 +26,22 @@ abstract class AbstractRepository implements IRepository {
     return await this._client.get(`${this._resourcePath}/self`);
   };
 
-  public create = async (): Promise<StringKeyObject> => {
-    return await this._client.post(`${this._resourcePath}/create`);
+  public create = async (
+    props: {
+      customResourcePath?: string;
+      query?: StringKeyObject;
+      payload: StringKeyObject;
+    } = {
+      customResourcePath: '',
+      query: {},
+      payload: {},
+    }
+  ): Promise<StringKeyObject> => {
+    const { customResourcePath, query, payload } = props;
+    const queryString = this._queryStringHandler.stringifyQueryStringObj(query!);
+    const baseApiUrl = customResourcePath || `${this._resourcePath}/create`;
+    const apiUrl = `${baseApiUrl}?${queryString}`;
+    return await this._client.post(apiUrl, payload);
   };
 
   public updateById = async (props: {
