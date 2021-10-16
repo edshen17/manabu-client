@@ -773,10 +773,11 @@ export default Vue.extend({
     },
     async getEvents({ start, end }: any): Promise<void> {
       const availableTimeRepository = makeAvailableTimeRepository;
-      const { data } = await availableTimeRepository.getById(this.userId);
-      console.log(data);
-      // const { data } = await availableTimeRepository.
-      // console.log(data);
+      const { data } = await availableTimeRepository.getById({
+        _id: this.userId,
+        customResourcePath: `/users/${this.userId}/availableTimes`,
+      });
+      const { availableTimes } = data;
       // const events = [];
       // const min = new Date(`${start.date}T00:00:00`).getTime();
       // const max = new Date(`${end.date}T23:59:59`).getTime();

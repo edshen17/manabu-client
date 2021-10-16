@@ -13,8 +13,13 @@ abstract class AbstractRepository implements IRepository {
     return await this._client.get(apiUrl);
   };
 
-  public getById = async (_id: string): Promise<StringKeyObject> => {
-    return await this._client.get(`${this._resourcePath}/${_id}`);
+  public getById = async (props: {
+    _id: string;
+    customResourcePath?: string;
+  }): Promise<StringKeyObject> => {
+    const { _id, customResourcePath } = props;
+    const apiUrl = customResourcePath || `${this._resourcePath}/${_id}`;
+    return await this._client.get(apiUrl);
   };
 
   public getSelf = async (): Promise<StringKeyObject> => {

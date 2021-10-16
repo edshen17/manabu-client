@@ -3,7 +3,7 @@ import { StringKeyObject } from '@server/types/custom';
 
 interface IRepository {
   get: (query?: StringKeyObject) => Promise<StringKeyObject>;
-  getById: (id: string) => Promise<StringKeyObject>;
+  getById: (props: { _id: string; customResourcePath?: string }) => Promise<StringKeyObject>;
   getSelf: () => Promise<StringKeyObject>;
   create: (props: StringKeyObject) => Promise<StringKeyObject>;
   updateById: (props: { _id: string; updateParams: StringKeyObject }) => Promise<StringKeyObject>;
