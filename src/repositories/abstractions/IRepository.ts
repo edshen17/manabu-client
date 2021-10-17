@@ -2,12 +2,16 @@ import { QueryStringHandler } from '@server/components/usecases/utils/queryStrin
 import { StringKeyObject } from '@server/types/custom';
 
 interface IRepository {
-  get: (query?: StringKeyObject) => Promise<StringKeyObject>;
-  getById: (props: { _id: string; customResourcePath?: string }) => Promise<StringKeyObject>;
+  get: (query: StringKeyObject) => Promise<StringKeyObject>;
+  getById: (props: {
+    _id: string;
+    customResourcePath?: string;
+    query: StringKeyObject;
+  }) => Promise<StringKeyObject>;
   getSelf: () => Promise<StringKeyObject>;
   create: (props: {
     customResourcePath?: string;
-    query?: StringKeyObject;
+    query: StringKeyObject;
     payload: StringKeyObject;
   }) => Promise<StringKeyObject>;
   updateById: (props: { _id: string; updateParams: StringKeyObject }) => Promise<StringKeyObject>;

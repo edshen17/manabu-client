@@ -81,7 +81,7 @@
     <v-menu
       v-model="showSelectedEventMenu"
       :close-on-content-click="false"
-      :close-on-click="false"
+      :close-on-click="true"
       :activator="selectedElement"
       offset-x
       :offset-y="isMobile"
@@ -97,9 +97,9 @@
               </p>
             </div>
             <button
-              v-if="getSelectedEventCreationStatus(selectedEvent) == 'saved'"
+              v-if="isSelectedEventSaved"
               class="float-right"
-              @click="deleteEvent(selectedEvent.attributes.id)"
+              @click="deleteEvent({ eventId: selectedEvent.attributes.id, deleteFromDb: true })"
             >
               <i class="fas fa-trash-alt text-lg"></i>
             </button>
@@ -187,7 +187,7 @@
             ></component>
           </div>
         </v-card-text>
-        <v-card-actions v-show="wasSelectedEventEdited(selectedEvent)">
+        <v-card-actions v-show="isSelectedEventEdited">
           <v-btn text color="secondary" class="m-0 animate-pulse" @click="saveEvent">
             <span class="text-blue-600">{{ $t('calendar.save') }}</span>
           </v-btn>
@@ -212,6 +212,9 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandler';
 import { VAutocomplete, VSelect } from 'vuetify/lib';
 import { makeAvailableTimeRepository } from '../../repositories/availableTime/index';
+import { AvailableTimeDoc } from '../../../../server/models/AvailableTime';
+const availableTimeRepository = makeAvailableTimeRepository;
+
 dayjs.extend(customParseFormat);
 
 export default Vue.extend({
@@ -235,17 +238,11 @@ export default Vue.extend({
         hour: 0,
         minute: 0,
       },
+      color: {
+        availableTimeColor: '#3F51B5',
+      },
       intervalTimerId: 0 as any,
       events: [] as StringKeyObject[],
-      colors: [
-        '#2196F3',
-        '#3F51B5',
-        '#673AB7',
-        '#00BCD4',
-        '#4CAF50',
-        '#FF9800',
-        '#757575',
-      ] as any[],
       names: [] as string[],
       dragEvent: null as any,
       dragStart: null as any,
@@ -306,11 +303,6 @@ export default Vue.extend({
     nowY: {
       get(): string {
         return this.cal ? this.cal.timeToY(this.currentTime) + 'px' : '-10px';
-      },
-    },
-    availableTimeTextLocale: {
-      get(): TranslateResult {
-        return this.$t('calendar.availableTime');
       },
     },
     autoCompleteStartIntervals: {
@@ -406,20 +398,32 @@ export default Vue.extend({
         return showSelectedEventMenuOnLeft;
       },
     },
+    isSelectedEventSaved: {
+      get(): boolean {
+        const { attributes, start, end } = this.selectedEvent;
+        let isSelectedEventSaved = false;
+        if (attributes) {
+          const { creationStatus, originalEvent } = attributes;
+          isSelectedEventSaved =
+            creationStatus == 'saved' && start == originalEvent.start && end == originalEvent.end;
+        }
+        return isSelectedEventSaved;
+      },
+    },
   },
   watch: {
     isMobile: function (newValue) {
       this.onMobile(newValue);
     },
   },
-  created() {
+  async created() {
     const isMobile = (this as any).isMobile;
     this.onMobile(isMobile);
     this.intervalTimerId = setInterval(() => {
       this.setCurrentTime();
     }, 60 * 1000);
   },
-  mounted() {
+  async mounted() {
     this.ready = true;
     this.setCurrentTime();
   },
@@ -557,11 +561,10 @@ export default Vue.extend({
         });
       }
     },
-    cancelEvent(): void {
-      const wasEventSaved = this.selectedEvent.attributes.creationStatus == 'saved';
-      const selectedEventId = this.selectedEvent.attributes.id;
-      if (!wasEventSaved) {
-        this.deleteEvent(selectedEventId);
+    async cancelEvent(): Promise<void> {
+      const eventId = this.selectedEvent.attributes.id;
+      if (!this.isSelectedEventSaved) {
+        this.deleteEvent({ eventId, deleteFromDb: false });
       } else {
         const originalEvent = this.selectedEvent.attributes.originalEvent;
         this.selectedEvent.start = originalEvent.start;
@@ -570,21 +573,58 @@ export default Vue.extend({
       }
       this.showSelectedEventMenu = false;
     },
-    deleteEvent(eventId: string) {
-      //delete in db if saved, else just filter out
+    async deleteEvent({
+      eventId,
+      deleteFromDb,
+    }: {
+      eventId: string;
+      deleteFromDb: boolean;
+    }): Promise<void> {
+      if (deleteFromDb) {
+        availableTimeRepository.deleteById(eventId);
+      }
       this.events = this.events.filter((event) => {
         return event.attributes.id != eventId;
       });
       this.showSelectedEventMenu = false;
     },
-    saveEvent(): void {
-      this.selectedEvent.attributes.creationStatus = 'saved';
-      this.selectedEvent.attributes.originalEvent = {
-        start: this.selectedEvent.start,
-        end: this.selectedEvent.end,
-      };
+    async saveEvent(): Promise<void> {
+      const start = this.selectedEvent.start;
+      const end = this.selectedEvent.end;
       this.showSelectedEventMenu = false;
-      // save to db
+      this.selectedEvent.attributes.originalEvent = {
+        start,
+        end,
+      };
+      if (!this.isSelectedEventSaved) {
+        await this._saveAvailableTime({ start, end });
+      } else {
+        await this._updateAvailableTime({ start, end });
+      }
+    },
+    async _saveAvailableTime(props: { start: Date; end: Date }): Promise<void> {
+      const { start, end } = props;
+      const payload = {
+        hostedById: this.userId,
+        startDate: start,
+        endDate: end,
+      };
+      const { data } = await availableTimeRepository.create({
+        payload,
+        query: {},
+      });
+      this.selectedEvent.attributes.creationStatus = 'saved';
+      this.selectedEvent.attributes.id = data.availableTime._id;
+    },
+    async _updateAvailableTime(props: { start: Date; end: Date }) {
+      const { start, end } = props;
+      await availableTimeRepository.updateById({
+        _id: this.selectedEvent.attributes.id,
+        updateParams: {
+          startDate: start,
+          endDate: end,
+        },
+      });
     },
     getEventTitle(event: any): TranslateResult {
       const isAvailableTime = event.attributes && event.attributes.type == 'availableTime';
@@ -593,26 +633,9 @@ export default Vue.extend({
         : this.$t('calendar.appointment');
       return eventTitle;
     },
-    getSelectedEventCreationStatus(): string {
-      let selectedEventCreationStatus = '';
-      if (this.selectedEvent.attributes) {
-        selectedEventCreationStatus = this.selectedEvent.attributes.creationStatus;
-      }
-      return selectedEventCreationStatus;
-    },
-    wasSelectedEventEdited(): boolean {
-      if (this.selectedEvent.attributes) {
-        const selectedEvent = this.selectedEvent;
-        const selectedEventAttributes = selectedEvent.attributes;
-        const wasSelectedEventEdited =
-          selectedEventAttributes.creationStatus == 'pending' ||
-          !(
-            selectedEvent.start == selectedEventAttributes.originalEvent.start &&
-            selectedEvent.end == selectedEventAttributes.originalEvent.end
-          );
-        return wasSelectedEventEdited;
-      }
-      return false;
+    isSelectedEventEdited(): boolean {
+      const isSelectedEventEdited = this.selectedEvent.attributes && !this.isSelectedEventSaved;
+      return isSelectedEventEdited;
     },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }): void {
@@ -676,7 +699,7 @@ export default Vue.extend({
         const start = new Date(this.createStart);
         const end = new Date(this.createStart + 60 * 60 * 1000);
         const newEvent = {
-          color: this.rndElement(this.colors),
+          color: this.color.availableTimeColor,
           start,
           end,
           timed: true,
@@ -771,105 +794,55 @@ export default Vue.extend({
         ? `rgba(${r}, ${g}, ${b}, 0.7)`
         : event.color;
     },
-    async getEvents({ start, end }: any): Promise<void> {
-      const availableTimeRepository = makeAvailableTimeRepository;
+    async getEvents({
+      start,
+      end,
+    }: {
+      start: StringKeyObject;
+      end: StringKeyObject;
+    }): Promise<void> {
+      const availableTimes = await this.getAvailableTimes({ start, end });
+      availableTimes.forEach((availableTime) => {
+        const event = {
+          color: this.color.availableTimeColor,
+          start: dayjs(availableTime.startDate).unix() * 1000,
+          end: dayjs(availableTime.endDate).unix() * 1000,
+          timed: true,
+          attributes: {
+            id: availableTime._id,
+            creationStatus: 'saved',
+            type: 'availableTime',
+            originalEvent: {
+              start: dayjs(availableTime.startDate).unix() * 1000,
+              end: dayjs(availableTime.endDate).unix() * 1000,
+            },
+          },
+        };
+        this.events.push(event);
+      });
+    },
+    async getAvailableTimes({
+      start,
+      end,
+    }: {
+      start: StringKeyObject;
+      end: StringKeyObject;
+    }): Promise<AvailableTimeDoc[]> {
       const { data } = await availableTimeRepository.getById({
         _id: this.userId,
         customResourcePath: `/users/${this.userId}/availableTimes`,
+        query: {
+          startDate: dayjs(start.date, 'YYYY-MM-DD').toString(),
+          endDate: dayjs(end.date, 'YYYY-MM-DD').toString(),
+        },
       });
       const { availableTimes } = data;
-      // const events = [];
-      // const min = new Date(`${start.date}T00:00:00`).getTime();
-      // const max = new Date(`${end.date}T23:59:59`).getTime();
-      // const days = (max - min) / 86400000;
-      // const eventCount = this.rnd(days, days + 20);
-      // for (let i = 0; i < eventCount; i++) {
-      //   const timed = this.rnd(0, 3) !== 0;
-      //   const firstTimestamp = this.rnd(min, max);
-      //   const secondTimestamp = this.rnd(2, timed ? 8 : 288) * 900000;
-      //   const start = firstTimestamp - (firstTimestamp % 900000);
-      //   const end = start + secondTimestamp;
-      //   events.push({
-      //     name: this.rndElement(this.names),
-      //     color: this.rndElement(this.colors),
-      //     start,
-      //     end,
-      //     timed,
-      //   });
-      // }
-      // this.events = events;
-    },
-    rnd(a: number, b: number): number {
-      return Math.floor((b - a + 1) * Math.random()) + a;
-    },
-    rndElement(arr: number[]): number {
-      return arr[this.rnd(0, arr.length - 1)];
+      return availableTimes;
     },
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.vs__no-options {
-  display: none !important;
-}
-
-.calendar .v-text-field.v-input--dense {
-  max-width: 120px;
-}
-
-.v-event-draggable {
-  padding-left: 6px;
-}
-
-.v-event-timed {
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.v-event-drag-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 4px;
-  height: 4px;
-  cursor: ns-resize;
-
-  &::after {
-    display: none;
-    position: absolute;
-    left: 50%;
-    height: 4px;
-    border-top: 1px solid white;
-    border-bottom: 1px solid white;
-    width: 16px;
-    margin-left: -8px;
-    opacity: 0.8;
-    content: '';
-  }
-
-  &:hover::after {
-    display: block;
-  }
-}
-
-.v-current-time {
-  height: 2px;
-  background-color: #ea4335;
-  position: absolute;
-  left: -1px;
-  right: 0;
-  pointer-events: none;
-
-  &.first::before {
-    content: '';
-    position: absolute;
-    background-color: #ea4335;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-top: -5px;
-    margin-left: -6.5px;
-  }
-}
+@import '../../assets/scss/calendar.scss';
 </style>

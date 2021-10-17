@@ -12,7 +12,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { USER_ENTITY_STATE_ENDPOINT } from './store/modules/user/state/userModuleState';
 
 export default Vue.extend({
   name: 'App',
@@ -22,9 +21,7 @@ export default Vue.extend({
     };
   },
   created() {
-    this.$store.dispatch('user/getEntityStateData', {
-      endpoint: USER_ENTITY_STATE_ENDPOINT,
-    });
+    this.$store.dispatch('user/getEntityStateData');
   },
 });
 </script>

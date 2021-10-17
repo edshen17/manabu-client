@@ -206,27 +206,27 @@ export default Vue.extend({
       }
     },
     async _handleLogin(): Promise<void> {
-      let body: StringKeyObject = {
+      let payload: StringKeyObject = {
         email: this.email,
         password: this.password,
       };
       let endpoint = '/users/auth/base/login';
       if (this.isSignupPage) {
-        body = { ...body, name: this.name };
+        payload = { ...payload, name: this.name };
         endpoint = '/users/create';
       }
-      await this._authorizeUser({ body, endpoint });
+      await this._authorizeUser({ payload, endpoint });
       this.$router.push('/dashboard');
     },
-    async _authorizeUser(props: { body: StringKeyObject; endpoint: string }): Promise<void> {
-      const { body, endpoint } = props;
+    async _authorizeUser(props: { payload: StringKeyObject; endpoint: string }): Promise<void> {
+      const { payload, endpoint } = props;
       try {
         this.$store.dispatch('user/resetEntityState');
-        const t = await userRepository.create({
-          payload: body,
+        await userRepository.create({
+          payload,
           customResourcePath: endpoint,
+          query: {},
         });
-        console.log(t);
       } catch (err: any) {
         const hasErrorResponse = err.response;
         const httpStatusCode = hasErrorResponse ? err.response.status : undefined;

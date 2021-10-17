@@ -7,39 +7,35 @@ abstract class AbstractRepository implements IRepository {
   private _queryStringHandler!: QueryStringHandler;
   private _resourcePath!: string;
 
-  public get = async (query: StringKeyObject = {}): Promise<StringKeyObject> => {
+  public get = async (query: StringKeyObject): Promise<StringKeyObject> => {
     const queryString = this._queryStringHandler.stringifyQueryStringObj(query);
-    const apiUrl = `${this._resourcePath}?${queryString}`;
-    return await this._client.get(apiUrl);
+    const apiUrl = this._resourcePath;
+    return await this._client.get(`${apiUrl}?${queryString}`);
   };
 
   public getById = async (props: {
     _id: string;
     customResourcePath?: string;
+    query: StringKeyObject;
   }): Promise<StringKeyObject> => {
-    const { _id, customResourcePath } = props;
+    const { _id, customResourcePath, query } = props;
+    const queryString = this._queryStringHandler.stringifyQueryStringObj(query);
     const apiUrl = customResourcePath || `${this._resourcePath}/${_id}`;
-    return await this._client.get(apiUrl);
+    return await this._client.get(`${apiUrl}?${queryString}`);
   };
 
   public getSelf = async (): Promise<StringKeyObject> => {
     return await this._client.get(`${this._resourcePath}/self`);
   };
 
-  public create = async (
-    props: {
-      customResourcePath?: string;
-      query?: StringKeyObject;
-      payload: StringKeyObject;
-    } = {
-      customResourcePath: '',
-      query: {},
-      payload: {},
-    }
-  ): Promise<StringKeyObject> => {
+  public create = async (props: {
+    customResourcePath?: string;
+    query: StringKeyObject;
+    payload: StringKeyObject;
+  }): Promise<StringKeyObject> => {
     const { customResourcePath, query, payload } = props;
-    const queryString = this._queryStringHandler.stringifyQueryStringObj(query!);
-    const baseApiUrl = customResourcePath || `${this._resourcePath}/create`;
+    const queryString = this._queryStringHandler.stringifyQueryStringObj(query);
+    const baseApiUrl = customResourcePath || `${this._resourcePath}`;
     const apiUrl = `${baseApiUrl}?${queryString}`;
     return await this._client.post(apiUrl, payload);
   };

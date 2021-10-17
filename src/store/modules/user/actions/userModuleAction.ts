@@ -44,14 +44,14 @@ class UserModuleAction extends AbstractModuleAction<
     this._localeHandler.updateLocale({ i18n: this._i18n, locale });
     commit('updateSettings', { locale });
     if (getters.isLoggedIn) {
-      this._axios.patch(`users/${_id}`, { settings: updatedSettings });
+      this._repository.updateById({ _id, updateParams: { settings: updatedSettings } });
     }
   };
 
   protected _initTemplate = async (
     optionalModuleActionInitParams: Omit<
       ModuleActionInitParams<OptionalUserModuleActionInitParams>,
-      'axios' | 'makeModuleState' | 'moduleName'
+      'makeRepository' | 'makeModuleState' | 'moduleName'
     >
   ): Promise<void> => {
     const { makeLocaleHandler, i18n } = optionalModuleActionInitParams;
