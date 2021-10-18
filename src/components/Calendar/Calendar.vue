@@ -49,7 +49,7 @@
       @click:event="onEventClick"
       @change="getEvents"
       @mousedown:event="startMouseDrag"
-      @mousedown:time="createEvent"
+      @mousedown:time="onMouseDownTime"
       @mousemove:time="mouseMove"
       @mouseup:time="endDrag"
       @mouseup:event="onMouseUp"
@@ -187,7 +187,7 @@
             ></component>
           </div>
         </v-card-text>
-        <v-card-actions v-show="isSelectedEventEdited">
+        <v-card-actions v-show="!isSelectedEventSaved">
           <v-btn text color="secondary" class="m-0 animate-pulse" @click="saveEvent">
             <span class="text-blue-600">{{ $t('calendar.save') }}</span>
           </v-btn>
@@ -565,21 +565,14 @@ export default Vue.extend({
       const eventId = this.selectedEvent.attributes.id;
       if (!this.isSelectedEventSaved) {
         this.deleteEvent({ eventId, deleteFromDb: false });
-      } else {
-        const originalEvent = this.selectedEvent.attributes.originalEvent;
-        this.selectedEvent.start = originalEvent.start;
-        this.selectedEvent.end = originalEvent.end;
-        this._showSelectedEventPopup(false);
       }
-      this.showSelectedEventMenu = false;
+      const originalEvent = this.selectedEvent.attributes.originalEvent;
+      this.selectedEvent.start = originalEvent.start;
+      this.selectedEvent.end = originalEvent.end;
+      this._showSelectedEventPopup(false);
     },
-    async deleteEvent({
-      eventId,
-      deleteFromDb,
-    }: {
-      eventId: string;
-      deleteFromDb: boolean;
-    }): Promise<void> {
+    async deleteEvent(props: { eventId: string; deleteFromDb: boolean }): Promise<void> {
+      const { eventId, deleteFromDb } = props;
       if (deleteFromDb) {
         availableTimeRepository.deleteById(eventId);
       }
@@ -602,12 +595,12 @@ export default Vue.extend({
         await this._updateAvailableTime({ start, end });
       }
     },
-    async _saveAvailableTime(props: { start: Date; end: Date }): Promise<void> {
+    async _saveAvailableTime(props: { start: number; end: number }): Promise<void> {
       const { start, end } = props;
       const payload = {
         hostedById: this.userId,
-        startDate: start,
-        endDate: end,
+        startDate: dayjs(start).toDate(),
+        endDate: dayjs(end).toDate(),
       };
       const { data } = await availableTimeRepository.create({
         payload,
@@ -621,8 +614,8 @@ export default Vue.extend({
       await availableTimeRepository.updateById({
         _id: this.selectedEvent.attributes.id,
         updateParams: {
-          startDate: start,
-          endDate: end,
+          startDate: dayjs(start).toDate(),
+          endDate: dayjs(end).toDate(),
         },
       });
     },
@@ -632,10 +625,6 @@ export default Vue.extend({
         ? this.$t('calendar.availableTime')
         : this.$t('calendar.appointment');
       return eventTitle;
-    },
-    isSelectedEventEdited(): boolean {
-      const isSelectedEventEdited = this.selectedEvent.attributes && !this.isSelectedEventSaved;
-      return isSelectedEventEdited;
     },
     // below are the vuetify calendar methods
     viewDay({ date }: { date: string }): void {
@@ -686,7 +675,7 @@ export default Vue.extend({
       }
       this.selectedEvent = event;
     },
-    createEvent(tms: StringKeyObject): void {
+    onMouseDownTime(tms: StringKeyObject): void {
       const mouse = this.toTime(tms);
       this.selectedElement = null;
       this.showSelectedEventMenu = false;
@@ -696,8 +685,8 @@ export default Vue.extend({
         this.dragTime = mouse - start;
       } else {
         this.createStart = this.roundTime(mouse);
-        const start = new Date(this.createStart);
-        const end = new Date(this.createStart + 60 * 60 * 1000);
+        const start = this.createStart;
+        const end = this.createStart + 60 * 60 * 1000;
         const newEvent = {
           color: this.color.availableTimeColor,
           start,
@@ -803,22 +792,27 @@ export default Vue.extend({
     }): Promise<void> {
       const availableTimes = await this.getAvailableTimes({ start, end });
       availableTimes.forEach((availableTime) => {
-        const event = {
-          color: this.color.availableTimeColor,
-          start: dayjs(availableTime.startDate).unix() * 1000,
-          end: dayjs(availableTime.endDate).unix() * 1000,
-          timed: true,
-          attributes: {
-            id: availableTime._id,
-            creationStatus: 'saved',
-            type: 'availableTime',
-            originalEvent: {
-              start: dayjs(availableTime.startDate).unix() * 1000,
-              end: dayjs(availableTime.endDate).unix() * 1000,
+        const isSeenEvent = this.events.some((event) => {
+          return event.attributes.id == availableTime._id;
+        });
+        if (!isSeenEvent) {
+          const event = {
+            color: this.color.availableTimeColor,
+            start: dayjs(availableTime.startDate).unix() * 1000,
+            end: dayjs(availableTime.endDate).unix() * 1000,
+            timed: true,
+            attributes: {
+              id: availableTime._id,
+              creationStatus: 'saved',
+              type: 'availableTime',
+              originalEvent: {
+                start: dayjs(availableTime.startDate).unix() * 1000,
+                end: dayjs(availableTime.endDate).unix() * 1000,
+              },
             },
-          },
-        };
-        this.events.push(event);
+          };
+          this.events.push(event);
+        }
       });
     },
     async getAvailableTimes({
@@ -833,12 +827,16 @@ export default Vue.extend({
         customResourcePath: `/users/${this.userId}/availableTimes`,
         query: {
           startDate: dayjs(start.date, 'YYYY-MM-DD').toString(),
-          endDate: dayjs(end.date, 'YYYY-MM-DD').toString(),
+          endDate: dayjs(end.date, 'YYYY-MM-DD').add(1, 'day').toString(),
         },
       });
       const { availableTimes } = data;
       return availableTimes;
     },
+  },
+  errorCaptured(err: Error): boolean {
+    console.log(err); // set translation err.message = 'error.___'
+    return true;
   },
 });
 </script>
