@@ -834,8 +834,17 @@ export default Vue.extend({
       return availableTimes;
     },
   },
-  errorCaptured(err: Error): boolean {
-    console.log(err); // set translation err.message = 'error.___'
+  errorCaptured(err: StringKeyObject): boolean {
+    const errMsg = err.response.data.err;
+    console.log(err.response.data.err);
+    switch (errMsg) {
+      case 'Your timeslot duration must be divisible by 30 minutes.':
+        err.message = 'error.calendar.unevenAppointment';
+      case 'Timeslots must begin at the start of the hour or 30 minutes into the hour.':
+        err.message = 'error.calendar.badStartAvailableTime';
+      case 'You cannot have timeslots that overlap.':
+        err.message = 'error.calendar.overlapAvailableTime';
+    }
     return true;
   },
 });

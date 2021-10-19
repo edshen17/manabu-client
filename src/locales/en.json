@@ -55,15 +55,23 @@
     "profile": "Profile"
   },
   "error": {
-    "name": "You must input a name.",
-    "email": "You must input a valid email address.",
-    "password": {
-      "length": "Your password must be at least 8 characters.",
-      "required": "You must input a password."
+    "userAuth": {
+      "name": "You must input a name.",
+      "email": "You must input a valid email address.",
+      "password": {
+        "length": "Your password must be at least 8 characters.",
+        "required": "You must input a password."
+      },
+      "login": {
+        "invalid": "Invalid username or password.",
+        "emailExists": "An account with that email already exists."
+      }
     },
-    "login": {
-      "invalid": "Invalid username or password.",
-      "emailExists": "An account with that email already exists."
+    "calendar": {
+      "pastAppointment": "You cannot reserve an appointment in the past.",
+      "unevenAvailableTime": "Your appointments must be in 30 minute to 1 hour intervals.",
+      "badStartAvailableTime": "You cannot start your appointments at that time (must be at the start of the hour or 30 minutes in).",
+      "overlapAvailableTime": "Your appointments cannot overlap."
     },
     "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
   },
@@ -106,14 +114,7 @@
     "availableTime": "Available",
     "lessonTime": "Lesson Time",
     "commTool": "Communication Tool",
-    "rejectReason": "Reason for rejecting appointment",
-    "available": "@:modal.available",
-    "alerts": {
-      "pastAppoint": "You cannot make an appointment in the past.",
-      "unevenAppoint": "Your appointments must be in 30 minute to 1 hour intervals.",
-      "badStart": "You cannot start your appointments at that time (must be at the start of the hour or 30 minutes in)",
-      "shortAppoint": "Your appointments must be at least 30 minutes."
-    },
+    "cancelReason": "Reason for cancelling appointment",
     "appointment": "Appointment"
   },
   "dateFormat": {

@@ -49,8 +49,8 @@ export default Vue.extend({
     },
   },
   errorCaptured(err: Error): boolean {
+    this.$data._showPopup = false;
     this.err = err;
-    console.log(err);
     this.$data._showPopup = true;
     this.errEmitPage = this.$route.path;
     return !this.stopPropagation;

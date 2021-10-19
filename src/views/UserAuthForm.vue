@@ -19,7 +19,7 @@
               @focus="focusedInputName = 'name'"
             />
             <p v-show="$v.name.$error" class="text-sm text-red-400 mt-2">
-              {{ $t('error.name') }}
+              {{ $t('error.userAuth.name') }}
             </p>
           </div>
           <input
@@ -33,7 +33,7 @@
             @focus="focusedInputName = 'email'"
           />
           <p v-show="$v.email.$error" class="text-sm text-red-400 mt-2">
-            {{ $t('error.email') }}
+            {{ $t('error.userAuth.email') }}
           </p>
           <div class="grid grid-cols-12">
             <input
@@ -75,8 +75,8 @@
           </div>
         </form>
         <p v-show="$v.password.$error" class="text-sm text-red-400 my-1">
-          <span v-if="isSignupPage">{{ $t('error.password.length') }}</span>
-          <span v-else>{{ $t('error.password.required') }}</span>
+          <span v-if="isSignupPage">{{ $t('error.userAuth.password.length') }}</span>
+          <span v-else>{{ $t('error.userAuth.password.required') }}</span>
         </p>
         <button
           class="bg-gray-700 py-3 px-4 rounded w-full my-6"
@@ -213,7 +213,7 @@ export default Vue.extend({
       let endpoint = '/users/auth/base/login';
       if (this.isSignupPage) {
         payload = { ...payload, name: this.name };
-        endpoint = '/users/create';
+        endpoint = '/users';
       }
       await this._authorizeUser({ payload, endpoint });
       this.$router.push('/dashboard');
@@ -230,11 +230,11 @@ export default Vue.extend({
       } catch (err: any) {
         const hasErrorResponse = err.response;
         const httpStatusCode = hasErrorResponse ? err.response.status : undefined;
-        let apiErrorMsgLocale = 'error.general';
+        let apiErrorMsgLocale = 'error.userAuth.general';
         if (httpStatusCode == StatusCodes.INTERNAL_SERVER_ERROR) {
-          apiErrorMsgLocale = 'error.login.emailExists';
+          apiErrorMsgLocale = 'error.userAuth.login.emailExists';
         } else if (httpStatusCode == StatusCodes.UNAUTHORIZED) {
-          apiErrorMsgLocale = 'error.login.invalid';
+          apiErrorMsgLocale = 'error.userAuth.login.invalid';
         }
         throw new Error(apiErrorMsgLocale);
       }
