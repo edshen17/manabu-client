@@ -563,12 +563,12 @@ export default Vue.extend({
     },
     async cancelEvent(): Promise<void> {
       const eventId = this.selectedEvent.attributes.id;
-      if (!this.isSelectedEventSaved) {
-        this.deleteEvent({ eventId, deleteFromDb: false });
-      }
       const originalEvent = this.selectedEvent.attributes.originalEvent;
       this.selectedEvent.start = originalEvent.start;
       this.selectedEvent.end = originalEvent.end;
+      if (!this.isSelectedEventSaved) {
+        this.deleteEvent({ eventId, deleteFromDb: false });
+      }
       this._showSelectedEventPopup(false);
     },
     async deleteEvent(props: { eventId: string; deleteFromDb: boolean }): Promise<void> {
@@ -836,7 +836,6 @@ export default Vue.extend({
   },
   errorCaptured(err: StringKeyObject): boolean {
     const errMsg = err.response.data.err;
-    console.log(err.response.data.err);
     switch (errMsg) {
       case 'Your timeslot duration must be divisible by 30 minutes.':
         err.message = 'error.calendar.unevenAppointment';

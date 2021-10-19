@@ -49,10 +49,13 @@ export default Vue.extend({
     },
   },
   errorCaptured(err: Error): boolean {
-    this.$data._showPopup = false;
     this.err = err;
     this.$data._showPopup = true;
     this.errEmitPage = this.$route.path;
+    const self = this;
+    setTimeout(() => {
+      self.$data._showPopup = false;
+    }, 5000);
     return !this.stopPropagation;
   },
 });
