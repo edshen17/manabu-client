@@ -60,7 +60,7 @@
       "pastAppointment": "過去時間の予約をすることはできません。",
       "unevenAvailableTime": "30分から1時間の間隔でアポイントメントが取れます。",
       "badStartAvailableTime": "この時間でアポイントメントを設定することはできません。",
-      "overlapAvailableTime": "予約が重なることはありません。"
+      "overlapAvailableTime": "予約が重なることはできません。"
     },
     "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
   },

@@ -379,6 +379,7 @@ export default Vue.extend({
           closeOnClick: true,
           closeOnContentClick: true,
           transition: false,
+          auto: true,
         };
         return autoCompleteMenuProps;
       },
