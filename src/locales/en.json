@@ -98,6 +98,13 @@
       "advanced": "Advanced (C1)",
       "proficient": "Proficient (C2)"
     },
+    "contactMethod": "My preferred contact method is...",
+    "contactMethods": {
+      "skype": "Skype",
+      "line": "LINE",
+      "discord": "Discord",
+      "zoom": "Zoom"
+    },
     "buttons": {
       "next": "Next"
     },
@@ -123,6 +130,15 @@
     "hourWithDuration": "h:mma ({hours} [hrs])",
     "abridgedDate": "dddd, MMMM D"
   },
+  "localeCode": {
+    "en": "English",
+    "ja": "Japanese",
+    "kr": "Korean",
+    "cn": "Chinese"
+  },
+
+
+
   "modal": {
     "cancel": "Cancel",
     "delete": "Delete",
@@ -196,11 +212,5 @@
       "hourlyRate": "Lessons starting from ~{rate} {currency}/hour",
       "bookNow": "BOOK NOW"
     }
-  },
-  "localeCode": {
-    "en": "English",
-    "ja": "Japanese",
-    "kr": "Korean",
-    "cn": "Chinese"
   }
 }

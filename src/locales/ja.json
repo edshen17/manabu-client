@@ -97,6 +97,13 @@
       "advanced": "上級（C1）",
       "proficient": "堪能（C2）"
     },
+    "contactMethod": "希望連絡方法は？",
+    "contactMethods": {
+      "skype": "スカイプ",
+      "line": "ライン",
+      "discord": "ディスコード",
+      "zoom": "ズーム"
+    },
     "buttons": {
       "next": "次へ"
     },
@@ -122,6 +129,17 @@
     "hourWithDuration": "ah:mm ({hours}時間)",
     "abridgedDate": "MMMM D日 (dddd)"
   },
+  "localeCode": {
+    "en": "英語",
+    "ja": "日本語",
+    "kr": "韓国語",
+    "cn": "中国語"
+  },
+
+
+
+
+
   "modal": {
     "cancel": "キャンセル",
     "delete": "削除",
@@ -195,11 +213,5 @@
       "hourlyRate": "レッスンは1時間約{rate} {currency}です",
       "bookNow": "予約する"
     }
-  },
-  "localeCode": {
-    "en": "英語",
-    "ja": "日本語",
-    "kr": "韓国語",
-    "cn": "中国語"
   }
 }

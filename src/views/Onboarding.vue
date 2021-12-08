@@ -30,6 +30,12 @@
     <!-- use v-if to remove components from DOM, otherwise causes dropdown to break... -->
     <region-step v-if="stepIndex == 4" />
     <timezone-step v-if="stepIndex == 5" :region="region" />
+    <contact-method-step
+      v-show="stepIndex == 6"
+      :contact-methods="contactMethods"
+      emitted-value-name="contactMethodName"
+      :step-title="$t('onboarding.contactMethod')"
+    />
   </div>
 </template>
 
@@ -44,6 +50,7 @@ import LanguageLevelStep from '../components/Onboarding/Steps/LanguageLevelStep.
 import { EventBus, EventBusPayload } from '../components/EventBus/EventBus';
 import RegionStep from '../components/Onboarding/Steps/RegionStep.vue';
 import TimezoneStep from '../components/Onboarding/Steps/TimezoneStep.vue';
+import ContactMethodStep from '../components/Onboarding/Steps/ContactMethodStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -54,7 +61,14 @@ type LanguageOfferings = {
 
 export default Vue.extend({
   name: 'Onboarding',
-  components: { ProgressBar, LanguageNameStep, LanguageLevelStep, RegionStep, TimezoneStep },
+  components: {
+    ProgressBar,
+    LanguageNameStep,
+    LanguageLevelStep,
+    RegionStep,
+    TimezoneStep,
+    ContactMethodStep,
+  },
   props: {},
   data() {
     return {
@@ -64,6 +78,8 @@ export default Vue.extend({
       nonTargetLanguageLevel: '',
       region: '',
       timezone: '',
+      contactMethodName: '',
+      contactMethodId: '',
       stepIndex: 0,
       stepTotal: 10,
     };
@@ -120,6 +136,42 @@ export default Vue.extend({
           return languageOffering.languageCode != this.targetLanguageCode;
         });
         return nonTargetLanguageOfferings;
+      },
+    },
+    contactMethods: {
+      get(): {
+        text: TranslateResult;
+        iconClass: string;
+        backgroundHex: string;
+        logoHex: string;
+      }[] {
+        const contactMethods = [
+          {
+            text: this.$t('onboarding.contactMethods.skype'),
+            iconClass: 'fab fa-skype fa-3x',
+            logoHex: '#00AFF0',
+            backgroundHex: '#FFF',
+          },
+          {
+            text: this.$t('onboarding.contactMethods.line'),
+            iconClass: 'fab fa-line fa-3x',
+            logoHex: '#00B900',
+            backgroundHex: '#FFF',
+          },
+          {
+            text: this.$t('onboarding.contactMethods.discord'),
+            iconClass: 'fab fa-discord fa-3x',
+            logoHex: '#7289DA',
+            backgroundHex: '#FFF',
+          },
+          {
+            text: this.$t('onboarding.contactMethods.zoom'),
+            iconClass: 'fas fa-video fa-2x',
+            logoHex: '#FFF',
+            backgroundHex: '#2D8CFF',
+          },
+        ];
+        return contactMethods;
       },
     },
   },
