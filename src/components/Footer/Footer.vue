@@ -12,8 +12,8 @@
             {{ $t('footer.questions.text') }}
           </h5>
           <div class="flex justify-start flex-wrap">
-            <div v-for="icon in iconData" :key="icon.mediaName" class="">
-              <a :href="icon.link" :title="icon.mediaName" target="_blank">
+            <div v-for="icon in iconData" :key="icon.name">
+              <a :href="icon.link" :title="icon.name" target="_blank">
                 <i class="mr-10 my-3 text-2xl" :class="icon.class"></i>
               </a>
             </div>
@@ -96,37 +96,37 @@ export default Vue.extend({
           {
             link: 'https://www.facebook.com/ManabuOfficial/',
             class: 'fab fa-facebook-f',
-            mediaName: 'Facebook',
+            name: 'Facebook',
           },
           {
             link: 'https://twitter.com/lessonsmanabu',
             class: 'fab fa-twitter',
-            mediaName: 'Twitter',
+            name: 'Twitter',
           },
           {
             link: 'https://www.instagram.com/nihongo_manabu_/',
             class: 'fab fa-instagram',
-            mediaName: 'Instagram',
+            name: 'Instagram',
           },
           {
             link: 'https://www.youtube.com/channel/UCwtTZCZ9apsj7zNn7n1eS5w',
             class: 'fab fa-youtube',
-            mediaName: 'Youtube',
+            name: 'Youtube',
           },
           {
             link: 'https://line.me/R/ti/p/%40743ilrvx',
             class: 'fab fa-line',
-            mediaName: 'LINE',
+            name: 'LINE',
           },
           {
             link: 'https://discord.com/invite/zHpyvN2TVA',
             class: 'fab fa-discord',
-            mediaName: 'Discord',
+            name: 'Discord',
           },
           {
             link: 'https://api.whatsapp.com/message/RJYZPGP6LNXNF1',
             class: 'fab fa-whatsapp',
-            mediaName: 'WhatsApp',
+            name: 'WhatsApp',
           },
         ];
       },

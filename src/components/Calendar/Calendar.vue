@@ -210,16 +210,17 @@ import { StringKeyObject } from '../../../../server/types/custom';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandler';
-import { VAutocomplete, VSelect } from 'vuetify/lib';
+import { VAutocomplete, VSelect } from 'vuetify/lib'; // need explicit import for dynamic components
 import { makeAvailableTimeRepository } from '../../repositories/availableTime/index';
 import { AvailableTimeDoc } from '../../../../server/models/AvailableTime';
+import DateTooltip from './DateTooltip.vue';
 const availableTimeRepository = makeAvailableTimeRepository;
 
 dayjs.extend(customParseFormat);
 
 export default Vue.extend({
   name: 'Calendar',
-  components: { VAutocomplete, VSelect },
+  components: { VAutocomplete, VSelect, DateTooltip },
   props: {
     userId: {
       type: String,
@@ -845,6 +846,7 @@ export default Vue.extend({
       case 'You cannot have timeslots that overlap.':
         err.message = 'error.calendar.overlapAvailableTime';
     }
+    this.cancelEvent();
     return true;
   },
 });

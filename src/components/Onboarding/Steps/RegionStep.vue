@@ -1,25 +1,27 @@
 <template>
-  <grid-select-layout :step-title="$t('onboarding.region')">
-    <template v-slot:select>
-      <v-select
-        v-model="region"
-        :options="selectRegions"
-        label="name"
-        :reduce="(region) => region.code"
-        :clearable="false"
-      ></v-select>
-    </template>
-    <template v-slot:button>
-      <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitRegionSelection" />
-    </template>
-  </grid-select-layout>
+  <div data-app>
+    <grid-select-layout :step-title="$t('onboarding.region')">
+      <template v-slot:select>
+        <v-autocomplete
+          v-model="region"
+          outlined
+          dense
+          auto
+          :cache-items="true"
+          :hide-no-data="true"
+          :items="selectRegions"
+        />
+      </template>
+      <template v-slot:button>
+        <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitRegionSelection" />
+      </template>
+    </grid-select-layout>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import vSelect from 'vue-select';
 import ct from 'countries-and-timezones';
-import 'vue-select/dist/vue-select.css';
 import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import { StringKeyObject } from '../../../../../server/types/custom';
 import GridButton from '../Common/GridButton.vue';
@@ -28,24 +30,23 @@ import GridSelectLayout from '../Layouts/GridSelectLayout.vue';
 
 export default Vue.extend({
   name: 'RegionStep',
-  components: { GridBaseLayout, vSelect, GridButton, GridSelectLayout },
+  components: { GridBaseLayout, GridButton, GridSelectLayout },
   data() {
     return {
       region: 'SG',
-      timezone: '',
     };
   },
   computed: {
     selectRegions: {
-      get(): { code: string; name: string }[] {
+      get(): { text: string; value: string }[] {
         const regions: StringKeyObject = ct.getAllCountries();
         const selectRegions = [];
         for (const code in regions) {
-          const region = {
-            code,
-            name: `${regions[code].name} - ${code}`,
+          const selectRegion = {
+            value: code,
+            text: `${regions[code].name} - ${code}`,
           };
-          selectRegions.push(region);
+          selectRegions.push(selectRegion);
         }
         return selectRegions;
       },

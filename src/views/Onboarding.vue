@@ -27,8 +27,9 @@
       "
       emitted-value-name="nonTargetLanguageLevel"
     />
-    <region-step v-show="stepIndex == 4" />
-    <timezone-step v-show="stepIndex == 5" :region="region" />
+    <!-- use v-if to remove components from DOM, otherwise causes dropdown to break... -->
+    <region-step v-if="stepIndex == 4" />
+    <timezone-step v-if="stepIndex == 5" :region="region" />
   </div>
 </template>
 

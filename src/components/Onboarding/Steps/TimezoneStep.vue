@@ -1,32 +1,36 @@
 <template>
-  <grid-select-layout :step-title="$t('onboarding.timezone')">
-    <template v-slot:select>
-      <v-select
-        v-model="timezone"
-        :options="selectTimezones"
-        label="timezone"
-        :clearable="false"
-      ></v-select>
-    </template>
-    <template v-slot:button>
-      <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitTimezoneSelection" />
-    </template>
-  </grid-select-layout>
+  <div data-app>
+    <grid-select-layout :step-title="$t('onboarding.timezone')">
+      <template v-slot:select>
+        <v-autocomplete
+          v-model="timezone"
+          outlined
+          dense
+          auto
+          :cache-items="true"
+          :hide-no-data="true"
+          :items="selectRegions"
+        />
+      </template>
+      <template v-slot:button>
+        <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitRegionSelection" />
+      </template>
+    </grid-select-layout>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import vSelect from 'vue-select';
 import ct from 'countries-and-timezones';
-import 'vue-select/dist/vue-select.css';
 import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
+import { StringKeyObject } from '../../../../../server/types/custom';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 import GridSelectLayout from '../Layouts/GridSelectLayout.vue';
 
 export default Vue.extend({
   name: 'TimezoneStep',
-  components: { GridBaseLayout, vSelect, GridButton, GridSelectLayout },
+  components: { GridBaseLayout, GridButton, GridSelectLayout },
   props: {
     region: {
       type: String,
@@ -39,26 +43,27 @@ export default Vue.extend({
     };
   },
   computed: {
-    selectTimezones: {
-      get(): string[] | undefined {
-        if (this.region) {
-          const selectTimezones = ct.getCountry(this.region)!.timezones;
-          return selectTimezones;
+    selectRegions: {
+      get(): { text: string; value: string }[] {
+        const timezones: string[] = ct.getCountry(this.region)!.timezones;
+        const selectTimezones = [];
+        for (let i = 0; i < timezones.length; i++) {
+          const timezone = timezones[i];
+          const selectTimezone = {
+            text: timezone,
+            value: timezone,
+          };
+          selectTimezones.push(selectTimezone);
         }
-        return undefined;
+        return selectTimezones;
       },
     },
   },
-  watch: {
-    region: function () {
-      this.timezone = this.selectTimezones![0];
-    },
-  },
   mounted() {
-    return;
+    this.timezone = this.selectRegions[0].value;
   },
   methods: {
-    emitTimezoneSelection(): void {
+    emitRegionSelection(): void {
       EventBus.$emit('step-forward', { value: this.timezone, emittedValueName: 'timezone' });
     },
   },
