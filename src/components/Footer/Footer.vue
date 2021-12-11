@@ -8,13 +8,13 @@
       <div class="grid grid-cols-12">
         <div class="col-span-12 lg:col-span-6">
           <h4 class="text-xl font-semibold">{{ $t('footer.questions.title') }}</h4>
-          <h5 class="text-lg text-gray-700 my-2">
+          <h5 class="text-md text-gray-700 my-2">
             {{ $t('footer.questions.text') }}
           </h5>
           <div class="flex justify-start flex-wrap">
             <div v-for="icon in iconData" :key="icon.name">
               <a :href="icon.link" :title="icon.name" target="_blank">
-                <i class="mr-10 my-3 text-2xl" :class="icon.class"></i>
+                <i class="mr-10 my-3 text-xl md:text-2xl" :class="icon.class"></i>
               </a>
             </div>
           </div>

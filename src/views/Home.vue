@@ -7,7 +7,7 @@
         </div>
         <div class="container relative mx-auto">
           <div class="items-center flex flex-wrap">
-            <div class="w-full lg:w-8/12 px-4 ml-auto mr-auto text-center">
+            <div class="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center">
               <img src="../assets/img/logo_white.png" />
             </div>
           </div>
@@ -17,10 +17,10 @@
         <div class="container mx-auto">
           <div class="flex flex-wrap justify-center">
             <div class="w-full lg:w-8/12">
-              <h2 class="text-3xl font-semibold text-center tracking-wide py-8">
+              <h2 class="py-8 text-3xl lg:text-2xl font-semibold text-center tracking-wide">
                 {{ $t('homepage.vision.title') }}
               </h2>
-              <p class="text-lg lg:text-xl leading-8 lg:leading-loose px-4">
+              <p class="px-4 text-lg leading-8 lg:leading-loose">
                 {{ $t('homepage.vision.text') }}
               </p>
               <hr class="my-10 mx-4 border-gray-300" />
@@ -32,7 +32,7 @@
         <div class="container mx-auto">
           <div class="flex flex-wrap justify-center">
             <div class="w-full lg:w-8/12 px-4">
-              <h2 class="text-3xl font-semibold text-center tracking-wide pb-7">
+              <h2 class="pb-7 text-3xl lg:text-2xl font-semibold text-center tracking-wide">
                 {{ $t('homepage.chooseUs.title') }}
               </h2>
               <div class="grid grid-cols-1 md:grid-cols-2 md:gap-y-7 md:gap-x-16">
@@ -43,19 +43,11 @@
                       <i :class="`${feature.class} fa-stack-1x text-red-400`"></i>
                     </span>
                     <span
-                      class="
-                        text-lg
-                        lg:text-xl
-                        uppercase
-                        text-gray-600
-                        px-2
-                        font-semibold
-                        tracking-wide
-                      "
+                      class="px-3 text-lg uppercase text-gray-600 font-semibold tracking-wide"
                       >{{ feature.title }}</span
                     >
                   </div>
-                  <p class="text-lg lg:text-xl pt-2 pb-6 leading-8 lg:leading-loose">
+                  <p class="text-lg pt-2 pb-6 leading-8 lg:leading-loose">
                     {{ feature.text }}
                   </p>
                 </div>
@@ -65,25 +57,25 @@
         </div>
       </section>
       <section class="relative bg-gray-600">
-        <div class="container mx-auto px-4 py-2 lg:pt-4 lg:pb-6">
+        <div class="container mx-auto px-4 py-3">
           <div class="flex flex-wrap text-center justify-center">
             <div class="w-full lg:w-8/12">
-              <h2 class="text-3xl font-semibold text-center tracking-wide py-8 text-white">
+              <h2
+                class="text-3xl lg:text-2xl font-semibold text-center tracking-wide py-8 text-white"
+              >
                 {{ $t('homepage.chooseUs.innovativeResources.title') }}
               </h2>
             </div>
           </div>
-          <div class="flex flex-wrap">
+          <div class="flex flex-wrap py-3">
             <section class="grid grid-cols-1 gap-12 lg:grid-cols-3">
               <div
                 v-for="card in cardData"
                 :key="card.title"
                 class="
                   pb-8
-                  w-7/12
-                  md:w-6/12
-                  lg:w-11/12
-                  2xl:w-10/12
+                  w-8/12
+                  lg:w-7/12
                   mx-auto
                   bg-white
                   transform
@@ -92,7 +84,7 @@
                   rounded-xl
                 "
               >
-                <h2 class="py-3 lg:py-5 text-center text-2xl lg:text-3xl select-none">
+                <h2 class="py-3 lg:py-5 text-center text-2xl select-none">
                   {{ card.title }}
                 </h2>
                 <img
@@ -113,23 +105,25 @@
               "
             >
               <div class="w-full lg:w-6/12 px-4">
+                <p class="py-5 text-white text-lg">
+                  {{ $t('homepage.beta') }}
+                </p>
                 <button
                   class="
-                    bg-blue-400
+                    bg-green-500
                     text-white
                     font-bold
                     py-2
                     px-4
                     rounded
-                    text-center
+                    text-center text-lg
                     align-middle
+                    mt-5
+                    mb-24
                   "
                 >
                   <router-link to="/signup">{{ $t('homepage.signUpNow') }}</router-link>
                 </button>
-                <p class="py-10 text-white">
-                  {{ $t('homepage.beta') }}
-                </p>
               </div>
             </div>
           </div>

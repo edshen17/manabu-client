@@ -19,7 +19,7 @@
     <div class="flex items-center flex-shrink-0 mr-6">
       <router-link
         to="/"
-        class="text-black no-underline text-4xl pl-2 font-sans font-bold"
+        class="text-black no-underline text-3xl lg:text-4xl pl-2 font-sans font-bold"
         @click="closeDropdown"
         >Manabu</router-link
       >
@@ -52,7 +52,7 @@
         <basic-account-dropdown-link
           :router-links="outerRouterLinks"
           div-class="block lg:inline-block text-gray-500"
-          router-link-class="px-3 py-4 lg:py-2 lg:px-5 block no-underline"
+          router-link-class="px-3 py-4 lg:py-2 lg:px-5 block no-underline text-md"
           @linkClick="closeDropdown"
         ></basic-account-dropdown-link>
         <extended-account-dropdown
