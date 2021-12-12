@@ -1,7 +1,7 @@
 <template>
   <div data-app>
-    <grid-select-layout :step-title="$t('onboarding.region')">
-      <template v-slot:select>
+    <grid-button-layout :step-title="$t('onboarding.region')">
+      <template v-slot:main>
         <v-autocomplete
           v-model="region"
           outlined
@@ -13,9 +13,9 @@
         />
       </template>
       <template v-slot:button>
-        <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitRegionSelection" />
+        <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitStepForward" />
       </template>
-    </grid-select-layout>
+    </grid-button-layout>
   </div>
 </template>
 
@@ -26,11 +26,11 @@ import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import { StringKeyObject } from '../../../../../server/types/custom';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
-import GridSelectLayout from '../Layouts/GridSelectLayout.vue';
+import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 
 export default Vue.extend({
   name: 'RegionStep',
-  components: { GridBaseLayout, GridButton, GridSelectLayout },
+  components: { GridBaseLayout, GridButton, GridButtonLayout },
   data() {
     return {
       region: 'SG',
@@ -56,7 +56,7 @@ export default Vue.extend({
     return;
   },
   methods: {
-    emitRegionSelection(): void {
+    emitStepForward(): void {
       EventBus.$emit('step-forward', { value: this.region, emittedValueName: 'region' });
     },
   },

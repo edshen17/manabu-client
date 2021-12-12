@@ -3,6 +3,8 @@
     <div v-for="languageOffering in languageOfferings" :key="languageOffering.languageCode">
       <button
         class="
+          flex flex-col
+          items-center
           bg-gray-800
           py-14
           px-24

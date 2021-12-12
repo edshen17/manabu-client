@@ -1,6 +1,6 @@
 <template>
   <grid-base-layout :step-title="stepTitle">
-    <div class="w-full place-items-center">
+    <div class="container w-full mx-auto md:w-6/12 place-items-center">
       <ul class="px-0">
         <li
           v-for="(listItem, index) in listItems"

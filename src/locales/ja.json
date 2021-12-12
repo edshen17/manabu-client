@@ -62,6 +62,9 @@
       "badStartAvailableTime": "この時間でアポイントメントを設定することはできません。",
       "overlapAvailableTime": "予約が重なることはできません。"
     },
+    "onboarding": {
+      "contactMethodId": "{contactMethod}のIDを正しく入力して下さい。"
+    },
     "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
   },
   "nav": {
@@ -104,6 +107,8 @@
       "discord": "ディスコード",
       "zoom": "ズーム"
     },
+    "contactMethodId": "{contactMethod}のIDを入力してください。",
+    "contactMethodIdInput": "{contactMethod}のID",
     "buttons": {
       "next": "次へ"
     },

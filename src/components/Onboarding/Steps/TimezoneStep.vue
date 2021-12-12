@@ -1,7 +1,7 @@
 <template>
   <div data-app>
-    <grid-select-layout :step-title="$t('onboarding.timezone')">
-      <template v-slot:select>
+    <grid-button-layout :step-title="$t('onboarding.timezone')">
+      <template v-slot:main>
         <v-autocomplete
           v-model="timezone"
           outlined
@@ -15,7 +15,7 @@
       <template v-slot:button>
         <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitRegionSelection" />
       </template>
-    </grid-select-layout>
+    </grid-button-layout>
   </div>
 </template>
 
@@ -23,14 +23,13 @@
 import Vue from 'vue';
 import ct from 'countries-and-timezones';
 import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
-import { StringKeyObject } from '../../../../../server/types/custom';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
-import GridSelectLayout from '../Layouts/GridSelectLayout.vue';
+import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 
 export default Vue.extend({
   name: 'TimezoneStep',
-  components: { GridBaseLayout, GridButton, GridSelectLayout },
+  components: { GridBaseLayout, GridButton, GridButtonLayout },
   props: {
     region: {
       type: String,

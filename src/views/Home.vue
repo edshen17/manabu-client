@@ -7,7 +7,7 @@
         </div>
         <div class="container relative mx-auto">
           <div class="items-center flex flex-wrap">
-            <div class="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center">
+            <div class="w-full lg:w-8/12 px-4 ml-auto mr-auto text-center">
               <img src="../assets/img/logo_white.png" />
             </div>
           </div>
@@ -17,7 +17,7 @@
         <div class="container mx-auto">
           <div class="flex flex-wrap justify-center">
             <div class="w-full lg:w-8/12">
-              <h2 class="py-8 text-3xl lg:text-2xl font-semibold text-center tracking-wide">
+              <h2 class="py-8 text-2xl font-semibold text-center tracking-wide">
                 {{ $t('homepage.vision.title') }}
               </h2>
               <p class="px-4 text-lg leading-8 lg:leading-loose">
@@ -32,7 +32,7 @@
         <div class="container mx-auto">
           <div class="flex flex-wrap justify-center">
             <div class="w-full lg:w-8/12 px-4">
-              <h2 class="pb-7 text-3xl lg:text-2xl font-semibold text-center tracking-wide">
+              <h2 class="pb-7 text-2xl font-semibold text-center tracking-wide">
                 {{ $t('homepage.chooseUs.title') }}
               </h2>
               <div class="grid grid-cols-1 md:grid-cols-2 md:gap-y-7 md:gap-x-16">
@@ -60,9 +60,7 @@
         <div class="container mx-auto px-4 py-3">
           <div class="flex flex-wrap text-center justify-center">
             <div class="w-full lg:w-8/12">
-              <h2
-                class="text-3xl lg:text-2xl font-semibold text-center tracking-wide py-8 text-white"
-              >
+              <h2 class="text-2xl font-semibold text-center tracking-wide py-8 text-white">
                 {{ $t('homepage.chooseUs.innovativeResources.title') }}
               </h2>
             </div>

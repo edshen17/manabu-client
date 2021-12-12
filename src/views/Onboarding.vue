@@ -30,11 +30,20 @@
     <!-- use v-if to remove components from DOM, otherwise causes dropdown to break... -->
     <region-step v-if="stepIndex == 4" />
     <timezone-step v-if="stepIndex == 5" :region="region" />
-    <contact-method-step
+    <contact-method-name-step
       v-show="stepIndex == 6"
       :contact-methods="contactMethods"
       emitted-value-name="contactMethodName"
       :step-title="$t('onboarding.contactMethod')"
+    />
+    <contact-method-id-step
+      v-show="stepIndex == 7"
+      :step-title="
+        $t('onboarding.contactMethodId', {
+          contactMethod: $t(`onboarding.contactMethods.${contactMethodName}`),
+        })
+      "
+      :contact-method-name="contactMethodName"
     />
   </div>
 </template>
@@ -50,7 +59,8 @@ import LanguageLevelStep from '../components/Onboarding/Steps/LanguageLevelStep.
 import { EventBus, EventBusPayload } from '../components/EventBus/EventBus';
 import RegionStep from '../components/Onboarding/Steps/RegionStep.vue';
 import TimezoneStep from '../components/Onboarding/Steps/TimezoneStep.vue';
-import ContactMethodStep from '../components/Onboarding/Steps/ContactMethodStep.vue';
+import ContactMethodNameStep from '../components/Onboarding/Steps/ContactMethodNameStep.vue';
+import ContactMethodIdStep from '../components/Onboarding/Steps/ContactMethodIdStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -67,7 +77,8 @@ export default Vue.extend({
     LanguageLevelStep,
     RegionStep,
     TimezoneStep,
-    ContactMethodStep,
+    ContactMethodNameStep,
+    ContactMethodIdStep,
   },
   props: {},
   data() {
@@ -140,34 +151,38 @@ export default Vue.extend({
     },
     contactMethods: {
       get(): {
-        text: TranslateResult;
+        name: TranslateResult;
         iconClass: string;
         backgroundHex: string;
         logoHex: string;
       }[] {
         const contactMethods = [
           {
-            text: this.$t('onboarding.contactMethods.skype'),
+            name: this.$t('onboarding.contactMethods.skype'),
+            value: 'skype',
             iconClass: 'fab fa-skype fa-3x',
             logoHex: '#00AFF0',
             backgroundHex: '#FFF',
           },
           {
-            text: this.$t('onboarding.contactMethods.line'),
+            name: this.$t('onboarding.contactMethods.line'),
             iconClass: 'fab fa-line fa-3x',
+            value: 'line',
             logoHex: '#00B900',
             backgroundHex: '#FFF',
           },
           {
-            text: this.$t('onboarding.contactMethods.discord'),
+            name: this.$t('onboarding.contactMethods.discord'),
             iconClass: 'fab fa-discord fa-3x',
             logoHex: '#7289DA',
+            value: 'discord',
             backgroundHex: '#FFF',
           },
           {
-            text: this.$t('onboarding.contactMethods.zoom'),
+            name: this.$t('onboarding.contactMethods.zoom'),
             iconClass: 'fas fa-video fa-2x',
             logoHex: '#FFF',
+            value: 'zoom',
             backgroundHex: '#2D8CFF',
           },
         ];
