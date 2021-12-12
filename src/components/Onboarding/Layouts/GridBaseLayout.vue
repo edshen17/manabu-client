@@ -1,6 +1,6 @@
 <template>
   <div class="container w-11/12 mx-auto">
-    <h2 class="flex justify-center text-2xl font-bold my-4 pb-8 lg:text-3xl lg:my-16">
+    <h2 class="mb-5 md:mb-16 pb-8 flex justify-center font-bold text-3xl lg:text-2xl">
       {{ stepTitle }}
     </h2>
     <slot />
