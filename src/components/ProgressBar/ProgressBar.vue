@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center mx-auto items-center mb-7">
+  <div class="flex justify-center mx-auto items-center mb-3 md:mb-7">
     <button class="mb-1 md:mb-0" @click="emitStepBackward">
       <i
         :class="{ 'text-white': stepIndex <= 0 }"

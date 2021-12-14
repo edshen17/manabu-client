@@ -1,10 +1,10 @@
 <template>
-  <grid-base-layout :step-title="stepTitle">
+  <grid-base-layout :step-title="stepTitle" class="relative">
     <div class="w-11/12 md:w-9/12 lg:w-6/12 mx-auto text-lg lg:text-xl">
       <slot name="main" />
     </div>
-    <div class="h-40v md:h-30v lg:h-40v"></div>
-    <div class="uppercase md:text-lg">
+    <div class="h-30v lg:h-40v"></div>
+    <div class="uppercase md:text-lg flex justify-center items-center">
       <slot name="button" />
     </div>
   </grid-base-layout>

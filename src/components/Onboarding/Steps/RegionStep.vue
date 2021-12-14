@@ -13,7 +13,11 @@
         />
       </template>
       <template v-slot:button>
-        <grid-button :button-text="$t('onboarding.buttons.next')" @click="emitStepForward" />
+        <grid-button
+          :button-text="$t('onboarding.buttons.next')"
+          class="absolute bottom-0"
+          @click="emitStepForward"
+        />
       </template>
     </grid-button-layout>
   </div>

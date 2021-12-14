@@ -7,7 +7,6 @@
             <input
               v-model="contactMethodId"
               v-focus="true"
-              name="id"
               type="text"
               :placeholder="
                 $t('onboarding.contactMethodIdInput', {
@@ -68,7 +67,6 @@ export default Vue.extend({
   },
   methods: {
     handleEnterKeyPress(): void {
-      console.log('hihi');
       this.$v.$touch();
       if (!this.$v.$invalid) {
         this.emitContactMethodId();

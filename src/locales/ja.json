@@ -109,6 +109,9 @@
     },
     "contactMethodId": "{contactMethod}のIDを入力してください。",
     "contactMethodIdInput": "{contactMethod}のID",
+    "userProfile": {
+      "setup": "ユーザープロフィールを設定してください。"
+    },
     "buttons": {
       "next": "次へ"
     },

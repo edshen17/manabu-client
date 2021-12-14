@@ -92,7 +92,7 @@
     "learningTargetLanguage": "I want to learn...",
     "teachingTargetLanguage": "I want to teach...",
     "speakingNonTargetLanguage": "I can speak...",
-    "languageLevel": "My {language} level is",
+    "languageLevel": "My {language} level is...",
     "languageLevels": {
       "beginner": "Beginner (A1)",
       "elementary": "Elementary (A2)",
@@ -108,8 +108,11 @@
       "discord": "Discord",
       "zoom": "Zoom"
     },
-    "contactMethodId": "My {contactMethod} id is...",
-    "contactMethodIdInput": "{contactMethod} id",
+    "contactMethodId": "My {contactMethod} ID is...",
+    "contactMethodIdInput": "{contactMethod} ID",
+    "userProfile": {
+      "setup": "Please set up your user profile."
+    },
     "buttons": {
       "next": "Next"
     },

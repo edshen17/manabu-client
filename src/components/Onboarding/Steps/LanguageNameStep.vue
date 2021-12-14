@@ -6,9 +6,8 @@
           flex flex-col
           items-center
           bg-gray-800
-          py-14
-          px-24
-          md:px-14
+          py-8
+          px-16
           rounded-lg
           cursor-pointer
           select-none

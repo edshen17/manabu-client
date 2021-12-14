@@ -9,7 +9,7 @@
       mx-auto
       border-solid border
       rounded-md
-      bg-green-700
+      bg-green-600
       text-white
       justify-center
       uppercase
