@@ -1,4 +1,5 @@
 import { IRepository } from '@/repositories/abstractions/IRepository';
+import { StringKeyObject } from '@server/types/custom';
 import { ActionContext, ActionTree } from 'vuex';
 import { IEntityState } from './IEntityState';
 import {
@@ -26,6 +27,12 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
         const entityStateData = await self.getEntityStateData(props);
         return entityStateData;
       },
+      setEntityStateData(
+        props: ModuleActionContext<EntityStateData>,
+        payload: StringKeyObject
+      ): void {
+        self.setEntityStateData(props, payload);
+      },
       resetEntityState(props: ModuleActionContext<EntityStateData>): void {
         self.resetEntityStateData(props);
         self.resetEntityStatePromise(props);
@@ -50,7 +57,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     if (entityState) {
       return entityState;
     }
-    await this._setEntityStateData(props);
+    await this._setBaseEntityStateData(props);
   };
 
   private _getEntityStateData = (
@@ -66,7 +73,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     }
   };
 
-  private _setEntityStateData = async (
+  private _setBaseEntityStateData = async (
     props: ActionContext<IEntityState<EntityStateData>, IRootState>
   ): Promise<void> => {
     const { state, commit } = props;
@@ -75,7 +82,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
       const entityStatePayload = entityStatePromise && entityStatePromise.data[this._moduleName];
       commit('setEntityStatePromise', entityStatePromise);
       if (entityStatePayload) {
-        commit('setEntityStateData', entityStatePayload);
+        this.setEntityStateData(props, entityStatePayload);
       }
     } catch (err: any) {
       const entityStatePromise = err.response;
@@ -83,6 +90,14 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
       entityStatePromise.data[this._moduleName] = state.entityStateData;
       commit('setEntityStatePromise', entityStatePromise);
     }
+  };
+
+  public setEntityStateData = (
+    props: ActionContext<IEntityState<EntityStateData>, IRootState>,
+    payload: StringKeyObject
+  ) => {
+    const { commit } = props;
+    commit('setEntityStateData', payload);
   };
 
   protected _getModuleActionsTemplate = (): ActionTree<

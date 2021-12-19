@@ -642,7 +642,7 @@ export default Vue.extend({
     next(): void {
       this._moveCalendar('forward');
     },
-    _moveCalendar(direction: string) {
+    _moveCalendar(direction: 'backward' | 'forward') {
       const isMovingForward = direction == 'forward';
       const calendar = this.$refs.calendar as any;
       isMovingForward ? calendar.next() : calendar.prev();

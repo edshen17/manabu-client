@@ -80,13 +80,7 @@ export default Vue.extend({
       focus: false,
     };
   },
-  computed: {
-    // prop: {
-    //   get(): any {
-    //     return;
-    //   },
-    // },
-  },
+  computed: {},
   mounted() {
     window.addEventListener('mouseup', this.onStop, { passive: false });
     window.addEventListener('mousemove', this.onDrag, { passive: false });
@@ -140,7 +134,7 @@ export default Vue.extend({
   &__zoom-icon {
     height: 18.75px;
     width: 18.75px;
-    fill: rgb(101, 119, 134);
+    fill: rgb(81, 96, 109);
     flex-shrink: 0;
     &--left {
       margin-right: 10px;
@@ -160,7 +154,7 @@ export default Vue.extend({
     cursor: pointer;
   }
   &__line {
-    background: rgb(142, 208, 249);
+    background: #5e80a7;
     height: 5px;
     width: 100%;
     border-radius: 5px;
@@ -169,7 +163,7 @@ export default Vue.extend({
     align-items: center;
   }
   &__fill {
-    background: rgb(29, 161, 242);
+    background: #364f6b;
     align-self: stretch;
     flex-basis: auto;
     flex-direction: column;
@@ -198,7 +192,7 @@ export default Vue.extend({
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    background-color: rgb(29, 161, 242);
+    background-color: #364f6b;
     transform: scale(1);
     transition-duration: 0.1s;
     transition-property: transform;

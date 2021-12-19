@@ -5,13 +5,6 @@ import { MutationTree } from 'vuex';
 import { UserEntityStateData } from '../state/userModuleState';
 
 class UserModuleMutation extends AbstractModuleMutation<UserEntityStateData> {
-  public getEntityStateData = (entityStatePayload: StringKeyObject): UserEntityStateData => {
-    const userEntityStateData = entityStatePayload.user
-      ? entityStatePayload.user
-      : entityStatePayload;
-    return userEntityStateData;
-  };
-
   protected _getModuleMutationsTemplate = (): MutationTree<IEntityState<UserEntityStateData>> => {
     const self = this;
     const extendedModuleMutations = {

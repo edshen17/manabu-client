@@ -16,7 +16,6 @@
         previewClass: 'twitter-cropper__stencil',
       }"
       :transitions="false"
-      :canvas="false"
       :debounce="false"
       :default-size="defaultSize"
       :min-width="150"
@@ -32,10 +31,11 @@
 import Vue from 'vue';
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
+import { StringKeyObject } from '../../../../server/types/custom';
 import CropperZoom from './CropperZoom.vue';
 
 export default Vue.extend({
-  name: '',
+  name: 'ExtendedCropper',
   components: { Cropper, CropperZoom },
   props: {
     src: {
@@ -65,7 +65,7 @@ export default Vue.extend({
         height: Math.min(boundaries.height, boundaries.width) - 48,
       };
     },
-    onChange() {
+    onChange(result: StringKeyObject): void {
       const cropper = (this as any).$refs.cropper;
       if (cropper) {
         const { coordinates, imageSize } = cropper;
@@ -79,6 +79,7 @@ export default Vue.extend({
             (cropper.imageSize.width - cropper.sizeRestrictions.minWidth);
         }
       }
+      this.$emit('change', result);
     },
     onZoom(value: number) {
       const cropper = (this as any).$refs.cropper;
@@ -114,7 +115,7 @@ export default Vue.extend({
     background-color: #edf2f4;
   }
   &__stencil {
-    border: solid 5px rgb(29, 161, 242);
+    border: solid 5px #364f6b;
   }
 }
 </style>

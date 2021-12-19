@@ -52,7 +52,7 @@
         <basic-account-dropdown-link
           :router-links="outerRouterLinks"
           div-class="block lg:inline-block text-gray-500"
-          router-link-class="px-3 py-4 lg:py-2 lg:px-5 block no-underline text-md"
+          router-link-class="px-3 py-3 lg:py-2 lg:px-5 block no-underline text-md"
           @linkClick="closeDropdown"
         ></basic-account-dropdown-link>
         <extended-account-dropdown
