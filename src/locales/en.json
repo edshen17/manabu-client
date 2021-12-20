@@ -111,7 +111,7 @@
     "contactMethodId": "My {contactMethod} ID is...",
     "contactMethodIdInput": "{contactMethod} ID",
     "userProfile": {
-      "setup": "Please set up your user profile."
+      "image": "Please upload a profile picture."
     },
     "buttons": {
       "next": "Next"

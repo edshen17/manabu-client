@@ -154,7 +154,6 @@ export default Vue.extend({
           if (IS_PRODUCTION) {
             await this._uploadBlobToStorage(blob);
           }
-          await this._uploadBlobToStorage(blob);
         });
       }
       this.profileImage.isSaved = true;
@@ -170,11 +169,10 @@ export default Vue.extend({
       try {
         const storageRef = ref(
           firebaseStorage,
-          `images/${this.userData._id}_profilePic-test.${fileType}`
+          `images/${this.userData._id}_profilePic.${fileType}`
         );
         await uploadBytes(storageRef, blob, metaData);
         const profileImageUrl = await getDownloadURL(storageRef);
-        // refactor repo so store included?
         const { data } = await userRepository.updateById({
           _id: this.userData._id,
           updateParams: { profileImageUrl },
@@ -183,8 +181,8 @@ export default Vue.extend({
         this.$store.dispatch('user/setEntityStateData', {
           ...user,
         });
-      } catch (err) {
-        throw new Error();
+      } catch (err: any) {
+        throw new Error(err);
       }
     },
   },

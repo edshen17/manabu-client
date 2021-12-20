@@ -5,7 +5,11 @@
         <profile-image :user-data="userData" />
       </template>
       <template v-slot:button>
-        <grid-button :button-text="$t('onboarding.buttons.next')" class="absolute bottom-0" />
+        <grid-button
+          :button-text="$t('onboarding.buttons.next')"
+          class="absolute bottom-0"
+          @click="emitStepForward"
+        />
       </template>
     </grid-button-layout>
   </div>
@@ -21,7 +25,7 @@ import ProfileCard from '../../UserProfile/ProfileCard.vue';
 import ProfileImage from '../../UserProfile/ProfileImage.vue';
 
 export default Vue.extend({
-  name: 'ProfileStep',
+  name: 'ProfileImageStep',
   components: { GridBaseLayout, GridButton, GridButtonLayout, ProfileCard, ProfileImage },
   props: {
     stepTitle: {
@@ -34,9 +38,7 @@ export default Vue.extend({
     },
   },
   data() {
-    return {
-      profileBio: '',
-    };
+    return {};
   },
   computed: {},
   mounted() {
@@ -44,10 +46,7 @@ export default Vue.extend({
   },
   methods: {
     emitStepForward(): void {
-      EventBus.$emit('step-forward', {
-        value: this.profileBio,
-        emittedValueName: 'profileBio',
-      });
+      EventBus.$emit('step-forward');
     },
   },
 });

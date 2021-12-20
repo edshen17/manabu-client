@@ -1,7 +1,7 @@
 <template>
   <div class="pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    <!-- <language-name-step
+    <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
       :language-offerings="targetLanguageOfferings"
@@ -27,6 +27,7 @@
       "
       emitted-value-name="nonTargetLanguageLevel"
     />
+    <!-- use v-if to remove components from DOM, otherwise causes dropdown to break... -->
     <region-step v-if="stepIndex == 4" />
     <timezone-step v-if="stepIndex == 5" :region="region" />
     <contact-method-name-step
@@ -43,9 +44,12 @@
         })
       "
       :contact-method-name="contactMethodName"
-    /> -->
-    <profile-step step-title="Please upload a profile picture." :user-data="userData" />
-    <!-- use v-if to remove components from DOM, otherwise causes dropdown to break... -->
+    />
+    <profile-image-step
+      v-show="stepIndex == 8"
+      :step-title="$t('onboarding.userProfile.image')"
+      :user-data="userData"
+    />
   </div>
 </template>
 
@@ -62,7 +66,7 @@ import RegionStep from '../components/Onboarding/Steps/RegionStep.vue';
 import TimezoneStep from '../components/Onboarding/Steps/TimezoneStep.vue';
 import ContactMethodNameStep from '../components/Onboarding/Steps/ContactMethodNameStep.vue';
 import ContactMethodIdStep from '../components/Onboarding/Steps/ContactMethodIdStep.vue';
-import ProfileStep from '../components/Onboarding/Steps/ProfileStep.vue';
+import ProfileImageStep from '../components/Onboarding/Steps/ProfileImageStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -81,7 +85,7 @@ export default Vue.extend({
     TimezoneStep,
     ContactMethodNameStep,
     ContactMethodIdStep,
-    ProfileStep,
+    ProfileImageStep,
   },
   props: {},
   data() {
@@ -204,8 +208,10 @@ export default Vue.extend({
     handleStepForward(): (payload: EventBusPayload) => void {
       const self = this;
       return function (payload: EventBusPayload) {
-        const { value, emittedValueName } = payload;
-        self.setData({ propertyName: emittedValueName, value });
+        const { value, emittedValueName } = payload || {};
+        if (value && emittedValueName) {
+          self.setData({ propertyName: emittedValueName, value });
+        }
         self.step('forward');
       };
     },
