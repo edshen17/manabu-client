@@ -26,6 +26,7 @@
     "node-sass": "^4.14.1",
     "secure-ls": "^1.2.6",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
+    "tiptap-vuetify": "^2.24.0",
     "url-join": "^4.0.1",
     "v-click-outside": "^3.1.2",
     "vue": "^2.6.11",

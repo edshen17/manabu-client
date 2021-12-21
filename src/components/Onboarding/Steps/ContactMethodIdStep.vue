@@ -27,7 +27,11 @@
         </form>
       </template>
       <template v-slot:button>
-        <grid-button :button-text="$t('onboarding.buttons.next')" @click="handleEnterKeyPress" />
+        <grid-button
+          :button-text="$t('onboarding.buttons.next')"
+          class="absolute bottom-0"
+          @click="handleEnterKeyPress"
+        />
       </template>
     </grid-button-layout>
   </div>

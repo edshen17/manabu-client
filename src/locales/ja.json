@@ -110,7 +110,8 @@
     "contactMethodId": "{contactMethod}のIDを入力してください。",
     "contactMethodIdInput": "{contactMethod}のID",
     "userProfile": {
-      "image": "プロフィール画像をアップロードしてください。"
+      "image": "プロフィール画像をアップロードしてください。",
+      "bio": "自己紹介を書いてください。"
     },
     "buttons": {
       "next": "次へ"

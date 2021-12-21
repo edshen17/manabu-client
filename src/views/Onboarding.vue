@@ -50,6 +50,12 @@
       :step-title="$t('onboarding.userProfile.image')"
       :user-data="userData"
     />
+    <profile-bio-step
+      v-show="stepIndex == 9"
+      :step-title="$t('onboarding.userProfile.bio')"
+      emitted-value-name="profileBio"
+    />
+    <div v-if="isTeacher"></div>
   </div>
 </template>
 
@@ -67,6 +73,7 @@ import TimezoneStep from '../components/Onboarding/Steps/TimezoneStep.vue';
 import ContactMethodNameStep from '../components/Onboarding/Steps/ContactMethodNameStep.vue';
 import ContactMethodIdStep from '../components/Onboarding/Steps/ContactMethodIdStep.vue';
 import ProfileImageStep from '../components/Onboarding/Steps/ProfileImageStep.vue';
+import ProfileBioStep from '../components/Onboarding/Steps/ProfileBioStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -86,6 +93,7 @@ export default Vue.extend({
     ContactMethodNameStep,
     ContactMethodIdStep,
     ProfileImageStep,
+    ProfileBioStep,
   },
   props: {},
   data() {
@@ -98,6 +106,7 @@ export default Vue.extend({
       timezone: '',
       contactMethodName: '',
       contactMethodId: '',
+      profileBio: '',
       stepIndex: 0,
       stepTotal: 10,
     };

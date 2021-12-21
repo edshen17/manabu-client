@@ -4,10 +4,16 @@ import { IEntityState } from '@/store/abstractions/IEntityState';
 import { ModuleActionInitParams } from '@/store/abstractions/IModuleAction';
 import { IRootState } from '@/store/abstractions/IRootState';
 import { StringKeyObject } from '@server/types/custom';
+import Vue from 'vue';
 import { ActionContext, ActionTree } from 'vuex';
 import { UserEntityStateData } from '../state/userModuleState';
 
-type UpdateLocaleParams = { locale: string; settings: StringKeyObject; _id: string };
+type UpdateLocaleParams = {
+  locale: string;
+  settings: StringKeyObject;
+  _id: string;
+  currentVueComponent: Vue;
+};
 
 type OptionalUserModuleActionInitParams = { makeLocaleHandler: LocaleHandler; i18n: unknown };
 
@@ -39,10 +45,11 @@ class UserModuleAction extends AbstractModuleAction<
     payload: UpdateLocaleParams
   ): void => {
     const { commit, getters } = props;
-    const { locale, settings, _id } = payload;
+    const { locale, settings, _id, currentVueComponent } = payload;
     const updatedSettings = { ...settings, locale };
     this._localeHandler.updateLocale({ i18n: this._i18n, locale });
     commit('updateSettings', { locale });
+    currentVueComponent.$vuetify.lang.current = locale;
     if (getters.isLoggedIn) {
       this._repository.updateById({ _id, updateParams: { settings: updatedSettings } });
     }

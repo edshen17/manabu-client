@@ -87,7 +87,12 @@ export default Vue.extend({
       set(locale: string): void {
         const _id = this.userData._id;
         const settings = this.userData.settings;
-        this.$store.dispatch('user/updateLocale', { locale, _id, settings });
+        this.$store.dispatch('user/updateLocale', {
+          locale,
+          _id,
+          settings,
+          currentVueComponent: this,
+        });
       },
     },
     iconData: {

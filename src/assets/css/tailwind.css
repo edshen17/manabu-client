@@ -62,3 +62,15 @@
 .progress-bar-transition {
     transition: width 0.3s linear;
 }
+
+.tiptap-vuetify-editor ol {
+    @apply list-decimal;
+}
+
+.tiptap-vuetify-editor ul {
+    @apply list-disc;
+}
+
+.tiptap-vuetify-editor p {
+    @apply text-base font-normal leading-normal;
+}
