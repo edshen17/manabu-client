@@ -111,7 +111,12 @@
     "contactMethodIdInput": "{contactMethod}のID",
     "userProfile": {
       "image": "プロフィール画像をアップロードしてください。",
-      "bio": "自己紹介を書いてください。"
+      "bio": "自己紹介を書いてください。",
+      "teacherType": "申し込んでいるのは？",
+      "teacherTypes": {
+        "proTeacher": "資格保有教師",
+        "commTeacher": "コミュニティティーチャー"
+      }
     },
     "buttons": {
       "next": "次へ"
@@ -204,8 +209,6 @@
       "appPending": "Teacher application pending",
       "approveApp": "Approve application",
       "viewLicense": "View professional license",
-      "proTeacher": "資格保有教師",
-      "commTeacher": "コミュニティティーチャー",
       "lessonTypes": {
         "mainichi": "毎日 ({amount}個のレッスン)",
         "mainichiAlt": "毎日プラン",

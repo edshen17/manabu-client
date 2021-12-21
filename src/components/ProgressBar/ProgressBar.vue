@@ -12,7 +12,6 @@
           :style="`width: ${progressPercent}%`"
           class="
             shadow-none
-            flex flex-col
             text-center
             whitespace-nowrap
             text-white

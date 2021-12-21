@@ -64,11 +64,11 @@
 }
 
 .tiptap-vuetify-editor ol {
-    @apply list-decimal;
+    @apply list-decimal px-4;
 }
 
 .tiptap-vuetify-editor ul {
-    @apply list-disc;
+    @apply list-disc px-4;
 }
 
 .tiptap-vuetify-editor p {

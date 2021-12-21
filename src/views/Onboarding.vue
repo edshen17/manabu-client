@@ -55,7 +55,11 @@
       :step-title="$t('onboarding.userProfile.bio')"
       emitted-value-name="profileBio"
     />
-    <div v-if="isTeacher"></div>
+    <teacher-type-step
+      v-show="stepIndex == 10"
+      :step-title="$t('onboarding.userProfile.teacherType')"
+      emitted-value-name="teacherType"
+    />
   </div>
 </template>
 
@@ -74,6 +78,7 @@ import ContactMethodNameStep from '../components/Onboarding/Steps/ContactMethodN
 import ContactMethodIdStep from '../components/Onboarding/Steps/ContactMethodIdStep.vue';
 import ProfileImageStep from '../components/Onboarding/Steps/ProfileImageStep.vue';
 import ProfileBioStep from '../components/Onboarding/Steps/ProfileBioStep.vue';
+import TeacherTypeStep from '../components/Onboarding/Steps/TeacherTypeStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -94,6 +99,7 @@ export default Vue.extend({
     ContactMethodIdStep,
     ProfileImageStep,
     ProfileBioStep,
+    TeacherTypeStep,
   },
   props: {},
   data() {
@@ -107,8 +113,9 @@ export default Vue.extend({
       contactMethodName: '',
       contactMethodId: '',
       profileBio: '',
+      teacherType: '',
       stepIndex: 0,
-      stepTotal: 10,
+      stepTotal: 16,
     };
   },
   computed: {

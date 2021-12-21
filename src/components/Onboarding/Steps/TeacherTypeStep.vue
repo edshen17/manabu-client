@@ -1,7 +1,7 @@
 <template>
   <grid-list-layout
     :step-title="stepTitle"
-    :list-items="languageLevels"
+    :list-items="teacherTypes"
     :emitted-value-name="emittedValueName"
   />
 </template>
@@ -11,7 +11,7 @@ import Vue from 'vue';
 import GridListLayout, { ListItems } from '../Layouts/GridListLayout.vue';
 
 export default Vue.extend({
-  name: 'LanguageLevelStep',
+  name: 'TeacherType',
   components: { GridListLayout },
   props: {
     stepTitle: {
@@ -27,17 +27,19 @@ export default Vue.extend({
     return {};
   },
   computed: {
-    languageLevels: {
+    teacherTypes: {
       get(): ListItems {
-        const languageLevels = [
-          { value: 'A1', content: this.$t('onboarding.languageLevels.beginner') },
-          { value: 'A2', content: this.$t('onboarding.languageLevels.elementary') },
-          { value: 'B1', content: this.$t('onboarding.languageLevels.intermediate') },
-          { value: 'B2', content: this.$t('onboarding.languageLevels.upperIntermediate') },
-          { value: 'C1', content: this.$t('onboarding.languageLevels.advanced') },
-          { value: 'C2', content: this.$t('onboarding.languageLevels.proficient') },
+        const teacherTypes = [
+          {
+            value: 'unlicensed',
+            content: this.$t('onboarding.userProfile.teacherTypes.commTeacher'),
+          },
+          {
+            value: 'licensed',
+            content: this.$t('onboarding.userProfile.teacherTypes.proTeacher'),
+          },
         ];
-        return languageLevels;
+        return teacherTypes;
       },
     },
   },

@@ -112,7 +112,12 @@
     "contactMethodIdInput": "{contactMethod} ID",
     "userProfile": {
       "image": "Please upload a profile picture.",
-      "bio": "Please write a self-introduction."
+      "bio": "Please write a self-introduction.",
+      "teacherType": "I am a...",
+      "teacherTypes": {
+        "proTeacher": "Professional Teacher",
+        "commTeacher": "Community Teacher"
+      }
     },
     "buttons": {
       "next": "Next"
@@ -132,6 +137,37 @@
     "commTool": "Communication Tool",
     "cancelReason": "Reason for cancelling appointment",
     "appointment": "Appointment"
+  },
+  "userProfile": {
+    "common": {
+      "block": "Block",
+      "report": "Report",
+      "lastOnline": "Last online {date}",
+      "alsoSpeaks": "Also speaks",
+      "viewCalendar": "VIEW CALENDAR",
+      "hideCalendar": "HIDE CALENDAR"
+    },
+    "teacher": {
+      "manabuVerified": "Manabu Verified Teacher since {date}",
+      "appPending": "Teacher application pending",
+      "approveApp": "Approve application",
+      "viewLicense": "View professional license",
+      "lessonTypes": {
+        "mainichi": "Mainichi ({amount} lessons)",
+        "mainichiAlt": "Mainichi Plan",
+        "mainichiDesc": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 22 personalized lessons every month or about 5 lessons every week.",
+        "moderate": "Moderate ({amount} lessons)",
+        "moderateAlt": "Moderate Plan",
+        "moderateDesc": "This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.",
+        "light": "Light ({amount} lessons)",
+        "lightAlt": "Light Plan",
+        "lightDesc": "This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week."
+      },
+      "lessonDuration": "{duration} minutes",
+      "lessonPlans": "Lesson Plans",
+      "hourlyRate": "Lessons starting from ~{rate} {currency}/hour",
+      "bookNow": "BOOK NOW"
+    }
   },
   "dateFormat": {
     "dayHour": "D h:mma",
@@ -188,38 +224,5 @@
     "prefCommErr": "Please provide a communication tool",
     "idErr": "Please provide an ID",
     "submit": "Submit"
-  },
-  "profile": {
-    "common": {
-      "block": "Block",
-      "report": "Report",
-      "lastOnline": "Last online {date}",
-      "alsoSpeaks": "Also speaks",
-      "viewCalendar": "VIEW CALENDAR",
-      "hideCalendar": "HIDE CALENDAR"
-    },
-    "teacher": {
-      "manabuVerified": "Manabu Verified Teacher since {date}",
-      "appPending": "Teacher application pending",
-      "approveApp": "Approve application",
-      "viewLicense": "View professional license",
-      "proTeacher": "Professional Teacher",
-      "commTeacher": "Community Teacher",
-      "lessonTypes": {
-        "mainichi": "Mainichi ({amount} lessons)",
-        "mainichiAlt": "Mainichi Plan",
-        "mainichiDesc": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 22 personalized lessons every month or about 5 lessons every week.",
-        "moderate": "Moderate ({amount} lessons)",
-        "moderateAlt": "Moderate Plan",
-        "moderateDesc": "This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.",
-        "light": "Light ({amount} lessons)",
-        "lightAlt": "Light Plan",
-        "lightDesc": "This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week."
-      },
-      "lessonDuration": "{duration} minutes",
-      "lessonPlans": "Lesson Plans",
-      "hourlyRate": "Lessons starting from ~{rate} {currency}/hour",
-      "bookNow": "BOOK NOW"
-    }
   }
 }
