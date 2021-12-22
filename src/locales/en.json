@@ -113,7 +113,7 @@
     "userProfile": {
       "image": "Please upload a profile picture.",
       "bio": "Please write a self-introduction.",
-      "teacherType": "I am a...",
+      "teacherType": "I am applying to be a...",
       "teacherTypes": {
         "proTeacher": "Professional Teacher",
         "commTeacher": "Community Teacher"

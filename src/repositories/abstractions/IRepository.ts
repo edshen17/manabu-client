@@ -3,23 +3,15 @@ import { StringKeyObject } from '@server/types/custom';
 
 interface IRepository {
   get: (query: StringKeyObject) => Promise<StringKeyObject>;
-  getById: (props: {
-    _id: string;
-    customResourcePath?: string;
-    query: StringKeyObject;
-  }) => Promise<StringKeyObject>;
+  getById: (props: any) => Promise<StringKeyObject>;
   getSelf: () => Promise<StringKeyObject>;
-  create: (props: {
-    customResourcePath?: string;
-    query: StringKeyObject;
-    payload: StringKeyObject;
-  }) => Promise<StringKeyObject>;
-  updateById: (props: { _id: string; updateParams: StringKeyObject }) => Promise<StringKeyObject>;
+  create: (props: any) => Promise<StringKeyObject>;
+  updateById: (props: any) => Promise<StringKeyObject>;
   deleteById: (_id: string) => Promise<StringKeyObject>;
   init: (initParams: {
     makeClient: any;
     makeQueryStringHandler: QueryStringHandler;
-    resourcePath: string;
+    resourcePath?: string;
   }) => this;
 }
 

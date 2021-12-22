@@ -67,24 +67,13 @@
 import Vue from 'vue';
 import ExtendedCropper from '../Cropper/ExtendedCropper.vue';
 import { Preview } from 'vue-advanced-cropper';
-import { initializeApp } from 'firebase/app';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { IS_PRODUCTION } from '../../../../server/constants';
 import { StringKeyObject } from '../../../../server/types/custom';
 import { makeUserRepository } from '../../repositories/user';
+import { makeGoogleCloudStorageRepository } from '../../repositories/googleCloudStorage';
 
-const firebaseConfig = {
-  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
-  authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.VUE_APP_FIREBASE_DATABASE_URL,
-  projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VUE_APP_FIREBASE_APP_ID,
-};
-const firebaseApp = initializeApp(firebaseConfig);
-const firebaseStorage = getStorage(firebaseApp);
 const userRepository = makeUserRepository;
+const googleCloudStorageRepository = makeGoogleCloudStorageRepository;
 
 export default Vue.extend({
   name: 'ProfileImage',
@@ -167,22 +156,21 @@ export default Vue.extend({
       };
       const fileType = blob.type.split('/')[1];
       try {
-        const storageRef = ref(
-          firebaseStorage,
-          `images/${this.userData._id}_profilePic.${fileType}`
-        );
-        await uploadBytes(storageRef, blob, metaData);
-        const profileImageUrl = await getDownloadURL(storageRef);
+        const { downloadUrl } = await googleCloudStorageRepository.create({
+          file: blob,
+          metaData,
+          uploadedFilePath: `${this.userData._id}/images/profileImage.${fileType}`,
+        });
         const { data } = await userRepository.updateById({
           _id: this.userData._id,
-          updateParams: { profileImageUrl },
+          updateParams: { profileImageUrl: downloadUrl },
         });
         const { user } = data;
         this.$store.dispatch('user/setEntityStateData', {
           ...user,
         });
-      } catch (err: any) {
-        throw new Error(err);
+      } catch (err) {
+        throw new Error();
       }
     },
   },

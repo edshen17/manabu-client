@@ -1,7 +1,8 @@
 <template>
   <div class="pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    <language-name-step
+    <profile-image-step :step-title="$t('onboarding.userProfile.image')" :user-data="userData" />
+    <!-- <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
       :language-offerings="targetLanguageOfferings"
@@ -26,9 +27,9 @@
         $t('onboarding.languageLevel', { language: $t(`localeCode.${nonTargetLanguageCode}`) })
       "
       emitted-value-name="nonTargetLanguageLevel"
-    />
+    /> -->
     <!-- use v-if to remove components from DOM, otherwise causes dropdown to break... -->
-    <region-step v-if="stepIndex == 4" />
+    <!-- <region-step v-if="stepIndex == 4" />
     <timezone-step v-if="stepIndex == 5" :region="region" />
     <contact-method-name-step
       v-show="stepIndex == 6"
@@ -45,11 +46,7 @@
       "
       :contact-method-name="contactMethodName"
     />
-    <profile-image-step
-      v-show="stepIndex == 8"
-      :step-title="$t('onboarding.userProfile.image')"
-      :user-data="userData"
-    />
+    
     <profile-bio-step
       v-show="stepIndex == 9"
       :step-title="$t('onboarding.userProfile.bio')"
@@ -59,7 +56,8 @@
       v-show="stepIndex == 10"
       :step-title="$t('onboarding.userProfile.teacherType')"
       emitted-value-name="teacherType"
-    />
+    /> -->
+    <!-- <teacher-license-upload /> -->
   </div>
 </template>
 
@@ -79,6 +77,7 @@ import ContactMethodIdStep from '../components/Onboarding/Steps/ContactMethodIdS
 import ProfileImageStep from '../components/Onboarding/Steps/ProfileImageStep.vue';
 import ProfileBioStep from '../components/Onboarding/Steps/ProfileBioStep.vue';
 import TeacherTypeStep from '../components/Onboarding/Steps/TeacherTypeStep.vue';
+import TeacherLicenseUpload from '../components/Onboarding/Steps/TeacherLicenseUpload.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -100,6 +99,7 @@ export default Vue.extend({
     ProfileImageStep,
     ProfileBioStep,
     TeacherTypeStep,
+    TeacherLicenseUpload,
   },
   props: {},
   data() {

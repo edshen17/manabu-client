@@ -8,11 +8,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { focus } from 'vue-focus';
 import GridListLayout, { ListItems } from '../Layouts/GridListLayout.vue';
 
 export default Vue.extend({
   name: 'TeacherType',
   components: { GridListLayout },
+  directives: { focus },
   props: {
     stepTitle: {
       type: String,

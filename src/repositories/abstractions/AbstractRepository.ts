@@ -3,9 +3,9 @@ import { StringKeyObject } from '@server/types/custom';
 import { IRepository } from './IRepository';
 
 abstract class AbstractRepository implements IRepository {
-  private _client!: any;
-  private _queryStringHandler!: QueryStringHandler;
-  private _resourcePath!: string;
+  protected _client!: any;
+  protected _queryStringHandler!: QueryStringHandler;
+  protected _resourcePath!: string | undefined;
 
   public get = async (query: StringKeyObject): Promise<StringKeyObject> => {
     const queryString = this._queryStringHandler.stringifyQueryStringObj(query);
@@ -55,7 +55,7 @@ abstract class AbstractRepository implements IRepository {
   public init = (initParams: {
     makeClient: any;
     makeQueryStringHandler: QueryStringHandler;
-    resourcePath: string;
+    resourcePath?: string;
   }): this => {
     const { makeClient, makeQueryStringHandler, resourcePath } = initParams;
     this._client = makeClient;
