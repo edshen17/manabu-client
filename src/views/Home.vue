@@ -17,18 +17,18 @@
         <div class="container mx-auto">
           <div class="flex flex-wrap justify-center">
             <div class="w-full lg:w-8/12">
-              <h2 class="py-8 text-2xl font-semibold text-center tracking-wide">
+              <h2 class="py-5 lg:py-8 text-2xl font-semibold text-center tracking-wide">
                 {{ $t('homepage.vision.title') }}
               </h2>
               <p class="px-4 text-lg leading-8 lg:leading-loose">
                 {{ $t('homepage.vision.text') }}
               </p>
-              <hr class="my-10 mx-4 border-gray-300" />
+              <hr class="mt-8 mb-2 mx-4 border-gray-300" />
             </div>
           </div>
         </div>
       </section>
-      <section class="relative mb-10 lg:mb-16">
+      <section class="relative mb-8">
         <div class="container mx-auto">
           <div class="flex flex-wrap justify-center">
             <div class="w-full lg:w-8/12 px-4">
@@ -72,8 +72,9 @@
                 :key="card.title"
                 class="
                   pb-8
-                  w-8/12
+                  w-9/12
                   lg:w-7/12
+                  2xl:w-9/12
                   mx-auto
                   bg-white
                   transform
@@ -117,7 +118,7 @@
                     text-center text-lg
                     align-middle
                     mt-5
-                    mb-24
+                    mb-14
                   "
                 >
                   <router-link to="/signup">{{ $t('homepage.signUpNow') }}</router-link>
