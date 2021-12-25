@@ -1,7 +1,6 @@
 <template>
-  <div class="pb-10 min-h-screen">
+  <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    <profile-image-step :step-title="$t('onboarding.userProfile.image')" :user-data="userData" />
     <!-- <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
@@ -46,7 +45,11 @@
       "
       :contact-method-name="contactMethodName"
     />
-    
+    <profile-image-step
+      v-show="stepIndex == 8"
+      :step-title="$t('onboarding.userProfile.image')"
+      :user-data="userData"
+    />
     <profile-bio-step
       v-show="stepIndex == 9"
       :step-title="$t('onboarding.userProfile.bio')"
@@ -57,7 +60,7 @@
       :step-title="$t('onboarding.userProfile.teacherType')"
       emitted-value-name="teacherType"
     /> -->
-    <!-- <teacher-license-upload /> -->
+    <teacher-license-step :user-data="userData" emitted-value-name="teacherLicenseUrl" />
   </div>
 </template>
 
@@ -77,7 +80,7 @@ import ContactMethodIdStep from '../components/Onboarding/Steps/ContactMethodIdS
 import ProfileImageStep from '../components/Onboarding/Steps/ProfileImageStep.vue';
 import ProfileBioStep from '../components/Onboarding/Steps/ProfileBioStep.vue';
 import TeacherTypeStep from '../components/Onboarding/Steps/TeacherTypeStep.vue';
-import TeacherLicenseUpload from '../components/Onboarding/Steps/TeacherLicenseUpload.vue';
+import TeacherLicenseStep from '../components/Onboarding/Steps/TeacherLicenseStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -99,7 +102,7 @@ export default Vue.extend({
     ProfileImageStep,
     ProfileBioStep,
     TeacherTypeStep,
-    TeacherLicenseUpload,
+    TeacherLicenseStep,
   },
   props: {},
   data() {
@@ -114,6 +117,7 @@ export default Vue.extend({
       contactMethodId: '',
       profileBio: '',
       teacherType: '',
+      teacherLicenseUrl: '',
       stepIndex: 0,
       stepTotal: 16,
     };
@@ -223,10 +227,11 @@ export default Vue.extend({
   methods: {
     handleStepForward(): (payload: EventBusPayload) => void {
       const self = this;
-      return function (payload: EventBusPayload) {
+      return async function (payload: EventBusPayload): Promise<void> {
         const { value, emittedValueName } = payload || {};
         if (value && emittedValueName) {
-          self.setData({ propertyName: emittedValueName, value });
+          const finalValue = await value; // support promises
+          self.setData({ propertyName: emittedValueName, value: finalValue });
         }
         self.step('forward');
       };

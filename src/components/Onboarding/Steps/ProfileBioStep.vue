@@ -5,6 +5,7 @@
         <div data-app>
           <tiptap-vuetify
             :key="$vuetify.lang.current"
+            ref="editor"
             v-model="profileBio"
             :extensions="extensions"
             class="w-full mx-auto"

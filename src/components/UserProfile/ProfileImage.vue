@@ -2,7 +2,11 @@
   <div data-app class="flex justify-center items-center">
     <button>
       <label class="flex justify-center items-center text-white relative cursor-pointer">
-        <img v-show="showProfileImage" :src="userData.profileImageUrl" class="h-28 rounded-full" />
+        <img
+          v-show="showProfileImage"
+          :src="userData.profileImageUrl"
+          class="h-28 rounded-full border-2"
+        />
         <preview
           v-show="showPreviewImage"
           class="rounded-full"
@@ -11,7 +15,10 @@
           :image="profileImage.cropperPreview.image"
           :coordinates="profileImage.cropperPreview.coordinates"
         />
-        <i class="fas fa-camera text-white opacity-90 absolute"></i>
+        <i
+          class="fas fa-camera text-white absolute opacity-95"
+          style="text-shadow: 0 0 4px #000"
+        ></i>
         <input
           ref="imageUploader"
           type="file"
@@ -140,9 +147,7 @@ export default Vue.extend({
       if (canvas) {
         canvas.toBlob(async (blob: Blob) => {
           this.profileImage.src = image.src;
-          if (IS_PRODUCTION) {
-            await this._uploadBlobToStorage(blob);
-          }
+          await this._uploadBlobToStorage(blob);
         });
       }
       this.profileImage.isSaved = true;

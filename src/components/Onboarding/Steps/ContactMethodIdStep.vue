@@ -16,7 +16,7 @@
               class="form-border mx-auto place-items-center"
               @keydown.enter.prevent="handleEnterKeyPress"
             />
-            <p v-show="$v.contactMethodId.$error" class="text-sm text-red-400 mt-2">
+            <p v-show="$v.contactMethodId.$error" class="vuelidate-error mt-2">
               {{
                 $t('error.onboarding.contactMethodId', {
                   contactMethod: $t(`onboarding.contactMethods.${contactMethodName}`),

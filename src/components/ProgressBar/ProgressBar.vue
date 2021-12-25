@@ -2,8 +2,10 @@
   <div class="flex justify-center mx-auto items-center mb-3 md:mb-7">
     <button class="mb-1 md:mb-0" @click="emitStepBackward">
       <i
-        :class="{ 'text-white': stepIndex <= 0 }"
-        class="fas fa-arrow-left pr-3 md:text-lg md:pr-4 lg:text-xl"
+        :class="{
+          hidden: stepIndex <= 0,
+          'fas fa-arrow-left pr-3 md:text-lg md:pr-4 lg:text-xl': stepIndex > 1,
+        }"
       ></i>
     </button>
     <div class="relative w-10/12 lg:w-10/12 2xl:w-7/12">

@@ -63,7 +63,8 @@
       "overlapAvailableTime": "予約が重なることはできません。"
     },
     "onboarding": {
-      "contactMethodId": "{contactMethod}のIDを正しく入力して下さい。"
+      "contactMethodId": "{contactMethod}のIDを正しく入力して下さい。",
+      "licenseUpload": "画像やPDFをアップロードしてください。"
     },
     "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
   },
@@ -118,6 +119,7 @@
         "commTeacher": "コミュニティティーチャー"
       }
     },
+    "licenseUpload": "教員免許をアップロードしてください。",
     "buttons": {
       "next": "次へ"
     },

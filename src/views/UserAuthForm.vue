@@ -3,7 +3,7 @@
     <div class="flex flex-wrap justify-center">
       <img
         src="../assets/img/torii-lg.png"
-        class="object-contain h-36 md:h-32 2xl:h-36 w-full mt-3 md:mt-10"
+        class="object-contain h-28 md:h-32 2xl:h-36 w-full mt-3 md:mt-10"
       />
     </div>
     <div class="flex flex-wrap justify-center">
@@ -21,7 +21,7 @@
               :placeholder="$t('userAuth.name')"
               @focus="focusedInputName = 'name'"
             />
-            <p v-show="$v.name.$error" class="text-sm text-red-400 mt-2">
+            <p v-show="$v.name.$error" class="vuelidate-error mt-2">
               {{ $t('error.userAuth.name') }}
             </p>
           </div>
@@ -36,7 +36,7 @@
               class="form-border"
               @focus="focusedInputName = 'email'"
             />
-            <p v-show="$v.email.$error" class="text-sm text-red-400 mt-2">
+            <p v-show="$v.email.$error" class="vuelidate-error mt-2">
               {{ $t('error.userAuth.email') }}
             </p>
           </div>
@@ -79,7 +79,7 @@
             </button>
           </div>
         </form>
-        <p v-show="$v.password.$error" class="text-sm text-red-400 my-1">
+        <p v-show="$v.password.$error" class="vuelidate-error my-1">
           <span v-if="isSignupPage">{{ $t('error.userAuth.password.length') }}</span>
           <span v-else>{{ $t('error.userAuth.password.required') }}</span>
         </p>

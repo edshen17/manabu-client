@@ -74,3 +74,15 @@
 .tiptap-vuetify-editor p {
     @apply text-base font-normal leading-normal;
 }
+
+.tiptap-vuetify-editor .theme--light.v-sheet {
+    @apply border-gray-100 !important;
+}
+
+.tiptap-vuetify-editor .theme--light.v-toolbar.v-sheet {
+    @apply bg-gray-100 !important;
+}
+
+.vuelidate-error {
+    @apply text-sm text-red-400;
+}

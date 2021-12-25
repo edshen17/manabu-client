@@ -1,4 +1,5 @@
 import { StringKeyObject } from '@server/types/custom';
+import { IS_PRODUCTION } from '../../../../server/constants';
 import { IRepository } from '../abstractions/IRepository';
 
 class GoogleCloudStorageRepository implements IRepository {
@@ -31,7 +32,8 @@ class GoogleCloudStorageRepository implements IRepository {
   }): Promise<StringKeyObject> => {
     const { file, metaData, uploadedFilePath } = props;
     const { firebaseStorage, uploadBytes, ref, getDownloadURL } = this._client;
-    const storageRef = ref(firebaseStorage, uploadedFilePath);
+    const finalFilePath = IS_PRODUCTION ? uploadedFilePath : `dev-${uploadedFilePath}`;
+    const storageRef = ref(firebaseStorage, finalFilePath);
     await uploadBytes(storageRef, file, metaData);
     const downloadUrl = await getDownloadURL(storageRef);
     return { downloadUrl };
