@@ -60,7 +60,7 @@
       :step-title="$t('onboarding.userProfile.teacherType')"
       emitted-value-name="teacherType"
     /> -->
-    <teacher-license-step :user-data="userData" emitted-value-name="teacherLicenseUrl" />
+    <teacher-license-step :user-data="userData" />
   </div>
 </template>
 

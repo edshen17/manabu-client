@@ -28,11 +28,11 @@ class GoogleCloudStorageRepository implements IRepository {
   public create = async (props: {
     file: File | Blob;
     metaData: { contentType: string };
-    uploadedFilePath: string;
+    cloudFilePath: string;
   }): Promise<StringKeyObject> => {
-    const { file, metaData, uploadedFilePath } = props;
+    const { file, metaData, cloudFilePath } = props;
     const { firebaseStorage, uploadBytes, ref, getDownloadURL } = this._client;
-    const finalFilePath = IS_PRODUCTION ? uploadedFilePath : `dev-${uploadedFilePath}`;
+    const finalFilePath = IS_PRODUCTION ? cloudFilePath : `dev-${cloudFilePath}`;
     const storageRef = ref(firebaseStorage, finalFilePath);
     await uploadBytes(storageRef, file, metaData);
     const downloadUrl = await getDownloadURL(storageRef);
