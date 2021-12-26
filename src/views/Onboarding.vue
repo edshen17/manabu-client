@@ -59,8 +59,10 @@
       v-show="stepIndex == 10"
       :step-title="$t('onboarding.userProfile.teacherType')"
       emitted-value-name="teacherType"
-    /> -->
-    <teacher-license-step :user-data="userData" />
+    /> 
+    <teacher-license-step :user-data="userData" v-show="stepIndex == 11" />
+    <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" />
+    -->
   </div>
 </template>
 
@@ -81,6 +83,7 @@ import ProfileImageStep from '../components/Onboarding/Steps/ProfileImageStep.vu
 import ProfileBioStep from '../components/Onboarding/Steps/ProfileBioStep.vue';
 import TeacherTypeStep from '../components/Onboarding/Steps/TeacherTypeStep.vue';
 import TeacherLicenseStep from '../components/Onboarding/Steps/TeacherLicenseStep.vue';
+import TeacherIntroductionVideoStep from '../components/Onboarding/Steps/TeacherIntroductionVideoStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -103,6 +106,7 @@ export default Vue.extend({
     ProfileBioStep,
     TeacherTypeStep,
     TeacherLicenseStep,
+    TeacherIntroductionVideoStep,
   },
   props: {},
   data() {
@@ -118,6 +122,7 @@ export default Vue.extend({
       profileBio: '',
       teacherType: '',
       teacherLicenseUrl: '',
+      teacherIntroductionVideoUrl: '',
       stepIndex: 0,
       stepTotal: 16,
     };

@@ -1,10 +1,10 @@
 <template>
   <file-upload-layout
-    :step-title="$t('onboarding.teacherLicenseUpload')"
-    supported-file-types="image/*, .pdf"
-    :no-file-error-message="$t('error.onboarding.teacherLicenseUpload')"
-    :cloud-file-path="`${userData._id}/images/teacherLicense`"
-    emitted-value-name="teacherLicenseUrl"
+    :step-title="$t('onboarding.teacherIntroductionVideoUpload')"
+    supported-file-types="video/*, .ogg, mp4, webm"
+    :no-file-error-message="$t('error.onboarding.teacherIntroductionVideoUpload')"
+    :cloud-file-path="`${userData._id}/videos/introductionVideo`"
+    emitted-value-name="teacherIntroductionVideoUrl"
   />
 </template>
 
@@ -13,7 +13,7 @@ import Vue from 'vue';
 import FileUploadLayout from '../Layouts/FileUploadLayout.vue';
 
 export default Vue.extend({
-  name: 'TeacherLicenseStep',
+  name: 'TeacherIntroductionVideoStep',
   components: { FileUploadLayout },
   props: {
     userData: {

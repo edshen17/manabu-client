@@ -75,7 +75,8 @@
     },
     "onboarding": {
       "contactMethodId": "You must input a {contactMethod} id.",
-      "licenseUpload": "You need to upload an image or pdf or your teaching license."
+      "teacherLicenseUpload": "You need to upload an image or pdf or your teaching license.",
+      "teacherIntroductionVideoUpload": "You need to upload an introduction video."
     },
     "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
   },
@@ -120,7 +121,8 @@
         "commTeacher": "Community Teacher"
       }
     },
-    "licenseUpload": "Please upload your teaching certificate.",
+    "teacherLicenseUpload": "Please upload your teaching certificate.",
+    "teacherIntroductionVideoUpload": "Please upload your self-introduction video.",
     "buttons": {
       "next": "Next"
     },
