@@ -19,7 +19,7 @@
             'rounded-t-lg rounded-l-lg rounded-r-lg rounded-bl-none rounded-br-none': index == 0,
             'border-b-2 rounded-b-lg': index == listItems.length - 1,
           }"
-          @click="emitItemClicked(listItem.value)"
+          @click="emitStepForward(listItem.value)"
         >
           <button>{{ listItem.content }}</button>
         </li>
@@ -63,8 +63,11 @@ export default Vue.extend({
     return;
   },
   methods: {
-    emitItemClicked(value: any): void {
-      EventBus.$emit('step-forward', { value, emittedValueName: this.emittedValueName });
+    emitStepForward(value: any): void {
+      EventBus.$emit('step-forward', {
+        value,
+        emittedValueName: this.emittedValueName,
+      });
     },
   },
 });

@@ -54,15 +54,19 @@
       v-show="stepIndex == 9"
       :step-title="$t('onboarding.userProfile.bio')"
       emitted-value-name="profileBio"
-    />
+    />-->
     <teacher-type-step
-      v-show="stepIndex == 10"
+      v-show="stepIndex == 0"
       :step-title="$t('onboarding.userProfile.teacherType')"
       emitted-value-name="teacherType"
-    /> 
-    <teacher-license-step :user-data="userData" v-show="stepIndex == 11" />
-    <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" />
-    -->
+    />
+    <teacher-license-step
+      v-show="stepIndex == 1"
+      :user-data="userData"
+      :is-pro-teacher="isProTeacher"
+    />
+    <!-- <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" /> -->
+    <!-- <teacher-price-data-step v-show="stepIndex == 1" :is-pro-teacher="isProTeacher" /> -->
   </div>
 </template>
 
@@ -84,6 +88,8 @@ import ProfileBioStep from '../components/Onboarding/Steps/ProfileBioStep.vue';
 import TeacherTypeStep from '../components/Onboarding/Steps/TeacherTypeStep.vue';
 import TeacherLicenseStep from '../components/Onboarding/Steps/TeacherLicenseStep.vue';
 import TeacherIntroductionVideoStep from '../components/Onboarding/Steps/TeacherIntroductionVideoStep.vue';
+import TeacherPriceDataStep from '../components/Onboarding/Steps/TeacherPriceDataStep.vue';
+import { TEACHER_ENTITY_TYPE } from '../../../server/components/entities/teacher/teacherEntity';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -107,6 +113,7 @@ export default Vue.extend({
     TeacherTypeStep,
     TeacherLicenseStep,
     TeacherIntroductionVideoStep,
+    TeacherPriceDataStep,
   },
   props: {},
   data() {
@@ -123,6 +130,7 @@ export default Vue.extend({
       teacherType: '',
       teacherLicenseUrl: '',
       teacherIntroductionVideoUrl: '',
+      teacherHourlyRate: 0,
       stepIndex: 0,
       stepTotal: 16,
     };
@@ -221,6 +229,12 @@ export default Vue.extend({
         return contactMethods;
       },
     },
+    isProTeacher: {
+      get(): boolean {
+        const isProTeacher = this.teacherType == TEACHER_ENTITY_TYPE.LICENSED;
+        return isProTeacher;
+      },
+    },
   },
   mounted() {
     EventBus.$on('step-forward', this.handleStepForward());
@@ -233,7 +247,7 @@ export default Vue.extend({
     handleStepForward(): (payload: EventBusPayload) => void {
       const self = this;
       return async function (payload: EventBusPayload): Promise<void> {
-        const { value, emittedValueName } = payload || {};
+        const { value, emittedValueName, metaData } = payload || {};
         if (value && emittedValueName) {
           const finalValue = await value; // support promises
           self.setData({ propertyName: emittedValueName, value: finalValue });

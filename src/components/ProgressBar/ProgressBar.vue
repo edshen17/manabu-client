@@ -3,9 +3,9 @@
     <button class="mb-1 md:mb-0" @click="emitStepBackward">
       <i
         :class="{
-          hidden: stepIndex <= 0,
-          'fas fa-arrow-left pr-3 md:text-lg md:pr-4 lg:text-xl': stepIndex > 1,
+          'opacity-0': stepIndex <= 0,
         }"
+        class="fas fa-arrow-left pr-3 md:text-lg md:pr-4 lg:text-xl"
       ></i>
     </button>
     <div class="relative w-10/12 lg:w-10/12 2xl:w-7/12">

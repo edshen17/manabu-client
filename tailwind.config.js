@@ -25,8 +25,15 @@ module.exports = {
     },
   },
   variants: {
-    outline: ['focus'],
-    extend: {},
+    outline: ['responsive', 'focus-within', 'focus'],
+    extend: {
+      opacity: ['disabled'],
+      backgroundColor: ['disabled'],
+      cursor: ['disabled'],
+      textColor: ['disabled'],
+      boxShadow: ['disabled'],
+      borderColor: ['disabled'],
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),

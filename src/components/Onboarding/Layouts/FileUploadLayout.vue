@@ -2,17 +2,32 @@
   <div data-app>
     <grid-button-layout :step-title="stepTitle">
       <template v-slot:main>
-        <div v-cloak class="mt-3" @drop.prevent="setFileToUpload" @dragover.prevent>
-          <v-file-input
-            v-model="fileToUpload"
-            outlined
-            dense
-            :accept="supportedFileTypes"
-          ></v-file-input>
-          <p v-show="$v.fileToUpload.$error" class="vuelidate-error ml-6 -mt-3">
-            {{ noFileErrorMessage }}
-          </p>
-        </div>
+        <v-tooltip :disabled="!isDisabled" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <div
+              v-cloak
+              class="mt-3"
+              v-bind="attrs"
+              @drop.prevent="setFileToUpload"
+              @dragover.prevent
+              v-on="on"
+            >
+              <div :class="{ 'cursor-not-allowed': isDisabled }">
+                <v-file-input
+                  v-model="fileToUpload"
+                  outlined
+                  dense
+                  :disabled="isDisabled"
+                  :accept="supportedFileTypes"
+                ></v-file-input>
+              </div>
+              <p v-show="$v.fileToUpload.$error && !isDisabled" class="vuelidate-error ml-6 -mt-3">
+                {{ noFileErrorMessage }}
+              </p>
+            </div>
+          </template>
+          <span>Only pro teachers need to upload their licenses</span>
+        </v-tooltip>
       </template>
       <template v-slot:button>
         <grid-button
@@ -60,10 +75,15 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    isDisabled: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
       fileToUpload: null as any,
+      show: false,
     };
   },
   computed: {},
@@ -74,8 +94,12 @@ export default Vue.extend({
     setFileToUpload(e: any): void {
       this.fileToUpload = e.dataTransfer.files[0];
     },
-    async emitStepForward(): Promise<void> {
-      this.$v.$touch();
+    emitStepForward(): void {
+      if (!this.isDisabled) {
+        this.$v.$touch();
+      } else {
+        EventBus.$emit('step-forward');
+      }
       if (!this.$v.$invalid) {
         const downloadUrl = this._uploadFile();
         EventBus.$emit('step-forward', {

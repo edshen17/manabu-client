@@ -9,21 +9,21 @@ export default Vue.extend({
   name: '',
   components: {},
   props: {
-    // prop: {
-    //   type: String,
-    //   default: '',
-    //   required: true,
-    // },
+    prop: {
+      type: String,
+      default: '',
+      required: true,
+    },
   },
   data() {
     return {};
   },
   computed: {
-    // prop: {
-    //   get(): any {
-    //     return;
-    //   },
-    // },
+    someProp: {
+      get(): any {
+        return 'something';
+      },
+    },
   },
   mounted() {
     return;

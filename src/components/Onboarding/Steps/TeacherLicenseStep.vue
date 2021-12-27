@@ -5,6 +5,7 @@
     :no-file-error-message="$t('error.onboarding.teacherLicenseUpload')"
     :cloud-file-path="`${userData._id}/images/teacherLicense`"
     emitted-value-name="teacherLicenseUrl"
+    :is-disabled="!isProTeacher"
   />
 </template>
 
@@ -18,6 +19,10 @@ export default Vue.extend({
   props: {
     userData: {
       type: Object,
+      required: true,
+    },
+    isProTeacher: {
+      type: Boolean,
       required: true,
     },
   },

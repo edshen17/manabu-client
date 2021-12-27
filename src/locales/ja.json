@@ -56,6 +56,7 @@
         "emailExists": "このメールアドレスを持つアカウントがすでに存在しています。"
       }
     },
+    "currencyInput": "通貨量を入力してください。",
     "calendar": {
       "pastAppointment": "過去時間の予約をすることはできません。",
       "unevenAvailableTime": "30分から1時間の間隔でアポイントメントが取れます。",
@@ -65,7 +66,8 @@
     "onboarding": {
       "contactMethodId": "{contactMethod}のIDを正しく入力して下さい。",
       "teacherLicenseUpload": "画像やPDFをアップロードしてください。",
-      "teacherIntroductionVideoUpload": "動画をアップロードしてください。"
+      "teacherIntroductionVideoUpload": "動画をアップロードしてください。",
+      "teacherPriceData": "時給を入力してください。"
     },
     "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
   },
@@ -122,6 +124,7 @@
     },
     "teacherLicenseUpload": "教員免許をアップロードしてください。",
     "teacherIntroductionVideoUpload": "自己紹介の動画をアップロードしてください。",
+    "teacherPriceData": "時給を設定ください。",
     "buttons": {
       "next": "次へ"
     },

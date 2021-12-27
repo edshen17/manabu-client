@@ -74,7 +74,6 @@
 import Vue from 'vue';
 import ExtendedCropper from '../Cropper/ExtendedCropper.vue';
 import { Preview } from 'vue-advanced-cropper';
-import { IS_PRODUCTION } from '../../../../server/constants';
 import { StringKeyObject } from '../../../../server/types/custom';
 import { makeUserRepository } from '../../repositories/user';
 import { makeGoogleCloudStorageRepository } from '../../repositories/googleCloudStorage';
@@ -145,9 +144,9 @@ export default Vue.extend({
       const cropper = (this as any).$refs.extendedCropper.$refs.cropper;
       const { canvas, image } = cropper.getResult();
       if (canvas) {
-        canvas.toBlob(async (blob: Blob) => {
+        canvas.toBlob((blob: Blob): void => {
           this.profileImage.src = image.src;
-          await this._uploadBlobToStorage(blob);
+          this._uploadBlobToStorage(blob);
         });
       }
       this.profileImage.isSaved = true;
@@ -160,23 +159,19 @@ export default Vue.extend({
         contentType: blobType,
       };
       const fileType = blob.type.split('/')[1];
-      try {
-        const { downloadUrl } = await googleCloudStorageRepository.create({
-          file: blob,
-          metaData,
-          uploadedFilePath: `${this.userData._id}/images/profileImage.${fileType}`,
-        });
-        const { data } = await userRepository.updateById({
-          _id: this.userData._id,
-          updateParams: { profileImageUrl: downloadUrl },
-        });
-        const { user } = data;
-        this.$store.dispatch('user/setEntityStateData', {
-          ...user,
-        });
-      } catch (err) {
-        throw new Error();
-      }
+      const { downloadUrl } = await googleCloudStorageRepository.create({
+        file: blob,
+        metaData,
+        cloudFilePath: `${this.userData._id}/images/profileImage.${fileType}`,
+      });
+      const { data } = await userRepository.updateById({
+        _id: this.userData._id,
+        updateParams: { profileImageUrl: downloadUrl },
+      });
+      const { user } = data;
+      this.$store.dispatch('user/setEntityStateData', {
+        ...user,
+      });
     },
   },
 });

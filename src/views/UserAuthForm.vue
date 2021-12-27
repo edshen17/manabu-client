@@ -21,7 +21,7 @@
               :placeholder="$t('userAuth.name')"
               @focus="focusedInputName = 'name'"
             />
-            <p v-show="$v.name.$error" class="vuelidate-error mt-2">
+            <p v-show="$v.name.$error" class="vuelidate-error mt-3">
               {{ $t('error.userAuth.name') }}
             </p>
           </div>
@@ -36,7 +36,7 @@
               class="form-border"
               @focus="focusedInputName = 'email'"
             />
-            <p v-show="$v.email.$error" class="vuelidate-error mt-2">
+            <p v-show="$v.email.$error" class="vuelidate-error mt-3">
               {{ $t('error.userAuth.email') }}
             </p>
           </div>
