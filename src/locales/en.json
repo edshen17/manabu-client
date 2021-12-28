@@ -124,8 +124,10 @@
       }
     },
     "teacherLicenseUpload": "Please upload your teaching certificate.",
+    "teacherLicenseUploadTooltip": "Only professional teachers need to upload a certificate.",
     "teacherIntroductionVideoUpload": "Please upload your self-introduction video.",
     "teacherPriceData": "Please set your hourly price.",
+    "teacherPriceDataTooltip": "Only professional teachers can set their hourly prices.",
     "buttons": {
       "next": "Next"
     },

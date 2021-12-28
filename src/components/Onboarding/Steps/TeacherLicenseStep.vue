@@ -6,6 +6,7 @@
     :cloud-file-path="`${userData._id}/images/teacherLicense`"
     emitted-value-name="teacherLicenseUrl"
     :is-disabled="!isProTeacher"
+    :disabled-tooltip-text="$t('onboarding.teacherLicenseUploadTooltip')"
   />
 </template>
 

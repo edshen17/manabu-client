@@ -123,8 +123,10 @@
       }
     },
     "teacherLicenseUpload": "教員免許をアップロードしてください。",
+    "teacherLicenseUploadTooltip": "教員免許を持っている教師のみアップロードしなければなりません。",
     "teacherIntroductionVideoUpload": "自己紹介の動画をアップロードしてください。",
     "teacherPriceData": "時給を設定ください。",
+    "teacherPriceDataTooltip": "教員免許を持っている教師のみ時給を設定できます。",
     "buttons": {
       "next": "次へ"
     },

@@ -26,7 +26,7 @@
               </p>
             </div>
           </template>
-          <span>Only pro teachers need to upload their licenses</span>
+          <span>{{ disabledTooltipText }}</span>
         </v-tooltip>
       </template>
       <template v-slot:button>
@@ -77,7 +77,13 @@ export default Vue.extend({
     },
     isDisabled: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
+    },
+    disabledTooltipText: {
+      type: String,
+      required: false,
+      default: '',
     },
   },
   data() {

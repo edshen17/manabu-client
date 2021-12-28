@@ -3,7 +3,7 @@
     <grid-button-layout :step-title="$t('onboarding.region')">
       <template v-slot:main>
         <v-autocomplete
-          v-model="region"
+          v-model="selectedRegion"
           outlined
           dense
           auto
@@ -35,9 +35,15 @@ import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 export default Vue.extend({
   name: 'RegionStep',
   components: { GridBaseLayout, GridButton, GridButtonLayout },
+  props: {
+    region: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      region: 'SG',
+      selectedRegion: this.region || 'SG',
     };
   },
   computed: {
@@ -61,7 +67,7 @@ export default Vue.extend({
   },
   methods: {
     emitStepForward(): void {
-      EventBus.$emit('step-forward', { value: this.region, emittedValueName: 'region' });
+      EventBus.$emit('step-forward', { value: this.selectedRegion, emittedValueName: 'region' });
     },
   },
 });

@@ -1,7 +1,7 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    <!-- <language-name-step
+    <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
       :language-offerings="targetLanguageOfferings"
@@ -26,10 +26,9 @@
         $t('onboarding.languageLevel', { language: $t(`localeCode.${nonTargetLanguageCode}`) })
       "
       emitted-value-name="nonTargetLanguageLevel"
-    /> -->
-    <!-- use v-if to remove components from DOM, otherwise causes dropdown to break... -->
-    <!-- <region-step v-if="stepIndex == 4" />
-    <timezone-step v-if="stepIndex == 5" :region="region" />
+    />
+    <region-step v-if="stepIndex == 4" :region="region" />
+    <timezone-step v-if="stepIndex == 5" :region="region" :timezone="timezone" />
     <contact-method-name-step
       v-show="stepIndex == 6"
       :contact-methods="contactMethods"
@@ -37,7 +36,7 @@
       :step-title="$t('onboarding.contactMethod')"
     />
     <contact-method-id-step
-      v-show="stepIndex == 7"
+      v-if="stepIndex == 7"
       :step-title="
         $t('onboarding.contactMethodId', {
           contactMethod: $t(`onboarding.contactMethods.${contactMethodName}`),
@@ -46,27 +45,27 @@
       :contact-method-name="contactMethodName"
     />
     <profile-image-step
-      v-show="stepIndex == 8"
+      v-if="stepIndex == 8"
       :step-title="$t('onboarding.userProfile.image')"
       :user-data="userData"
     />
     <profile-bio-step
-      v-show="stepIndex == 9"
+      v-if="stepIndex == 9"
       :step-title="$t('onboarding.userProfile.bio')"
       emitted-value-name="profileBio"
-    />-->
+    />
     <teacher-type-step
-      v-show="stepIndex == 0"
+      v-show="stepIndex == 10"
       :step-title="$t('onboarding.userProfile.teacherType')"
       emitted-value-name="teacherType"
     />
     <teacher-license-step
-      v-show="stepIndex == 1"
+      v-show="stepIndex == 11"
       :user-data="userData"
       :is-pro-teacher="isProTeacher"
     />
-    <!-- <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" /> -->
-    <!-- <teacher-price-data-step v-show="stepIndex == 1" :is-pro-teacher="isProTeacher" /> -->
+    <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" />
+    <teacher-price-data-step v-show="stepIndex == 13" :is-pro-teacher="isProTeacher" />
   </div>
 </template>
 
@@ -247,7 +246,7 @@ export default Vue.extend({
     handleStepForward(): (payload: EventBusPayload) => void {
       const self = this;
       return async function (payload: EventBusPayload): Promise<void> {
-        const { value, emittedValueName, metaData } = payload || {};
+        const { value, emittedValueName } = payload || {};
         if (value && emittedValueName) {
           const finalValue = await value; // support promises
           self.setData({ propertyName: emittedValueName, value: finalValue });

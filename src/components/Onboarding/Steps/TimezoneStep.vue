@@ -3,13 +3,13 @@
     <grid-button-layout :step-title="$t('onboarding.timezone')">
       <template v-slot:main>
         <v-autocomplete
-          v-model="timezone"
+          v-model="selectedTimezone"
           outlined
           dense
           auto
           :cache-items="true"
           :hide-no-data="true"
-          :items="selectRegions"
+          :items="selectTimezones"
         />
       </template>
       <template v-slot:button>
@@ -39,14 +39,18 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    timezone: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
-      timezone: '',
+      selectedTimezone: '',
     };
   },
   computed: {
-    selectRegions: {
+    selectTimezones: {
       get(): { text: string; value: string }[] {
         const timezones: string[] = ct.getCountry(this.region)!.timezones;
         const selectTimezones = [];
@@ -62,12 +66,20 @@ export default Vue.extend({
       },
     },
   },
+  watch: {
+    timezone: function () {
+      this.selectedTimezone = this.selectTimezones[0].value;
+    },
+  },
   mounted() {
-    this.timezone = this.selectRegions[0].value;
+    this.selectedTimezone = this.timezone || this.selectTimezones[0].value;
   },
   methods: {
     emitRegionSelection(): void {
-      EventBus.$emit('step-forward', { value: this.timezone, emittedValueName: 'timezone' });
+      EventBus.$emit('step-forward', {
+        value: this.selectedTimezone,
+        emittedValueName: 'timezone',
+      });
     },
   },
 });

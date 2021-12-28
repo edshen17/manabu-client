@@ -8,11 +8,11 @@
               <currency-input
                 v-model="teacherHourlyRate"
                 :options="{ currency, valueRange: { min: 0 } }"
-                :is-disabled="isProTeacher"
+                :is-disabled="!isProTeacher"
               />
             </div>
           </template>
-          <span>Only pro teachers can set prices</span>
+          <span>{{ $t('onboarding.teacherPriceDataTooltip') }}</span>
         </v-tooltip>
       </template>
       <template v-slot:button>

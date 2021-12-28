@@ -10,6 +10,9 @@
             :extensions="extensions"
             class="w-full mx-auto"
           />
+          <p v-show="$v.profileBio.$error" class="vuelidate-error ml-6 mt-3">
+            you must write an profile
+          </p>
         </div>
       </template>
       <template v-slot:button>
@@ -39,6 +42,7 @@ import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import GridButton from '../Common/GridButton.vue';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 import { EventBus } from '../../EventBus/EventBus';
+import { required } from 'vuelidate/lib/validators';
 
 export default Vue.extend({
   name: 'ProfileBioStep',
@@ -56,12 +60,28 @@ export default Vue.extend({
     };
   },
   computed: {},
+  watch: {
+    profileBio: function (newVal) {
+      const isEmpty = newVal == '<p></p>';
+      if (isEmpty) {
+        this.profileBio = '';
+      }
+    },
+  },
   mounted() {
     return;
   },
   methods: {
     emitStepForward(): void {
-      EventBus.$emit('step-forward', { value: this.profileBio, emittedValueName: 'profileBio' });
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        EventBus.$emit('step-forward', { value: this.profileBio, emittedValueName: 'profileBio' });
+      }
+    },
+  },
+  validations: {
+    profileBio: {
+      required,
     },
   },
 });
