@@ -47,13 +47,14 @@ import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 import { required } from 'vuelidate/lib/validators';
-import { makeGoogleCloudStorageRepository } from '../../../repositories/googleCloudStorage';
+import { makeGoogleCloudStorageMixin } from '../../../mixins/googleCloudStorage';
 
-const googleCloudStorageRepository = makeGoogleCloudStorageRepository;
+const googleCloudStorageMixin = makeGoogleCloudStorageMixin;
 
 export default Vue.extend({
   name: 'FileUploadLayout',
   components: { GridBaseLayout, GridButton, GridButtonLayout },
+  mixins: [googleCloudStorageMixin],
   props: {
     stepTitle: {
       type: String,
@@ -63,11 +64,11 @@ export default Vue.extend({
       type: String,
       required: true,
     },
-    noFileErrorMessage: {
+    updateParamName: {
       type: String,
       required: true,
     },
-    emittedValueName: {
+    noFileErrorMessage: {
       type: String,
       required: true,
     },
@@ -85,6 +86,14 @@ export default Vue.extend({
       required: false,
       default: '',
     },
+    userData: {
+      type: Object,
+      required: true,
+    },
+    repositoryName: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -100,31 +109,31 @@ export default Vue.extend({
     setFileToUpload(e: any): void {
       this.fileToUpload = e.dataTransfer.files[0];
     },
-    emitStepForward(): void {
+    async emitStepForward(): Promise<void> {
       if (!this.isDisabled) {
         this.$v.$touch();
       } else {
         EventBus.$emit('step-forward');
       }
       if (!this.$v.$invalid) {
-        const downloadUrl = this._uploadFile();
-        EventBus.$emit('step-forward', {
-          value: downloadUrl,
-          emittedValueName: this.emittedValueName,
-        });
+        await this._uploadFile();
+        EventBus.$emit('step-forward');
       }
     },
-    async _uploadFile(): Promise<string> {
+    async _uploadFile(): Promise<void> {
       const fileType = this.fileToUpload.type.split('/')[1];
       const metaData = {
         contentType: fileType,
       };
-      const { downloadUrl } = await googleCloudStorageRepository.create({
+      const userId = this.userData._id;
+      (this as any).updateUserAfterUpload({
         file: this.fileToUpload,
         metaData,
         cloudFilePath: `${this.cloudFilePath}.${fileType}`,
+        userId,
+        updateParamName: this.updateParamName,
+        repositoryName: this.repositoryName,
       });
-      return downloadUrl;
     },
   },
   validations: {

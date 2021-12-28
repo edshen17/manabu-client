@@ -1,6 +1,11 @@
 import { QueryStringHandler } from '@server/components/usecases/utils/queryStringHandler/queryStringHandler';
 import { StringKeyObject } from '@server/types/custom';
 
+enum REPOSITORY_NAME {
+  USER = 'user',
+  TEACHER = 'teacher',
+}
+
 interface IRepository {
   get: (query: StringKeyObject) => Promise<StringKeyObject>;
   getById: (props: any) => Promise<StringKeyObject>;
@@ -15,4 +20,4 @@ interface IRepository {
   }) => this;
 }
 
-export { IRepository };
+export { IRepository, REPOSITORY_NAME };

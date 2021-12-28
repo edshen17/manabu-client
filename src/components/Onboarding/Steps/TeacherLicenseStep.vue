@@ -4,15 +4,16 @@
     supported-file-types="image/*, .pdf"
     :no-file-error-message="$t('error.onboarding.teacherLicenseUpload')"
     :cloud-file-path="`${userData._id}/images/teacherLicense`"
-    emitted-value-name="teacherLicenseUrl"
+    update-param-name="licenseUrl"
     :is-disabled="!isProTeacher"
     :disabled-tooltip-text="$t('onboarding.teacherLicenseUploadTooltip')"
+    :user-data="userData"
+    repository-name="teacher"
   />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { EventBus } from '../../EventBus/EventBus';
 import FileUploadLayout from '../Layouts/FileUploadLayout.vue';
 
 export default Vue.extend({

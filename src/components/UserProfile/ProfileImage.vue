@@ -164,6 +164,7 @@ export default Vue.extend({
         cloudFilePath: `${userId}/images/profileImage.${fileType}`,
         userId,
         updateParamName: 'profileImageUrl',
+        repositoryName: 'user',
       });
     },
   },

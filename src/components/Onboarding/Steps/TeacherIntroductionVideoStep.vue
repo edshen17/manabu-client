@@ -4,7 +4,9 @@
     supported-file-types="video/*, .ogg, mp4, webm"
     :no-file-error-message="$t('error.onboarding.teacherIntroductionVideoUpload')"
     :cloud-file-path="`${userData._id}/videos/introductionVideo`"
-    emitted-value-name="teacherIntroductionVideoUrl"
+    :user-data="userData"
+    update-param-name="introductionVideoUrl"
+    repository-name="teacher"
   />
 </template>
 
