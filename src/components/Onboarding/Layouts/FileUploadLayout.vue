@@ -102,6 +102,13 @@ export default Vue.extend({
     };
   },
   computed: {},
+  watch: {
+    isDisabled: function (newVal) {
+      if (newVal) {
+        this.fileToUpload = null;
+      }
+    },
+  },
   mounted() {
     return;
   },

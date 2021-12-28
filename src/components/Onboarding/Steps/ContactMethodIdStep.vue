@@ -5,7 +5,7 @@
         <form class="mb-0 space-y-6">
           <div>
             <input
-              v-model="contactMethodId"
+              v-model="id"
               v-focus="true"
               type="text"
               :placeholder="
@@ -16,7 +16,7 @@
               class="form-border mx-auto place-items-center"
               @keydown.enter.prevent="handleEnterKeyPress"
             />
-            <p v-show="$v.contactMethodId.$error" class="vuelidate-error mt-2">
+            <p v-show="$v.id.$error" class="vuelidate-error mt-2">
               {{
                 $t('error.onboarding.contactMethodId', {
                   contactMethod: $t(`onboarding.contactMethods.${contactMethodName}`),
@@ -59,10 +59,14 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    contactMethodId: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
-      contactMethodId: '',
+      id: this.contactMethodId || '',
     };
   },
   computed: {},
@@ -78,13 +82,13 @@ export default Vue.extend({
     },
     emitContactMethodId(): void {
       EventBus.$emit('step-forward', {
-        value: this.contactMethodId,
+        value: this.id,
         emittedValueName: 'contactMethodId',
       });
     },
   },
   validations: {
-    contactMethodId: {
+    id: {
       required,
     },
   },

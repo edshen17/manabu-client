@@ -24,6 +24,7 @@ const makeGoogleCloudStorageMixin: any = {
         file,
         metaData,
         cloudFilePath,
+        userId,
       });
       const updateParams: StringKeyObject = {};
       updateParams[updateParamName] = downloadUrl;

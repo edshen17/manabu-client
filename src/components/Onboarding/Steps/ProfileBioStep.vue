@@ -6,12 +6,12 @@
           <tiptap-vuetify
             :key="$vuetify.lang.current"
             ref="editor"
-            v-model="profileBio"
+            v-model="bio"
             :extensions="extensions"
             class="w-full mx-auto"
           />
-          <p v-show="$v.profileBio.$error" class="vuelidate-error ml-6 mt-3">
-            you must write an profile
+          <p v-show="$v.bio.$error" class="vuelidate-error ml-6 mt-3">
+            {{ $t('error.onboarding.profileBio') }}
           </p>
         </div>
       </template>
@@ -52,19 +52,23 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    profileBio: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
       extensions: [History, Bold, Underline, Italic, ListItem, BulletList, OrderedList],
-      profileBio: '',
+      bio: this.profileBio || '',
     };
   },
   computed: {},
   watch: {
-    profileBio: function (newVal) {
+    bio: function (newVal) {
       const isEmpty = newVal == '<p></p>';
       if (isEmpty) {
-        this.profileBio = '';
+        this.bio = '';
       }
     },
   },
@@ -75,12 +79,12 @@ export default Vue.extend({
     emitStepForward(): void {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        EventBus.$emit('step-forward', { value: this.profileBio, emittedValueName: 'profileBio' });
+        EventBus.$emit('step-forward', { value: this.bio, emittedValueName: 'profileBio' });
       }
     },
   },
   validations: {
-    profileBio: {
+    bio: {
       required,
     },
   },

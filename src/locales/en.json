@@ -78,7 +78,8 @@
       "contactMethodId": "You must input a {contactMethod} id.",
       "teacherLicenseUpload": "You need to upload an image or pdf or your teaching license.",
       "teacherIntroductionVideoUpload": "You need to upload an introduction video.",
-      "teacherPriceData": "You must input an hourly rate."
+      "teacherPriceData": "You must input an hourly rate.",
+      "profileBio": "You must write a self-introduction."
     },
     "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
   },
@@ -154,7 +155,8 @@
       "lastOnline": "Last online {date}",
       "alsoSpeaks": "Also speaks",
       "viewCalendar": "VIEW CALENDAR",
-      "hideCalendar": "HIDE CALENDAR"
+      "hideCalendar": "HIDE CALENDAR",
+      "edit": "Profile Picture"
     },
     "teacher": {
       "manabuVerified": "Manabu Verified Teacher since {date}",

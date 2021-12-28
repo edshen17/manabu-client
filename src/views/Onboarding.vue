@@ -43,6 +43,7 @@
         })
       "
       :contact-method-name="contactMethodName"
+      :contact-method-id="contactMethodId"
     />
     <profile-image-step
       v-if="stepIndex == 8"
@@ -53,6 +54,7 @@
       v-if="stepIndex == 9"
       :step-title="$t('onboarding.userProfile.bio')"
       emitted-value-name="profileBio"
+      :profile-bio="profileBio"
     />
     <teacher-type-step
       v-show="stepIndex == 10"
@@ -131,7 +133,7 @@ export default Vue.extend({
       teacherIntroductionVideoUrl: '',
       teacherHourlyRate: 0,
       stepIndex: 0,
-      stepTotal: 16,
+      stepTotal: 14,
     };
   },
   computed: {

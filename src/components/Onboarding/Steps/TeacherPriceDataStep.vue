@@ -6,6 +6,7 @@
           <template v-slot:activator="{ on, attrs }">
             <div v-bind="attrs" v-on="on">
               <currency-input
+                :key="isProTeacher"
                 v-model="teacherHourlyRate"
                 :options="{ currency, valueRange: { min: 0 } }"
                 :is-disabled="!isProTeacher"
@@ -50,6 +51,13 @@ export default Vue.extend({
     };
   },
   computed: {},
+  watch: {
+    isProTeacher: function (newVal) {
+      if (!newVal) {
+        this.teacherHourlyRate = 30;
+      }
+    },
+  },
   mounted() {
     return;
   },

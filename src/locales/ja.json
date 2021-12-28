@@ -64,10 +64,11 @@
       "overlapAvailableTime": "予約が重なることはできません。"
     },
     "onboarding": {
-      "contactMethodId": "{contactMethod}のIDを正しく入力して下さい。",
+      "contactMethodId": "{contactMethod}のIDを入力して下さい。",
       "teacherLicenseUpload": "画像やPDFをアップロードしてください。",
       "teacherIntroductionVideoUpload": "動画をアップロードしてください。",
-      "teacherPriceData": "時給を入力してください。"
+      "teacherPriceData": "希望の時給を入力してください。",
+      "profileBio": "自己紹介を書いてください。"
     },
     "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
   },
@@ -145,6 +146,38 @@
     "commTool": "コミュニケーションツール",
     "cancelReason": "アポイントメント拒否の理由",
     "appointment": "予約"
+  },
+  "userProfile": {
+    "common": {
+      "block": "Block",
+      "report": "Report",
+      "lastOnline": "Last online {date}",
+      "alsoSpeaks": "Also speaks",
+      "viewCalendar": "VIEW CALENDAR",
+      "hideCalendar": "HIDE CALENDAR",
+      "edit": "プロフィール画像"
+    },
+    "teacher": {
+      "manabuVerified": "Manabu Verified Teacher since {date}",
+      "appPending": "Teacher application pending",
+      "approveApp": "Approve application",
+      "viewLicense": "View professional license",
+      "lessonTypes": {
+        "mainichi": "Mainichi ({amount} lessons)",
+        "mainichiAlt": "Mainichi Plan",
+        "mainichiDesc": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 22 personalized lessons every month or about 5 lessons every week.",
+        "moderate": "Moderate ({amount} lessons)",
+        "moderateAlt": "Moderate Plan",
+        "moderateDesc": "This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.",
+        "light": "Light ({amount} lessons)",
+        "lightAlt": "Light Plan",
+        "lightDesc": "This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week."
+      },
+      "lessonDuration": "{duration} minutes",
+      "lessonPlans": "Lesson Plans",
+      "hourlyRate": "Lessons starting from ~{rate} {currency}/hour",
+      "bookNow": "BOOK NOW"
+    }
   },
   "dateFormat": {
     "dayHour": "DD ah:mm",

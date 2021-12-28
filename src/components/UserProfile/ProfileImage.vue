@@ -43,7 +43,7 @@
               <button class="mr-3 flex-none" @click="hideModal">
                 <i class="fas fa-arrow-left fa-sm"></i>
               </button>
-              <p class="flex-grow ml-6">Edit Profile Picture</p>
+              <p class="flex-grow ml-6">{{ $t('userProfile.common.edit') }}</p>
               <button
                 class="float-right flex-none rounded-full px-2 py-1"
                 style="background-color: #364f6b; color: #f5f5f5"
