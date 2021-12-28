@@ -248,7 +248,7 @@ export default Vue.extend({
       return async function (payload: EventBusPayload): Promise<void> {
         const { value, emittedValueName } = payload || {};
         if (value && emittedValueName) {
-          const finalValue = await value; // support promises
+          const finalValue = value;
           self.setData({ propertyName: emittedValueName, value: finalValue });
         }
         self.step('forward');

@@ -75,15 +75,13 @@ import Vue from 'vue';
 import ExtendedCropper from '../Cropper/ExtendedCropper.vue';
 import { Preview } from 'vue-advanced-cropper';
 import { StringKeyObject } from '../../../../server/types/custom';
-import { makeUserRepository } from '../../repositories/user';
-import { makeGoogleCloudStorageRepository } from '../../repositories/googleCloudStorage';
-
-const userRepository = makeUserRepository;
-const googleCloudStorageRepository = makeGoogleCloudStorageRepository;
+import { makeGoogleCloudStorageMixin } from '../../mixins/googleCloudStorage';
+const googleCloudStorageMixin = makeGoogleCloudStorageMixin;
 
 export default Vue.extend({
   name: 'ProfileImage',
   components: { ExtendedCropper, Preview },
+  mixins: [googleCloudStorageMixin],
   props: {
     userData: {
       type: Object,
@@ -159,18 +157,13 @@ export default Vue.extend({
         contentType: blobType,
       };
       const fileType = blob.type.split('/')[1];
-      const { downloadUrl } = await googleCloudStorageRepository.create({
+      const userId = this.userData._id;
+      (this as any).updateUserAfterUpload({
         file: blob,
         metaData,
-        cloudFilePath: `${this.userData._id}/images/profileImage.${fileType}`,
-      });
-      const { data } = await userRepository.updateById({
-        _id: this.userData._id,
-        updateParams: { profileImageUrl: downloadUrl },
-      });
-      const { user } = data;
-      this.$store.dispatch('user/setEntityStateData', {
-        ...user,
+        cloudFilePath: `${userId}/images/profileImage.${fileType}`,
+        userId,
+        updateParamName: 'profileImageUrl',
       });
     },
   },

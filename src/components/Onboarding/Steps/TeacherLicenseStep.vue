@@ -12,6 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { EventBus } from '../../EventBus/EventBus';
 import FileUploadLayout from '../Layouts/FileUploadLayout.vue';
 
 export default Vue.extend({

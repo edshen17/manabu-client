@@ -2,6 +2,12 @@ import { StringKeyObject } from '@server/types/custom';
 import { IS_PRODUCTION } from '../../../../server/constants';
 import { IRepository } from '../abstractions/IRepository';
 
+type GoogleCloudStorageRepositoryCreateParams = {
+  file: File | Blob;
+  metaData: { contentType: string };
+  cloudFilePath: string;
+};
+
 class GoogleCloudStorageRepository implements IRepository {
   private _client!: any;
 
@@ -25,11 +31,9 @@ class GoogleCloudStorageRepository implements IRepository {
     return this._throwNotImplementedError();
   };
 
-  public create = async (props: {
-    file: File | Blob;
-    metaData: { contentType: string };
-    cloudFilePath: string;
-  }): Promise<StringKeyObject> => {
+  public create = async (
+    props: GoogleCloudStorageRepositoryCreateParams
+  ): Promise<StringKeyObject> => {
     const { file, metaData, cloudFilePath } = props;
     const { firebaseStorage, uploadBytes, ref, getDownloadURL } = this._client;
     const finalFilePath = IS_PRODUCTION ? cloudFilePath : `dev-${cloudFilePath}`;
@@ -57,4 +61,4 @@ class GoogleCloudStorageRepository implements IRepository {
   };
 }
 
-export { GoogleCloudStorageRepository };
+export { GoogleCloudStorageRepository, GoogleCloudStorageRepositoryCreateParams };
