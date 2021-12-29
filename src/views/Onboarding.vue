@@ -1,7 +1,7 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    <language-name-step
+    <!-- <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
       :language-offerings="targetLanguageOfferings"
@@ -67,7 +67,8 @@
       :is-pro-teacher="isProTeacher"
     />
     <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" />
-    <teacher-price-data-step v-show="stepIndex == 13" :is-pro-teacher="isProTeacher" />
+    <teacher-price-data-step v-show="stepIndex == 13" :is-pro-teacher="isProTeacher" /> -->
+    <teacher-packages-step :user-data="userData" />
   </div>
 </template>
 
@@ -91,6 +92,7 @@ import TeacherLicenseStep from '../components/Onboarding/Steps/TeacherLicenseSte
 import TeacherIntroductionVideoStep from '../components/Onboarding/Steps/TeacherIntroductionVideoStep.vue';
 import TeacherPriceDataStep from '../components/Onboarding/Steps/TeacherPriceDataStep.vue';
 import { TEACHER_ENTITY_TYPE } from '../../../server/components/entities/teacher/teacherEntity';
+import TeacherPackagesStep from '../components/Onboarding/Steps/TeacherPackagesStep.vue';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -115,6 +117,7 @@ export default Vue.extend({
     TeacherLicenseStep,
     TeacherIntroductionVideoStep,
     TeacherPriceDataStep,
+    TeacherPackagesStep,
   },
   props: {},
   data() {

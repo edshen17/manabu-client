@@ -235,8 +235,8 @@ export default Vue.extend({
       } catch (err: any) {
         const hasErrorResponse = err.response;
         const httpStatusCode = hasErrorResponse ? err.response.status : undefined;
-        let apiErrorMsgLocale = 'error.userAuth.general';
-        if (httpStatusCode == StatusCodes.INTERNAL_SERVER_ERROR) {
+        let apiErrorMsgLocale = 'error.general';
+        if (httpStatusCode == StatusCodes.CONFLICT) {
           apiErrorMsgLocale = 'error.userAuth.login.emailExists';
         } else if (httpStatusCode == StatusCodes.UNAUTHORIZED) {
           apiErrorMsgLocale = 'error.userAuth.login.invalid';
