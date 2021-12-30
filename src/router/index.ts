@@ -52,7 +52,7 @@ const routes: Array<RouteConfig> = [
     path: '/onboarding',
     name: 'Onboarding',
     component: Onboarding,
-    // beforeEnter: loginProtectedRouterGuard.consume(),
+    beforeEnter: loginProtectedRouterGuard.consume(),
     meta: { requiresAuth: true },
   },
 ];

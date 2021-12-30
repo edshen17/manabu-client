@@ -20,8 +20,8 @@ export default Vue.extend({
       layout: 'div',
     };
   },
-  created() {
-    this.$store.dispatch('user/getEntityStateData');
+  async created() {
+    await this.$store.dispatch('user/getEntityStateData');
   },
 });
 </script>

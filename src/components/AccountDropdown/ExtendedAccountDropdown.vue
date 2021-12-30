@@ -3,9 +3,11 @@
     <button
       class="h-10 w-10 mx-4 relative z-10 block rounded-full overflow-hidden"
       :class="{
-        'outline-none ring-2 ring-pink-600 border-transparent': showDropdown,
+        'outline-none ring-2 ring-pink-600 border-transparent': showDropdown || isHovering,
       }"
       @click="toggleDropdown"
+      @mouseover="toggleHover"
+      @mouseleave="toggleHover"
     >
       <img class="h-full w-full object-cover" :src="userData.profileImageUrl" />
     </button>
@@ -41,6 +43,7 @@ export default Vue.extend({
   data() {
     return {
       showDropdown: false,
+      isHovering: false,
     };
   },
   computed: {
@@ -54,6 +57,9 @@ export default Vue.extend({
   methods: {
     toggleDropdown() {
       this.showDropdown = !this.showDropdown;
+    },
+    toggleHover() {
+      this.isHovering = !this.isHovering;
     },
     closeDropdown(event: any) {
       const itemClicked = event!.target.tagName.toLowerCase();

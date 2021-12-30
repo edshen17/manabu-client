@@ -55,8 +55,9 @@
       :step-title="$t('onboarding.userProfile.bio')"
       emitted-value-name="profileBio"
       :profile-bio="profileBio"
-    />
-    <teacher-type-step
+    /> -->
+    <!-- <div v-show="isTeacher"> -->
+    <!-- <teacher-type-step
       v-show="stepIndex == 10"
       :step-title="$t('onboarding.userProfile.teacherType')"
       emitted-value-name="teacherType"
@@ -69,6 +70,7 @@
     <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" />
     <teacher-price-data-step v-show="stepIndex == 13" :is-pro-teacher="isProTeacher" /> -->
     <teacher-packages-step :user-data="userData" />
+    <!-- </div> -->
   </div>
 </template>
 
@@ -91,8 +93,8 @@ import TeacherTypeStep from '../components/Onboarding/Steps/TeacherTypeStep.vue'
 import TeacherLicenseStep from '../components/Onboarding/Steps/TeacherLicenseStep.vue';
 import TeacherIntroductionVideoStep from '../components/Onboarding/Steps/TeacherIntroductionVideoStep.vue';
 import TeacherPriceDataStep from '../components/Onboarding/Steps/TeacherPriceDataStep.vue';
-import { TEACHER_ENTITY_TYPE } from '../../../server/components/entities/teacher/teacherEntity';
 import TeacherPackagesStep from '../components/Onboarding/Steps/TeacherPackagesStep.vue';
+import { TEACHER_ENTITY_TYPE } from '../../../server/components/entities/teacher/teacherEntity';
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -136,7 +138,6 @@ export default Vue.extend({
       teacherIntroductionVideoUrl: '',
       teacherHourlyRate: 0,
       stepIndex: 0,
-      stepTotal: 14,
     };
   },
   computed: {
@@ -144,6 +145,12 @@ export default Vue.extend({
       userData: 'user/entityStateData',
       isTeacher: 'user/isTeacher',
     }),
+    stepTotal: {
+      get(): number {
+        const stepTotal = !this.isTeacher ? 9 : 14;
+        return stepTotal;
+      },
+    },
     targetLanguageText: {
       get(): TranslateResult {
         let targetLanguageText = this.$t('onboarding.learningTargetLanguage');

@@ -21,7 +21,9 @@
     select {
         @apply w-full border-gray-300 rounded shadow-sm focus:border-gray-300 focus:ring-gray-300
     }
-    [type='checkbox'],
+    [type='checkbox'] {
+            @apply block border-2 border-gray-300 disabled:border-gray-200 rounded-md border-solid disabled:bg-gray-50  disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed;
+    },
     [type='radio'] {
         @apply rounded border-gray-300 focus:ring-gray-300;
     }

@@ -34,7 +34,9 @@ class UserModuleGetter extends AbstractModuleGetter<UserEntityStateData> {
       teacherPackages(state: GetterState): StringKeyObject[] {
         const isTeacher = 'teacherData' in state.entityStateData;
         if (isTeacher) {
-          return (state.entityStateData as JoinedUserDoc).teacherData!.packages;
+          return (state.entityStateData as JoinedUserDoc).teacherData!.packages.sort(
+            (a, b) => Number(a.isOffering) - Number(b.isOffering) || a.type.localeCompare(b.type)
+          );
         } else {
           return [];
         }
