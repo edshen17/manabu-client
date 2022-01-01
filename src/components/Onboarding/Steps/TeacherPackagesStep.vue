@@ -8,7 +8,7 @@
           padding-class="h-20v"
         >
           <template v-slot:main>
-            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 pt-2">
               <article
                 v-for="pkg in teacherPackages"
                 :key="pkg._id"
@@ -30,12 +30,13 @@
                       <h2
                         v-show="!isEditingPackage(pkg)"
                         class="
-                          text-2xl
+                          inline-block
+                          text-xl
+                          lg:text-2xl
                           font-semibold
                           text-gray-700
                           capitalize
                           py-1
-                          w-80
                           break-words
                         "
                         :class="{ 'hover:bg-gray-200 cursor-pointer': isCustomPackage(pkg) }"
@@ -45,33 +46,33 @@
                       >
                         {{ getPackageData(pkg._id).name }}
                       </h2>
-                      <input
-                        v-show="isCustomPackage(pkg) && isEditingPackage(pkg)"
-                        v-focus="isFocused({ _id: pkg._id, focusedInputName: 'packageName' })"
-                        name="packageName"
-                        type="text"
-                        class="form-border h-12"
-                        :value="getPackageData(pkg._id).name"
-                        @input="updatePackageName($event, pkg._id)"
-                        @focus="setFocusedInputName('packageName')"
-                      />
-                      <p
-                        v-show="showError({ _id: pkg._id, propertyName: 'name' })"
-                        class="vuelidate-error mt-2"
-                      >
-                        {{ $t('error.onboarding.package.name') }}
-                      </p>
                     </div>
                     <button
                       v-show="isCustomPackage(pkg) && !isEditingPackage(pkg)"
                       class="float-right"
                       @click="setEditingPackageId({ _id: pkg._id })"
                     >
-                      <i class="fas fa-edit text-2xl"></i>
+                      <i class="fas fa-edit text-xl lg:text-2xl"></i>
                     </button>
+                    <input
+                      v-show="isCustomPackage(pkg) && isEditingPackage(pkg)"
+                      v-focus="isFocused({ _id: pkg._id, focusedInputName: 'packageName' })"
+                      name="packageName"
+                      type="text"
+                      class="form-border h-12"
+                      :value="getPackageData(pkg._id).name"
+                      @input="updatePackageName($event, pkg._id)"
+                      @focus="setFocusedInputName('packageName')"
+                    />
+                    <p
+                      v-show="showError({ _id: pkg._id, propertyName: 'name' })"
+                      class="vuelidate-error mt-2"
+                    >
+                      {{ $t('error.onboarding.package.name') }}
+                    </p>
                   </div>
                   <div class="flex mt-5 space-x-2">
-                    <span class="text-xl font-light leading-relaxed text-gray-700">
+                    <span class="text-lg font-light leading-relaxed text-gray-700">
                       <p class="inline">{{ $t('onboarding.package.lessonAmount') }}</p>
                       <p
                         v-show="!isEditingPackage(pkg)"
@@ -111,7 +112,7 @@
                       $t('onboarding.package.isOffering')
                     }}</span>
                   </label>
-                  <p class="pt-4">{{ $t('onboarding.package.lessonDuration') }}</p>
+                  <p class="pt-4 text-lg">{{ $t('onboarding.package.lessonDuration') }}</p>
                   <label
                     v-for="lessonDuration in lessonDurations"
                     :key="lessonDuration"
@@ -222,10 +223,10 @@ export default Vue.extend({
         isOfferingPackage = isOfferingPackage || pkg.isOffering;
       }
       if (!hasPackageError && isOfferingPackage) {
-        //   EventBus.$emit('step-forward', {
-        //   value: this.teacherHourlyRate,
-        //   emittedValueName: 'teacherHourlyRate',
-        // });
+        EventBus.$emit('step-forward', {
+          value: this.packages,
+          emittedValueName: 'teacherPackages',
+        });
       } else if (!isOfferingPackage) {
         throw new Error('error.onboarding.package.isOffering');
       }

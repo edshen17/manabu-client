@@ -1,7 +1,7 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    <!-- <language-name-step
+    <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
       :language-offerings="targetLanguageOfferings"
@@ -55,22 +55,22 @@
       :step-title="$t('onboarding.userProfile.bio')"
       emitted-value-name="profileBio"
       :profile-bio="profileBio"
-    /> -->
-    <!-- <div v-show="isTeacher"> -->
-    <!-- <teacher-type-step
-      v-show="stepIndex == 10"
-      :step-title="$t('onboarding.userProfile.teacherType')"
-      emitted-value-name="teacherType"
     />
-    <teacher-license-step
-      v-show="stepIndex == 11"
-      :user-data="userData"
-      :is-pro-teacher="isProTeacher"
-    />
-    <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" />
-    <teacher-price-data-step v-show="stepIndex == 13" :is-pro-teacher="isProTeacher" /> -->
-    <teacher-packages-step :user-data="userData" />
-    <!-- </div> -->
+    <div v-show="isTeacher">
+      <teacher-type-step
+        v-show="stepIndex == 10"
+        :step-title="$t('onboarding.userProfile.teacherType')"
+        emitted-value-name="teacherType"
+      />
+      <teacher-license-step
+        v-show="stepIndex == 11"
+        :user-data="userData"
+        :is-pro-teacher="isProTeacher"
+      />
+      <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" />
+      <teacher-price-data-step v-show="stepIndex == 13" :is-pro-teacher="isProTeacher" />
+      <teacher-packages-step v-show="stepIndex == 14" :user-data="userData" />
+    </div>
   </div>
 </template>
 
@@ -137,6 +137,7 @@ export default Vue.extend({
       teacherLicenseUrl: '',
       teacherIntroductionVideoUrl: '',
       teacherHourlyRate: 0,
+      teacherPackages: [],
       stepIndex: 0,
     };
   },

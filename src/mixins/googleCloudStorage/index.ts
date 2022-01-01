@@ -14,12 +14,14 @@ const makeGoogleCloudStorageMixin: any = {
     updateUserAfterUpload: async function (
       props: GoogleCloudStorageRepositoryCreateParams & {
         userId: string;
+        teacherId?: string;
         updateParamName: string;
         repositoryName: REPOSITORY_NAME.USER | REPOSITORY_NAME.TEACHER;
       }
     ) {
       const self = this as any;
-      const { file, metaData, cloudFilePath, userId, updateParamName, repositoryName } = props;
+      const { file, metaData, cloudFilePath, userId, updateParamName, repositoryName, teacherId } =
+        props;
       const { downloadUrl } = await googleCloudStorageRepository.create({
         file,
         metaData,
@@ -28,10 +30,11 @@ const makeGoogleCloudStorageMixin: any = {
       });
       const updateParams: StringKeyObject = {};
       updateParams[updateParamName] = downloadUrl;
-      const repository =
-        repositoryName == REPOSITORY_NAME.USER ? userRepository : teacherRepository;
+      const isUserRepository = repositoryName == REPOSITORY_NAME.USER;
+      const repository = isUserRepository ? userRepository : teacherRepository;
+      const _id = isUserRepository ? userId : teacherId!;
       const { data } = await repository.updateById({
-        _id: userId,
+        _id,
         updateParams,
       });
       const { user } = data;

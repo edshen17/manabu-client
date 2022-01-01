@@ -133,11 +133,14 @@ export default Vue.extend({
         contentType: fileType,
       };
       const userId = this.userData._id;
+      const isTeacher = this.userData.teacherData;
+      const teacherId = isTeacher ? this.userData.teacherData._id : '';
       (this as any).updateUserAfterUpload({
         file: this.fileToUpload,
         metaData,
         cloudFilePath: `${this.cloudFilePath}.${fileType}`,
         userId,
+        teacherId,
         updateParamName: this.updateParamName,
         repositoryName: this.repositoryName,
       });
