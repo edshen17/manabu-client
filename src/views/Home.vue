@@ -121,7 +121,7 @@
                     mb-14
                   "
                 >
-                  <router-link to="/signup">{{ $t('homepage.signUpNow') }}</router-link>
+                  <router-link to="/signup">{{ $t('button.homepage.signUpNow') }}</router-link>
                 </button>
               </div>
             </div>

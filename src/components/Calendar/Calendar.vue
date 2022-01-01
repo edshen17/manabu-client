@@ -189,10 +189,10 @@
         </v-card-text>
         <v-card-actions v-show="!isSelectedEventSaved">
           <v-btn text color="secondary" class="m-0 animate-pulse" @click="saveEvent">
-            <span class="text-blue-600">{{ $t('calendar.save') }}</span>
+            <span class="text-blue-600">{{ $t('button.common.save') }}</span>
           </v-btn>
           <v-btn text color="secondary" @click="cancelEvent">
-            {{ $t('calendar.cancel') }}
+            {{ $t('button.common.cancel') }}
           </v-btn>
         </v-card-actions>
       </v-card>

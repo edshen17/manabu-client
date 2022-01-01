@@ -28,8 +28,7 @@
         "tools": "Eラーニング教材"
       }
     },
-    "beta": "Manabuを一緒に育てる『ベータテスター』になって、貴方の意見をレッスンやウェブサイトに反映してくれませんか？期間限定で、レッスンプランを購入された皆様に全てのプレミアム機能とこれから私たちがマーケットを拡大した際のサービスへの永久無料アクセスをご提供しております。みなさまのご応募を心よりお待ちしております。",
-    "signUpNow": "今すぐ登録！"
+    "beta": "Manabuを一緒に育てる『ベータテスター』になって、貴方の意見をレッスンやウェブサイトに反映してくれませんか？期間限定で、レッスンプランを購入された皆様に全てのプレミアム機能とこれから私たちがマーケットを拡大した際のサービスへの永久無料アクセスをご提供しております。みなさまのご応募を心よりお待ちしております。"
   },
   "userAuth": {
     "name": "お名前",
@@ -68,7 +67,13 @@
       "teacherLicenseUpload": "画像やPDFをアップロードしてください。",
       "teacherIntroductionVideoUpload": "動画をアップロードしてください。",
       "teacherPriceData": "希望の時給を入力してください。",
-      "profileBio": "自己紹介を書いてください。"
+      "profileBio": "自己紹介を書いてください。",
+      "package": {
+        "name": "パッケージの名前を入力してください。",
+        "lessonAmount": "レッスン回数を入力してください。",
+        "lessonDurations": "最低でも1つの継続時間が必要です。",
+        "isOffering": "最低でも1つのパッケージを提供しなければなりません。"
+      }
     },
     "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
   },
@@ -128,8 +133,12 @@
     "teacherIntroductionVideoUpload": "自己紹介の動画をアップロードしてください。",
     "teacherPriceData": "時給を設定ください。",
     "teacherPriceDataTooltip": "教員免許を持っている教師のみ時給を設定できます。",
-    "buttons": {
-      "next": "次へ"
+    "package": {
+      "title": "レッスンの設定を確認してください。",
+      "lessonAmount": "レッスン回数：",
+      "lessonDuration": "継続時間：",
+      "lessonDurations": "{lessonDuration}分",
+      "isOffering": "提供"
     },
     "region": "お住まいは？",
     "timezone": "タイムゾーンは？",
@@ -137,8 +146,6 @@
   },
   "calendar": {
     "today": "今日",
-    "save":"保存",
-    "cancel": "キャンセル",
     "day":"日",
     "week":"週",
     "availableTime": "都合がつく時間",
@@ -175,8 +182,7 @@
       },
       "lessonDuration": "{duration} minutes",
       "lessonPlans": "Lesson Plans",
-      "hourlyRate": "Lessons starting from ~{rate} {currency}/hour",
-      "bookNow": "BOOK NOW"
+      "hourlyRate": "Lessons starting from ~{rate} {currency}/hour"
     }
   },
   "dateFormat": {
@@ -190,6 +196,18 @@
     "ja": "日本語",
     "kr": "韓国語",
     "cn": "中国語"
+  },
+  "button": {
+    "common": {
+      "save": "保存",
+      "cancel": "キャンセル"
+    },
+    "onboarding": {
+      "next": "次へ"
+    },
+    "homepage": {
+      "signUpNow": "今すぐ登録！"
+    }
   },
 
 

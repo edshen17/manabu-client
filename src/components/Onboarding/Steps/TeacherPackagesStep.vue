@@ -3,7 +3,7 @@
     <template>
       <div data-app>
         <grid-button-layout
-          step-title="Please set up your lesson packages"
+          :step-title="$t('onboarding.package.title')"
           main-class="lg:w-11/12"
           padding-class="h-20v"
         >
@@ -59,7 +59,7 @@
                         v-show="showError({ _id: pkg._id, propertyName: 'name' })"
                         class="vuelidate-error mt-2"
                       >
-                        You need to input a package name.
+                        {{ $t('error.onboarding.package.name') }}
                       </p>
                     </div>
                     <button
@@ -72,7 +72,7 @@
                   </div>
                   <div class="flex mt-5 space-x-2">
                     <span class="text-xl font-light leading-relaxed text-gray-700">
-                      <p class="inline">Lesson Amount:</p>
+                      <p class="inline">{{ $t('onboarding.package.lessonAmount') }}</p>
                       <p
                         v-show="!isEditingPackage(pkg)"
                         class="inline px-1 py-1"
@@ -99,7 +99,7 @@
                     v-show="showError({ _id: pkg._id, propertyName: 'lessonAmount' })"
                     class="vuelidate-error mt-2"
                   >
-                    You must input a lesson amount
+                    {{ $t('error.onboarding.package.lessonAmount') }}
                   </p>
                   <label class="inline-flex items-center mt-2 mr-3">
                     <input
@@ -107,9 +107,11 @@
                       class="h-5 w-5 text-gray-600"
                       :checked="pkg.isOffering"
                       @change="updatePackageOffering($event, pkg._id)"
-                    /><span class="ml-2 text-gray-700 text-md">Offer</span>
+                    /><span class="ml-2 text-gray-700 text-md">{{
+                      $t('onboarding.package.isOffering')
+                    }}</span>
                   </label>
-                  <p class="pt-4">Duration:</p>
+                  <p class="pt-4">{{ $t('onboarding.package.lessonDuration') }}</p>
                   <label
                     v-for="lessonDuration in lessonDurations"
                     :key="lessonDuration"
@@ -121,20 +123,22 @@
                       :checked="pkg.lessonDurations.includes(lessonDuration)"
                       :value="lessonDuration"
                       @change="updatePackageDuration({ _id: pkg._id, lessonDuration })"
-                    /><span class="ml-2 text-gray-700 text-md">{{ lessonDuration }} minutes</span>
+                    /><span class="ml-2 text-gray-700 text-md">{{
+                      $t('onboarding.package.lessonDurations', { lessonDuration })
+                    }}</span>
                   </label>
                   <p
                     v-show="showError({ _id: pkg._id, propertyName: 'lessonDurations' })"
                     class="vuelidate-error my-2"
                   >
-                    Each package needs a duration
+                    {{ $t('error.onboarding.package.lessonDurations') }}
                   </p>
                   <div v-show="isEditingPackage(pkg)" class="flex justify-end mt-4">
                     <button
                       class="py-2 px-3 hover:bg-gray-200 animate-pulse text-blue-600"
-                      @click="setEditingPackageId({ _id: '' })"
+                      @click="savePackage(pkg._id)"
                     >
-                      Save
+                      {{ $t('button.common.save') }}
                     </button>
                   </div>
                 </div>
@@ -143,7 +147,7 @@
           </template>
           <template v-slot:button
             ><grid-button
-              :button-text="$t('onboarding.buttons.next')"
+              :button-text="$t('button.onboarding.next')"
               class="absolute bottom-10 md:block"
               @click="emitStepForward"
             />
@@ -163,6 +167,7 @@ import { StringKeyObject } from '../../../../../server/types/custom';
 import GridButton from '../Common/GridButton.vue';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 import { focus } from 'vue-focus';
+import { EventBus } from '../../EventBus/EventBus';
 
 type PackageFormData = Pick<
   PackageDoc,
@@ -181,9 +186,10 @@ export default Vue.extend({
   },
   data() {
     return {
-      packagesData: [] as PackageFormData[],
+      packages: [] as PackageFormData[],
       editingPackageId: '',
       focusedInputName: '',
+      packageErrors: {} as StringKeyObject,
     };
   },
   computed: {
@@ -207,13 +213,22 @@ export default Vue.extend({
   },
   methods: {
     emitStepForward(): void {
-      // if (this.teacherHourlyRate || this.teacherHourlyRate >= 0) {
-      //   EventBus.$emit('step-forward', {
-      //     value: this.teacherHourlyRate,
-      //     emittedValueName: 'teacherHourlyRate',
-      //   });
-      // }
-      // check at least one is offering..., else alert
+      let hasPackageError = false;
+      let isOfferingPackage = false;
+      for (const _id in this.packageErrors) {
+        hasPackageError = hasPackageError || this._hasPackageError(_id);
+      }
+      for (const pkg of this.packages) {
+        isOfferingPackage = isOfferingPackage || pkg.isOffering;
+      }
+      if (!hasPackageError && isOfferingPackage) {
+        //   EventBus.$emit('step-forward', {
+        //   value: this.teacherHourlyRate,
+        //   emittedValueName: 'teacherHourlyRate',
+        // });
+      } else if (!isOfferingPackage) {
+        throw new Error('error.onboarding.package.isOffering');
+      }
     },
     updatePackageDuration(props: { _id: string; lessonDuration: number }): void {
       const { _id, lessonDuration } = props;
@@ -227,12 +242,12 @@ export default Vue.extend({
       }
     },
     getPackageData(_id: string): PackageFormData {
-      let packageData = this._findPackage({ _id, packageArr: this.packagesData });
+      let packageData = this._findPackage({ _id, packageArr: this.packages });
       if (!packageData) {
         const teacherPackage = this._findPackage({ _id, packageArr: this.teacherPackages });
         const { isOffering, name, lessonAmount, lessonDurations } = teacherPackage;
         packageData = { _id, isOffering, name, lessonAmount, lessonDurations };
-        this.packagesData.push(packageData);
+        this.packages.push(packageData);
       }
       return packageData;
     },
@@ -259,7 +274,11 @@ export default Vue.extend({
       this._updatePackage(event, { _id, propertyName: 'name', eventTargetName: 'value' });
     },
     updatePackageAmount(event: any, _id: string): void {
-      this._updatePackage(event, { _id, propertyName: 'lessonAmount', eventTargetName: 'value' });
+      this._updatePackage(event, {
+        _id,
+        propertyName: 'lessonAmount',
+        eventTargetName: 'valueAsNumber',
+      });
     },
     setEditingPackageId(props: { _id: string; focusedInputName?: string }): void {
       const { _id, focusedInputName } = props;
@@ -282,14 +301,29 @@ export default Vue.extend({
       const isFocused = this.editingPackageId == _id && this.focusedInputName == focusedInputName;
       return isFocused;
     },
-    savePackage() {
-      this.setEditingPackageId({ _id: '' });
+    savePackage(_id: string) {
+      const hasPackageError = this._hasPackageError(_id);
+      if (!hasPackageError) {
+        this.setEditingPackageId({ _id: '' });
+      }
+    },
+    _hasPackageError(_id: string): boolean {
+      let hasPackageError = false;
+      for (const property in this.packageErrors[_id]) {
+        hasPackageError = hasPackageError || this.packageErrors[_id][property];
+      }
+      return hasPackageError;
     },
     showError(props: { _id: string; propertyName: string }): boolean {
       const { _id, propertyName } = props;
       const value = (this.getPackageData(_id) as StringKeyObject)[propertyName];
       const isArray = Array.isArray(value);
-      const showError = isArray ? value.length == 0 : !value;
+      const isEmptyArray = value.length == 0;
+      const showError = isArray ? isEmptyArray : !value;
+      if (!this.packageErrors[_id]) {
+        this.packageErrors[_id] = {};
+      }
+      this.packageErrors[_id][propertyName] = showError;
       return showError;
     },
   },

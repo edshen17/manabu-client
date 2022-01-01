@@ -29,8 +29,7 @@
         "tools": "E-learning Tools"
       }
     },
-    "beta": "As a special thanks to beta testers, if you sign up now and purchase a lesson plan you will receive permanent free access to ALL premium features we release in the future. Happy learning!",
-    "signUpNow": "Sign up now!"
+    "beta": "As a special thanks to beta testers, if you sign up now and purchase a lesson plan you will receive permanent free access to ALL premium features we release in the future. Happy learning!"
   },
   "userAuth": {
     "name": "Name",
@@ -79,7 +78,13 @@
       "teacherLicenseUpload": "You need to upload an image or pdf or your teaching license.",
       "teacherIntroductionVideoUpload": "You need to upload an introduction video.",
       "teacherPriceData": "You must input an hourly rate.",
-      "profileBio": "You must write a self-introduction."
+      "profileBio": "You must write a self-introduction.",
+      "package": {
+        "name": "You must input a package name.",
+        "lessonAmount": "You must input a lesson amount.",
+        "lessonDurations": "Each package needs at least 1 duration.",
+        "isOffering": "You must offer at least 1 package."
+      }
     },
     "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
   },
@@ -129,8 +134,12 @@
     "teacherIntroductionVideoUpload": "Please upload your self-introduction video.",
     "teacherPriceData": "Please set your hourly price.",
     "teacherPriceDataTooltip": "Only professional teachers can set their hourly prices.",
-    "buttons": {
-      "next": "Next"
+    "package": {
+      "title": "Please set up your lesson packages.",
+      "lessonAmount": "Lesson Amount:",
+      "lessonDuration": "Duration:",
+      "lessonDurations": "{lessonDuration} minutes",
+      "isOffering": "Offer"
     },
     "region": "I live in...",
     "timezone": "My timezone is...",
@@ -138,8 +147,6 @@
   },
   "calendar": {
     "today": "Today",
-    "save":"Save",
-    "cancel": "Cancel",
     "day":"Day",
     "week":"Week",
     "availableTime": "Available",
@@ -176,8 +183,7 @@
       },
       "lessonDuration": "{duration} minutes",
       "lessonPlans": "Lesson Plans",
-      "hourlyRate": "Lessons starting from ~{rate} {currency}/hour",
-      "bookNow": "BOOK NOW"
+      "hourlyRate": "Lessons starting from ~{rate} {currency}/hour"
     }
   },
   "dateFormat": {
@@ -191,6 +197,18 @@
     "ja": "Japanese",
     "kr": "Korean",
     "cn": "Chinese"
+  },
+  "button": {
+    "common": {
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "onboarding": {
+      "next": "Next"
+    },
+    "homepage": {
+      "signUpNow": "Sign up now!"
+    }
   },
 
 

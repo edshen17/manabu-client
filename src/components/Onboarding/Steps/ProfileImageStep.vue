@@ -6,7 +6,7 @@
       </template>
       <template v-slot:button>
         <grid-button
-          :button-text="$t('onboarding.buttons.next')"
+          :button-text="$t('button.onboarding.next')"
           class="absolute bottom-0"
           @click="emitStepForward"
         />
