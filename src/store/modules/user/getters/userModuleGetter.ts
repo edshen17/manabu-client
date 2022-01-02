@@ -7,20 +7,20 @@ import { GetterTree } from 'vuex';
 import { TEACHER_ENTITY_TYPE } from '../../../../../../server/components/entities/teacher/teacherEntity';
 import { UserEntityStateData } from '../state/userModuleState';
 
-type GetterState = IEntityState<UserEntityStateData>;
+type UserGetterState = IEntityState<UserEntityStateData>;
 
 class UserModuleGetter extends AbstractModuleGetter<UserEntityStateData> {
-  protected _getModuleGettersTemplate = (): GetterTree<GetterState, IRootState> => {
+  protected _getModuleGettersTemplate = (): GetterTree<UserGetterState, IRootState> => {
     const extendedModuleGetters = {
-      isLoggedIn(state: GetterState): boolean {
+      isLoggedIn(state: UserGetterState): boolean {
         const isLoggedIn = '_id' in state.entityStateData;
         return isLoggedIn;
       },
-      isTeacher(state: GetterState): boolean {
+      isTeacher(state: UserGetterState): boolean {
         const isTeacher = 'teacherData' in state.entityStateData;
         return isTeacher;
       },
-      isProTeacher(state: GetterState): boolean {
+      isProTeacher(state: UserGetterState): boolean {
         const isTeacher = 'teacherData' in state.entityStateData; //this.isTeacher throws an error...
         let isProTeacher = false;
         if (isTeacher) {
@@ -31,21 +31,35 @@ class UserModuleGetter extends AbstractModuleGetter<UserEntityStateData> {
         }
         return isProTeacher;
       },
-      teacherPackages(state: GetterState): StringKeyObject[] {
+      isFinishedOnboarding(state: UserGetterState): boolean {
+        const userData = state.entityStateData;
+        let isFinishedOnboarding = false;
+        if ('_id' in userData) {
+          const { profileBio, languages, region, timezone } = userData;
+          isFinishedOnboarding =
+            profileBio!.length > 0 &&
+            languages.length > 0 &&
+            region!.length > 0 &&
+            timezone!.length > 0;
+        }
+        return isFinishedOnboarding;
+      },
+      teacherPackages(state: UserGetterState): StringKeyObject[] {
         const isTeacher = 'teacherData' in state.entityStateData;
         if (isTeacher) {
           return (state.entityStateData as JoinedUserDoc).teacherData!.packages.sort(
+            // sort by isOffering, then by type
             (a, b) => Number(a.isOffering) - Number(b.isOffering) || a.type.localeCompare(b.type)
           );
         } else {
           return [];
         }
       },
-      locale(state: GetterState): string {
+      locale(state: UserGetterState): string {
         const locale = state.entityStateData.settings.locale!;
         return locale;
       },
-      currency(state: GetterState): string {
+      currency(state: UserGetterState): string {
         const currency = state.entityStateData.settings.currency!;
         return currency;
       },

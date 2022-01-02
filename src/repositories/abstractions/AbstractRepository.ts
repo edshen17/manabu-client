@@ -45,13 +45,17 @@ abstract class AbstractRepository implements IRepository {
     updateParams: StringKeyObject;
   }): Promise<StringKeyObject> => {
     const { _id, updateParams } = props;
-    return await this._client.patch(`${this._resourcePath}/${_id}`, this._removeId(updateParams));
+    this._removeId(updateParams);
+    return await this._client.patch(`${this._resourcePath}/${_id}`, updateParams);
   };
 
   private _removeId = (obj: StringKeyObject): void => {
     for (const prop in obj) {
-      if (prop === '_id') delete obj[prop];
-      else if (typeof obj[prop] === 'object') this._removeId(obj[prop]);
+      if (prop === '_id') {
+        delete obj[prop];
+      } else if (typeof obj[prop] === 'object') {
+        this._removeId(obj[prop]);
+      }
     }
   };
 

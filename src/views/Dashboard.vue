@@ -11,7 +11,7 @@ import Calendar from '../components/Calendar/Calendar.vue';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 
 export default Vue.extend({
-  name: '',
+  name: 'Dashboard',
   components: {
     Calendar,
   },
@@ -22,10 +22,14 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       userData: 'user/entityStateData',
+      isFinishedOnboarding: 'user/isFinishedOnboarding',
     }),
   },
   created() {
     this.$emit('update:layout', LayoutDefault);
+    if (!this.isFinishedOnboarding) {
+      this.$router.push('/onboarding');
+    }
   },
   methods: {},
 });

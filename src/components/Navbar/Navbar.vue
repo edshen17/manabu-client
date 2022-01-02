@@ -84,7 +84,6 @@ type RouterLink = {
   title: TranslateResult;
   path: string;
   isShowing: boolean;
-  children?: RouterLink[];
 };
 
 export default Vue.extend({
@@ -140,15 +139,8 @@ export default Vue.extend({
           },
           {
             title: this.$t('nav.settings'),
-            path: '/settings',
+            path: '/onboarding',
             isShowing: this.isLoggedIn,
-            children: [
-              {
-                title: this.$t('nav.logout'),
-                path: '/logout',
-                isShowing: this.isLoggedIn,
-              },
-            ],
           },
           {
             title: this.$t('nav.logout'),
