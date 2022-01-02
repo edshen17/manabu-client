@@ -71,6 +71,7 @@
       <teacher-price-data-step v-show="stepIndex == 13" :is-pro-teacher="isProTeacher" />
       <teacher-packages-step v-show="stepIndex == 14" :user-data="userData" />
     </div>
+    <async-loader v-show="isFinishedOnboarding" :progress-percent="uploadProgress" />
   </div>
 </template>
 
@@ -101,6 +102,7 @@ import { DEFAULT_CURRENCY } from '../../../server/constants';
 import { StringKeyObject } from '../../../server/types/custom';
 import { makePackageRepository } from '../repositories/package';
 import { PACKAGE_ENTITY_TYPE } from '../../../server/components/entities/package/packageEntity';
+import AsyncLoader from '../components/Onboarding/Steps/AsyncLoader.vue';
 
 const updateUserByIdMixin = makeUpdateUserByIdMixin;
 const packageRepository = makePackageRepository;
@@ -129,6 +131,7 @@ export default Vue.extend({
     TeacherIntroductionVideoStep,
     TeacherPriceDataStep,
     TeacherPackagesStep,
+    AsyncLoader,
   },
   mixins: [updateUserByIdMixin],
   props: {},
@@ -147,6 +150,7 @@ export default Vue.extend({
       teacherHourlyRate: 0,
       teacherPackages: [] as StringKeyObject[],
       stepIndex: 0,
+      uploadProgress: 0,
     };
   },
   computed: {
@@ -255,13 +259,22 @@ export default Vue.extend({
         return isProTeacher;
       },
     },
+    isFinishedOnboarding: {
+      get(): boolean {
+        const isFinishedOnboarding = this.stepTotal == this.stepIndex;
+        return isFinishedOnboarding;
+      },
+    },
   },
   watch: {
-    stepIndex: async function (stepValue): Promise<void> {
-      if (this.stepTotal == stepValue) {
+    stepIndex: async function (): Promise<void> {
+      if (this.isFinishedOnboarding) {
+        this.uploadProgress += 50;
         await this.updateUserData();
         if (this.isTeacher) {
           await this.updateTeacherData();
+        } else {
+          this.uploadProgress += 50;
         }
         this.$router.push('/dashboard');
       }
@@ -345,6 +358,7 @@ export default Vue.extend({
         },
         repositoryName: REPOSITORY_NAME.TEACHER,
       });
+      this.uploadProgress += 25;
       await this.updatePackageData();
     },
     async updatePackageData(): Promise<void> {
@@ -365,6 +379,7 @@ export default Vue.extend({
         });
         promiseArr.push(promise);
       }
+      this.uploadProgress += 25;
       await Promise.all(promiseArr);
     },
   },

@@ -142,7 +142,8 @@
     },
     "region": "お住まいは？",
     "timezone": "タイムゾーンは？",
-    "comingSoon": "近日公開！"
+    "comingSoon": "近日公開！",
+    "loading": "ロード中..."
   },
   "calendar": {
     "today": "今日",

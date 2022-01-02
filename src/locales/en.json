@@ -143,7 +143,8 @@
     },
     "region": "I live in...",
     "timezone": "My timezone is...",
-    "comingSoon": "Coming soon!"
+    "comingSoon": "Coming soon!",
+    "loading": "Loading..."
   },
   "calendar": {
     "today": "Today",
