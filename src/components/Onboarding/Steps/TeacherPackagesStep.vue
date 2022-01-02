@@ -172,7 +172,7 @@ import { EventBus } from '../../EventBus/EventBus';
 
 type PackageFormData = Pick<
   PackageDoc,
-  '_id' | 'isOffering' | 'name' | 'lessonAmount' | 'lessonDurations'
+  '_id' | 'isOffering' | 'name' | 'lessonAmount' | 'lessonDurations' | 'type'
 >;
 
 export default Vue.extend({
@@ -246,8 +246,8 @@ export default Vue.extend({
       let packageData = this._findPackage({ _id, packageArr: this.packages });
       if (!packageData) {
         const teacherPackage = this._findPackage({ _id, packageArr: this.teacherPackages });
-        const { isOffering, name, lessonAmount, lessonDurations } = teacherPackage;
-        packageData = { _id, isOffering, name, lessonAmount, lessonDurations };
+        const { isOffering, name, lessonAmount, lessonDurations, type } = teacherPackage;
+        packageData = { _id, isOffering, name, lessonAmount, lessonDurations, type };
         this.packages.push(packageData);
       }
       return packageData;

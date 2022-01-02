@@ -95,6 +95,15 @@ import TeacherIntroductionVideoStep from '../components/Onboarding/Steps/Teacher
 import TeacherPriceDataStep from '../components/Onboarding/Steps/TeacherPriceDataStep.vue';
 import TeacherPackagesStep from '../components/Onboarding/Steps/TeacherPackagesStep.vue';
 import { TEACHER_ENTITY_TYPE } from '../../../server/components/entities/teacher/teacherEntity';
+import { makeUpdateUserByIdMixin } from '../mixins/updateUserById';
+import { REPOSITORY_NAME } from '../repositories/abstractions/IRepository';
+import { DEFAULT_CURRENCY } from '../../../server/constants';
+import { StringKeyObject } from '../../../server/types/custom';
+import { makePackageRepository } from '../repositories/package';
+import { PACKAGE_ENTITY_TYPE } from '../../../server/components/entities/package/packageEntity';
+
+const updateUserByIdMixin = makeUpdateUserByIdMixin;
+const packageRepository = makePackageRepository;
 
 type LanguageOfferings = {
   name: TranslateResult;
@@ -121,6 +130,7 @@ export default Vue.extend({
     TeacherPriceDataStep,
     TeacherPackagesStep,
   },
+  mixins: [updateUserByIdMixin],
   props: {},
   data() {
     return {
@@ -134,10 +144,8 @@ export default Vue.extend({
       contactMethodId: '',
       profileBio: '',
       teacherType: '',
-      teacherLicenseUrl: '',
-      teacherIntroductionVideoUrl: '',
       teacherHourlyRate: 0,
-      teacherPackages: [],
+      teacherPackages: [] as StringKeyObject[],
       stepIndex: 0,
     };
   },
@@ -148,7 +156,7 @@ export default Vue.extend({
     }),
     stepTotal: {
       get(): number {
-        const stepTotal = !this.isTeacher ? 9 : 14;
+        const stepTotal = !this.isTeacher ? 10 : 15;
         return stepTotal;
       },
     },
@@ -248,6 +256,17 @@ export default Vue.extend({
       },
     },
   },
+  watch: {
+    stepIndex: async function (stepValue): Promise<void> {
+      if (this.stepTotal == stepValue) {
+        await this.updateUserData();
+        if (this.isTeacher) {
+          await this.updateTeacherData();
+        }
+        this.$router.push('/dashboard');
+      }
+    },
+  },
   mounted() {
     EventBus.$on('step-forward', this.handleStepForward());
     EventBus.$on('step-backward', this.handleStepBackward());
@@ -283,6 +302,70 @@ export default Vue.extend({
       const progressPercent = (this.stepIndex / this.stepTotal) * 100;
       const progressBar = this.$refs.progressBar as any;
       progressBar.setProgressPercent(progressPercent);
+    },
+    async updateUserData(): Promise<void> {
+      await (this as any).updateUserById({
+        userId: this.userData._id,
+        updateParams: {
+          contactMethods: [
+            {
+              methodName: this.contactMethodId,
+              methodAddress: this.contactMethodName,
+              isPrimaryMethod: true,
+              methodType: 'online',
+            },
+          ],
+          languages: [
+            { language: this.targetLanguageCode, level: this.targetLanguageLevel },
+            { language: this.nonTargetLanguageCode, level: this.nonTargetLanguageLevel },
+          ],
+          profileBio: this.profileBio,
+          region: this.region,
+          timezone: this.timezone,
+        },
+        repositoryName: REPOSITORY_NAME.USER,
+      });
+    },
+    async updateTeacherData(): Promise<void> {
+      await (this as any).updateUserById({
+        userId: this.userData._id,
+        teacherId: this.userData.teacherData._id,
+        updateParams: {
+          teachingLanguages: [
+            { language: this.targetLanguageCode, level: this.targetLanguageLevel },
+          ],
+          alsoSpeaks: [
+            { language: this.nonTargetLanguageCode, level: this.nonTargetLanguageLevel },
+          ],
+          type: this.teacherType,
+          priceData: {
+            hourlyRate: this.teacherHourlyRate,
+            currency: DEFAULT_CURRENCY,
+          },
+        },
+        repositoryName: REPOSITORY_NAME.TEACHER,
+      });
+      await this.updatePackageData();
+    },
+    async updatePackageData(): Promise<void> {
+      const promiseArr = [];
+      for (const pkg of this.teacherPackages) {
+        const { _id, name, isOffering, lessonAmount, lessonDurations, type } = pkg;
+        const updateParams: StringKeyObject = {
+          isOffering,
+          lessonDurations,
+        };
+        if (type == PACKAGE_ENTITY_TYPE.CUSTOM) {
+          updateParams.name = name;
+          updateParams.lessonAmount = lessonAmount;
+        }
+        const promise = packageRepository.updateById({
+          _id,
+          updateParams,
+        });
+        promiseArr.push(promise);
+      }
+      await Promise.all(promiseArr);
     },
   },
 });
