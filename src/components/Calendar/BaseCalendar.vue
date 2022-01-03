@@ -43,14 +43,23 @@
       ref="calendar"
       v-model="calendarFocusDate"
       style="overflow: hidden"
-      class="w-screen h-screen text-white"
+      :class="calendarClass"
       :type="calendarView"
       :locale="locale"
       :events="events"
       color="primary"
       event-text-color="white"
+      @mousedown:event="onMouseDownEvent"
+      @mousedown:time="onMouseDownTime"
+      @mousemove:time="onMouseMoveTime"
+      @mouseup:time="onMouseUpTime"
+      @mouseup:event="onMouseUpEvent"
+      @mouseleave.native="onMouseLeaveNative"
       @click:date="focusDate({ date: today, calendarView: 'day' })"
     >
+      <template v-slot:event="{ event, timed }">
+        <slot name="event" :event="event" :timed="timed" />
+      </template>
       <template v-slot:day-body="{ date, week }">
         <div
           class="v-current-time"
@@ -59,6 +68,7 @@
         ></div>
       </template>
     </v-calendar>
+    <slot name="menu" />
   </div>
 </template>
 
@@ -74,13 +84,18 @@ enum CALENDAR_VIEW {
 }
 
 export default Vue.extend({
-  name: '',
+  name: 'BaseCalendar',
   components: {},
   props: {
     events: {
       default: () => [],
       required: false,
       type: Array,
+    },
+    calendarClass: {
+      default: 'w-screen h-screen text-white',
+      required: false,
+      type: String,
     },
   },
   data() {
@@ -170,6 +185,24 @@ export default Vue.extend({
         hour: dayjs().hour(),
         minute: dayjs().minute(),
       };
+    },
+    onMouseDownEvent({ event, timed }: any): void {
+      this.$emit('mousedown:event', { event, timed });
+    },
+    onMouseDownTime(tms: StringKeyObject): void {
+      this.$emit('mousedown:time', tms);
+    },
+    onMouseMoveTime(tms: StringKeyObject): void {
+      this.$emit('mousemove:time', tms);
+    },
+    onMouseUpTime(): void {
+      this.$emit('mouseup:time');
+    },
+    onMouseUpEvent({ nativeEvent, event }: any): void {
+      this.$emit('mouseup:event', { nativeEvent, event });
+    },
+    onMouseLeaveNative(): void {
+      this.$emit('mouseleave.native');
     },
   },
 });

@@ -1,22 +1,22 @@
 <template>
   <div>
     <!-- <calendar :user-id="userData._id" /> -->
-    <base-calendar />
+    <edit-calendar />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import BaseCalendar from '../components/Calendar/BaseCalendar.vue';
 import Calendar from '../components/Calendar/Calendar.vue';
+import EditCalendar from '../components/Calendar/EditCalendar.vue';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 
 export default Vue.extend({
   name: 'Dashboard',
   components: {
     Calendar,
-    BaseCalendar,
+    EditCalendar,
   },
   props: {},
   data() {
