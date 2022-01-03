@@ -49,6 +49,7 @@
       :events="events"
       color="primary"
       event-text-color="white"
+      @change="onChange"
       @mousedown:event="onMouseDownEvent"
       @mousedown:time="onMouseDownTime"
       @mousemove:time="onMouseMoveTime"
@@ -56,6 +57,7 @@
       @mouseup:event="onMouseUpEvent"
       @mouseleave.native="onMouseLeaveNative"
       @click:date="focusDate({ date: today, calendarView: 'day' })"
+      @click:event="onClickEvent"
     >
       <template v-slot:event="{ event, timed }">
         <slot name="event" :event="event" :timed="timed" />
@@ -82,6 +84,11 @@ enum CALENDAR_VIEW {
   DAY = 'day',
   WEEK = 'week',
 }
+
+type EventParams = {
+  nativeEvent: StringKeyObject;
+  event: StringKeyObject;
+};
 
 export default Vue.extend({
   name: 'BaseCalendar',
@@ -186,7 +193,10 @@ export default Vue.extend({
         minute: dayjs().minute(),
       };
     },
-    onMouseDownEvent({ event, timed }: any): void {
+    onChange({ start, end }: { start: StringKeyObject; end: StringKeyObject }): void {
+      this.$emit('change', { start, end });
+    },
+    onMouseDownEvent({ event, timed }: { event: StringKeyObject; timed: boolean }): void {
       this.$emit('mousedown:event', { event, timed });
     },
     onMouseDownTime(tms: StringKeyObject): void {
@@ -198,11 +208,14 @@ export default Vue.extend({
     onMouseUpTime(): void {
       this.$emit('mouseup:time');
     },
-    onMouseUpEvent({ nativeEvent, event }: any): void {
+    onMouseUpEvent({ nativeEvent, event }: EventParams): void {
       this.$emit('mouseup:event', { nativeEvent, event });
     },
     onMouseLeaveNative(): void {
       this.$emit('mouseleave.native');
+    },
+    onClickEvent({ nativeEvent, event }: EventParams): void {
+      this.$emit('click:event', { nativeEvent, event });
     },
   },
 });

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <calendar :user-id="userData._id" /> -->
-    <edit-calendar />
+    <edit-calendar :user-id="userData._id" />
   </div>
 </template>
 
@@ -30,9 +30,9 @@ export default Vue.extend({
   },
   created() {
     this.$emit('update:layout', LayoutDefault);
-    if (!this.isFinishedOnboarding) {
-      this.$router.push('/onboarding');
-    }
+    // if (!this.isFinishedOnboarding) {
+    //   this.$router.push('/onboarding');
+    // }
   },
   methods: {},
 });

@@ -2,10 +2,13 @@
   <div>
     <base-calendar
       :events="events"
+      @change="getEvents"
       @mousedown:event="onMouseDownEvent"
       @mousedown:time="onMouseDownTime"
       @mousemove:time="onMouseMoveTime"
       @mouseup:time="onMouseUpTime"
+      @mouseup:event="onMouseUpEvent"
+      @click:event="onMouseUpEvent"
       @mouseleave.native="onMouseLeaveNative"
     >
       <template v-slot:event="{ event, timed }">
@@ -13,17 +16,12 @@
           <div class="v-event-draggable">
             {{ event }}
             {{ timed }}
-            <!-- <span>
-              {{ getEventTitle(event) }}
-            </span>
-            <br />
-            <span
-              >{{ formatDate({ date: event.start, dateFormat: 'hour' }) }} -
-              {{ formatDate({ date: event.end, dateFormat: 'hour' }) }}</span
-            > -->
           </div>
           <div v-if="timed" class="v-event-drag-bottom" @mousedown.stop="extendBottom(event)"></div>
         </div>
+      </template>
+      <template v-slot:menu>
+        <event-editor :show-event-editor="showEventEditor" :event-editor-coord="eventEditorCoord" />
       </template>
     </base-calendar>
   </div>
@@ -33,26 +31,43 @@
 import Vue from 'vue';
 import { StringKeyObject } from '../../../../server/types/custom';
 import BaseCalendar from './BaseCalendar.vue';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { makeAvailableTimeRepository } from '../../repositories/availableTime/index';
+import { AvailableTimeDoc } from '../../../../server/models/AvailableTime';
+import EventEditor from './EventEditor.vue';
+
+const availableTimeRepository = makeAvailableTimeRepository;
+
+enum EVENT_COLOR {
+  AVAILABLE_TIME = '#3F51B5',
+}
 
 export default Vue.extend({
   name: 'EditCalendar',
-  components: { BaseCalendar },
+  components: { BaseCalendar, EventEditor },
   props: {
-    // prop: {
-    //   type: String,
-    //   default: '',
-    //   required: true,
-    // },
+    userId: {
+      type: String,
+      default: '',
+      required: true,
+    },
   },
   data() {
     return {
       events: [] as StringKeyObject[],
-      dragTime: null as any,
-      dragEvent: null as any,
-      dragStart: null as any,
-      createEvent: null as any,
-      createStart: null as any,
-      extendOriginal: null as any,
+      dragTime: null as number | null,
+      dragEvent: null as null | StringKeyObject,
+      dragStart: null as null | number,
+      createEvent: null as null | StringKeyObject,
+      createStart: null as null | number,
+      extendOriginal: null as null | number,
+      showEventEditor: false,
+      selectedEvent: {} as StringKeyObject,
+      eventEditorCoord: {
+        x: 0,
+        y: 0,
+      },
     };
   },
   computed: {
@@ -65,10 +80,57 @@ export default Vue.extend({
   mounted() {
     return;
   },
-  // created() {
-  //   this.$emit('update:layout', LayoutDefault);
-  // },
   methods: {
+    async getEvents({
+      start,
+      end,
+    }: {
+      start: StringKeyObject;
+      end: StringKeyObject;
+    }): Promise<void> {
+      const availableTimes = await this.getAvailableTimes({ start, end });
+      for (const availableTime of availableTimes) {
+        const isExistingEvent = this.events.some((event) => {
+          return event.attributes._id == availableTime._id;
+        });
+        if (!isExistingEvent) {
+          const event = {
+            color: EVENT_COLOR.AVAILABLE_TIME,
+            start: dayjs(availableTime.startDate).unix() * 1000,
+            end: dayjs(availableTime.endDate).unix() * 1000,
+            timed: true,
+            attributes: {
+              _id: availableTime._id,
+              creationStatus: 'saved',
+              type: 'availableTime',
+              originalEvent: {
+                start: dayjs(availableTime.startDate).unix() * 1000,
+                end: dayjs(availableTime.endDate).unix() * 1000,
+              },
+            },
+          };
+          this.events.push(event);
+        }
+      }
+    },
+    async getAvailableTimes({
+      start,
+      end,
+    }: {
+      start: StringKeyObject;
+      end: StringKeyObject;
+    }): Promise<AvailableTimeDoc[]> {
+      const { data } = await availableTimeRepository.getById({
+        _id: this.userId,
+        customResourcePath: `/users/${this.userId}/availableTimes`,
+        query: {
+          startDate: dayjs(start.date, 'YYYY-MM-DD').toString(),
+          endDate: dayjs(end.date, 'YYYY-MM-DD').add(1, 'day').toString(),
+        },
+      });
+      const { availableTimes } = data;
+      return availableTimes;
+    },
     onMouseDownEvent({ event, timed }: { event: StringKeyObject; timed: StringKeyObject }): void {
       if (event && timed) {
         this.dragEvent = event;
@@ -86,12 +148,26 @@ export default Vue.extend({
         this.createEvent = {
           name: `Event #${this.events.length}`,
           color: '#2196F3',
-          start: this.createStart,
-          end: this.createStart,
+          start: dayjs(this.createStart).toDate(),
+          end: dayjs(this.createStart).add(60, 'minutes').toDate(),
           timed: true,
         };
         this.events.push(this.createEvent);
       }
+    },
+    onMouseUpEvent({
+      event,
+      nativeEvent,
+    }: {
+      event: StringKeyObject;
+      nativeEvent: StringKeyObject;
+    }): void {
+      this.eventEditorCoord.x = nativeEvent.clientX;
+      this.eventEditorCoord.y = nativeEvent.clientY;
+      this.selectedEvent = event;
+      this.$nextTick(() => {
+        this.showEventEditor = true;
+      });
     },
     extendBottom(event: StringKeyObject): void {
       const { start, end } = event;
