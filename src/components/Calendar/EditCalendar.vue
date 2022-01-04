@@ -220,15 +220,21 @@ export default Vue.extend({
         const newStartTime = mouse - this.dragTime;
         const newStart = this.roundTime(newStartTime);
         const newEnd = newStart + duration;
-        this.dragEvent.start = newStart;
-        this.dragEvent.end = newEnd;
+        const isSameDay = dayjs(newStart).date() == dayjs(newEnd).date();
+        if (isSameDay) {
+          this.dragEvent.start = newStart;
+          this.dragEvent.end = newEnd;
+        }
         this._showEventEditor(false);
       } else if (this.createEvent && this.createStart !== null) {
         const mouseRounded = this.roundTime(mouse, false);
         const min = Math.min(mouseRounded, this.createStart);
         const max = Math.max(mouseRounded, this.createStart);
-        this.createEvent.start = min;
-        this.createEvent.end = max;
+        const isSameDay = dayjs(min).date() == dayjs(max).date();
+        if (isSameDay) {
+          this.createEvent.start = min;
+          this.createEvent.end = max;
+        }
         this._showEventEditor(false);
       }
     },
