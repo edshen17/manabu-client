@@ -8,20 +8,37 @@
       @mousemove:time="onMouseMoveTime"
       @mouseup:time="onMouseUpTime"
       @mouseup:event="onMouseUpEvent"
-      @click:event="onMouseUpEvent"
       @mouseleave.native="onMouseLeaveNative"
+      @click:event="onMouseUpEvent"
+      @touchstart:event="onMouseDownEvent"
+      @touchend:time="onMouseUpTime"
+      @touchend:event="onMouseUpEvent"
     >
       <template v-slot:event="{ event, timed }">
-        <div>
+        <div :class="{ 'opacity-60': isPast(event.start) }">
           <div class="v-event-draggable">
-            {{ event }}
-            {{ timed }}
+            <span>
+              {{ getEventTitle(event) }}
+            </span>
+            <br />
+            <span
+              >{{ formatDate({ date: event.start, dateFormat: 'hour' }) }} -
+              {{ formatDate({ date: event.end, dateFormat: 'hour' }) }}</span
+            >
           </div>
-          <div v-if="timed" class="v-event-drag-bottom" @mousedown.stop="extendBottom(event)"></div>
+          <div
+            v-if="timed"
+            :class="{ 'v-event-drag-bottom': !isMobile }"
+            @mousedown.stop="extendBottom(event)"
+          ></div>
         </div>
       </template>
       <template v-slot:menu>
-        <event-editor :show-event-editor="showEventEditor" :event-editor-coord="eventEditorCoord" />
+        <event-editor
+          :show-event-editor="showEventEditor"
+          :event-editor-coord="eventEditorCoord"
+          :selected-event="selectedEvent"
+        />
       </template>
     </base-calendar>
   </div>
@@ -32,12 +49,15 @@ import Vue from 'vue';
 import { StringKeyObject } from '../../../../server/types/custom';
 import BaseCalendar from './BaseCalendar.vue';
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { makeAvailableTimeRepository } from '../../repositories/availableTime/index';
 import { AvailableTimeDoc } from '../../../../server/models/AvailableTime';
 import EventEditor from './EventEditor.vue';
+import { EVENT_TYPE, EVENT_CREATION_STATUS } from '../../types/Calendar';
+import { makeCalendarMixin } from '../../mixins/calendar';
+import cryptoRandomString from 'crypto-random-string';
 
 const availableTimeRepository = makeAvailableTimeRepository;
+const calendarMixin = makeCalendarMixin;
 
 enum EVENT_COLOR {
   AVAILABLE_TIME = '#3F51B5',
@@ -46,6 +66,7 @@ enum EVENT_COLOR {
 export default Vue.extend({
   name: 'EditCalendar',
   components: { BaseCalendar, EventEditor },
+  mixins: [calendarMixin],
   props: {
     userId: {
       type: String,
@@ -101,8 +122,8 @@ export default Vue.extend({
             timed: true,
             attributes: {
               _id: availableTime._id,
-              creationStatus: 'saved',
-              type: 'availableTime',
+              creationStatus: EVENT_CREATION_STATUS.SAVED,
+              type: EVENT_TYPE.AVAILABLE_TIME,
               originalEvent: {
                 start: dayjs(availableTime.startDate).unix() * 1000,
                 end: dayjs(availableTime.endDate).unix() * 1000,
@@ -144,16 +165,32 @@ export default Vue.extend({
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
       } else {
+        this._deletePendingEvents();
         this.createStart = this.roundTime(mouse);
+        const start = dayjs(this.createStart).toDate();
+        const end = dayjs(this.createStart).add(60, 'minutes').toDate();
         this.createEvent = {
-          name: `Event #${this.events.length}`,
-          color: '#2196F3',
-          start: dayjs(this.createStart).toDate(),
-          end: dayjs(this.createStart).add(60, 'minutes').toDate(),
+          color: EVENT_COLOR.AVAILABLE_TIME,
+          start,
+          end,
           timed: true,
+          attributes: {
+            id: cryptoRandomString({ length: 20 }),
+            creationStatus: EVENT_CREATION_STATUS.PENDING,
+            type: EVENT_TYPE.AVAILABLE_TIME,
+            originalEvent: {
+              start,
+              end,
+            },
+          },
         };
         this.events.push(this.createEvent);
       }
+    },
+    _deletePendingEvents(): void {
+      this.events = this.events.filter((event) => {
+        return event.attributes.creationStatus != 'pending';
+      });
     },
     onMouseUpEvent({
       event,
@@ -165,9 +202,7 @@ export default Vue.extend({
       this.eventEditorCoord.x = nativeEvent.clientX;
       this.eventEditorCoord.y = nativeEvent.clientY;
       this.selectedEvent = event;
-      this.$nextTick(() => {
-        this.showEventEditor = true;
-      });
+      this._showEventEditor(true);
     },
     extendBottom(event: StringKeyObject): void {
       const { start, end } = event;
@@ -186,12 +221,14 @@ export default Vue.extend({
         const newEnd = newStart + duration;
         this.dragEvent.start = newStart;
         this.dragEvent.end = newEnd;
+        this._showEventEditor(false);
       } else if (this.createEvent && this.createStart !== null) {
         const mouseRounded = this.roundTime(mouse, false);
         const min = Math.min(mouseRounded, this.createStart);
         const max = Math.max(mouseRounded, this.createStart);
         this.createEvent.start = min;
         this.createEvent.end = max;
+        this._showEventEditor(false);
       }
     },
     onMouseUpTime(): void {
@@ -200,6 +237,7 @@ export default Vue.extend({
       this.createEvent = null;
       this.createStart = null;
       this.extendOriginal = null;
+      this._showEventEditor(true);
     },
     onMouseLeaveNative(): void {
       if (this.createEvent) {
@@ -225,9 +263,16 @@ export default Vue.extend({
     convertToMs(tms: StringKeyObject): number {
       return new Date(tms.year, tms.month - 1, tms.day, tms.hour, tms.minute).getTime();
     },
+    _showEventEditor(showEventEditor: boolean): void {
+      this.showEventEditor = false;
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => (this.showEventEditor = showEventEditor))
+      );
+    },
   },
 });
 </script>
+
 <style lang="scss" scoped>
 @import '../../assets/scss/calendar.scss';
 </style>

@@ -4,7 +4,7 @@
       <v-toolbar flat>
         <v-btn
           outlined
-          class="mx-4"
+          class="lg:mx-4"
           color="grey darken-2"
           @click="focusDate({ date: today, calendarView })"
         >
@@ -16,7 +16,7 @@
         <v-btn fab text small color="grey darken-2" @click="moveCalendar('forward')">
           <v-icon small> mdi-chevron-right </v-icon>
         </v-btn>
-        <v-toolbar-title v-if="$refs.calendar && !isMobile" class="mx-4">
+        <v-toolbar-title v-if="$refs.calendar" class="lg:mx-4">
           {{ $refs.calendar.title }}
         </v-toolbar-title>
         <v-menu bottom right>
@@ -58,6 +58,11 @@
       @mouseleave.native="onMouseLeaveNative"
       @click:date="focusDate({ date: today, calendarView: 'day' })"
       @click:event="onClickEvent"
+      @touchstart:event="onTouchStartEvent"
+      @touchstart:time="onTouchStartTime"
+      @touchmove:time="onTouchMoveTime"
+      @touchend:time="onTouchEndTime"
+      @touchend:event="onTouchEndEvent"
     >
       <template v-slot:event="{ event, timed }">
         <slot name="event" :event="event" :timed="timed" />
@@ -181,11 +186,13 @@ export default Vue.extend({
     focusDate({ date, calendarView }: { date: string; calendarView: CALENDAR_VIEW }): void {
       this.calendarFocusDate = date;
       this.calendarView = calendarView;
+      this.$emit('toolbar:click');
     },
     moveCalendar(direction: 'backward' | 'forward'): void {
       const isMovingForward = direction == 'forward';
       const calendar = this.$refs.calendar as any;
       isMovingForward ? calendar.next() : calendar.prev();
+      this.$emit('toolbar:click');
     },
     setCurrentTime(): void {
       this.currentTime = {
@@ -216,6 +223,21 @@ export default Vue.extend({
     },
     onClickEvent({ nativeEvent, event }: EventParams): void {
       this.$emit('click:event', { nativeEvent, event });
+    },
+    onTouchStartEvent({ nativeEvent, event }: EventParams): void {
+      this.$emit('touchstart:event', { nativeEvent, event });
+    },
+    onTouchMoveTime(tms: StringKeyObject): void {
+      this.$emit('touchstart:time', tms);
+    },
+    onTouchStartTime(tms: StringKeyObject): void {
+      this.$emit('touchmove:time', tms);
+    },
+    onTouchEndTime(tms: StringKeyObject): void {
+      this.$emit('touchend:time', tms);
+    },
+    onTouchEndEvent({ nativeEvent, event }: EventParams): void {
+      this.$emit('touchend:event', { nativeEvent, event });
     },
   },
 });
