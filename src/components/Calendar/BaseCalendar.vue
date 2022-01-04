@@ -75,7 +75,6 @@
         ></div>
       </template>
     </v-calendar>
-    <slot name="menu" />
   </div>
 </template>
 

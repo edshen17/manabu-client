@@ -15,30 +15,31 @@
       @touchend:event="onMouseUpEvent"
     >
       <template v-slot:event="{ event, timed }">
-        <div :class="{ 'opacity-60': isPast(event.start) }">
-          <div class="v-event-draggable">
-            <span>
-              {{ getEventTitle(event) }}
-            </span>
-            <br />
-            <span
-              >{{ formatDate({ date: event.start, dateFormat: 'hour' }) }} -
-              {{ formatDate({ date: event.end, dateFormat: 'hour' }) }}</span
-            >
-          </div>
-          <div
-            v-if="timed"
-            :class="{ 'v-event-drag-bottom': !isMobile }"
-            @mousedown.stop="extendBottom(event)"
-          ></div>
-        </div>
-      </template>
-      <template v-slot:menu>
         <event-editor
           :show-event-editor="showEventEditor"
           :event-editor-coord="eventEditorCoord"
           :selected-event="selectedEvent"
-        />
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
+              <div class="v-event-draggable">
+                <span>
+                  {{ getEventTitle(event) }}
+                </span>
+                <br />
+                <span
+                  >{{ formatDate({ date: event.start, dateFormat: 'hour' }) }} -
+                  {{ formatDate({ date: event.end, dateFormat: 'hour' }) }}</span
+                >
+              </div>
+              <div
+                v-if="timed"
+                :class="{ 'v-event-drag-bottom': !isMobile }"
+                @mousedown.stop="extendBottom(event)"
+              ></div>
+            </div>
+          </template>
+        </event-editor>
       </template>
     </base-calendar>
   </div>

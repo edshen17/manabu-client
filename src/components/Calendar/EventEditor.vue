@@ -2,9 +2,6 @@
   <div data-app>
     <v-menu
       v-model="showEventEditor"
-      :position-x="eventEditorCoord.x"
-      :position-y="eventEditorCoord.y"
-      absolute
       :offset-y="isMobile"
       :close-on-content-click="false"
       :close-on-click="false"
@@ -12,6 +9,9 @@
       :left="showMenuOnLeft"
       offset-x
     >
+      <template v-slot:activator="{ on, attrs }">
+        <slot name="activator" :on="on" :attrs="attrs" />
+      </template>
       <v-card color="grey lighten-4" flat>
         <v-card-text>
           <div class="flex">
