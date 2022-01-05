@@ -61,6 +61,7 @@ import EventEditor from './EventEditor.vue';
 import { EVENT_TYPE, EVENT_CREATION_STATUS } from '../../types/Calendar';
 import { makeCalendarMixin } from '../../mixins/calendar';
 import cryptoRandomString from 'crypto-random-string';
+import cloneDeep from 'clone-deep';
 
 const availableTimeRepository = makeAvailableTimeRepository;
 const calendarMixin = makeCalendarMixin;
@@ -68,6 +69,22 @@ const calendarMixin = makeCalendarMixin;
 enum EVENT_COLOR {
   AVAILABLE_TIME = '#3F51B5',
 }
+
+type EventObject = {
+  color: EVENT_COLOR;
+  start: number;
+  end: number;
+  timed: boolean;
+  attributes: {
+    _id: string;
+    creationStatus: EVENT_CREATION_STATUS;
+    type: EVENT_TYPE;
+    originalEvent: {
+      start: number;
+      end: number;
+    };
+  };
+};
 
 export default Vue.extend({
   name: 'EditCalendar',
@@ -82,11 +99,11 @@ export default Vue.extend({
   },
   data() {
     return {
-      events: [] as StringKeyObject[],
+      events: [] as EventObject[],
       dragTime: null as number | null,
       dragEvent: null as null | StringKeyObject,
       dragStart: null as null | number,
-      createEvent: null as null | StringKeyObject,
+      createEvent: null as null | EventObject,
       createStart: null as null | number,
       extendOriginal: null as null | number,
       showEventEditor: false,
@@ -130,8 +147,8 @@ export default Vue.extend({
           return event.attributes._id == availableTime._id;
         });
         if (!isExistingEvent) {
-          const start = dayjs(availableTime.startDate).toDate();
-          const end = dayjs(availableTime.endDate).toDate();
+          const start = this._convertToUnixMs(availableTime.startDate);
+          const end = this._convertToUnixMs(availableTime.endDate);
           const event = {
             color: EVENT_COLOR.AVAILABLE_TIME,
             start,
@@ -169,6 +186,9 @@ export default Vue.extend({
       const { availableTimes } = data;
       return availableTimes;
     },
+    _convertToUnixMs(date: Date | string | number): number {
+      return dayjs(date).unix() * 1000;
+    },
     onMouseDownEvent({ event, timed }: { event: StringKeyObject; timed: StringKeyObject }): void {
       if (event && timed) {
         this.dragEvent = event;
@@ -184,8 +204,8 @@ export default Vue.extend({
       } else {
         this._deletePendingEvents();
         this.createStart = this.roundTime(mouse);
-        const start = dayjs(this.createStart).toDate();
-        const end = dayjs(this.createStart).add(60, 'minutes').toDate();
+        const start = this._convertToUnixMs(this.createStart);
+        const end = this._convertToUnixMs(dayjs(this.createStart).add(60, 'minutes').toDate());
         this.createEvent = {
           color: EVENT_COLOR.AVAILABLE_TIME,
           start,
@@ -201,6 +221,7 @@ export default Vue.extend({
             },
           },
         };
+        this.selectedEvent = this.createEvent;
         this.events.push(this.createEvent);
       }
     },
@@ -223,11 +244,9 @@ export default Vue.extend({
     },
     _showEventEditor(showEventEditor: boolean): void {
       this.showEventEditor = false;
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => (this.showEventEditor = showEventEditor))
-      );
+      requestAnimationFrame(() => (this.showEventEditor = showEventEditor));
     },
-    extendBottom(event: StringKeyObject): void {
+    extendBottom(event: EventObject): void {
       const { start, end } = event;
       this.createEvent = event;
       this.createStart = start;
@@ -302,15 +321,22 @@ export default Vue.extend({
     async saveEvent(): Promise<void> {
       const start = this.selectedEvent.start;
       const end = this.selectedEvent.end;
-      this._showEventEditor(false);
+      const originalEventBeforeSave = cloneDeep(this.selectedEvent.attributes.originalEvent);
       this.selectedEvent.attributes.originalEvent = {
         start,
         end,
       };
-      if (!this.isSelectedEventSaved) {
-        await this._saveAvailableTime({ start, end });
-      } else {
-        await this._updateAvailableTime({ start, end });
+      this._showEventEditor(false);
+      try {
+        if (!this.isSelectedEventSaved) {
+          this.selectedEvent.attributes.creationStatus = EVENT_CREATION_STATUS.SAVED;
+          await this._saveAvailableTime({ start, end });
+        } else {
+          await this._updateAvailableTime({ start, end });
+        }
+      } catch (err) {
+        this._undoSaveEvent(originalEventBeforeSave);
+        throw err;
       }
     },
     async _saveAvailableTime(props: { start: number; end: number }): Promise<void> {
@@ -324,7 +350,6 @@ export default Vue.extend({
         payload,
         query: {},
       });
-      this.selectedEvent.attributes.creationStatus = 'saved';
       this.selectedEvent.attributes._id = data.availableTime._id;
     },
     async _updateAvailableTime(props: { start: Date; end: Date }) {
@@ -336,6 +361,9 @@ export default Vue.extend({
           endDate: dayjs(end).toDate(),
         },
       });
+    },
+    _undoSaveEvent(originalEventBeforeSave: StringKeyObject) {
+      this.selectedEvent.attributes.originalEvent = originalEventBeforeSave;
     },
     async cancelEvent(): Promise<void> {
       const eventId = this.selectedEvent.attributes._id;
