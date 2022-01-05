@@ -27,7 +27,6 @@
           <div class="flex flex-wrap content-start">
             <v-menu
               v-model="showDatePicker"
-              transition="slide-x-transition"
               :close-on-content-click="false"
               :nudge-right="40"
               offset-y
@@ -39,10 +38,19 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  date
+                  {{
+                    formatDate({ date: selectedEvent.start, dateFormat: DATE_FORMAT.ABRIDGED_DATE })
+                  }}
                 </button>
               </template>
-              <v-date-picker no-title scrollable></v-date-picker>
+              <v-date-picker
+                v-model="datePickerDate"
+                no-title
+                scrollable
+                :locale="locale"
+                @input="showDatePicker = false"
+                @change="onDatePickerChange"
+              ></v-date-picker>
             </v-menu>
             <p class="mx-1 py-1 text-lg font-bold">⋅</p>
             <button class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2">date</button>
@@ -81,6 +89,7 @@ import { StringKeyObject } from '../../../../server/types/custom';
 import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandler';
 import { EVENT_TYPE } from '../../types/Calendar';
 import { makeCalendarMixin } from '../../mixins/calendar';
+import { mapGetters } from 'vuex';
 
 const dateFormatHandler = makeDateFormatHandler;
 const calendarMixin = makeCalendarMixin;
@@ -119,9 +128,13 @@ export default Vue.extend({
   data() {
     return {
       showDatePicker: false,
+      datePickerDate: new Date().toISOString().substr(0, 10),
     };
   },
   computed: {
+    ...mapGetters({
+      locale: 'user/locale',
+    }),
     menuWidth: {
       get(): string {
         const menuWidth = '350px';
@@ -172,6 +185,9 @@ export default Vue.extend({
         formatString: dateFormatString,
       });
       return formattedDate;
+    },
+    onDatePickerChange(): void {
+      this.$emit('date-picker:change', this.datePickerDate);
     },
   },
 });

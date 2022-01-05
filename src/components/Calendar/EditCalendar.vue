@@ -2,6 +2,7 @@
   <div>
     <base-calendar
       :events="events"
+      :calendarFocusDate="calendarFocusDate"
       @change="getEvents"
       @mousedown:event="onMouseDownEvent"
       @mousedown:time="onMouseDownTime"
@@ -13,6 +14,7 @@
       @touchstart:event="onMouseDownEvent"
       @touchend:time="onMouseUpTime"
       @touchend:event="onMouseUpEvent"
+      @update:calendar-focus-date="onCalendarFocusDateUpdate"
     >
       <template v-slot:event="{ event, timed }">
         <event-editor
@@ -24,6 +26,7 @@
           @event:save="saveEvent"
           @event:cancel="cancelEvent"
           @event:delete="deleteEvent({ eventId: selectedEvent.attributes._id, deleteFromDb: true })"
+          @date-picker:change="onDatePickerChange"
         >
           <template v-slot:activator="{ on, attrs }">
             <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
@@ -33,8 +36,8 @@
                 </span>
                 <br />
                 <span
-                  >{{ formatDate({ date: event.start, dateFormat: 'hour' }) }} -
-                  {{ formatDate({ date: event.end, dateFormat: 'hour' }) }}</span
+                  >{{ formatDate({ date: event.start, dateFormat: DATE_FORMAT.HOUR }) }} -
+                  {{ formatDate({ date: event.end, dateFormat: DATE_FORMAT.HOUR }) }}</span
                 >
               </div>
               <div
@@ -112,6 +115,7 @@ export default Vue.extend({
         x: 0,
         y: 0,
       },
+      calendarFocusDate: '',
     };
   },
   computed: {
@@ -384,6 +388,32 @@ export default Vue.extend({
         return event.attributes._id != eventId;
       });
       this._showEventEditor(false);
+    },
+    onDatePickerChange(value: string): void {
+      const selectedEventStart = dayjs(this.selectedEvent.start);
+      const selectedEventEnd = dayjs(this.selectedEvent.end);
+      const newStartTime = dayjs(value)
+        .hour(selectedEventStart.hour())
+        .minute(selectedEventStart.minute())
+        .toDate();
+      const newEndTime = dayjs(value)
+        .hour(selectedEventEnd.hour())
+        .minute(selectedEventEnd.minute())
+        .toDate();
+      this._updateSelectedEvent({ field: 'start', value: this._convertToUnixMs(newStartTime) });
+      this._updateSelectedEvent({ field: 'end', value: this._convertToUnixMs(newEndTime) });
+      this.calendarFocusDate = (this as any).formatDate({
+        date: this.selectedEvent.start,
+        formatString: 'YYYY-MM-DD',
+      });
+    },
+    _updateSelectedEvent(props: { field: string; value: unknown }): void {
+      const { field, value } = props;
+      this.selectedEvent[field] = value;
+      // this._showSelectedEventPopup(true);
+    },
+    onCalendarFocusDateUpdate(value: string): void {
+      this.calendarFocusDate = value;
     },
   },
   errorCaptured(err: StringKeyObject): boolean {

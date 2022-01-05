@@ -41,7 +41,7 @@
     </v-sheet>
     <v-calendar
       ref="calendar"
-      v-model="calendarFocusDate"
+      v-model="calendarFocusDateModel"
       style="overflow: hidden"
       :class="calendarClass"
       :type="calendarView"
@@ -108,11 +108,15 @@ export default Vue.extend({
       required: false,
       type: String,
     },
+    calendarFocusDate: {
+      default: '',
+      required: false,
+      type: String,
+    },
   },
   data() {
     return {
       calendarView: CALENDAR_VIEW.WEEK,
-      calendarFocusDate: '',
       isCalendarReady: false,
       currentTime: {
         hour: 0,
@@ -155,7 +159,18 @@ export default Vue.extend({
     },
     nowY: {
       get(): string {
-        return this.calendarRef ? this.calendarRef.timeToY(this.currentTime) + 'px' : '-10px';
+        return this.calendarRef
+          ? (this as any).calendarRef.timeToY(this.currentTime) + 'px'
+          : '-10px';
+      },
+    },
+    calendarFocusDateModel: {
+      get(): string {
+        const calendarFocusDate = this.calendarFocusDate;
+        return calendarFocusDate;
+      },
+      set(value) {
+        this.$emit('update:calendar-focus-date', value);
       },
     },
   },
@@ -183,7 +198,7 @@ export default Vue.extend({
       isMobile ? (this.calendarView = CALENDAR_VIEW.DAY) : (this.calendarView = CALENDAR_VIEW.WEEK);
     },
     focusDate({ date, calendarView }: { date: string; calendarView: CALENDAR_VIEW }): void {
-      this.calendarFocusDate = date;
+      this.calendarFocusDateModel = date;
       this.calendarView = calendarView;
       this.$emit('toolbar:click');
     },

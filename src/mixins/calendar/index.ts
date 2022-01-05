@@ -6,7 +6,19 @@ import { TranslateResult } from 'vue-i18n';
 
 const dateFormatHandler = makeDateFormatHandler;
 
+enum DATE_FORMAT {
+  DAY_HOUR = 'dayHour',
+  HOUR = 'hour',
+  HOUR_WITH_DURATION = 'hourWithDuration',
+  ABRIDGED_DATE = 'abridgedDate',
+}
+
 const makeCalendarMixin = {
+  data() {
+    return {
+      DATE_FORMAT: DATE_FORMAT,
+    };
+  },
   methods: {
     getEventTitle(event: StringKeyObject): TranslateResult {
       const self: any = this;
