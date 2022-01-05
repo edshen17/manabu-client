@@ -24,17 +24,20 @@
               <i class="fas fa-trash-alt text-lg"></i>
             </button>
           </div>
-          <div class="flex flex-wrap content-start">
+          <div
+            class="flex flex-wrap content-start text-gray-500"
+            :class="{ 'hover:bg-gray-100': !activeEditorName }"
+          >
             <v-menu
-              v-model="showDatePicker"
+              v-model="showDatePickerMenu"
               :close-on-content-click="false"
-              :nudge-right="40"
               offset-y
               min-width="auto"
+              @input="onDatePickerMenuInput"
             >
               <template v-slot:activator="{ on, attrs }">
                 <button
-                  class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2"
+                  :class="getDateEditorButtonClass(EDITOR_NAME.DATE_PICKER)"
                   v-bind="attrs"
                   v-on="on"
                 >
@@ -48,24 +51,16 @@
                 no-title
                 scrollable
                 :locale="locale"
-                @input="showDatePicker = false"
                 @change="onDatePickerChange"
               ></v-date-picker>
             </v-menu>
             <p class="mx-1 py-1 text-lg font-bold">⋅</p>
-            <button class="inline cursor-pointer hover:bg-gray-100 opacity-90 py-2">date</button>
+            <button :class="getDateEditorButtonClass(EDITOR_NAME.START)">
+              {{ formatDate({ date: selectedEvent.start, dateFormat: DATE_FORMAT.HOUR }) }}
+            </button>
             <p class="mx-1 py-1 text-lg font-thin">-</p>
-            <button
-              class="
-                inline
-                cursor-pointer
-                hover:bg-gray-100
-                focus:border-red-300 focus:ring-red-300
-                py-2
-                mr-3
-              "
-            >
-              date
+            <button :class="getDateEditorButtonClass(EDITOR_NAME.END)">
+              {{ formatDate({ date: selectedEvent.end, dateFormat: DATE_FORMAT.HOUR }) }}
             </button>
           </div>
         </v-card-text>
@@ -93,6 +88,13 @@ import { mapGetters } from 'vuex';
 
 const dateFormatHandler = makeDateFormatHandler;
 const calendarMixin = makeCalendarMixin;
+
+enum EDITOR_NAME {
+  DATE_PICKER = 'datePicker',
+  START = 'start',
+  END = 'end',
+  DEFAULT = '',
+}
 
 export default Vue.extend({
   name: 'EventEditor',
@@ -127,8 +129,10 @@ export default Vue.extend({
   },
   data() {
     return {
-      showDatePicker: false,
+      showDatePickerMenu: false,
       datePickerDate: new Date().toISOString().substr(0, 10),
+      EDITOR_NAME,
+      activeEditorName: '',
     };
   },
   computed: {
@@ -186,8 +190,19 @@ export default Vue.extend({
       });
       return formattedDate;
     },
+    onDatePickerMenuInput(value: boolean): void {
+      this.activeEditorName = value ? EDITOR_NAME.DATE_PICKER : EDITOR_NAME.DEFAULT;
+    },
     onDatePickerChange(): void {
       this.$emit('date-picker:change', this.datePickerDate);
+    },
+    getDateEditorButtonClass(editorName: EDITOR_NAME): StringKeyObject {
+      const dateEditorButtonClass = {
+        'hover:bg-gray-100': this.activeEditorName,
+        'inline cursor-pointer hover:underline py-2': !this.activeEditorName,
+        'bg-gray-100 px-2': this.activeEditorName == editorName,
+      };
+      return dateEditorButtonClass;
     },
   },
 });

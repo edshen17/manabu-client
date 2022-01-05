@@ -16,7 +16,7 @@ enum DATE_FORMAT {
 const makeCalendarMixin = {
   data() {
     return {
-      DATE_FORMAT: DATE_FORMAT,
+      DATE_FORMAT,
     };
   },
   methods: {
