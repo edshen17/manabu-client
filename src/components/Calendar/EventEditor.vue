@@ -1,7 +1,7 @@
 <template>
   <div data-app>
     <v-menu
-      v-model="showEventEditor"
+      v-model="showEventEditorModel"
       :offset-y="isMobile"
       :close-on-content-click="false"
       :close-on-click="false"
@@ -20,7 +20,7 @@
                 {{ getEventTitle(selectedEvent) }}
               </p>
             </div>
-            <button class="float-right" @click="$emit('event:delete')">
+            <button v-if="isSelectedEventSaved" class="float-right" @click="$emit('event:delete')">
               <i class="fas fa-trash-alt text-lg"></i>
             </button>
           </div>
@@ -105,6 +105,16 @@ export default Vue.extend({
       default: () => ({}),
       required: true,
     },
+    eventId: {
+      type: String,
+      default: '',
+      required: true,
+    },
+    isSelectedEventSaved: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   data() {
     return {
@@ -114,7 +124,7 @@ export default Vue.extend({
   computed: {
     menuWidth: {
       get(): string {
-        const menuWidth = (this as any).isMobile ? '340px' : '400px';
+        const menuWidth = '350px';
         return menuWidth;
       },
     },
@@ -123,6 +133,16 @@ export default Vue.extend({
         const windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
         const showMenuOnLeft = this.eventEditorCoord.x > windowWidth / 2;
         return showMenuOnLeft;
+      },
+    },
+    showEventEditorModel: {
+      get(): boolean {
+        const showEventEditorModel =
+          this.showEventEditor && this.eventId == this.selectedEvent.attributes._id;
+        return showEventEditorModel;
+      },
+      set(value: boolean): void {
+        this.$emit('show-event-editor:change', value);
       },
     },
   },

@@ -16,9 +16,14 @@
     >
       <template v-slot:event="{ event, timed }">
         <event-editor
+          :event-id="event.attributes._id"
           :show-event-editor="showEventEditor"
           :event-editor-coord="eventEditorCoord"
           :selected-event="selectedEvent"
+          :is-selected-event-saved="isSelectedEventSaved"
+          @event:save="saveEvent"
+          @event:cancel="cancelEvent"
+          @event:delete="deleteEvent({ eventId: selectedEvent.attributes._id, deleteFromDb: true })"
         >
           <template v-slot:activator="{ on, attrs }">
             <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
@@ -93,11 +98,20 @@ export default Vue.extend({
     };
   },
   computed: {
-    // prop: {
-    //   get(): any {
-    //     return;
-    //   },
-    // },
+    isSelectedEventSaved: {
+      get(): boolean {
+        const { attributes, start, end } = this.selectedEvent;
+        let isSelectedEventSaved = false;
+        if (attributes) {
+          const { creationStatus, originalEvent } = attributes;
+          isSelectedEventSaved =
+            creationStatus == EVENT_CREATION_STATUS.SAVED &&
+            start == originalEvent.start &&
+            end == originalEvent.end;
+        }
+        return isSelectedEventSaved;
+      },
+    },
   },
   mounted() {
     return;
@@ -116,18 +130,20 @@ export default Vue.extend({
           return event.attributes._id == availableTime._id;
         });
         if (!isExistingEvent) {
+          const start = dayjs(availableTime.startDate).toDate();
+          const end = dayjs(availableTime.endDate).toDate();
           const event = {
             color: EVENT_COLOR.AVAILABLE_TIME,
-            start: dayjs(availableTime.startDate).unix() * 1000,
-            end: dayjs(availableTime.endDate).unix() * 1000,
+            start,
+            end,
             timed: true,
             attributes: {
               _id: availableTime._id,
               creationStatus: EVENT_CREATION_STATUS.SAVED,
               type: EVENT_TYPE.AVAILABLE_TIME,
               originalEvent: {
-                start: dayjs(availableTime.startDate).unix() * 1000,
-                end: dayjs(availableTime.endDate).unix() * 1000,
+                start,
+                end,
               },
             },
           };
@@ -176,7 +192,7 @@ export default Vue.extend({
           end,
           timed: true,
           attributes: {
-            id: cryptoRandomString({ length: 20 }),
+            _id: cryptoRandomString({ length: 20 }),
             creationStatus: EVENT_CREATION_STATUS.PENDING,
             type: EVENT_TYPE.AVAILABLE_TIME,
             originalEvent: {
@@ -205,6 +221,12 @@ export default Vue.extend({
       this.selectedEvent = event;
       this._showEventEditor(true);
     },
+    _showEventEditor(showEventEditor: boolean): void {
+      this.showEventEditor = false;
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => (this.showEventEditor = showEventEditor))
+      );
+    },
     extendBottom(event: StringKeyObject): void {
       const { start, end } = event;
       this.createEvent = event;
@@ -220,8 +242,8 @@ export default Vue.extend({
         const newStartTime = mouse - this.dragTime;
         const newStart = this.roundTime(newStartTime);
         const newEnd = newStart + duration;
-        const isSameDay = dayjs(newStart).date() == dayjs(newEnd).date();
-        if (isSameDay) {
+        const isValidDate = this._isValidDate({ start: newStart, end: newEnd });
+        if (isValidDate) {
           this.dragEvent.start = newStart;
           this.dragEvent.end = newEnd;
         }
@@ -230,13 +252,20 @@ export default Vue.extend({
         const mouseRounded = this.roundTime(mouse, false);
         const min = Math.min(mouseRounded, this.createStart);
         const max = Math.max(mouseRounded, this.createStart);
-        const isSameDay = dayjs(min).date() == dayjs(max).date();
-        if (isSameDay) {
+        const isValidDate = this._isValidDate({ start: min, end: max });
+        if (isValidDate) {
           this.createEvent.start = min;
           this.createEvent.end = max;
         }
         this._showEventEditor(false);
       }
+    },
+    _isValidDate(props: { start: Date | number; end: Date | number }): boolean {
+      const { start, end } = props;
+      const isSameDay = dayjs(start).date() == dayjs(end).date();
+      const isEndMidnight = dayjs(end).hour() == 0 && dayjs(end).minute() == 0;
+      const isValidDate = isSameDay || isEndMidnight;
+      return isValidDate;
     },
     onMouseUpTime(): void {
       this.dragTime = null;
@@ -270,12 +299,77 @@ export default Vue.extend({
     convertToMs(tms: StringKeyObject): number {
       return new Date(tms.year, tms.month - 1, tms.day, tms.hour, tms.minute).getTime();
     },
-    _showEventEditor(showEventEditor: boolean): void {
-      this.showEventEditor = false;
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => (this.showEventEditor = showEventEditor))
-      );
+    async saveEvent(): Promise<void> {
+      const start = this.selectedEvent.start;
+      const end = this.selectedEvent.end;
+      this._showEventEditor(false);
+      this.selectedEvent.attributes.originalEvent = {
+        start,
+        end,
+      };
+      if (!this.isSelectedEventSaved) {
+        await this._saveAvailableTime({ start, end });
+      } else {
+        await this._updateAvailableTime({ start, end });
+      }
     },
+    async _saveAvailableTime(props: { start: number; end: number }): Promise<void> {
+      const { start, end } = props;
+      const payload = {
+        hostedById: this.userId,
+        startDate: dayjs(start).toDate(),
+        endDate: dayjs(end).toDate(),
+      };
+      const { data } = await availableTimeRepository.create({
+        payload,
+        query: {},
+      });
+      this.selectedEvent.attributes.creationStatus = 'saved';
+      this.selectedEvent.attributes._id = data.availableTime._id;
+    },
+    async _updateAvailableTime(props: { start: Date; end: Date }) {
+      const { start, end } = props;
+      await availableTimeRepository.updateById({
+        _id: this.selectedEvent.attributes._id,
+        updateParams: {
+          startDate: dayjs(start).toDate(),
+          endDate: dayjs(end).toDate(),
+        },
+      });
+    },
+    async cancelEvent(): Promise<void> {
+      const eventId = this.selectedEvent.attributes._id;
+      const originalEvent = this.selectedEvent.attributes.originalEvent;
+      this.selectedEvent.start = originalEvent.start;
+      this.selectedEvent.end = originalEvent.end;
+      if (!this.isSelectedEventSaved) {
+        this.deleteEvent({ eventId, deleteFromDb: false });
+      }
+      this._showEventEditor(false);
+    },
+    async deleteEvent(props: { eventId: string; deleteFromDb: boolean }): Promise<void> {
+      const { eventId, deleteFromDb } = props;
+      if (deleteFromDb) {
+        availableTimeRepository.deleteById(eventId);
+      }
+      this.events = this.events.filter((event) => {
+        return event.attributes._id != eventId;
+      });
+      this._showEventEditor(false);
+    },
+  },
+  errorCaptured(err: StringKeyObject): boolean {
+    const errMsg = err.response.data.err;
+    switch (errMsg) {
+      case 'Your timeslot duration must be divisible by 30 minutes.':
+        err.message = 'error.calendar.unevenAppointment';
+      case 'Timeslots must begin at the start of the hour or 30 minutes into the hour.':
+        err.message = 'error.calendar.badStartAvailableTime';
+      case 'You cannot have timeslots that overlap.':
+        err.message = 'error.calendar.overlapAvailableTime';
+    }
+    this.cancelEvent();
+    return true;
   },
 });
 </script>
