@@ -55,9 +55,24 @@
               ></v-date-picker>
             </v-menu>
             <p class="mx-1 py-1 text-lg font-bold">⋅</p>
-            <button :class="getDateEditorButtonClass(EDITOR_NAME.START)">
+            <button
+              v-show="!isActiveEditor(EDITOR_NAME.START)"
+              :class="getDateEditorButtonClass(EDITOR_NAME.START)"
+              @click="focusHourDropdown(EDITOR_NAME.START)"
+            >
               {{ formatDate({ date: selectedEvent.start, dateFormat: DATE_FORMAT.HOUR }) }}
             </button>
+            <v-autocomplete
+              v-show="isActiveEditor(EDITOR_NAME.START)"
+              ref="start-autocomplete"
+              auto-select-first
+              dense
+              auto
+              :hide-no-data="true"
+              append-icon=""
+              :items="[1, 2, 3]"
+              @blur="onAutoCompleteBlur"
+            />
             <p class="mx-1 py-1 text-lg font-thin">-</p>
             <button :class="getDateEditorButtonClass(EDITOR_NAME.END)">
               {{ formatDate({ date: selectedEvent.end, dateFormat: DATE_FORMAT.HOUR }) }}
@@ -162,6 +177,17 @@ export default Vue.extend({
         this.$emit('show-event-editor:change', value);
       },
     },
+    autoCompleteMenuProps: {
+      get(): StringKeyObject {
+        const autoCompleteMenuProps = {
+          closeOnClick: true,
+          closeOnContentClick: true,
+          transition: false,
+          auto: true,
+        };
+        return autoCompleteMenuProps;
+      },
+    },
   },
   mounted() {
     return;
@@ -200,9 +226,25 @@ export default Vue.extend({
       const dateEditorButtonClass = {
         'hover:bg-gray-100': this.activeEditorName,
         'inline cursor-pointer hover:underline py-2': !this.activeEditorName,
-        'bg-gray-100 px-2': this.activeEditorName == editorName,
+        'bg-gray-100 px-2': this.isActiveEditor(editorName),
       };
       return dateEditorButtonClass;
+    },
+    isActiveEditor(editorName: EDITOR_NAME): boolean {
+      const isActiveEditor = this.activeEditorName == editorName;
+      return isActiveEditor;
+    },
+    focusHourDropdown(dropdownName: EDITOR_NAME.START | EDITOR_NAME.END): void {
+      this.activeEditorName = dropdownName;
+      const inputField = (this.$refs[`${dropdownName}-autocomplete`] as any).$refs.input;
+      setTimeout(() => {
+        inputField.click();
+      });
+    },
+    onAutoCompleteBlur() {
+      this.activeEditorName = EDITOR_NAME.DEFAULT;
+      // need to set isActive to false so v-select closes on alt-tab...
+      (this.$refs['start-autocomplete'] as any).$refs.menu.isActive = false;
     },
   },
 });

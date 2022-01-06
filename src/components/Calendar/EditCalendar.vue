@@ -2,7 +2,7 @@
   <div>
     <base-calendar
       :events="events"
-      :calendarFocusDate="calendarFocusDate"
+      :calendar-focus-date="calendarFocusDate"
       @change="getEvents"
       @mousedown:event="onMouseDownEvent"
       @mousedown:time="onMouseDownTime"
