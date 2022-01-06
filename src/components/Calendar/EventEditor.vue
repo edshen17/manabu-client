@@ -64,19 +64,36 @@
             </button>
             <v-autocomplete
               v-show="isActiveEditor(EDITOR_NAME.START)"
-              ref="start-autocomplete"
+              ref="autocomplete-start"
+              v-model="autoCompleteStartModel"
               auto-select-first
               dense
               auto
               :hide-no-data="true"
               append-icon=""
-              :items="[1, 2, 3]"
-              @blur="onAutoCompleteBlur"
+              :items="autoCompleteStartIntervals"
+              @blur="onAutoCompleteBlur(EDITOR_NAME.START)"
             />
             <p class="mx-1 py-1 text-lg font-thin">-</p>
-            <button :class="getDateEditorButtonClass(EDITOR_NAME.END)">
+            <button
+              v-show="!isActiveEditor(EDITOR_NAME.END)"
+              :class="getDateEditorButtonClass(EDITOR_NAME.END)"
+              @click="focusHourDropdown(EDITOR_NAME.END)"
+            >
               {{ formatDate({ date: selectedEvent.end, dateFormat: DATE_FORMAT.HOUR }) }}
             </button>
+            <v-autocomplete
+              v-show="isActiveEditor(EDITOR_NAME.END)"
+              ref="autocomplete-end"
+              v-model="autoCompleteEndModel"
+              auto-select-first
+              dense
+              auto
+              :hide-no-data="true"
+              append-icon=""
+              :items="autoCompleteEndIntervals"
+              @blur="onAutoCompleteBlur(EDITOR_NAME.END)"
+            />
           </div>
         </v-card-text>
         <v-card-actions>
@@ -100,6 +117,7 @@ import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandle
 import { EVENT_TYPE } from '../../types/Calendar';
 import { makeCalendarMixin } from '../../mixins/calendar';
 import { mapGetters } from 'vuex';
+import dayjs from 'dayjs';
 
 const dateFormatHandler = makeDateFormatHandler;
 const calendarMixin = makeCalendarMixin;
@@ -188,6 +206,82 @@ export default Vue.extend({
         return autoCompleteMenuProps;
       },
     },
+    autoCompleteStartIntervals: {
+      get(): StringKeyObject[] {
+        const selectedEventStart = this.selectedEvent.start;
+        let startTime = dayjs(selectedEventStart).hour(0).minute(0);
+        const endTime = startTime.add(1, 'day');
+        const startIntervals = [];
+        while (startTime.isBefore(endTime)) {
+          const formattedTime = startTime.format((this as any).AUTOCOMPLETE_DATE_FORMAT.HOUR);
+          const time = {
+            text: formattedTime,
+            value: startTime.format((this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT),
+            locale: this.locale,
+          };
+          startIntervals.push(time);
+          startTime = startTime.add(30, 'minutes');
+        }
+        return startIntervals;
+      },
+    },
+    autoCompleteEndIntervals: {
+      get(): StringKeyObject[] {
+        const endIntervals: StringKeyObject[] = [];
+        const selectedEventStart = this.selectedEvent.start;
+        const selectedEventEnd = this.selectedEvent.end;
+        const hasSelectedEvent = selectedEventStart && selectedEventEnd;
+        if (hasSelectedEvent) {
+          let startTime = dayjs(selectedEventStart).add(30, 'minutes');
+          let endTime = startTime.add(1, 'day').hour(0).minute(30);
+          while (startTime.isBefore(endTime)) {
+            const diffBetweenSelectedEventStart =
+              startTime.diff(selectedEventStart, 'minutes') / 60;
+            const formattedTime = this.formatDate({
+              date: startTime.toDate(),
+              dateFormat: (this as any).DATE_FORMAT.HOUR_WITH_DURATION,
+              translationProps: { hours: diffBetweenSelectedEventStart },
+            });
+            const time = {
+              text: formattedTime,
+              value: startTime.format((this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT),
+              locale: this.locale,
+            };
+            endIntervals.push(time);
+            startTime = startTime.add(30, 'minutes');
+          }
+        }
+        return endIntervals;
+      },
+    },
+    autoCompleteStartModel: {
+      get(): string {
+        const selectedEventStart = this.selectedEvent.start;
+        return selectedEventStart
+          ? this.formatDate({
+              date: selectedEventStart,
+              formatString: (this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT,
+            })
+          : '';
+      },
+      set(value: string): void {
+        this.$emit('auto-complete-start:change', value);
+      },
+    },
+    autoCompleteEndModel: {
+      get(): string {
+        const selectedEventEnd = this.selectedEvent.end;
+        return selectedEventEnd
+          ? this.formatDate({
+              date: selectedEventEnd,
+              formatString: (this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT,
+            })
+          : '';
+      },
+      set(value: string): void {
+        this.$emit('auto-complete-end:change', value);
+      },
+    },
   },
   mounted() {
     return;
@@ -236,15 +330,15 @@ export default Vue.extend({
     },
     focusHourDropdown(dropdownName: EDITOR_NAME.START | EDITOR_NAME.END): void {
       this.activeEditorName = dropdownName;
-      const inputField = (this.$refs[`${dropdownName}-autocomplete`] as any).$refs.input;
+      const inputField = (this.$refs[`autocomplete-${dropdownName}`] as any).$refs.input;
       setTimeout(() => {
         inputField.click();
       });
     },
-    onAutoCompleteBlur() {
+    onAutoCompleteBlur(editorName: EDITOR_NAME.START | EDITOR_NAME.END) {
       this.activeEditorName = EDITOR_NAME.DEFAULT;
       // need to set isActive to false so v-select closes on alt-tab...
-      (this.$refs['start-autocomplete'] as any).$refs.menu.isActive = false;
+      (this.$refs[`autocomplete-${editorName}`] as any).$refs.menu.isActive = false;
     },
   },
 });

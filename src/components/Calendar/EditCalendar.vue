@@ -27,6 +27,8 @@
           @event:cancel="cancelEvent"
           @event:delete="deleteEvent({ eventId: selectedEvent.attributes._id, deleteFromDb: true })"
           @date-picker:change="onDatePickerChange"
+          @auto-complete-start:change="onAutoCompleteStartChange"
+          @auto-complete-end:change="onAutoCompleteEndChange"
         >
           <template v-slot:activator="{ on, attrs }">
             <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
@@ -286,8 +288,9 @@ export default Vue.extend({
     _isValidDate(props: { start: Date | number; end: Date | number }): boolean {
       const { start, end } = props;
       const isSameDay = dayjs(start).date() == dayjs(end).date();
+      const isSameDate = dayjs(start).diff(dayjs(end)) == 0;
       const isEndMidnight = dayjs(end).hour() == 0 && dayjs(end).minute() == 0;
-      const isValidDate = isSameDay || isEndMidnight;
+      const isValidDate = isSameDay || (isSameDay && isEndMidnight) || !isSameDate;
       return isValidDate;
     },
     onMouseUpTime(): void {
@@ -410,10 +413,43 @@ export default Vue.extend({
     _updateSelectedEvent(props: { field: string; value: unknown }): void {
       const { field, value } = props;
       this.selectedEvent[field] = value;
-      // this._showSelectedEventPopup(true);
+      this._showEventEditor(true);
     },
     onCalendarFocusDateUpdate(value: string): void {
       this.calendarFocusDate = value;
+    },
+    onAutoCompleteStartChange(value: string): void {
+      const selectedEventStart = dayjs(this.selectedEvent.start);
+      const selectedEventEnd = dayjs(this.selectedEvent.end);
+      const newStartTime = dayjs(value, (this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT);
+      const diff = newStartTime.diff(selectedEventStart);
+      const newEndTime = selectedEventEnd.add(diff);
+      const isValidDate = this._isValidDate({
+        start: newStartTime.toDate(),
+        end: newEndTime.toDate(),
+      });
+      this._updateSelectedEvent({
+        field: 'start',
+        value: this._convertToUnixMs(newStartTime.toDate()),
+      });
+      if (isValidDate) {
+        this._updateSelectedEvent({
+          field: 'end',
+          value: this._convertToUnixMs(newEndTime.toDate()),
+        });
+      } else {
+        this._updateSelectedEvent({
+          field: 'end',
+          value: this._convertToUnixMs(newStartTime.add(1, 'day').hour(0).minute(0).toDate()),
+        });
+      }
+    },
+    onAutoCompleteEndChange(value: string): void {
+      const newEndTime = dayjs(value, (this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT);
+      this._updateSelectedEvent({
+        field: 'end',
+        value: this._convertToUnixMs(newEndTime.toDate()),
+      });
     },
   },
   errorCaptured(err: StringKeyObject): boolean {

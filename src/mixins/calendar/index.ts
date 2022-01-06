@@ -13,10 +13,16 @@ enum DATE_FORMAT {
   ABRIDGED_DATE = 'abridgedDate',
 }
 
+enum AUTOCOMPLETE_DATE_FORMAT {
+  HOUR = 'h:mma',
+  DEFAULT = 'M/D/YYYY@h:mma',
+}
+
 const makeCalendarMixin = {
   data() {
     return {
       DATE_FORMAT,
+      AUTOCOMPLETE_DATE_FORMAT,
     };
   },
   methods: {
