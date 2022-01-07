@@ -47,11 +47,10 @@
                 </button>
               </template>
               <v-date-picker
-                v-model="datePickerDate"
+                v-model="datePickerDateModel"
                 no-title
                 scrollable
                 :locale="locale"
-                @change="onDatePickerChange"
               ></v-date-picker>
             </v-menu>
             <p class="mx-1 py-1 text-lg font-bold">⋅</p>
@@ -62,7 +61,8 @@
             >
               {{ formatDate({ date: selectedEvent.start, dateFormat: DATE_FORMAT.HOUR }) }}
             </button>
-            <v-autocomplete
+            <component
+              :is="selectTimeComponent"
               v-show="isActiveEditor(EDITOR_NAME.START)"
               ref="autocomplete-start"
               v-model="autoCompleteStartModel"
@@ -82,7 +82,8 @@
             >
               {{ formatDate({ date: selectedEvent.end, dateFormat: DATE_FORMAT.HOUR }) }}
             </button>
-            <v-autocomplete
+            <component
+              :is="selectTimeComponent"
               v-show="isActiveEditor(EDITOR_NAME.END)"
               ref="autocomplete-end"
               v-model="autoCompleteEndModel"
@@ -96,7 +97,7 @@
             />
           </div>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions v-show="!isSelectedEventSaved">
           <v-btn text color="secondary" class="m-0 animate-pulse" @click="$emit('event:save')">
             <span class="text-blue-600">{{ $t('button.common.save') }}</span>
           </v-btn>
@@ -118,6 +119,7 @@ import { EVENT_TYPE } from '../../types/Calendar';
 import { makeCalendarMixin } from '../../mixins/calendar';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
+import { VAutocomplete, VSelect } from 'vuetify/lib'; // need explicit import for dynamic components
 
 const dateFormatHandler = makeDateFormatHandler;
 const calendarMixin = makeCalendarMixin;
@@ -131,7 +133,7 @@ enum EDITOR_NAME {
 
 export default Vue.extend({
   name: 'EventEditor',
-  components: {},
+  components: { VAutocomplete, VSelect },
   mixins: [calendarMixin],
   props: {
     showEventEditor: {
@@ -159,11 +161,15 @@ export default Vue.extend({
       default: false,
       required: true,
     },
+    datePickerDate: {
+      type: String,
+      default: '',
+      required: true,
+    },
   },
   data() {
     return {
       showDatePickerMenu: false,
-      datePickerDate: new Date().toISOString().substr(0, 10),
       EDITOR_NAME,
       activeEditorName: '',
     };
@@ -282,6 +288,21 @@ export default Vue.extend({
         this.$emit('auto-complete-end:change', value);
       },
     },
+    datePickerDateModel: {
+      get(): string {
+        const datePickerDate = this.datePickerDate;
+        return datePickerDate;
+      },
+      set(value: string): void {
+        this.$emit('date-picker:change', value);
+      },
+    },
+    selectTimeComponent: {
+      get(): string {
+        const selectTimeComponent = (this as any).isMobile ? 'VSelect' : 'VAutocomplete';
+        return selectTimeComponent;
+      },
+    },
   },
   mounted() {
     return;
@@ -312,9 +333,6 @@ export default Vue.extend({
     },
     onDatePickerMenuInput(value: boolean): void {
       this.activeEditorName = value ? EDITOR_NAME.DATE_PICKER : EDITOR_NAME.DEFAULT;
-    },
-    onDatePickerChange(): void {
-      this.$emit('date-picker:change', this.datePickerDate);
     },
     getDateEditorButtonClass(editorName: EDITOR_NAME): StringKeyObject {
       const dateEditorButtonClass = {

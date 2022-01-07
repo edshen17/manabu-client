@@ -23,6 +23,7 @@
           :event-editor-coord="eventEditorCoord"
           :selected-event="selectedEvent"
           :is-selected-event-saved="isSelectedEventSaved"
+          :date-picker-date="datePickerDate"
           @event:save="saveEvent"
           @event:cancel="cancelEvent"
           @event:delete="deleteEvent({ eventId: selectedEvent.attributes._id, deleteFromDb: true })"
@@ -67,6 +68,7 @@ import { EVENT_TYPE, EVENT_CREATION_STATUS } from '../../types/Calendar';
 import { makeCalendarMixin } from '../../mixins/calendar';
 import cryptoRandomString from 'crypto-random-string';
 import cloneDeep from 'clone-deep';
+import { AVAILABLE_TIME_CONFLIT_HANDLER_ERROR } from '../../../../server/components/usecases/utils/availableTimeConflictHandler/availableTimeConflictHandler';
 
 const availableTimeRepository = makeAvailableTimeRepository;
 const calendarMixin = makeCalendarMixin;
@@ -112,12 +114,13 @@ export default Vue.extend({
       createStart: null as null | number,
       extendOriginal: null as null | number,
       showEventEditor: false,
-      selectedEvent: {} as StringKeyObject,
+      selectedEvent: {} as EventObject,
       eventEditorCoord: {
         x: 0,
         y: 0,
       },
       calendarFocusDate: '',
+      datePickerDate: new Date().toISOString().substr(0, 10),
     };
   },
   computed: {
@@ -240,7 +243,7 @@ export default Vue.extend({
       event,
       nativeEvent,
     }: {
-      event: StringKeyObject;
+      event: EventObject;
       nativeEvent: StringKeyObject;
     }): void {
       this.eventEditorCoord.x = nativeEvent.clientX;
@@ -287,8 +290,8 @@ export default Vue.extend({
     },
     _isValidDate(props: { start: Date | number; end: Date | number }): boolean {
       const { start, end } = props;
-      const isSameDay = dayjs(start).date() == dayjs(end).date();
-      const isSameDate = dayjs(start).diff(dayjs(end)) == 0;
+      const isSameDay = dayjs(start).isSame(end, 'day');
+      const isSameDate = dayjs(start).isSame(end);
       const isEndMidnight = dayjs(end).hour() == 0 && dayjs(end).minute() == 0;
       const isValidDate = (isSameDay || (isSameDay && isEndMidnight)) && !isSameDate;
       return isValidDate;
@@ -359,7 +362,7 @@ export default Vue.extend({
       });
       this.selectedEvent.attributes._id = data.availableTime._id;
     },
-    async _updateAvailableTime(props: { start: Date; end: Date }) {
+    async _updateAvailableTime(props: { start: number; end: number }) {
       const { start, end } = props;
       await availableTimeRepository.updateById({
         _id: this.selectedEvent.attributes._id,
@@ -369,7 +372,8 @@ export default Vue.extend({
         },
       });
     },
-    _undoSaveEvent(originalEventBeforeSave: StringKeyObject) {
+    _undoSaveEvent(originalEventBeforeSave: EventObject['attributes']['originalEvent']) {
+      this.selectedEvent.attributes.creationStatus = EVENT_CREATION_STATUS.PENDING;
       this.selectedEvent.attributes.originalEvent = originalEventBeforeSave;
     },
     async cancelEvent(): Promise<void> {
@@ -379,6 +383,12 @@ export default Vue.extend({
       this.selectedEvent.end = originalEvent.end;
       if (!this.isSelectedEventSaved) {
         this.deleteEvent({ eventId, deleteFromDb: false });
+      } else {
+        const newFocusDate = (this as any).formatDate({
+          date: this.selectedEvent.start,
+          formatString: 'YYYY-MM-DD',
+        });
+        this.calendarFocusDate = newFocusDate;
       }
       this._showEventEditor(false);
     },
@@ -414,14 +424,16 @@ export default Vue.extend({
         field: 'end',
         value: this._convertToUnixMs(newEndTime.toDate()),
       });
-      this.calendarFocusDate = (this as any).formatDate({
+      const newFocusDate = (this as any).formatDate({
         date: this.selectedEvent.start,
         formatString: 'YYYY-MM-DD',
       });
+      this.calendarFocusDate = newFocusDate;
+      this.datePickerDate = newFocusDate;
     },
     _updateSelectedEvent(props: { field: string; value: unknown }): void {
       const { field, value } = props;
-      this.selectedEvent[field] = value;
+      (this.selectedEvent as StringKeyObject)[field] = value;
       this._showEventEditor(true);
     },
     onCalendarFocusDateUpdate(value: string): void {
@@ -464,11 +476,11 @@ export default Vue.extend({
   errorCaptured(err: StringKeyObject): boolean {
     const errMsg = err.response.data.err;
     switch (errMsg) {
-      case 'Your timeslot duration must be divisible by 30 minutes.':
+      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.INVALID_DURATION:
         err.message = 'error.calendar.unevenAppointment';
-      case 'Timeslots must begin at the start of the hour or 30 minutes into the hour.':
+      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.INVALID_TIME:
         err.message = 'error.calendar.badStartAvailableTime';
-      case 'You cannot have timeslots that overlap.':
+      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.OVERLAP:
         err.message = 'error.calendar.overlapAvailableTime';
     }
     this.cancelEvent();
