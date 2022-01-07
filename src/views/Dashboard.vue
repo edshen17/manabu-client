@@ -8,14 +8,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import Calendar from '../components/Calendar/Calendar.vue';
 import EditCalendar from '../components/Calendar/EditCalendar.vue';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 
 export default Vue.extend({
   name: 'Dashboard',
   components: {
-    Calendar,
     EditCalendar,
   },
   props: {},

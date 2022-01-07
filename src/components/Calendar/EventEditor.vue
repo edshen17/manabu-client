@@ -66,6 +66,7 @@
               v-show="isActiveEditor(EDITOR_NAME.START)"
               ref="autocomplete-start"
               v-model="autoCompleteStartModel"
+              autofocus
               auto-select-first
               dense
               auto
@@ -87,6 +88,7 @@
               v-show="isActiveEditor(EDITOR_NAME.END)"
               ref="autocomplete-end"
               v-model="autoCompleteEndModel"
+              autofocus
               auto-select-first
               dense
               auto
@@ -180,7 +182,7 @@ export default Vue.extend({
     }),
     menuWidth: {
       get(): string {
-        const menuWidth = '350px';
+        const menuWidth = '340px';
         return menuWidth;
       },
     },
@@ -199,17 +201,6 @@ export default Vue.extend({
       },
       set(value: boolean): void {
         this.$emit('show-event-editor:change', value);
-      },
-    },
-    autoCompleteMenuProps: {
-      get(): StringKeyObject {
-        const autoCompleteMenuProps = {
-          closeOnClick: true,
-          closeOnContentClick: true,
-          transition: false,
-          auto: true,
-        };
-        return autoCompleteMenuProps;
       },
     },
     autoCompleteStartIntervals: {
@@ -262,29 +253,21 @@ export default Vue.extend({
     },
     autoCompleteStartModel: {
       get(): string {
-        const selectedEventStart = this.selectedEvent.start;
-        return selectedEventStart
-          ? this.formatDate({
-              date: selectedEventStart,
-              formatString: (this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT,
-            })
-          : '';
+        const autoCompleteStartModel = this._getAutoCompleteModel(this.selectedEvent.start);
+        return autoCompleteStartModel;
       },
       set(value: string): void {
+        this.activeEditorName = EDITOR_NAME.DEFAULT;
         this.$emit('auto-complete-start:change', value);
       },
     },
     autoCompleteEndModel: {
       get(): string {
-        const selectedEventEnd = this.selectedEvent.end;
-        return selectedEventEnd
-          ? this.formatDate({
-              date: selectedEventEnd,
-              formatString: (this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT,
-            })
-          : '';
+        const autoCompleteEndModel = this._getAutoCompleteModel(this.selectedEvent.end);
+        return autoCompleteEndModel;
       },
       set(value: string): void {
+        this.activeEditorName = EDITOR_NAME.DEFAULT;
         this.$emit('auto-complete-end:change', value);
       },
     },
@@ -317,7 +300,7 @@ export default Vue.extend({
       return eventTitle;
     },
     formatDate(props: {
-      date: Date;
+      date: Date | number;
       dateFormat?: string;
       formatString?: string;
       translationProps?: StringKeyObject;
@@ -357,6 +340,15 @@ export default Vue.extend({
       this.activeEditorName = EDITOR_NAME.DEFAULT;
       // need to set isActive to false so v-select closes on alt-tab...
       (this.$refs[`autocomplete-${editorName}`] as any).$refs.menu.isActive = false;
+    },
+    _getAutoCompleteModel(date: Date | number) {
+      const autoCompleteModel = date
+        ? this.formatDate({
+            date,
+            formatString: (this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT,
+          })
+        : '';
+      return autoCompleteModel;
     },
   },
 });
