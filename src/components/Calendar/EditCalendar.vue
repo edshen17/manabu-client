@@ -290,7 +290,7 @@ export default Vue.extend({
       const isSameDay = dayjs(start).date() == dayjs(end).date();
       const isSameDate = dayjs(start).diff(dayjs(end)) == 0;
       const isEndMidnight = dayjs(end).hour() == 0 && dayjs(end).minute() == 0;
-      const isValidDate = isSameDay || (isSameDay && isEndMidnight) || !isSameDate;
+      const isValidDate = (isSameDay || (isSameDay && isEndMidnight)) && !isSameDate;
       return isValidDate;
     },
     onMouseUpTime(): void {
@@ -397,14 +397,23 @@ export default Vue.extend({
       const selectedEventEnd = dayjs(this.selectedEvent.end);
       const newStartTime = dayjs(value)
         .hour(selectedEventStart.hour())
-        .minute(selectedEventStart.minute())
-        .toDate();
-      const newEndTime = dayjs(value)
-        .hour(selectedEventEnd.hour())
-        .minute(selectedEventEnd.minute())
-        .toDate();
-      this._updateSelectedEvent({ field: 'start', value: this._convertToUnixMs(newStartTime) });
-      this._updateSelectedEvent({ field: 'end', value: this._convertToUnixMs(newEndTime) });
+        .minute(selectedEventStart.minute());
+      let newEndTime = dayjs(value).hour(selectedEventEnd.hour()).minute(selectedEventEnd.minute());
+      const isValidDate = this._isValidDate({
+        start: newStartTime.toDate(),
+        end: newEndTime.toDate(),
+      });
+      if (!isValidDate) {
+        newEndTime = newStartTime.add(1, 'day').hour(0).minute(0);
+      }
+      this._updateSelectedEvent({
+        field: 'start',
+        value: this._convertToUnixMs(newStartTime.toDate()),
+      });
+      this._updateSelectedEvent({
+        field: 'end',
+        value: this._convertToUnixMs(newEndTime.toDate()),
+      });
       this.calendarFocusDate = (this as any).formatDate({
         date: this.selectedEvent.start,
         formatString: 'YYYY-MM-DD',
@@ -432,12 +441,12 @@ export default Vue.extend({
         field: 'start',
         value: this._convertToUnixMs(newStartTime.toDate()),
       });
-      if (isValidDate) {
-        this._updateSelectedEvent({
-          field: 'end',
-          value: this._convertToUnixMs(newEndTime.toDate()),
-        });
-      } else {
+      if (newStartTime.isAfter(selectedEventStart)) {
+        const diff = newStartTime.diff(selectedEventStart);
+        const newEndTime = selectedEventEnd.add(diff);
+        this._updateSelectedEvent({ field: 'end', value: newEndTime.toDate() });
+      }
+      if (!isValidDate) {
         this._updateSelectedEvent({
           field: 'end',
           value: this._convertToUnixMs(newStartTime.add(1, 'day').hour(0).minute(0).toDate()),
