@@ -7,6 +7,7 @@ const Dashboard = () => import('../views/Dashboard.vue');
 const Home = () => import('../views/Home.vue');
 const Onboarding = () => import('../views/Onboarding.vue');
 const UserAuthForm = () => import('../views/UserAuthForm.vue');
+const TeacherSignup = () => import('../views/TeacherSignup.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -54,6 +55,13 @@ const routes: Array<RouteConfig> = [
     component: Onboarding,
     beforeEnter: loginProtectedRouterGuard.consume(),
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/apply',
+    name: 'TeacherSignup',
+    component: TeacherSignup,
+    beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: {},
   },
 ];
 
