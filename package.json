@@ -25,6 +25,7 @@
     "http-status-codes": "^2.1.4",
     "jwt-decode": "^3.1.2",
     "node-sass": "^4.14.1",
+    "postcss": "^7",
     "secure-ls": "^1.2.6",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "tiptap-vuetify": "^2.24.0",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@intlify/vue-i18n-loader": "^1.0.0",
+    "@tailwindcss/typography": "^0.3.1",
     "@types/url-join": "^4.0.1",
     "@types/vue-select": "^3.11.2",
     "@types/vuelidate": "^0.7.15",
@@ -65,7 +67,6 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-standard": "^5.0.0",
     "eslint-plugin-vue": "^6.2.2",
-    "postcss": "^7.0.36",
     "prettier": "^2.2.1",
     "sass": "~1.32.0",
     "sass-loader": "^10.0.0",

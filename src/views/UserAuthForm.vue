@@ -131,6 +131,7 @@ import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import { StringKeyObject } from '../../../server/types/custom';
 import { StatusCodes } from 'http-status-codes';
 import { makeUserRepository } from '../repositories/user/index';
+import { IS_PRODUCTION } from '../../../server/constants';
 const userRepository = makeUserRepository;
 
 export default Vue.extend({
@@ -156,12 +157,16 @@ export default Vue.extend({
     },
     GOOGLE_AUTH_URL: {
       get: function (): string {
-        const isProduction = process.env.NODE_ENV == 'production';
-        let GOOGLE_AUTH_URL = process.env.VUE_APP_GOOGLE_AUTH_URL!;
-        if (!isProduction) {
-          GOOGLE_AUTH_URL = process.env.VUE_APP_GOOGLE_AUTH_URL_DEV!;
-        }
-        return GOOGLE_AUTH_URL;
+        const GOOGLE_AUTH_URL = IS_PRODUCTION
+          ? process.env.VUE_APP_GOOGLE_AUTH_URL!
+          : process.env.VUE_APP_GOOGLE_AUTH_URL_DEV!;
+        return `${GOOGLE_AUTH_URL}&state=${this.queryState}`;
+      },
+    },
+    queryState: {
+      get: function (): string {
+        const queryState = (this as any).$route.query.state || '';
+        return queryState;
       },
     },
     focusedInputName: {
@@ -225,12 +230,17 @@ export default Vue.extend({
     },
     async _authorizeUser(props: { payload: StringKeyObject; endpoint: string }): Promise<void> {
       const { payload, endpoint } = props;
+      const query = this.queryState
+        ? {
+            state: this.queryState,
+          }
+        : {};
       try {
         this.$store.dispatch('user/resetEntityState');
         await userRepository.create({
           payload,
           customResourcePath: endpoint,
-          query: {},
+          query,
         });
       } catch (err: any) {
         const hasErrorResponse = err.response;
