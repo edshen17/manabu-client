@@ -19,7 +19,7 @@
 import Vue from 'vue';
 import { useCurrencyInput } from 'vue-currency-input';
 import { StringKeyObject } from '../../../../server/types/custom';
-import { required, minValue } from 'vuelidate/lib/validators';
+import { required, minValue, integer } from 'vuelidate/lib/validators';
 import { focus } from 'vue-focus';
 
 export default Vue.extend({
@@ -64,6 +64,7 @@ export default Vue.extend({
     value: {
       required,
       minValue: minValue(0),
+      integer,
     },
   },
 });

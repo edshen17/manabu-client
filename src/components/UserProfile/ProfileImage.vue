@@ -1,60 +1,60 @@
 <template>
   <div data-app class="flex justify-center items-center">
-    <button>
-      <label class="flex justify-center items-center text-white relative cursor-pointer">
-        <img
-          v-show="showProfileImage"
-          :src="userData.profileImageUrl"
-          class="h-28 rounded-full border-2"
-        />
-        <preview
-          v-show="showPreviewImage"
-          class="rounded-full"
-          :width="125"
-          :height="125"
-          :image="profileImage.cropperPreview.image"
-          :coordinates="profileImage.cropperPreview.coordinates"
-        />
-        <i
-          class="fas fa-camera text-white absolute opacity-95"
-          style="text-shadow: 0 0 4px #000"
-        ></i>
-        <input
-          ref="imageUploader"
-          type="file"
-          class="hidden"
-          name="image"
-          accept="image/*"
-          @change="onFileSelect($event)"
-        />
-      </label>
-    </button>
     <v-dialog
-      v-model="isEditingProfileImage"
+      v-model="showDialog"
       :no-click-animation="true"
       width="700"
-      activator="#profile-image-editor"
       @click:outside="resetProfileImage"
     >
+      <template v-slot:activator="{ on, attrs }">
+        <button v-bind="attrs" v-on="on">
+          <img
+            v-show="showProfileImage"
+            :src="userData.profileImageUrl"
+            class="h-28 rounded-full"
+          />
+          <preview
+            v-show="showPreviewImage"
+            class="rounded-full"
+            :width="125"
+            :height="125"
+            :image="profileImage.cropperPreview.image"
+            :coordinates="profileImage.cropperPreview.coordinates"
+          />
+        </button>
+      </template>
       <v-card>
         <v-card-title class="grey lighten-2"
           ><template>
             <div class="flex items-center w-full">
-              <button class="mr-3 flex-none" @click="hideModal">
-                <i class="fas fa-arrow-left fa-sm"></i>
+              <button class="flex-none" @click="resetProfileImage">
+                <i class="fas fa-arrow-left fa-sm mr-0 md:mr-2"></i>
               </button>
-              <p class="flex-grow ml-6">{{ $t('userProfile.common.edit') }}</p>
+              <p class="flex-grow ml-6 text-sm md:text-xl">
+                {{ $t('userProfile.common.profilePicture') }}
+              </p>
               <button
-                class="float-right flex-none rounded-full px-2 py-1"
+                class="float-right flex-none rounded-full px-2 py-1 text-sm md:text-lg"
                 style="background-color: #364f6b; color: #f5f5f5"
-                @click="saveProfileImage"
+                @click="onDialogButtonClick"
               >
-                Save
+                {{ dialogButtonText }}
               </button>
             </div>
           </template></v-card-title
         >
-        <div class="items-center flex justify-center static">
+        <div class="items-center flex justify-center">
+          <input
+            ref="imageUploader"
+            type="file"
+            class="hidden"
+            name="image"
+            accept="image/*"
+            @change="onFileSelect($event)"
+          />
+          <span v-show="showProfileImage" class="items-center flex justify-center h-96">
+            <img :src="userData.profileImageUrl" class="h-48 rounded-full" />
+          </span>
           <extended-cropper
             v-show="isEditingProfileImage"
             ref="extendedCropper"
@@ -76,6 +76,7 @@ import ExtendedCropper from '../Cropper/ExtendedCropper.vue';
 import { Preview } from 'vue-advanced-cropper';
 import { StringKeyObject } from '../../../../server/types/custom';
 import { makeGoogleCloudStorageMixin } from '../../mixins/googleCloudStorage';
+import { TranslateResult } from 'vue-i18n';
 const googleCloudStorageMixin = makeGoogleCloudStorageMixin;
 
 export default Vue.extend({
@@ -96,6 +97,7 @@ export default Vue.extend({
         isSaved: false,
       } as StringKeyObject,
       isEditingProfileImage: false,
+      showDialog: false,
     };
   },
   computed: {
@@ -109,6 +111,14 @@ export default Vue.extend({
         return this.isEditingProfileImage || this.profileImage.isSaved;
       },
     },
+    dialogButtonText: {
+      get(): TranslateResult {
+        const dialogButtonText = this.isEditingProfileImage
+          ? this.$t('button.common.save')
+          : this.$t('button.common.upload');
+        return dialogButtonText;
+      },
+    },
   },
   mounted() {
     return;
@@ -116,12 +126,18 @@ export default Vue.extend({
   methods: {
     resetProfileImage(): void {
       this.profileImage.src = '';
+      this.isEditingProfileImage = false;
+      this.showDialog = false;
     },
     updateCropperPreview(result: any) {
       this.profileImage.cropperPreview = result;
     },
-    hideModal(): void {
-      this.isEditingProfileImage = false;
+    onDialogButtonClick(): void {
+      if (!this.isEditingProfileImage) {
+        (this as any).$refs.imageUploader.click();
+      } else {
+        this._saveProfileImage();
+      }
     },
     onFileSelect(event: any) {
       const { files } = event.target;
@@ -138,7 +154,7 @@ export default Vue.extend({
         this.isEditingProfileImage = true;
       }
     },
-    saveProfileImage(): void {
+    _saveProfileImage(): void {
       const cropper = (this as any).$refs.extendedCropper.$refs.cropper;
       const { canvas, image } = cropper.getResult();
       if (canvas) {
@@ -149,7 +165,7 @@ export default Vue.extend({
       }
       this.profileImage.isSaved = true;
       (this as any).$refs.imageUploader.value = '';
-      this.hideModal();
+      this.resetProfileImage();
     },
     async _uploadBlobToStorage(blob: Blob): Promise<void> {
       const blobType = blob.type;

@@ -164,7 +164,7 @@
       "alsoSpeaks": "Also speaks",
       "viewCalendar": "VIEW CALENDAR",
       "hideCalendar": "HIDE CALENDAR",
-      "edit": "Profile Picture"
+      "profilePicture": "Profile Picture"
     },
     "teacher": {
       "manabuVerified": "Manabu Verified Teacher since {date}",
@@ -202,7 +202,8 @@
   "button": {
     "common": {
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "upload": "Upload"
     },
     "onboarding": {
       "next": "Next"

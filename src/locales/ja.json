@@ -163,7 +163,7 @@
       "alsoSpeaks": "Also speaks",
       "viewCalendar": "VIEW CALENDAR",
       "hideCalendar": "HIDE CALENDAR",
-      "edit": "プロフィール画像"
+      "profilePicture": "プロフィール画像"
     },
     "teacher": {
       "manabuVerified": "Manabu Verified Teacher since {date}",
@@ -201,7 +201,8 @@
   "button": {
     "common": {
       "save": "保存",
-      "cancel": "キャンセル"
+      "cancel": "キャンセル",
+      "upload": "アップロード"
     },
     "onboarding": {
       "next": "次へ"
