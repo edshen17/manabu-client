@@ -1,6 +1,7 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
+    <name-step :user-data="userData" />
     <language-name-step
       v-show="stepIndex == 0"
       :step-title="targetLanguageText"
@@ -103,6 +104,7 @@ import { StringKeyObject } from '../../../server/types/custom';
 import { makePackageRepository } from '../repositories/package';
 import { PACKAGE_ENTITY_TYPE } from '../../../server/components/entities/package/packageEntity';
 import AsyncLoader from '../components/Onboarding/Steps/AsyncLoader.vue';
+import NameStep from '../components/Onboarding/Steps/NameStep.vue';
 
 const updateUserByIdMixin = makeUpdateUserByIdMixin;
 const packageRepository = makePackageRepository;
@@ -118,6 +120,7 @@ export default Vue.extend({
   name: 'Onboarding',
   components: {
     ProgressBar,
+    NameStep,
     LanguageNameStep,
     LanguageLevelStep,
     RegionStep,

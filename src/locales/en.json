@@ -75,8 +75,8 @@
     },
     "onboarding": {
       "contactMethodId": "You must input a {contactMethod} id.",
-      "teacherLicenseUpload": "You need to upload an image or pdf or your teaching license.",
-      "teacherIntroductionVideoUpload": "You need to upload an introduction video.",
+      "teacherLicenseUpload": "You must upload an image or pdf or your teaching license.",
+      "teacherIntroductionVideoUpload": "You must upload an introduction video.",
       "teacherPriceData": "You must input an hourly rate.",
       "profileBio": "You must write a self-introduction.",
       "package": {
@@ -84,7 +84,8 @@
         "lessonAmount": "You must input a lesson amount.",
         "lessonDurations": "Each package needs at least 1 duration.",
         "isOffering": "You must offer at least 1 package."
-      }
+      },
+      "name": "You must input a name."
     },
     "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
   },
@@ -144,7 +145,11 @@
     "region": "I live in...",
     "timezone": "My timezone is...",
     "comingSoon": "Coming soon!",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "name": {
+      "title": "My name is...",
+      "placeholder": "Name"
+    }
   },
   "calendar": {
     "today": "Today",
