@@ -1,7 +1,7 @@
 <template>
-  <div class="h-auto mb-10 flex w-auto">
-    <div class="mt-4 lg:mt-7">
-      <div class="text-center">
+  <div class="flex justify-center my-5">
+    <div class="container px-8">
+      <div class="text-center mb-5">
         <h3 class="text-3xl font-semibold leading-normal mb-2 text-gray-800 uppercase">
           Teacher Signup
         </h3>
@@ -9,10 +9,43 @@
           下の５つのステップをよく読んでManabuの先生にご登録下さい。
         </div>
       </div>
-      <div class="mt-4 text-lg mx-8 lg:mx-56 xl:mx-96">
-        <ul class="list-decimal list-inside leading-relaxed">
-          <li v-for="step in signUpData" :key="step.text" class="py-3 lg:py-2">{{ step.text }}</li>
-        </ul>
+      <div
+        v-for="(step, index) in stepData"
+        :key="step.text"
+        class="flex relative pt-10 pb-10 sm:items-center md:w-2/3 mx-auto"
+      >
+        <div class="h-full w-6 absolute inset-0 flex items-center justify-center">
+          <div class="h-full w-1 bg-gray-200 pointer-events-none"></div>
+        </div>
+        <div
+          class="
+            flex-shrink-0
+            w-6
+            h-6
+            rounded-full
+            mt-10
+            sm:mt-0
+            inline-flex
+            items-center
+            justify-center
+            bg-indigo-500
+            text-white
+            relative
+            z-10
+            title-font
+            font-medium
+            text-sm
+          "
+        >
+          {{ index + 1 }}
+        </div>
+        <div class="flex-grow md:pl-8 pl-6 flex sm:items-center items-start flex-col sm:flex-row">
+          <div class="flex-grow sm:pl-6 sm:mt-0">
+            <h2 class="font-medium title-font text-gray-900 mb-1 text-xl">
+              {{ step.text }}
+            </h2>
+          </div>
+        </div>
       </div>
       <button
         class="
@@ -52,7 +85,7 @@ export default Vue.extend({
     return {};
   },
   computed: {
-    signUpData: {
+    stepData: {
       get(): { text: TranslateResult | string }[] {
         return [
           {

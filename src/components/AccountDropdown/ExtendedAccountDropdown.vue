@@ -16,7 +16,7 @@
         <basic-account-dropdown
           v-click-outside="closeDropdown"
           :inner-router-links="innerRouterLinks"
-          router-link-class="py-4 lg:py-2 lg:px-4 inline-block no-underline w-full h-full lg:hover:bg-gray-700 lg:rounded-md text-white"
+          router-link-class="py-4 lg:py-2 lg:px-4 inline-block no-underline w-full h-full lg:hover:bg-gray-600 lg:rounded-md text-white"
           active-router-link-class="bg-gray-700"
           @linkClick="showDropdown = false"
         ></basic-account-dropdown>
