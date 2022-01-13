@@ -1,43 +1,42 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    <name-step :user-data="userData" />
+    <name-step v-if="stepIndex == 0" :user-data="userData" />
     <language-name-step
-      v-show="stepIndex == 0"
+      v-show="stepIndex == 1"
       :step-title="targetLanguageText"
       :language-offerings="targetLanguageOfferings"
-      emitted-value-name="targetLanguageCode"
+      :emitted-value-name="'targetLanguageCode'"
     />
     <language-level-step
-      v-show="stepIndex == 1"
+      v-show="stepIndex == 2"
       :step-title="
         $t('onboarding.languageLevel', { language: $t(`localeCode.${targetLanguageCode}`) })
       "
       emitted-value-name="targetLanguageLevel"
     />
     <language-name-step
-      v-show="stepIndex == 2"
+      v-show="stepIndex == 3"
       :step-title="$t('onboarding.speakingNonTargetLanguage')"
       :language-offerings="nonTargetLanguageOfferings"
-      emitted-value-name="nonTargetLanguageCode"
+      :emitted-value-name="'nonTargetLanguageCode'"
     />
     <language-level-step
-      v-show="stepIndex == 3"
+      v-show="stepIndex == 4"
       :step-title="
         $t('onboarding.languageLevel', { language: $t(`localeCode.${nonTargetLanguageCode}`) })
       "
       emitted-value-name="nonTargetLanguageLevel"
     />
-    <region-step v-if="stepIndex == 4" :region="region" />
-    <timezone-step v-if="stepIndex == 5" :region="region" :timezone="timezone" />
+    <region-step v-if="stepIndex == 5" :region="region" />
+    <timezone-step v-if="stepIndex == 6" :region="region" :timezone="timezone" />
     <contact-method-name-step
-      v-show="stepIndex == 6"
+      v-show="stepIndex == 7"
       :contact-methods="contactMethods"
-      emitted-value-name="contactMethodName"
       :step-title="$t('onboarding.contactMethod')"
     />
     <contact-method-id-step
-      v-if="stepIndex == 7"
+      v-if="stepIndex == 8"
       :step-title="
         $t('onboarding.contactMethodId', {
           contactMethod: $t(`onboarding.contactMethods.${contactMethodName}`),
@@ -47,30 +46,28 @@
       :contact-method-id="contactMethodId"
     />
     <profile-image-step
-      v-if="stepIndex == 8"
+      v-show="stepIndex == 9"
       :step-title="$t('onboarding.userProfile.image')"
       :user-data="userData"
     />
     <profile-bio-step
-      v-if="stepIndex == 9"
+      v-if="stepIndex == 10"
       :step-title="$t('onboarding.userProfile.bio')"
-      emitted-value-name="profileBio"
       :profile-bio="profileBio"
     />
     <div v-show="isTeacher">
       <teacher-type-step
-        v-show="stepIndex == 10"
+        v-show="stepIndex == 11"
         :step-title="$t('onboarding.userProfile.teacherType')"
-        emitted-value-name="teacherType"
       />
       <teacher-license-step
-        v-show="stepIndex == 11"
+        v-show="stepIndex == 12"
         :user-data="userData"
         :is-pro-teacher="isProTeacher"
       />
-      <teacher-introduction-video-step v-show="stepIndex == 12" :user-data="userData" />
-      <teacher-price-data-step v-show="stepIndex == 13" :is-pro-teacher="isProTeacher" />
-      <teacher-packages-step v-show="stepIndex == 14" :user-data="userData" />
+      <teacher-introduction-video-step v-show="stepIndex == 13" :user-data="userData" />
+      <teacher-price-data-step v-show="stepIndex == 14" :is-pro-teacher="isProTeacher" />
+      <teacher-packages-step v-show="stepIndex == 15" :user-data="userData" />
     </div>
     <async-loader v-show="isFinishedOnboarding" :progress-percent="uploadProgress" />
   </div>
@@ -140,6 +137,7 @@ export default Vue.extend({
   props: {},
   data() {
     return {
+      name: '',
       targetLanguageCode: '',
       targetLanguageLevel: '',
       nonTargetLanguageCode: '',
@@ -163,7 +161,7 @@ export default Vue.extend({
     }),
     stepTotal: {
       get(): number {
-        const stepTotal = !this.isTeacher ? 10 : 15;
+        const stepTotal = !this.isTeacher ? 11 : 16;
         return stepTotal;
       },
     },

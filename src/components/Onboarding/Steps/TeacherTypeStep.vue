@@ -2,7 +2,7 @@
   <grid-list-layout
     :step-title="stepTitle"
     :list-items="teacherTypes"
-    :emitted-value-name="emittedValueName"
+    emitted-value-name="teacherType"
   />
 </template>
 
@@ -17,10 +17,6 @@ export default Vue.extend({
   directives: { focus },
   props: {
     stepTitle: {
-      type: String,
-      required: true,
-    },
-    emittedValueName: {
       type: String,
       required: true,
     },

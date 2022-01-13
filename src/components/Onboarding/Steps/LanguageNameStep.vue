@@ -46,14 +46,13 @@ export default Vue.extend({
       default: '',
       required: true,
     },
-    emittedValueName: {
-      type: String,
-      default: '',
-      required: true,
-    },
     languageOfferings: {
       type: Array,
       default: (): {}[] => [],
+      required: true,
+    },
+    emittedValueName: {
+      type: String,
       required: true,
     },
   },

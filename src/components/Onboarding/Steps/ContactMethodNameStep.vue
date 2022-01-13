@@ -53,11 +53,6 @@ export default Vue.extend({
       default: '',
       required: true,
     },
-    emittedValueName: {
-      type: String,
-      default: '',
-      required: true,
-    },
     contactMethods: {
       type: Array,
       default: (): {}[] => [],
@@ -73,7 +68,7 @@ export default Vue.extend({
   },
   methods: {
     emitStepForward(value: string): void {
-      EventBus.$emit('step-forward', { value, emittedValueName: this.emittedValueName });
+      EventBus.$emit('step-forward', { value, emittedValueName: 'contactMethodName' });
     },
   },
 });
