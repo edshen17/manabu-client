@@ -5,7 +5,8 @@
         flex
         justify-center
         container
-        py-10
+        py-5
+        md:py-10
         mx-auto
         md:w-11/12
         xl:w-9/12

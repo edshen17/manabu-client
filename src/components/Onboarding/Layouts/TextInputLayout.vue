@@ -68,10 +68,10 @@ export default Vue.extend({
   computed: {
     inputModel: {
       get() {
-        return this.inputValue;
+        return (this as any).inputValue;
       },
       set(value) {
-        this.$emit('update:prop', value);
+        (this as any).$emit('update:prop', value);
       },
     },
   },
