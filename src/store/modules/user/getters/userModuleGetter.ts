@@ -32,15 +32,22 @@ class UserModuleGetter extends AbstractModuleGetter<UserEntityStateData> {
         return isProTeacher;
       },
       isFinishedOnboarding(state: UserGetterState): boolean {
-        const userData = state.entityStateData;
+        const userData = state.entityStateData as JoinedUserDoc;
         let isFinishedOnboarding = false;
-        if ('_id' in userData) {
-          const { profileBio, languages, region, timezone } = userData;
-          isFinishedOnboarding =
+        const isLoggedIn = '_id' in userData;
+        const isTeacher = 'teacherData' in state.entityStateData;
+        if (isLoggedIn) {
+          const { profileBio, languages, region, timezone, teacherData } = userData;
+          const userChecks =
             profileBio!.length > 0 &&
             languages.length > 0 &&
             region!.length > 0 &&
             timezone!.length > 0;
+          isFinishedOnboarding = !isTeacher
+            ? userChecks
+            : userChecks &&
+              teacherData!.teachingLanguages.length == 0 &&
+              teacherData!.introductionVideoUrl?.length == 0;
         }
         return isFinishedOnboarding;
       },

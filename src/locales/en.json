@@ -85,7 +85,8 @@
         "lessonDurations": "Each package needs at least 1 duration.",
         "isOffering": "You must offer at least 1 package."
       },
-      "name": "You must input a name."
+      "name": "You must input a name.",
+      "paymentData": "You must input a PayPal email."
     },
     "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
   },
@@ -149,6 +150,10 @@
     "name": {
       "title": "My name is...",
       "placeholder": "Name"
+    },
+    "paymentData": {
+      "title": "My PayPal email is...",
+      "placeholder": "PayPal email"
     }
   },
   "calendar": {

@@ -1,8 +1,20 @@
 <template>
-  <div class="flex justify-center container py-10 mx-auto w-9/12 flex-wrap md:flex-nowrap">
-    <profile-card :user-data="userData" />
-    <div>
-      <div class="">
+  <div class="bg-gray-50 h-auto min-h-screen">
+    <div
+      class="
+        flex
+        justify-center
+        container
+        py-10
+        mx-auto
+        md:w-11/12
+        xl:w-9/12
+        flex-wrap
+        md:flex-nowrap
+      "
+    >
+      <profile-card :user-data="userData" class="bg-white" />
+      <div class="bg-white">
         <div class="shadow-md rounded-lg">
           <p class="leading-relaxed text-base">
             Taxidermy bushwick celiac master cleanse microdosing seitan. Fashion axe four dollar
@@ -80,8 +92,8 @@
           </div>
         </div>
       </div>
+      <!-- <edit-calendar :user-id="userData._id" /> -->
     </div>
-    <!-- <edit-calendar :user-id="userData._id" /> -->
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <text-input-layout
     :step-title="$t('onboarding.name.title')"
-    :input-value="name"
+    :input-value="userName"
     :input-placeholder-text="$t('onboarding.name.placeholder')"
     :input-error-text="$t('error.onboarding.name')"
     :input-model-vuelidate-obj="inputModelVuelidateObj"
@@ -25,10 +25,15 @@ export default Vue.extend({
       type: Object,
       required: true,
     },
+    name: {
+      type: String,
+      required: false,
+      default: '',
+    },
   },
   data() {
     return {
-      name: this.userData.name || '',
+      userName: this.name || this.userData.name || '',
     };
   },
   computed: {
@@ -47,11 +52,11 @@ export default Vue.extend({
   },
   methods: {
     onInputChange(value: string): void {
-      this.name = value;
+      this.userName = value;
     },
     onStepForward(): void {
       EventBus.$emit('step-forward', {
-        value: this.name,
+        value: this.userName,
         emittedValueName: 'name',
       });
     },

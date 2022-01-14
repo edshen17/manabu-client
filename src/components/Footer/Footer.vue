@@ -1,5 +1,5 @@
 <template>
-  <footer class="relative bg-white pt-6 lg:pt-7 pb-6 border-t border-gray-400 mx-auto w-11/12">
+  <footer class="relative bg-white pt-6 lg:pt-7 pb-6 border-t-2 border-gray-200 mx-auto w-11/12">
     <div
       class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden"
       style="height: 80px"
@@ -50,10 +50,9 @@
           </select>
         </div>
       </div>
-      <hr class="my-6 border-gray-400" />
-      <div class="flex flex-wrap items-center lg:justify-between justify-center">
+      <div class="flex flex-wrap items-center lg:justify-between justify-center mt-20">
         <div class="w-full lg:w-4/12 px-4 mx-auto text-center">
-          <div class="text-sm text-black font-semibold py-1">
+          <div class="text-sm text-gray-600 font-semibold py-1">
             Copyright © {{ currentYear }}. {{ $t('footer.copyright') }}
           </div>
         </div>

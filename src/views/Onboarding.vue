@@ -1,7 +1,7 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    <name-step v-if="stepIndex == 0" :user-data="userData" />
+    <name-step v-if="stepIndex == 0" :user-data="userData" :name="name" />
     <language-name-step
       v-show="stepIndex == 1"
       :step-title="targetLanguageText"
@@ -46,7 +46,7 @@
       :contact-method-id="contactMethodId"
     />
     <profile-image-step
-      v-show="stepIndex == 9"
+      v-if="stepIndex == 9"
       :step-title="$t('onboarding.userProfile.image')"
       :user-data="userData"
     />
@@ -61,13 +61,18 @@
         :step-title="$t('onboarding.userProfile.teacherType')"
       />
       <teacher-license-step
-        v-show="stepIndex == 12"
+        v-if="stepIndex == 12"
         :user-data="userData"
         :is-pro-teacher="isProTeacher"
       />
-      <teacher-introduction-video-step v-show="stepIndex == 13" :user-data="userData" />
-      <teacher-price-data-step v-show="stepIndex == 14" :is-pro-teacher="isProTeacher" />
-      <teacher-packages-step v-show="stepIndex == 15" :user-data="userData" />
+      <teacher-introduction-video-step v-if="stepIndex == 13" :user-data="userData" />
+      <teacher-price-data-step v-if="stepIndex == 14" :is-pro-teacher="isProTeacher" />
+      <payment-email-step
+        v-if="stepIndex == 15"
+        :user-data="userData"
+        :payout-email="payoutEmail"
+      />
+      <teacher-packages-step v-show="stepIndex == 16" :user-data="userData" />
     </div>
     <async-loader v-show="isFinishedOnboarding" :progress-percent="uploadProgress" />
   </div>
@@ -102,6 +107,7 @@ import { makePackageRepository } from '../repositories/package';
 import { PACKAGE_ENTITY_TYPE } from '../../../server/components/entities/package/packageEntity';
 import AsyncLoader from '../components/Onboarding/Steps/AsyncLoader.vue';
 import NameStep from '../components/Onboarding/Steps/NameStep.vue';
+import PaymentEmailStep from '../components/Onboarding/Steps/PaymentEmailStep.vue';
 
 const updateUserByIdMixin = makeUpdateUserByIdMixin;
 const packageRepository = makePackageRepository;
@@ -132,6 +138,7 @@ export default Vue.extend({
     TeacherPriceDataStep,
     TeacherPackagesStep,
     AsyncLoader,
+    PaymentEmailStep,
   },
   mixins: [updateUserByIdMixin],
   props: {},
@@ -150,6 +157,7 @@ export default Vue.extend({
       teacherType: '',
       teacherHourlyRate: 0,
       teacherPackages: [] as StringKeyObject[],
+      payoutEmail: '',
       stepIndex: 0,
       uploadProgress: 0,
     };
@@ -161,7 +169,7 @@ export default Vue.extend({
     }),
     stepTotal: {
       get(): number {
-        const stepTotal = !this.isTeacher ? 11 : 16;
+        const stepTotal = !this.isTeacher ? 11 : 17;
         return stepTotal;
       },
     },
@@ -355,6 +363,12 @@ export default Vue.extend({
           priceData: {
             hourlyRate: this.teacherHourlyRate,
             currency: DEFAULT_CURRENCY,
+          },
+          settings: {
+            ...this.userData.teacherData.settings,
+            payoutData: {
+              email: this.payoutEmail,
+            },
           },
         },
         repositoryName: REPOSITORY_NAME.TEACHER,
