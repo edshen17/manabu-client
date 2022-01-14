@@ -6,14 +6,15 @@
       <div class="flex">
         <language-bars
           :language-level="nonTargetLanguage.level"
-          :language-code="nonTargetLanguage.language"
+          :language-code="nonTargetLanguage.code"
           class="mx-3"
         />
         <language-bars
           :language-level="targetLanguage.level"
-          :language-code="targetLanguage.language"
+          :language-code="targetLanguage.code"
         />
       </div>
+      <p class="text-gray-600 text-sm mt-1">{{ userData.timezone }}</p>
     </div>
   </div>
 </template>

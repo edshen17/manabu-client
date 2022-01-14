@@ -15,8 +15,8 @@
       "
     >
       <profile-card :user-data="userData" class="bg-white" />
-      <div class="bg-white">
-        <div class="shadow-md rounded-lg">
+      <div>
+        <div class="shadow-md rounded-lg bg-white">
           <p class="leading-relaxed text-base">
             Taxidermy bushwick celiac master cleanse microdosing seitan. Fashion axe four dollar
             toast truffaut, direct trade kombucha brunch williamsburg keffiyeh gastropub tousled

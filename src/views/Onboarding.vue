@@ -338,8 +338,8 @@ export default Vue.extend({
             },
           ],
           languages: [
-            { language: this.targetLanguageCode, level: this.targetLanguageLevel },
-            { language: this.nonTargetLanguageCode, level: this.nonTargetLanguageLevel },
+            { code: this.targetLanguageCode, level: this.targetLanguageLevel },
+            { code: this.nonTargetLanguageCode, level: this.nonTargetLanguageLevel },
           ],
           profileBio: this.profileBio,
           region: this.region,
@@ -353,12 +353,8 @@ export default Vue.extend({
         userId: this.userData._id,
         teacherId: this.userData.teacherData._id,
         updateParams: {
-          teachingLanguages: [
-            { language: this.targetLanguageCode, level: this.targetLanguageLevel },
-          ],
-          alsoSpeaks: [
-            { language: this.nonTargetLanguageCode, level: this.nonTargetLanguageLevel },
-          ],
+          teachingLanguages: [{ code: this.targetLanguageCode, level: this.targetLanguageLevel }],
+          alsoSpeaks: [{ code: this.nonTargetLanguageCode, level: this.nonTargetLanguageLevel }],
           type: this.teacherType,
           priceData: {
             hourlyRate: this.teacherHourlyRate,
