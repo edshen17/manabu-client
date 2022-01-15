@@ -3,7 +3,7 @@
     <grid-button-layout :step-title="$t('onboarding.timezone')">
       <template v-slot:main>
         <v-autocomplete
-          v-model="selectedTimezone"
+          v-model="timezoneModel"
           outlined
           dense
           auto
@@ -43,6 +43,10 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    userData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -50,6 +54,24 @@ export default Vue.extend({
     };
   },
   computed: {
+    timezoneModel: {
+      get(): string {
+        const isDbTimezoneValid = this.isValidTimezone(this.userData.timezone);
+        const isSavedTimezoneValid = this.isValidTimezone(this.timezone);
+        let timezoneModel;
+        if (isDbTimezoneValid) {
+          timezoneModel = this.userData.timezone;
+        } else if (isSavedTimezoneValid) {
+          timezoneModel = this.timezone;
+        } else {
+          timezoneModel = this.selectTimezones[0].value;
+        }
+        return timezoneModel;
+      },
+      set(value: string): void {
+        this.selectedTimezone = value;
+      },
+    },
     selectTimezones: {
       get(): { text: string; value: string }[] {
         const timezones: string[] = ct.getCountry(this.region)!.timezones;
@@ -66,13 +88,8 @@ export default Vue.extend({
       },
     },
   },
-  watch: {
-    timezone: function () {
-      this.selectedTimezone = this.selectTimezones[0].value;
-    },
-  },
   mounted() {
-    this.selectedTimezone = this.timezone || this.selectTimezones[0].value;
+    this.selectedTimezone = this.timezoneModel;
   },
   methods: {
     emitRegionSelection(): void {
@@ -80,6 +97,13 @@ export default Vue.extend({
         value: this.selectedTimezone,
         emittedValueName: 'timezone',
       });
+    },
+    isValidTimezone(timezone: string): boolean {
+      const isValidTimezone =
+        this.selectTimezones.filter((selectTimezone: { text: string; value: string }) => {
+          return selectTimezone.value == timezone;
+        }).length > 0;
+      return isValidTimezone;
     },
   },
 });

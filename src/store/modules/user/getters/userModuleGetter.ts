@@ -45,9 +45,7 @@ class UserModuleGetter extends AbstractModuleGetter<UserEntityStateData> {
             timezone!.length > 0;
           isFinishedOnboarding = !isTeacher
             ? userChecks
-            : userChecks &&
-              teacherData!.teachingLanguages.length == 0 &&
-              teacherData!.introductionVideoUrl?.length == 0;
+            : userChecks && teacherData!.teachingLanguages.length > 0;
         }
         return isFinishedOnboarding;
       },

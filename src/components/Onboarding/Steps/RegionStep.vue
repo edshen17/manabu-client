@@ -40,10 +40,14 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    userData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
-      selectedRegion: this.region || 'SG',
+      selectedRegion: this.region || this.userData.region || 'SG',
     };
   },
   computed: {

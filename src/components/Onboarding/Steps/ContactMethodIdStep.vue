@@ -63,15 +63,21 @@ export default Vue.extend({
       type: String,
       required: false,
     },
+    userData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
-      id: this.contactMethodId || '',
+      id: '',
     };
   },
   computed: {},
   mounted() {
-    return;
+    const contactMethods = this.userData.contactMethods;
+    const savedContactMethodId = contactMethods.length > 0 ? contactMethods[0].methodAddress : '';
+    this.id = this.contactMethodId || savedContactMethodId || '';
   },
   methods: {
     handleEnterKeyPress(): void {

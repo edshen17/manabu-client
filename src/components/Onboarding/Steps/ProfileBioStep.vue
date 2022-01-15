@@ -56,11 +56,15 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    userData: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
       extensions: [History, Bold, Underline, Italic, ListItem, BulletList, OrderedList],
-      bio: this.profileBio || '',
+      bio: this.profileBio || this.userData.profileBio || '',
     };
   },
   computed: {},

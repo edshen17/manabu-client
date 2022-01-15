@@ -33,7 +33,11 @@ export default Vue.extend({
   },
   data() {
     return {
-      email: this.payoutEmail || this.userData.email || '',
+      email:
+        this.payoutEmail ||
+        this.userData.teacherData.settings.payoutData.email ||
+        this.userData.email ||
+        '',
     };
   },
   computed: {

@@ -1,6 +1,7 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
+    {{ userData }}
     <name-step v-if="stepIndex == 0" :user-data="userData" :name="name" />
     <language-name-step
       v-show="stepIndex == 1"
@@ -28,8 +29,13 @@
       "
       emitted-value-name="nonTargetLanguageLevel"
     />
-    <region-step v-if="stepIndex == 5" :region="region" />
-    <timezone-step v-if="stepIndex == 6" :region="region" :timezone="timezone" />
+    <region-step v-if="stepIndex == 5" :region="region" :user-data="userData" />
+    <timezone-step
+      v-if="stepIndex == 6"
+      :region="region"
+      :timezone="timezone"
+      :user-data="userData"
+    />
     <contact-method-name-step
       v-show="stepIndex == 7"
       :contact-methods="contactMethods"
@@ -44,6 +50,7 @@
       "
       :contact-method-name="contactMethodName"
       :contact-method-id="contactMethodId"
+      :user-data="userData"
     />
     <profile-image-step
       v-if="stepIndex == 9"
@@ -54,6 +61,7 @@
       v-if="stepIndex == 10"
       :step-title="$t('onboarding.userProfile.bio')"
       :profile-bio="profileBio"
+      :user-data="userData"
     />
     <div v-show="isTeacher">
       <teacher-type-step
@@ -329,10 +337,11 @@ export default Vue.extend({
       await (this as any).updateUserById({
         userId: this.userData._id,
         updateParams: {
+          name: this.name || this.userData.name,
           contactMethods: [
             {
-              methodName: this.contactMethodId,
-              methodAddress: this.contactMethodName,
+              methodName: this.contactMethodName,
+              methodAddress: this.contactMethodId,
               isPrimaryMethod: true,
               methodType: 'online',
             },
