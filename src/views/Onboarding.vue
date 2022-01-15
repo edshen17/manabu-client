@@ -1,7 +1,6 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
     <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
-    {{ userData }}
     <name-step v-if="stepIndex == 0" :user-data="userData" :name="name" />
     <language-name-step
       v-show="stepIndex == 1"
@@ -74,7 +73,12 @@
         :is-pro-teacher="isProTeacher"
       />
       <teacher-introduction-video-step v-if="stepIndex == 13" :user-data="userData" />
-      <teacher-price-data-step v-if="stepIndex == 14" :is-pro-teacher="isProTeacher" />
+      <teacher-price-data-step
+        v-if="stepIndex == 14"
+        :is-pro-teacher="isProTeacher"
+        :user-data="userData"
+        :hourly-rate="teacherHourlyRate"
+      />
       <payment-email-step
         v-if="stepIndex == 15"
         :user-data="userData"
@@ -286,8 +290,9 @@ export default Vue.extend({
   watch: {
     stepIndex: async function (): Promise<void> {
       if (this.isFinishedOnboarding) {
-        this.uploadProgress += 50;
+        this.uploadProgress += 25;
         await this.updateUserData();
+        this.uploadProgress += 25;
         if (this.isTeacher) {
           await this.updateTeacherData();
         } else {

@@ -43,21 +43,29 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+    userData: {
+      type: Object,
+      required: true,
+    },
+    hourlyRate: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
-      teacherHourlyRate: 30,
+      teacherHourlyRate: this.hourlyRate || this.userData.teacherData.priceData.hourlyRate,
       currency: DEFAULT_CURRENCY,
     };
   },
   computed: {},
-  watch: {
-    isProTeacher: function (newVal) {
-      if (!newVal) {
-        this.teacherHourlyRate = 30;
-      }
-    },
-  },
+  // watch: {
+  //   isProTeacher: function (newVal) {
+  //     if (!newVal) {
+  //       this.teacherHourlyRate = 30;
+  //     }
+  //   },
+  // },
   mounted() {
     return;
   },

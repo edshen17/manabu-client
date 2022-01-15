@@ -8,9 +8,9 @@
             :rotate="90"
             :size="120"
             :width="15"
-            :value="progressPercent"
+            :value="progress"
           >
-            {{ progressPercent }}
+            {{ progress }}
           </v-progress-circular>
         </div>
       </template>
@@ -34,7 +34,14 @@ export default Vue.extend({
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    progress: {
+      get(): number {
+        const progress = this.progressPercent >= 100 ? 100 : this.progressPercent;
+        return progress;
+      },
+    },
+  },
   mounted() {
     return;
   },
