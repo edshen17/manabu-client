@@ -58,8 +58,7 @@
       "name": "You must input a name.",
       "email": "You must input a valid email address.",
       "password": {
-        "length": "Your password must be at least 8 characters.",
-        "required": "You must input a password."
+        "length": "Your must input a password that is at least 8 characters."
       },
       "login": {
         "invalid": "Invalid username or password.",

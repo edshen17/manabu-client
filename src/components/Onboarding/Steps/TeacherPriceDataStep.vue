@@ -48,7 +48,7 @@ export default Vue.extend({
       required: true,
     },
     hourlyRate: {
-      type: Object,
+      type: Number,
       required: true,
     },
   },

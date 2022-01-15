@@ -81,7 +81,7 @@
         </form>
         <p v-show="$v.password.$error" class="vuelidate-error my-1">
           <span v-if="isSignupPage">{{ $t('error.userAuth.password.length') }}</span>
-          <span v-else>{{ $t('error.userAuth.password.required') }}</span>
+          <span v-else>{{ $t('error.userAuth.password.length') }}</span>
         </p>
         <button
           class="bg-gray-700 py-3 px-4 rounded w-full my-6"
@@ -107,7 +107,7 @@
         <p class="float-right">
           <span v-if="isSignupPage">
             {{ $t('userAuth.haveAccount') }}
-            <router-link to="/login" class="text-blue-500">
+            <router-link :to="{ path: 'login', query: $route.query }" class="text-blue-500">
               {{ $t('userAuth.loginHere') }}
             </router-link>
           </span>
