@@ -113,7 +113,7 @@
           </span>
           <span v-else class="inline-block">
             {{ $t('userAuth.noAccount') }}
-            <router-link to="/signup" class="text-blue-500">{{
+            <router-link :to="{ path: 'signup', query: $route.query }" class="text-blue-500">{{
               $t('userAuth.signupHere')
             }}</router-link>
           </span>
