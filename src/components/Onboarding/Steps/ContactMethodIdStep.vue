@@ -76,7 +76,7 @@ export default Vue.extend({
   computed: {},
   mounted() {
     const contactMethods = this.userData.contactMethods;
-    const savedContactMethodId = contactMethods.length > 0 ? contactMethods[0].methodAddress : '';
+    const savedContactMethodId = contactMethods.length > 0 ? contactMethods[0].address : '';
     this.id = this.contactMethodId || savedContactMethodId || '';
   },
   methods: {

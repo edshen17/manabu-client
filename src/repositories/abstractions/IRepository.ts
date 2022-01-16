@@ -7,7 +7,7 @@ enum REPOSITORY_NAME {
 }
 
 interface IRepository {
-  get: (query: StringKeyObject) => Promise<StringKeyObject>;
+  get: (props: any) => Promise<StringKeyObject>;
   getById: (props: any) => Promise<StringKeyObject>;
   getSelf: () => Promise<StringKeyObject>;
   create: (props: any) => Promise<StringKeyObject>;

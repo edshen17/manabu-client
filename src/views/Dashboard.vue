@@ -14,9 +14,10 @@
         md:flex-nowrap
       "
     >
-      <profile-card :user-data="userData" class="bg-white" />
-      <!-- <div>
-        <div class="shadow-md rounded-lg bg-white">
+      <profile-card :user-data="userData" class="bg-white max-h-72" />
+      <div>
+        <teachers-card />
+        <div class="shadow-md rounded-lg bg-white mb-2">
           <p class="leading-relaxed text-base">
             Taxidermy bushwick celiac master cleanse microdosing seitan. Fashion axe four dollar
             toast truffaut, direct trade kombucha brunch williamsburg keffiyeh gastropub tousled
@@ -54,7 +55,7 @@
             </a>
           </div>
         </div>
-        <div class="shadow-md rounded-lg">
+        <!-- <div class="shadow-md rounded-lg">
           <p class="leading-relaxed text-base">
             Taxidermy bushwick celiac master cleanse microdosing seitan. Fashion axe four dollar
             toast truffaut, direct trade kombucha brunch williamsburg keffiyeh gastropub tousled
@@ -91,10 +92,10 @@
               </svg>
             </a>
           </div>
-        </div>
-      </div> -->
-      <edit-calendar :user-id="userData._id" />
+        </div> -->
+      </div>
     </div>
+    <edit-calendar :user-id="userData._id" />
   </div>
 </template>
 
@@ -102,6 +103,7 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import EditCalendar from '../components/Calendar/EditCalendar.vue';
+import TeachersCard from '../components/Dashboard/Cards/TeachersCard.vue';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import ProfileCard from '../components/UserProfile/ProfileCard.vue';
 
@@ -110,6 +112,7 @@ export default Vue.extend({
   components: {
     EditCalendar,
     ProfileCard,
+    TeachersCard,
   },
   props: {},
   data() {
