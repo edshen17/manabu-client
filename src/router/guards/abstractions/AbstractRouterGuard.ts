@@ -8,6 +8,7 @@ abstract class AbstractRouterGuard implements IRouterGuard {
 
   public consume = (): NavigationGuard => {
     return async (to: Route, from: Route, next: NavigationGuardNext<any>): Promise<void> => {
+      window.scrollTo(0, 0);
       await this._consumeTemplate(to, from, next);
     };
   };

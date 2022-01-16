@@ -37,7 +37,6 @@
     />
     <contact-method-name-step
       v-show="stepIndex == 7"
-      :contact-methods="contactMethods"
       :step-title="$t('onboarding.contactMethod')"
     />
     <contact-method-id-step
@@ -234,46 +233,6 @@ export default Vue.extend({
         return nonTargetLanguageOfferings;
       },
     },
-    contactMethods: {
-      get(): {
-        name: TranslateResult;
-        iconClass: string;
-        backgroundHex: string;
-        logoHex: string;
-      }[] {
-        const contactMethods = [
-          {
-            name: this.$t('onboarding.contactMethods.skype'),
-            value: 'skype',
-            iconClass: 'fab fa-skype fa-3x',
-            logoHex: '#00AFF0',
-            backgroundHex: '#FFF',
-          },
-          {
-            name: this.$t('onboarding.contactMethods.line'),
-            iconClass: 'fab fa-line fa-3x',
-            value: 'line',
-            logoHex: '#00B900',
-            backgroundHex: '#FFF',
-          },
-          {
-            name: this.$t('onboarding.contactMethods.discord'),
-            iconClass: 'fab fa-discord fa-3x',
-            logoHex: '#7289DA',
-            value: 'discord',
-            backgroundHex: '#FFF',
-          },
-          {
-            name: this.$t('onboarding.contactMethods.zoom'),
-            iconClass: 'fas fa-video fa-2x',
-            logoHex: '#FFF',
-            value: 'zoom',
-            backgroundHex: '#2D8CFF',
-          },
-        ];
-        return contactMethods;
-      },
-    },
     isProTeacher: {
       get(): boolean {
         const isProTeacher = this.teacherType == TEACHER_ENTITY_TYPE.LICENSED;
@@ -345,10 +304,10 @@ export default Vue.extend({
           name: this.name || this.userData.name,
           contactMethods: [
             {
-              methodName: this.contactMethodName,
-              methodAddress: this.contactMethodId,
+              name: this.contactMethodName,
+              address: this.contactMethodId,
               isPrimaryMethod: true,
-              methodType: 'online',
+              type: 'online',
             },
           ],
           languages: [

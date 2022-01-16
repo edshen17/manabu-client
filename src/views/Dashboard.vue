@@ -15,7 +15,7 @@
       "
     >
       <profile-card :user-data="userData" class="bg-white" />
-      <div>
+      <!-- <div>
         <div class="shadow-md rounded-lg bg-white">
           <p class="leading-relaxed text-base">
             Taxidermy bushwick celiac master cleanse microdosing seitan. Fashion axe four dollar
@@ -92,8 +92,8 @@
             </a>
           </div>
         </div>
-      </div>
-      <!-- <edit-calendar :user-id="userData._id" /> -->
+      </div> -->
+      <edit-calendar :user-id="userData._id" />
     </div>
   </div>
 </template>

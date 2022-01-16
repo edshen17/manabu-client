@@ -95,7 +95,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
   public setEntityStateData = (
     props: ActionContext<IEntityState<EntityStateData>, IRootState>,
     payload: StringKeyObject
-  ) => {
+  ): void => {
     const { commit } = props;
     commit('setEntityStateData', payload);
   };

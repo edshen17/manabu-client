@@ -43,6 +43,7 @@
 import Vue from 'vue';
 import GridColLayout from '../Layouts/GridColLayout.vue';
 import { EventBus } from '../../EventBus/EventBus';
+import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
   name: 'ContactMethodNameStep',
@@ -53,16 +54,52 @@ export default Vue.extend({
       default: '',
       required: true,
     },
-    contactMethods: {
-      type: Array,
-      default: (): {}[] => [],
-      required: true,
-    },
   },
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    contactMethods: {
+      get(): {
+        name: TranslateResult;
+        iconClass: string;
+        backgroundHex: string;
+        logoHex: string;
+      }[] {
+        const contactMethods = [
+          {
+            name: this.$t('onboarding.contactMethods.skype'),
+            value: 'skype',
+            iconClass: 'fab fa-skype fa-3x',
+            logoHex: '#00AFF0',
+            backgroundHex: '#FFF',
+          },
+          {
+            name: this.$t('onboarding.contactMethods.line'),
+            iconClass: 'fab fa-line fa-3x',
+            value: 'line',
+            logoHex: '#00B900',
+            backgroundHex: '#FFF',
+          },
+          {
+            name: this.$t('onboarding.contactMethods.discord'),
+            iconClass: 'fab fa-discord fa-3x',
+            logoHex: '#7289DA',
+            value: 'discord',
+            backgroundHex: '#FFF',
+          },
+          {
+            name: this.$t('onboarding.contactMethods.zoom'),
+            iconClass: 'fas fa-video fa-2x',
+            logoHex: '#FFF',
+            value: 'zoom',
+            backgroundHex: '#2D8CFF',
+          },
+        ];
+        return contactMethods;
+      },
+    },
+  },
   mounted() {
     return;
   },
