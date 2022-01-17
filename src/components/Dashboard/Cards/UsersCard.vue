@@ -15,6 +15,7 @@
           </div>
         </div>
         <div
+          v-show="users.length >= limit && !isEnd"
           class="text-center py-2 uppercase text-gray-500 text-sm hover:bg-gray-100"
           @click="showMore"
         >
@@ -55,8 +56,9 @@ export default Vue.extend({
   data() {
     return {
       users: [] as JoinedUserDoc[],
-      usersToShow: 3,
       page: 0,
+      limit: 3,
+      isEnd: false,
     };
   },
   computed: {
@@ -78,24 +80,26 @@ export default Vue.extend({
         path: '/pendingTeachers',
         query: {
           page: this.page,
-          limit: 3,
+          limit: this.limit,
         },
         isAbsolutePath: false,
       });
       const { teachers } = data;
       this.users = this.users.concat(teachers);
+      this.setIsEnd(teachers);
     },
     async _getUserTeacherEdges(): Promise<void> {
       const { data } = await userRepository.get({
         path: `/users/${this.userData._id}/userTeacherEdges`,
         query: {
           page: this.page,
-          limit: 3,
+          limit: this.limit,
         },
         isAbsolutePath: true,
       });
       const { users } = data;
       this.users = this.users.concat(users);
+      this.setIsEnd(users);
     },
     async showMore(): Promise<void> {
       this.page++;
@@ -107,6 +111,11 @@ export default Vue.extend({
         ? this.$t(`userProfile.teacher.${user.teacherData!.type}`)
         : this.$t('userProfile.student');
       return userType;
+    },
+    setIsEnd(users: JoinedUserDoc[]): void {
+      if (users.length == 0) {
+        this.isEnd = true;
+      }
     },
   },
 });
