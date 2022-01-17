@@ -144,6 +144,7 @@ export default Vue.extend({
       email: '',
       password: '',
       showPassword: false,
+      isLoading: false,
       _focusedInputName: '',
     };
   },
@@ -211,7 +212,7 @@ export default Vue.extend({
     },
     async handleAuthFormSubmit(): Promise<void> {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
+      if (!this.$v.$invalid && !this.isLoading) {
         await this._handleLogin();
       }
     },
@@ -221,6 +222,7 @@ export default Vue.extend({
         password: this.password,
       };
       let endpoint = '/users/auth/base/login';
+      this.isLoading = true;
       if (this.isSignupPage) {
         payload = { ...payload, name: this.name };
         endpoint = '/users';
