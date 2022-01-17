@@ -7,6 +7,7 @@ type UserEntityState = IEntityState<UserEntityStateData>;
 type UserEntityStateData = JoinedUserDoc | LoggedOutUser;
 
 type LoggedOutUser = {
+  role: string;
   settings: {
     currency: string;
     locale: string;
@@ -23,6 +24,7 @@ class UserModuleState extends AbstractModuleState<
 
   public getDefaultEntityStateData = (): UserEntityStateData => {
     const defaultEntityStateData = {
+      role: 'user',
       settings: {
         currency: 'SGD',
         locale: this._locale,

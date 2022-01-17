@@ -14,7 +14,10 @@
             </p>
           </div>
         </div>
-        <div class="text-center py-2 uppercase text-gray-500 text-sm hover:bg-gray-100">
+        <div
+          class="text-center py-2 uppercase text-gray-500 text-sm hover:bg-gray-100"
+          @click="showMore"
+        >
           {{ $t('dashboard.showMore') }}
         </div>
       </div>
@@ -26,9 +29,11 @@
 import Vue from 'vue';
 import LongCard from '../Layouts/LongCard.vue';
 import { makeAdminRepository } from '../../../repositories/admin';
+import { makeUserRepository } from '../../../repositories/user';
 import { JoinedUserDoc } from '../../../../../server/models/User';
 import { TranslateResult } from 'vue-i18n';
 const adminRepository = makeAdminRepository;
+const userRepository = makeUserRepository;
 
 export default Vue.extend({
   name: 'UsersCard',
@@ -38,11 +43,20 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    userData: {
+      type: Object,
+      required: true,
+    },
+    isAdmin: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
       users: [] as JoinedUserDoc[],
-      teachersToShow: 3,
+      usersToShow: 3,
+      page: 0,
     };
   },
   computed: {
@@ -53,132 +67,39 @@ export default Vue.extend({
     // },
   },
   async mounted() {
-    this.users = [
-      {
-        _id: '61e4d24f66a99174bd4e8dc9',
-        name: 'Edwin Shen',
-        email: 'greencopter4444@gmail.com',
-        profileImageUrl:
-          'https://lh3.googleusercontent.com/a-/AOh14GjQAkMXL_1lf8a8ymoxuR6PJZDhoVMNX8wUejGV=s96-c',
-        profileBio: '',
-        languages: [
-          { code: 'ja', level: 'C2', _id: '61e4d38c66a99174bd4e8e1d' },
-          { code: 'en', level: 'C2', _id: '61e4d38c66a99174bd4e8e1d' },
-        ],
-        region: '',
-        timezone: '',
-        role: 'user',
-        settings: {
-          currency: 'SGD',
-          locale: 'en',
-          emailAlerts: {
-            packageTransactionCreation: true,
-            appointmentCreation: true,
-            appointmentUpdate: true,
-            appointmentStartReminder: true,
-            _id: '61e4d24f66a99174bd4e8dcb',
-          },
-          _id: '61e4d24f66a99174bd4e8dca',
-        },
-        memberships: [],
-        contactMethods: [],
-        isEmailVerified: false,
-        createdDate: '2022-01-17T02:19:59.591Z',
-        lastModifiedDate: '2022-01-17T02:22:01.427Z',
-        lastOnlineDate: '2022-01-17T02:19:59.591Z',
-        balance: {
-          totalCurrent: 0,
-          totalPending: 0,
-          totalAvailable: 0,
-          currency: 'SGD',
-          _id: '61e4d24f66a99174bd4e8dcc',
-        },
-        __v: 0,
-        teacherData: {
-          teachingLanguages: [],
-          alsoSpeaks: [],
-          introductionVideoUrl: '',
-          applicationStatus: 'pending',
-          settings: {
-            isHidden: false,
-            payoutData: { email: '' },
-            _id: '61e4d2c766a99174bd4e8df0',
-          },
-          type: 'unlicensed',
-          licenseUrl: '',
-          priceData: { hourlyRate: 30, currency: 'SGD', _id: '61e4d2c766a99174bd4e8df1' },
-          tags: [],
-          lessonCount: 0,
-          studentCount: 0,
-          packages: [
-            {
-              lessonAmount: 5,
-              description: '',
-              name: 'light plan',
-              isOffering: true,
-              type: 'default',
-              lessonDurations: [30, 60],
-              tags: [],
-              createdDate: '2022-01-17T02:21:59.799Z',
-              lastModifiedDate: '2022-01-17T02:21:59.799Z',
-              _id: '61e4d2c766a99174bd4e8df2',
-            },
-            {
-              lessonAmount: 12,
-              description: '',
-              name: 'moderate plan',
-              isOffering: true,
-              type: 'default',
-              lessonDurations: [30, 60],
-              tags: [],
-              createdDate: '2022-01-17T02:21:59.799Z',
-              lastModifiedDate: '2022-01-17T02:21:59.799Z',
-              _id: '61e4d2c766a99174bd4e8df3',
-            },
-            {
-              lessonAmount: 22,
-              description: '',
-              name: 'mainichi plan',
-              isOffering: true,
-              type: 'default',
-              lessonDurations: [30, 60],
-              tags: [],
-              createdDate: '2022-01-17T02:21:59.801Z',
-              lastModifiedDate: '2022-01-17T02:21:59.801Z',
-              _id: '61e4d2c766a99174bd4e8df4',
-            },
-            {
-              lessonAmount: 10,
-              description: '',
-              name: 'custom plan',
-              isOffering: false,
-              type: 'custom',
-              lessonDurations: [30, 60],
-              tags: [],
-              createdDate: '2022-01-17T02:21:59.801Z',
-              lastModifiedDate: '2022-01-17T02:21:59.801Z',
-              _id: '61e4d2c766a99174bd4e8df5',
-            },
-          ],
-          createdDate: '2022-01-17T02:21:59.798Z',
-          lastModifiedDate: '2022-01-17T02:21:59.798Z',
-          _id: '61e4d2c766a99174bd4e8def',
-        },
-      },
-    ] as any;
+    await this.getUsersBrancher();
   },
   methods: {
-    async getTeachers(): Promise<JoinedUserDoc[]> {
+    async getUsersBrancher(): Promise<void> {
+      this.isAdmin ? await this._getPendingTeachers() : await this._getUserTeacherEdges();
+    },
+    async _getPendingTeachers(): Promise<void> {
       const { data } = await adminRepository.get({
         path: '/pendingTeachers',
         query: {
-          page: 0,
-          limit: 5,
+          page: this.page,
+          limit: 3,
         },
         isAbsolutePath: false,
       });
+      const { teachers } = data;
+      this.users = this.users.concat(teachers);
+    },
+    async _getUserTeacherEdges(): Promise<void> {
+      const { data } = await userRepository.get({
+        path: `/users/${this.userData._id}/userTeacherEdges`,
+        query: {
+          page: this.page,
+          limit: 3,
+        },
+        isAbsolutePath: true,
+      });
       const { users } = data;
-      return users;
+      this.users = this.users.concat(users);
+    },
+    async showMore(): Promise<void> {
+      this.page++;
+      await this.getUsersBrancher();
     },
     getUserType(user: JoinedUserDoc): TranslateResult {
       const isTeacher = 'teacherData' in user;

@@ -54,8 +54,7 @@
             </a>
           </div>
         </div>
-        <users-card :title="$t('dashboard.admin.pendingTeachers')" />
-        <users-card :title="usersCardTitle" />
+        <users-card :title="usersCardTitle" :user-data="userData" :is-admin="isAdmin" />
       </div>
     </div>
     <edit-calendar :user-id="userData._id" />
@@ -87,12 +86,18 @@ export default Vue.extend({
       userData: 'user/entityStateData',
       isFinishedOnboarding: 'user/isFinishedOnboarding',
       isTeacher: 'user/isTeacher',
+      isAdmin: 'user/isAdmin',
     }),
     usersCardTitle: {
       get(): TranslateResult {
-        const usersCardTitle = this.isTeacher
-          ? this.$t('dashboard.myStudents')
-          : this.$t('dashboard.myTeachers');
+        let usersCardTitle;
+        if (this.isAdmin) {
+          usersCardTitle = this.$t('dashboard.admin.pendingTeachers');
+        } else if (this.isTeacher) {
+          usersCardTitle = this.$t('dashboard.myStudents');
+        } else {
+          usersCardTitle = this.$t('dashboard.myTeachers');
+        }
         return usersCardTitle;
       },
     },

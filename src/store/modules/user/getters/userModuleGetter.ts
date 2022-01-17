@@ -16,6 +16,10 @@ class UserModuleGetter extends AbstractModuleGetter<UserEntityStateData> {
         const isLoggedIn = '_id' in state.entityStateData;
         return isLoggedIn;
       },
+      isAdmin(state: UserGetterState): boolean {
+        const isAdmin = state.entityStateData.role == 'admin';
+        return isAdmin;
+      },
       isTeacher(state: UserGetterState): boolean {
         const isTeacher = 'teacherData' in state.entityStateData;
         return isTeacher;

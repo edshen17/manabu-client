@@ -1,12 +1,12 @@
 <template>
-  <component :is="layout" class="font-noto-sans">
+  <component :is="this.$route.meta.layout || 'div'" class="font-noto-sans">
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
       integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
       crossorigin="anonymous"
     />
-    <router-view :layout.sync="layout" />
+    <router-view />
   </component>
 </template>
 
@@ -15,14 +15,6 @@ import Vue from 'vue';
 
 export default Vue.extend({
   name: 'App',
-  data() {
-    return {
-      layout: 'div',
-    };
-  },
-  async created() {
-    await this.$store.dispatch('user/getEntityStateData');
-  },
 });
 </script>
 
