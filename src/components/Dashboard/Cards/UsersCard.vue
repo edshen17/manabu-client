@@ -76,6 +76,12 @@ export default Vue.extend({
         return isEnd;
       },
     },
+    queryPage: {
+      get(): number {
+        const queryPage = Math.ceil(this.users.length / this.queryLimit);
+        return queryPage;
+      },
+    },
   },
   async mounted() {
     await this.getUsersBrancher();
@@ -88,7 +94,7 @@ export default Vue.extend({
       const { data } = await adminRepository.get({
         path: '/pendingTeachers',
         query: {
-          page: this.page,
+          page: this.queryPage,
           limit: this.queryLimit,
         },
         isAbsolutePath: false,
@@ -101,7 +107,7 @@ export default Vue.extend({
       const { data } = await userRepository.get({
         path: `/users/${this.userData._id}/userTeacherEdges`,
         query: {
-          page: this.page,
+          page: this.queryPage,
           limit: this.queryLimit,
         },
         isAbsolutePath: true,
