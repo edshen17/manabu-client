@@ -126,8 +126,8 @@
       "bio": "Please write a self-introduction.",
       "teacherType": "I am applying to be a...",
       "teacherTypes": {
-        "proTeacher": "Professional Teacher",
-        "commTeacher": "Community Teacher"
+        "licensed": "@:userProfile.teacher.licensed",
+        "unlicensed": "@:userProfile.teacher.unlicensed"
       }
     },
     "teacherLicenseUpload": "Please upload your teaching certificate.",
@@ -175,7 +175,10 @@
       "hideCalendar": "HIDE CALENDAR",
       "profilePicture": "Profile Picture"
     },
+    "student": "Student",
     "teacher": {
+      "licensed": "Professional Teacher",
+      "unlicensed": "Community Teacher",
       "manabuVerified": "Manabu Verified Teacher since {date}",
       "appPending": "Teacher application pending",
       "approveApp": "Approve application",
@@ -220,6 +223,14 @@
     "homepage": {
       "signUpNow": "Sign up now!"
     }
+  },
+  "dashboard": {
+    "admin": {
+      "pendingTeachers": "Pending Teachers"
+    },
+    "showMore": "Show more",
+    "myTeachers": "My teachers",
+    "myStudents": "My students"
   },
 
 

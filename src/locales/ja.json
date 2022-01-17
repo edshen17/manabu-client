@@ -125,8 +125,8 @@
       "bio": "自己紹介を書いてください。",
       "teacherType": "申し込んでいるのは？",
       "teacherTypes": {
-        "proTeacher": "資格保有教師",
-        "commTeacher": "コミュニティティーチャー"
+        "licensed": "@:userProfile.teacher.licensed",
+        "unlicensed": "@:userProfile.teacher.unlicensed"
       }
     },
     "teacherLicenseUpload": "教員免許をアップロードしてください。",
@@ -174,7 +174,10 @@
       "hideCalendar": "HIDE CALENDAR",
       "profilePicture": "プロフィール画像"
     },
+    "student": "生徒",
     "teacher": {
+      "licensed": "資格保有教師",
+      "unlicensed": "コミュニティティーチャー",
       "manabuVerified": "Manabu Verified Teacher since {date}",
       "appPending": "Teacher application pending",
       "approveApp": "Approve application",
@@ -219,6 +222,14 @@
     "homepage": {
       "signUpNow": "今すぐ登録！"
     }
+  },
+  "dashboard": {
+    "admin": {
+      "pendingTeachers": "承認されていない教師"
+    },
+    "showMore": "もっと見る",
+    "myTeachers": "私の教師",
+    "myStudents": "私の生徒"
   },
 
 

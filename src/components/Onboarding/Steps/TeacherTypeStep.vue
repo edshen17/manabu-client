@@ -30,11 +30,11 @@ export default Vue.extend({
         const teacherTypes = [
           {
             value: 'unlicensed',
-            content: this.$t('onboarding.userProfile.teacherTypes.commTeacher'),
+            content: this.$t('onboarding.userProfile.teacherTypes.unlicensed'),
           },
           {
             value: 'licensed',
-            content: this.$t('onboarding.userProfile.teacherTypes.proTeacher'),
+            content: this.$t('onboarding.userProfile.teacherTypes.licensed'),
           },
         ];
         return teacherTypes;

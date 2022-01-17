@@ -16,7 +16,6 @@
     >
       <profile-card :user-data="userData" class="bg-white max-h-72" />
       <div>
-        <teachers-card />
         <div class="shadow-md rounded-lg bg-white mb-2">
           <p class="leading-relaxed text-base">
             Taxidermy bushwick celiac master cleanse microdosing seitan. Fashion axe four dollar
@@ -55,44 +54,8 @@
             </a>
           </div>
         </div>
-        <!-- <div class="shadow-md rounded-lg">
-          <p class="leading-relaxed text-base">
-            Taxidermy bushwick celiac master cleanse microdosing seitan. Fashion axe four dollar
-            toast truffaut, direct trade kombucha brunch williamsburg keffiyeh gastropub tousled
-            squid meh taiyaki drinking vinegar tacos.
-          </p>
-          <div class="flex md:mt-4 mt-6">
-            <button
-              class="
-                inline-flex
-                text-white
-                bg-indigo-500
-                border-0
-                py-1
-                px-4
-                focus:outline-none
-                hover:bg-indigo-600
-                rounded
-              "
-            >
-              Button
-            </button>
-            <a class="text-indigo-500 inline-flex items-center ml-4"
-              >Learn More
-              <svg
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                class="w-4 h-4 ml-2"
-                viewBox="0 0 24 24"
-              >
-                <path d="M5 12h14M12 5l7 7-7 7"></path>
-              </svg>
-            </a>
-          </div>
-        </div> -->
+        <users-card :title="$t('dashboard.admin.pendingTeachers')" />
+        <users-card :title="usersCardTitle" />
       </div>
     </div>
     <edit-calendar :user-id="userData._id" />
@@ -101,9 +64,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import EditCalendar from '../components/Calendar/EditCalendar.vue';
-import TeachersCard from '../components/Dashboard/Cards/TeachersCard.vue';
+import UsersCard from '../components/Dashboard/Cards/UsersCard.vue';
 import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import ProfileCard from '../components/UserProfile/ProfileCard.vue';
 
@@ -112,7 +76,7 @@ export default Vue.extend({
   components: {
     EditCalendar,
     ProfileCard,
-    TeachersCard,
+    UsersCard,
   },
   props: {},
   data() {
@@ -122,7 +86,16 @@ export default Vue.extend({
     ...mapGetters({
       userData: 'user/entityStateData',
       isFinishedOnboarding: 'user/isFinishedOnboarding',
+      isTeacher: 'user/isTeacher',
     }),
+    usersCardTitle: {
+      get(): TranslateResult {
+        const usersCardTitle = this.isTeacher
+          ? this.$t('dashboard.myStudents')
+          : this.$t('dashboard.myTeachers');
+        return usersCardTitle;
+      },
+    },
   },
   created() {
     this.$emit('update:layout', LayoutDefault);
