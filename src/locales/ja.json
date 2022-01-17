@@ -214,7 +214,9 @@
     "common": {
       "save": "保存",
       "cancel": "キャンセル",
-      "upload": "アップロード"
+      "upload": "アップロード",
+      "showMore": "もっと見る",
+      "showLess": "少なめに表示"
     },
     "onboarding": {
       "next": "次へ"
@@ -227,7 +229,6 @@
     "admin": {
       "pendingTeachers": "承認されていない教師"
     },
-    "showMore": "もっと見る",
     "myTeachers": "私の教師",
     "myStudents": "私の生徒"
   },

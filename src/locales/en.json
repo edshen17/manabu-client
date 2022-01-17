@@ -215,7 +215,9 @@
     "common": {
       "save": "Save",
       "cancel": "Cancel",
-      "upload": "Upload"
+      "upload": "Upload",
+      "showMore": "Show more",
+      "showLess": "Show less"
     },
     "onboarding": {
       "next": "Next"
@@ -228,7 +230,6 @@
     "admin": {
       "pendingTeachers": "Pending Teachers"
     },
-    "showMore": "Show more",
     "myTeachers": "My teachers",
     "myStudents": "My students"
   },

@@ -5,7 +5,7 @@
         {{ title }}
       </h2>
       <div class="grid grid-cols-1 divide-y cursor-pointer">
-        <div v-for="user in users" :key="user._id" class="flex hover:bg-gray-100 px-5 py-3">
+        <div v-for="user in visibleUsers" :key="user._id" class="flex hover:bg-gray-100 px-5 py-3">
           <img :src="user.profileImageUrl" class="rounded-full w-12" />
           <div class="px-3">
             <p>{{ user.name }}</p>
@@ -14,12 +14,11 @@
             </p>
           </div>
         </div>
-        <div
-          v-show="users.length >= limit && !isEnd"
-          class="text-center py-2 uppercase text-gray-500 text-sm hover:bg-gray-100"
-          @click="showMore"
-        >
-          {{ $t('dashboard.showMore') }}
+        <div class="text-center uppercase text-gray-500 text-sm hover:bg-gray-100 py-2">
+          <div v-show="!isEnd" @click="showMore">
+            {{ $t('button.common.showMore') }}
+          </div>
+          <div v-show="isEnd" @click="page = 0">{{ $t('button.common.showLess') }}</div>
         </div>
       </div>
     </div>
@@ -57,16 +56,26 @@ export default Vue.extend({
     return {
       users: [] as JoinedUserDoc[],
       page: 0,
-      limit: 3,
-      isEnd: false,
+      showLimit: 3,
+      queryLimit: 6,
+      pages: 0,
     };
   },
   computed: {
-    // prop: {
-    //   get(): any {
-    //     return;
-    //   },
-    // },
+    visibleUsers: {
+      get(): JoinedUserDoc[] {
+        const usersToShow = this.showLimit * (this.page + 1);
+        const usersCopy = this.users.slice();
+        const visibleUsers = usersCopy.splice(0, usersToShow);
+        return visibleUsers;
+      },
+    },
+    isEnd: {
+      get(): boolean {
+        const isEnd = this.page > this.pages;
+        return isEnd;
+      },
+    },
   },
   async mounted() {
     await this.getUsersBrancher();
@@ -80,30 +89,32 @@ export default Vue.extend({
         path: '/pendingTeachers',
         query: {
           page: this.page,
-          limit: this.limit,
+          limit: this.queryLimit,
         },
         isAbsolutePath: false,
       });
-      const { teachers } = data;
+      const { teachers, pages } = data;
       this.users = this.users.concat(teachers);
-      this.setIsEnd(teachers);
+      this.pages = pages;
     },
     async _getUserTeacherEdges(): Promise<void> {
       const { data } = await userRepository.get({
         path: `/users/${this.userData._id}/userTeacherEdges`,
         query: {
           page: this.page,
-          limit: this.limit,
+          limit: this.queryLimit,
         },
         isAbsolutePath: true,
       });
-      const { users } = data;
+      const { users, pages } = data;
       this.users = this.users.concat(users);
-      this.setIsEnd(users);
+      this.pages = pages;
     },
     async showMore(): Promise<void> {
-      this.page++;
-      await this.getUsersBrancher();
+      if (!this.isEnd) {
+        this.page++;
+        await this.getUsersBrancher();
+      }
     },
     getUserType(user: JoinedUserDoc): TranslateResult {
       const isTeacher = 'teacherData' in user;
@@ -111,11 +122,6 @@ export default Vue.extend({
         ? this.$t(`userProfile.teacher.${user.teacherData!.type}`)
         : this.$t('userProfile.student');
       return userType;
-    },
-    setIsEnd(users: JoinedUserDoc[]): void {
-      if (users.length == 0) {
-        this.isEnd = true;
-      }
     },
   },
 });
