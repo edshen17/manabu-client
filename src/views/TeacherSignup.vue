@@ -74,7 +74,6 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { makeQueryStringHandler } from '../../../server/components/usecases/utils/queryStringHandler';
 import { StringKeyObject } from '../../../server/types/custom';
-import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 const queryStringHandler = makeQueryStringHandler;
 
 export default Vue.extend({
@@ -121,9 +120,6 @@ export default Vue.extend({
   },
   mounted() {
     return;
-  },
-  created() {
-    this.$emit('update:layout', LayoutDefault);
   },
   methods: {},
 });

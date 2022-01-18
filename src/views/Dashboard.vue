@@ -5,8 +5,8 @@
         flex
         justify-center
         container
-        py-5
-        md:py-10
+        py-3
+        md:py-7
         mx-auto
         md:w-11/12
         xl:w-9/12
@@ -14,14 +14,10 @@
         md:flex-nowrap
       "
     >
-      <profile-card :user-data="userData" class="bg-white max-h-72" />
-      <div>
+      <profile-card :user-data="userData" class="bg-white max-h-72 max-w-sm" />
+      <div class="w-full">
         <div class="shadow-md rounded-lg bg-white mb-2">
-          <p class="leading-relaxed text-base">
-            Taxidermy bushwick celiac master cleanse microdosing seitan. Fashion axe four dollar
-            toast truffaut, direct trade kombucha brunch williamsburg keffiyeh gastropub tousled
-            squid meh taiyaki drinking vinegar tacos.
-          </p>
+          <p class="leading-relaxed text-base">something</p>
           <div class="flex md:mt-4 mt-6">
             <button
               class="
@@ -103,7 +99,6 @@ export default Vue.extend({
     },
   },
   created() {
-    this.$emit('update:layout', LayoutDefault);
     // if (!this.isFinishedOnboarding) {
     //   this.$router.push('/onboarding');
     // }

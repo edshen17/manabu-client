@@ -188,8 +188,5 @@ export default Vue.extend({
       },
     },
   },
-  created() {
-    this.$emit('update:layout', LayoutDefault);
-  },
 });
 </script>

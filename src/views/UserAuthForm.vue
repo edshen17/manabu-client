@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen">
+    <vue-topprogress ref="topProgress"></vue-topprogress>
     <div class="flex flex-wrap justify-center">
       <img
         src="../assets/img/torii-lg.png"
@@ -127,16 +128,16 @@
 import Vue from 'vue';
 import { focus } from 'vue-focus';
 import { email, minLength, required, requiredIf } from 'vuelidate/lib/validators';
-import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import { StringKeyObject } from '../../../server/types/custom';
 import { StatusCodes } from 'http-status-codes';
 import { makeUserRepository } from '../repositories/user/index';
 import { IS_PRODUCTION } from '../../../server/constants';
+import { vueTopprogress } from 'vue-top-progress';
 const userRepository = makeUserRepository;
 
 export default Vue.extend({
   name: 'UserAuthForm',
-  components: {},
+  components: { vueTopprogress },
   directives: { focus },
   data() {
     return {
@@ -188,9 +189,6 @@ export default Vue.extend({
       this.focusedInputName = this.isSignupPage ? 'name' : 'email';
     },
   },
-  created() {
-    this.$emit('update:layout', LayoutDefault);
-  },
   validations: {
     name: {
       required: requiredIf(function (vm) {
@@ -223,11 +221,14 @@ export default Vue.extend({
       };
       let endpoint = '/users/auth/base/login';
       this.isLoading = true;
+      this.$refs.topProgress.start();
       if (this.isSignupPage) {
         payload = { ...payload, name: this.name };
         endpoint = '/users';
       }
       await this._authorizeUser({ payload, endpoint });
+      this.isLoading = false;
+      this.$refs.topProgress.done();
       this.$router.push('/dashboard');
     },
     async _authorizeUser(props: { payload: StringKeyObject; endpoint: string }): Promise<void> {

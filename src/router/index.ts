@@ -8,11 +8,13 @@ const Home = () => import('../views/Home.vue');
 const Onboarding = () => import('../views/Onboarding.vue');
 const UserAuthForm = () => import('../views/UserAuthForm.vue');
 const TeacherSignup = () => import('../views/TeacherSignup.vue');
+const UserProfile = () => import('../views/UserProfile.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
 
 Vue.use(VueRouter);
+const layout = { layout: LayoutDefault };
 
 const routes: Array<RouteConfig> = [
   {
@@ -20,48 +22,54 @@ const routes: Array<RouteConfig> = [
     name: 'Home',
     component: Home,
     beforeEnter: loginProtectedRouterGuard.consume(),
-    meta: { requiresRedirectOnAuth: true, layout: LayoutDefault },
+    meta: { requiresRedirectOnAuth: true, ...layout },
   },
   {
     path: '/signup',
     name: 'Signup',
     component: UserAuthForm,
     beforeEnter: loginProtectedRouterGuard.consume(),
-    meta: { requiresRedirectOnAuth: true, layout: LayoutDefault },
+    meta: { requiresRedirectOnAuth: true, ...layout },
   },
   {
     path: '/login',
     name: 'Login',
     component: UserAuthForm,
     beforeEnter: loginProtectedRouterGuard.consume(),
-    meta: { requiresRedirectOnAuth: true, layout: LayoutDefault },
+    meta: { requiresRedirectOnAuth: true, ...layout },
   },
   {
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard,
     beforeEnter: loginProtectedRouterGuard.consume(),
-    meta: { requiresAuth: true, layout: LayoutDefault },
+    meta: { requiresAuth: true, ...layout },
   },
   {
     path: '/logout',
     name: 'Logout',
     beforeEnter: logoutRouterGuard.consume(),
-    meta: { requiresAuth: true, layout: LayoutDefault },
+    meta: { requiresAuth: true, ...layout },
   },
   {
     path: '/onboarding',
     name: 'Onboarding',
     component: Onboarding,
     beforeEnter: loginProtectedRouterGuard.consume(),
-    meta: { requiresAuth: true, layout: LayoutDefault },
+    meta: { requiresAuth: true, ...layout },
   },
   {
     path: '/apply',
     name: 'TeacherSignup',
     component: TeacherSignup,
     beforeEnter: loginProtectedRouterGuard.consume(),
-    meta: { layout: LayoutDefault },
+    meta: { ...layout },
+  },
+  {
+    path: '/user/:userId',
+    name: 'UserProfile',
+    component: UserProfile,
+    meta: { ...layout },
   },
 ];
 

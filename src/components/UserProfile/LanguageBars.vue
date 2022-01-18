@@ -1,6 +1,6 @@
 <template>
   <div class="flex mt-1">
-    <p class="mb-1 text-sm uppercase">{{ languageCode }}</p>
+    <p class="text-sm uppercase">{{ languageCode }}</p>
     <div
       v-for="index in languageCodeValue.C2"
       :key="index"

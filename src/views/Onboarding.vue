@@ -265,9 +265,6 @@ export default Vue.extend({
     EventBus.$on('step-forward', this.handleStepForward());
     EventBus.$on('step-backward', this.handleStepBackward());
   },
-  created() {
-    this.$emit('update:layout', LayoutDefault);
-  },
   methods: {
     handleStepForward(): (payload: EventBusPayload) => void {
       const self = this;
