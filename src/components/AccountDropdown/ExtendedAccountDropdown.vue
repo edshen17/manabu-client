@@ -14,9 +14,13 @@
         border-transparent
         ring-0
         focus:ring-pink-600 focus:ring-2
-        hover:ring-pink-600 hover:ring-2
       "
+      :class="{
+        'outline-none ring-2 ring-pink-600  border-transparent': showDropdown || isHovering,
+      }"
       @click="toggleDropdown"
+      @mouseover="toggleHover"
+      @mouseleave="toggleHover"
     >
       <img class="h-full w-full object-cover" :src="userData.profileImageUrl" />
     </button>
@@ -52,6 +56,7 @@ export default Vue.extend({
   data() {
     return {
       showDropdown: false,
+      isHovering: false,
     };
   },
   computed: {
@@ -65,6 +70,9 @@ export default Vue.extend({
   methods: {
     toggleDropdown() {
       this.showDropdown = !this.showDropdown;
+    },
+    toggleHover() {
+      this.isHovering = !this.isHovering;
     },
     closeDropdown(event: any) {
       const itemClicked = event!.target.tagName.toLowerCase();

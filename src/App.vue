@@ -23,6 +23,7 @@ export default Vue.extend({
   },
   async created() {
     await this.$store.dispatch('user/getEntityStateData');
+    await this.$store.dispatch('exchangeRate/getEntityStateData');
   },
 });
 </script>

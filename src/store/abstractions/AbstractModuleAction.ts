@@ -78,8 +78,8 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
   ): Promise<void> => {
     const { state, commit } = props;
     try {
-      const entityStatePromise = await this._repository.getSelf();
-      const entityStatePayload = entityStatePromise && entityStatePromise.data[this._moduleName];
+      const entityStatePromise = await this._getEntityStatePromise();
+      const entityStatePayload = this._getEntityStatePayload(entityStatePromise);
       commit('setEntityStatePromise', entityStatePromise);
       if (entityStatePayload) {
         this.setEntityStateData(props, entityStatePayload);
@@ -90,6 +90,16 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
       entityStatePromise.data[this._moduleName] = state.entityStateData;
       commit('setEntityStatePromise', entityStatePromise);
     }
+  };
+
+  protected _getEntityStatePromise = async (): Promise<StringKeyObject> => {
+    const entityStatePromise = await this._repository.getSelf();
+    return entityStatePromise;
+  };
+
+  protected _getEntityStatePayload = (entityStatePromise: StringKeyObject): StringKeyObject => {
+    const entityStatePayload = entityStatePromise && entityStatePromise.data[this._moduleName];
+    return entityStatePayload;
   };
 
   public setEntityStateData = (

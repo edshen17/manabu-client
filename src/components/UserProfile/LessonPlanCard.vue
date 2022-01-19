@@ -2,7 +2,7 @@
   <div class="rounded-lg shadow-md mt-5 h-auto pb-2 bg-white">
     <p class="justify-center p-6 mx-auto text-2xl">{{ $t('userProfile.teacher.lessonPlans') }}</p>
     <div v-for="pkg in visiblePackages" :key="pkg._id" class="px-6 mx-auto">
-      <button class="border-solid border-2 rounded-md mb-5">
+      <button class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100">
         <div class="m-4 text-left">
           <p class="text-lg" :style="{ color: getRandomColor(pkg.name) }">
             {{ getPackageTitle(pkg) }}
@@ -16,7 +16,7 @@
               w-24
               mt-3
               shadow-md
-              bg-blue-800
+              bg-blue-400
               no-underline
               rounded-full
               text-white

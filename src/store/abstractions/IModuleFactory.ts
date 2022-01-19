@@ -8,6 +8,7 @@ import { IRootState } from './IRootState';
 
 enum MODULE_NAME {
   USER = 'user',
+  EXCHANGE_RATE = 'exchangeRate',
 }
 
 interface IModuleFactory<EntityStateData> {
