@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user" class="rounded-lg shadow-md bg-white">
+  <div v-if="user._id" class="rounded-lg shadow-md bg-white">
     <video v-if="isTeacher" controls>
       <source
         src="https://firebasestorage.googleapis.com/v0/b/japanese-221819.appspot.com/o/dev-61e578db0d920e908eccf69e%2Fvideos%2F1736107238341807-introductionVideo.mp4?alt=media&token=453cb2b0-4f2f-48f9-a582-f640a2f69e90"
@@ -52,7 +52,6 @@
 import Vue from 'vue';
 import dayjs from 'dayjs';
 import { JoinedUserDoc } from '../../../../server/models/User';
-import { makeUserRepository } from '../../repositories/user';
 import LanguageBars from './LanguageBars.vue';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { TranslateResult } from 'vue-i18n';
@@ -60,29 +59,24 @@ import DOMPurify from 'dompurify';
 import { StringKeyObject } from '../../../../server/types/custom';
 
 dayjs.extend(relativeTime);
-const userRepository = makeUserRepository;
 
 export default Vue.extend({
   name: 'ProfileBioCard',
   components: { LanguageBars },
   props: {
-    userId: {
-      type: String,
+    user: {
+      type: Object,
+      required: true,
+    },
+    isTeacher: {
+      type: Boolean,
       required: true,
     },
   },
   data() {
-    return {
-      user: null as unknown as JoinedUserDoc,
-    };
+    return {};
   },
   computed: {
-    isTeacher: {
-      get(): boolean {
-        const isTeacher = this.user && 'teacherData' in this.user;
-        return isTeacher;
-      },
-    },
     lastOnlineDate: {
       get(): string {
         const lastOnlineDate = dayjs().to(dayjs(this.user.lastOnlineDate));
@@ -133,14 +127,8 @@ export default Vue.extend({
     },
   },
   async mounted() {
-    await this.getUser();
+    return;
   },
-  methods: {
-    async getUser(): Promise<void> {
-      const { data } = await userRepository.getById({ _id: this.$route.params.userId, query: {} });
-      const { user } = data;
-      this.user = user;
-    },
-  },
+  methods: {},
 });
 </script>

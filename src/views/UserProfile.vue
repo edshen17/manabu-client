@@ -2,8 +2,8 @@
   <div class="bg-gray-50 h-auto min-h-screen">
     <div class="flex flex-wrap md:flex-nowrap w-full md:w-9/12 mx-auto md:py-7">
       <div class="w-full md:w-8/12 md:mx-2">
-        <profile-bio-card :user-id="$route.params.userId" />
-        <div class="rounded-lg shadow-md mt-5 h-auto pb-2">
+        <profile-bio-card :user="user" :is-teacher="isTeacher" />
+        <div class="rounded-lg shadow-md mt-5 h-auto pb-2 bg-white">
           <p class="justify-center p-6 mx-auto text-2xl">Lessons</p>
           <div class="px-6 mx-auto">
             <div class="border-solid border-2 rounded-md mb-5">
@@ -53,10 +53,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { JoinedUserDoc } from '../../../server/models/User';
 import ProfileBioCard from '../components/UserProfile/ProfileBioCard.vue';
+import { makeUserRepository } from '../repositories/user';
+const userRepository = makeUserRepository;
 
 export default Vue.extend({
-  name: '',
+  name: 'UserProfile',
   components: { ProfileBioCard },
   props: {
     // prop: {
@@ -66,18 +69,25 @@ export default Vue.extend({
     // },
   },
   data() {
-    return {};
+    return { user: {} as unknown as JoinedUserDoc };
   },
   computed: {
-    // prop: {
-    //   get(): any {
-    //     return;
-    //   },
-    // },
+    isTeacher: {
+      get(): boolean {
+        const isTeacher = 'teacherData' in this.user;
+        return isTeacher;
+      },
+    },
   },
-  mounted() {
-    return;
+  async mounted() {
+    await this.getUser();
   },
-  methods: {},
+  methods: {
+    async getUser(): Promise<void> {
+      const { data } = await userRepository.getById({ _id: this.$route.params.userId, query: {} });
+      const { user } = data;
+      this.user = user;
+    },
+  },
 });
 </script>
