@@ -27,7 +27,7 @@ import LanguageBars from './LanguageBars.vue';
 import ProfileImage from './ProfileImage.vue';
 
 export default Vue.extend({
-  name: 'ProfileCard',
+  name: 'ProfileImageCard',
   components: {
     ProfileImage,
     LanguageBars,

@@ -89,6 +89,19 @@
     @apply text-sm text-red-400;
 }
 
+.profile-bio p {
+    @apply py-1
+}
+
+.profile-bio strong {
+    @apply text-xl
+}
+
+#readmore {
+    @apply text-yellow-500
+}
+
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     display: none;

@@ -14,10 +14,10 @@
         md:flex-nowrap
       "
     >
-      <profile-card :user-data="userData" class="bg-white max-h-72 max-w-sm" />
+      <profile-image-card :user-data="userData" class="bg-white max-h-72 max-w-sm" />
       <div class="w-full">
         <div class="shadow-md rounded-lg bg-white mb-2">
-          <p class="leading-relaxed text-base">something</p>
+          <p class="leading-relaxed text-base">scss sadas</p>
           <div class="flex md:mt-4 mt-6">
             <button
               class="
@@ -63,14 +63,13 @@ import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 import EditCalendar from '../components/Calendar/EditCalendar.vue';
 import UsersCard from '../components/Dashboard/Cards/UsersCard.vue';
-import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
-import ProfileCard from '../components/UserProfile/ProfileCard.vue';
+import ProfileImageCard from '../components/UserProfile/ProfileImageCard.vue';
 
 export default Vue.extend({
   name: 'Dashboard',
   components: {
     EditCalendar,
-    ProfileCard,
+    ProfileImageCard,
     UsersCard,
   },
   props: {},

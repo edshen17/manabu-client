@@ -39,7 +39,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
@@ -48,7 +47,7 @@ import { required } from 'vuelidate/lib/validators';
 
 export default Vue.extend({
   name: 'ContactMethodIdStep',
-  components: { GridBaseLayout, GridButton, GridButtonLayout },
+  components: { GridButton, GridButtonLayout },
   directives: { focus },
   props: {
     stepTitle: {

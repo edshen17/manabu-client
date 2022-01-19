@@ -175,7 +175,10 @@
       "profilePicture": "プロフィール画像"
     },
     "student": "生徒",
+    "user": "ユーザー",
+    "learning": "Learning",
     "teacher": {
+      "teaches": "Teaches",
       "licensed": "資格保有教師",
       "unlicensed": "コミュニティティーチャー",
       "manabuVerified": "Manabu Verified Teacher since {date}",

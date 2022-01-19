@@ -31,14 +31,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import GridButton from '../Common/GridButton.vue';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 import { focus } from 'vue-focus';
 
 export default Vue.extend({
   name: 'TextInputLayout',
-  components: { GridBaseLayout, GridButton, GridButtonLayout },
+  components: { GridButton, GridButtonLayout },
   directives: { focus },
   props: {
     stepTitle: {

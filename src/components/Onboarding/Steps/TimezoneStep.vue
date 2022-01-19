@@ -26,14 +26,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import ct from 'countries-and-timezones';
-import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 
 export default Vue.extend({
   name: 'TimezoneStep',
-  components: { GridBaseLayout, GridButton, GridButtonLayout },
+  components: { GridButton, GridButtonLayout },
   props: {
     region: {
       type: String,

@@ -38,7 +38,6 @@ import {
   ListItem,
   History,
 } from 'tiptap-vuetify';
-import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import GridButton from '../Common/GridButton.vue';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
 import { EventBus } from '../../EventBus/EventBus';
@@ -46,7 +45,7 @@ import { required } from 'vuelidate/lib/validators';
 
 export default Vue.extend({
   name: 'ProfileBioStep',
-  components: { TiptapVuetify, GridBaseLayout, GridButton, GridButtonLayout },
+  components: { TiptapVuetify, GridButton, GridButtonLayout },
   props: {
     stepTitle: {
       type: String,

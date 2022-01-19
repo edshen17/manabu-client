@@ -3,6 +3,7 @@ import 'tiptap-vuetify/dist/main.css';
 import vClickOutside from 'v-click-outside';
 import Vue from 'vue';
 import VueCookies from 'vue-cookies';
+import ReadMore from 'vue-read-more';
 import VueWindowSize from 'vue-window-size';
 import Vuelidate from 'vuelidate';
 import 'vuetify/dist/vuetify.min.css';
@@ -37,6 +38,7 @@ Vue.use(TiptapVuetifyPlugin, {
   vuetify,
   iconsGroup: 'mdi',
 });
+Vue.use(ReadMore);
 
 new Vue({
   router,

@@ -176,7 +176,10 @@
       "profilePicture": "Profile Picture"
     },
     "student": "Student",
+    "user": "User",
+    "learning": "Learning",
     "teacher": {
+      "teaches": "Teaches",
       "licensed": "Professional Teacher",
       "unlicensed": "Community Teacher",
       "manabuVerified": "Manabu Verified Teacher since {date}",

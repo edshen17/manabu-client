@@ -9,7 +9,7 @@
       @mousemove:time="onMouseMoveTime"
       @mouseup:time="onMouseUpTime"
       @mouseup:event="onMouseUpEvent"
-      @mouseleave.native="onMouseLeaveNative"
+      @mouseleave:event="onMouseLeaveNative"
       @click:event="onMouseUpEvent"
       @touchstart:event="onMouseDownEvent"
       @touchend:time="onMouseUpTime"
@@ -252,7 +252,6 @@ export default Vue.extend({
       this._showEventEditor(true);
     },
     _showEventEditor(showEventEditor: boolean): void {
-      this.showEventEditor = false;
       requestAnimationFrame(() => (this.showEventEditor = showEventEditor));
     },
     extendBottom(event: EventObject): void {
@@ -314,11 +313,13 @@ export default Vue.extend({
             this.events.splice(i, 1);
           }
         }
+        console.log('inhere');
       }
       this.createEvent = null;
       this.createStart = null;
       this.dragTime = null;
       this.dragEvent = null;
+      console.log('leave');
     },
     roundTime(time: number, down = true): number {
       const roundTo = 30; // minutes

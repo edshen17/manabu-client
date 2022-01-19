@@ -221,14 +221,14 @@ export default Vue.extend({
       };
       let endpoint = '/users/auth/base/login';
       this.isLoading = true;
-      this.$refs.topProgress.start();
+      (this as any).$refs.topProgress.start();
       if (this.isSignupPage) {
         payload = { ...payload, name: this.name };
         endpoint = '/users';
       }
       await this._authorizeUser({ payload, endpoint });
       this.isLoading = false;
-      this.$refs.topProgress.done();
+      (this as any).$refs.topProgress.done();
       this.$router.push('/dashboard');
     },
     async _authorizeUser(props: { payload: StringKeyObject; endpoint: string }): Promise<void> {

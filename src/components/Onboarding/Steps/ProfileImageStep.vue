@@ -17,16 +17,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
-import ProfileCard from '../../UserProfile/ProfileCard.vue';
 import ProfileImage from '../../UserProfile/ProfileImage.vue';
 
 export default Vue.extend({
   name: 'ProfileImageStep',
-  components: { GridBaseLayout, GridButton, GridButtonLayout, ProfileCard, ProfileImage },
+  components: { GridButton, GridButtonLayout, ProfileImage },
   props: {
     stepTitle: {
       type: String,

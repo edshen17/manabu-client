@@ -94,20 +94,13 @@
               </div>
             </section>
             <div
-              class="
-                flex flex-wrap
-                mt-12
-                justify-center
-                text-center text-xl
-                leading-8
-                lg:leading-loose
-              "
+              class="flex flex-wrap justify-center text-center text-xl leading-8 lg:leading-loose"
             >
-              <div class="w-full lg:w-6/12 px-4">
+              <div class="w-full lg:w-6/12 px-4 my-10">
                 <p class="py-5 text-white text-lg">
                   {{ $t('homepage.beta') }}
                 </p>
-                <button
+                <router-link
                   class="
                     bg-green-500
                     text-white
@@ -118,11 +111,10 @@
                     text-center text-lg
                     align-middle
                     mt-5
-                    mb-14
                   "
+                  to="/signup"
+                  >{{ $t('button.homepage.signUpNow') }}</router-link
                 >
-                  <router-link to="/signup">{{ $t('button.homepage.signUpNow') }}</router-link>
-                </button>
               </div>
             </div>
           </div>
@@ -135,7 +127,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 
 export default Vue.extend({
   name: 'Home',

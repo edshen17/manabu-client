@@ -91,7 +91,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import LayoutDefault from '../components/LayoutDefault/LayoutDefault.vue';
 import ProgressBar from '../components/ProgressBar/ProgressBar.vue';
 import LanguageNameStep from '../components/Onboarding/Steps/LanguageNameStep.vue';
 import { TranslateResult } from 'vue-i18n';

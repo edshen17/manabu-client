@@ -2,39 +2,7 @@
   <div class="bg-gray-50 h-auto min-h-screen">
     <div class="flex flex-wrap md:flex-nowrap w-full md:w-9/12 mx-auto md:py-7">
       <div class="w-full md:w-8/12 md:mx-2">
-        <div class="rounded-lg shadow-md">
-          <video controls>
-            <source
-              src="https://firebasestorage.googleapis.com/v0/b/japanese-221819.appspot.com/o/dev-61e578db0d920e908eccf69e%2Fvideos%2F1736107238341807-introductionVideo.mp4?alt=media&token=453cb2b0-4f2f-48f9-a582-f640a2f69e90"
-              type="video/mp4"
-            />
-          </video>
-          <div class="flex m-3">
-            <div>
-              <img src="https://fakeimg.pl/300/" class="rounded-full w-20" />
-            </div>
-            <div class="mx-4">
-              <p class="text-2xl">Mio Sensei</p>
-              <p class="text-xs text-gray-400 uppercase tracking-wide my-1">community teacher</p>
-              <p class="text-gray-400 text-xs">Last online 10 days ago</p>
-              <div class="flex">
-                <p class="text-sm mt-1 mr-3">Teaches</p>
-                <language-bars :language-level="'C2'" :language-code="'ja'" />
-              </div>
-              <div class="flex">
-                <p class="text-sm mt-1 mr-3">Also Speaks</p>
-                <language-bars :language-level="'C2'" :language-code="'en'" />
-              </div>
-            </div>
-          </div>
-          <div class="mx-auto border-0 border-t-2 border-solid">
-            <p class="justify-center p-6 mx-auto">
-              profile bioprofile bioprofile bioprofile bioprofile bioprofile bioprofile bioprofile
-              bioprofile bioprofile bioprofile bioprofile bioprofile bioprofile bioprofile
-              bioprofile bioprofile bioprofile bioprofile bio
-            </p>
-          </div>
-        </div>
+        <profile-bio-card :user-id="$route.params.userId" />
         <div class="rounded-lg shadow-md mt-5 h-auto pb-2">
           <p class="justify-center p-6 mx-auto text-2xl">Lessons</p>
           <div class="px-6 mx-auto">
@@ -85,11 +53,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import LanguageBars from '../components/UserProfile/LanguageBars.vue';
+import ProfileBioCard from '../components/UserProfile/ProfileBioCard.vue';
 
 export default Vue.extend({
   name: '',
-  components: { LanguageBars },
+  components: { ProfileBioCard },
   props: {
     // prop: {
     //   type: String,

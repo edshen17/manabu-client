@@ -42,7 +42,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import GridBaseLayout from '../Layouts/GridBaseLayout.vue';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
@@ -53,7 +52,7 @@ const googleCloudStorageMixin = makeGoogleCloudStorageMixin;
 
 export default Vue.extend({
   name: 'FileUploadLayout',
-  components: { GridBaseLayout, GridButton, GridButtonLayout },
+  components: { GridButton, GridButtonLayout },
   mixins: [googleCloudStorageMixin],
   props: {
     stepTitle: {

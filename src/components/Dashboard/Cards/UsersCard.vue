@@ -5,21 +5,27 @@
         {{ title }}
       </h2>
       <div class="grid grid-cols-1 divide-y cursor-pointer">
-        <div v-for="user in visibleUsers" :key="user._id" class="flex hover:bg-gray-100 px-5 py-3">
-          <img :src="user.profileImageUrl" class="rounded-full w-12" />
-          <div class="px-3">
-            <p>{{ user.name }}</p>
-            <p class="uppercase text-sm text-gray-500 tracking-wide">
-              {{ getUserType(user) }}
-            </p>
+        <router-link
+          v-for="user in visibleUsers"
+          :key="user._id"
+          :to="{ name: 'UserProfile', params: { userId: user._id } }"
+        >
+          <div class="flex hover:bg-gray-100 px-5 py-3">
+            <img :src="user.profileImageUrl" class="rounded-full w-12" />
+            <div class="px-3">
+              <p>{{ user.name }}</p>
+              <p class="uppercase text-sm text-gray-500 tracking-wide">
+                {{ getUserType(user) }}
+              </p>
+            </div>
           </div>
-        </div>
-        <div class="text-center uppercase text-gray-500 text-sm hover:bg-gray-100 py-2">
-          <div v-show="!isEnd" @click="showMore">
-            {{ $t('button.common.showMore') }}
-          </div>
-          <div v-show="isEnd" @click="page = 0">{{ $t('button.common.showLess') }}</div>
-        </div>
+        </router-link>
+        <button
+          class="text-center uppercase text-gray-500 text-sm hover:bg-gray-100 py-2 border-solid"
+          @click="onButtonClick"
+        >
+          {{ visibilityButtonText }}
+        </button>
       </div>
     </div>
   </long-card>
@@ -82,11 +88,28 @@ export default Vue.extend({
         return queryPage;
       },
     },
+    visibilityButtonText: {
+      get(): TranslateResult {
+        const visibilityButtonText = this.isEnd
+          ? this.$t('button.common.showLess')
+          : this.$t('button.common.showMore');
+        return visibilityButtonText;
+      },
+    },
   },
   async mounted() {
     await this.getUsersBrancher();
   },
   methods: {
+    async onButtonClick(): Promise<void> {
+      this.isEnd ? (this.page = 0) : await this.showMore();
+    },
+    async showMore(): Promise<void> {
+      if (!this.isEnd) {
+        this.page++;
+        await this.getUsersBrancher();
+      }
+    },
     async getUsersBrancher(): Promise<void> {
       this.isAdmin ? await this._getPendingTeachers() : await this._getUserTeacherEdges();
     },
@@ -115,12 +138,6 @@ export default Vue.extend({
       const { users, pages } = data;
       this.users = this.users.concat(users);
       this.pages = pages;
-    },
-    async showMore(): Promise<void> {
-      if (!this.isEnd) {
-        this.page++;
-        await this.getUsersBrancher();
-      }
     },
     getUserType(user: JoinedUserDoc): TranslateResult {
       const isTeacher = 'teacherData' in user;
