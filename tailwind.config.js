@@ -33,6 +33,7 @@ module.exports = {
       textColor: ['disabled'],
       boxShadow: ['disabled'],
       borderColor: ['disabled'],
+      ringWidth: ['hover', 'active'],
     },
   },
   plugins: [

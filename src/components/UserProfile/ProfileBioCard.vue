@@ -1,14 +1,11 @@
 <template>
   <div v-if="user._id" class="rounded-lg shadow-md bg-white">
     <video v-if="isTeacher" controls>
-      <source
-        src="https://firebasestorage.googleapis.com/v0/b/japanese-221819.appspot.com/o/dev-61e578db0d920e908eccf69e%2Fvideos%2F1736107238341807-introductionVideo.mp4?alt=media&token=453cb2b0-4f2f-48f9-a582-f640a2f69e90"
-        type="video/mp4"
-      />
+      <source :src="user.teacherData.introductionVideoUrl" type="video/mp4" />
     </video>
     <div class="flex m-4" :class="{ 'py-5': !isTeacher }">
       <div>
-        <img src="https://fakeimg.pl/300/" class="rounded-full w-20" />
+        <img :src="user.profileImageUrl" class="rounded-full w-20" />
       </div>
       <div class="mx-4">
         <p class="text-2xl">{{ user.name }}</p>
