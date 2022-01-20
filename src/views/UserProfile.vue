@@ -5,9 +5,8 @@
         <profile-bio-card :user="user" :is-teacher="isTeacher" />
         <lesson-plan-card v-if="isTeacher" :user="user" />
       </div>
-      <div class="w-full md:w-4/12 md:mx-3 max-h-96">
-        <div class="rounded-lg shadow-md max-h-96 h-96"></div>
-        <div class="rounded-lg shadow-md max-h-96 mt-5">price data</div>
+      <div class="w-full md:w-4/12 md:mx-3 max-h-96 sticky top-24 rounded-lg bg-white shadow-md">
+        <div class="max-h-96 h-96">sa</div>
       </div>
     </div>
   </div>

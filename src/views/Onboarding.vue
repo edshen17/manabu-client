@@ -1,6 +1,6 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
-    <progress-bar ref="progressBar" class="pt-8 md:pt-10" :step-index="stepIndex" />
+    <progress-bar class="pt-8 md:pt-10" :step-index="stepIndex" :step-total="stepTotal" />
     <name-step v-if="stepIndex == 0" :user-data="userData" :name="name" />
     <language-name-step
       v-show="stepIndex == 1"
@@ -289,9 +289,6 @@ export default Vue.extend({
     step(direction: string): void {
       const isForward = direction == 'forward';
       isForward ? this.stepIndex++ : this.stepIndex--;
-      const progressPercent = (this.stepIndex / this.stepTotal) * 100;
-      const progressBar = this.$refs.progressBar as any;
-      progressBar.setProgressPercent(progressPercent);
     },
     async updateUserData(): Promise<void> {
       await (this as any).updateUserById({

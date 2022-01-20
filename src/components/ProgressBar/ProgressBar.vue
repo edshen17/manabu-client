@@ -39,20 +39,26 @@ export default Vue.extend({
       type: Number,
       required: true,
     },
+    stepTotal: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
-    return {
-      progressPercent: 0,
-    };
+    return {};
   },
-  computed: {},
+  computed: {
+    progressPercent: {
+      get(): number {
+        const progressPercent = (this.stepIndex / this.stepTotal) * 100;
+        return progressPercent;
+      },
+    },
+  },
   mounted() {
     return;
   },
   methods: {
-    setProgressPercent(value: number): void {
-      this.progressPercent = value;
-    },
     emitStepBackward(): void {
       if (this.stepIndex > 0) {
         EventBus.$emit('step-backward');
