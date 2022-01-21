@@ -1,23 +1,32 @@
 <template>
-  <div class="flex justify-center items-center h-screen bg-gray-50">
-    <div class="w-full md:w-8/12 md:rounded-lg h-full md:h-5/6 bg-white">
-      <div class="flex flex-wrap md:flex-nowrap h-full">
+  <div class="flex justify-center items-center bg-gray-50 min-h-screen">
+    <div class="w-full md:w-8/12 md:rounded-lg h-auto bg-white">
+      <div class="flex flex-wrap md:flex-nowrap h-auto my-10">
         <div class="w-4/12">
           <p>Lesson Details</p>
           <p>x Lessons left to reserve</p>
         </div>
-        <v-date-picker
-          v-model="calendarFocusDateModel"
-          :full-width="true"
-          class="w-96 h-96"
-          :allowed-dates="isAllowedDate"
-          @update:picker-date="getAvailableTimes"
-          @change="test"
-        ></v-date-picker>
-        <div class="flex-grow m-2">
-          <button class="border-solid border border-blue-400 rounded-md text-xl p-2 w-full">
-            10:15am
-          </button>
+        <div class="w-4/12">
+          <v-date-picker
+            v-model="calendarFocusDateModel"
+            :full-width="true"
+            class="h-96"
+            :allowed-dates="isAllowedDate"
+            @update:picker-date="getAvailableTimes"
+            @change="test"
+          ></v-date-picker>
+          your timezone
+        </div>
+        <div class="flex-grow">
+          <div class="flex flex-col justify-center items-center">
+            <button
+              v-for="timeslot in visibleTimeslots"
+              :key="timeslot"
+              class="border-solid border border-blue-400 rounded-md text-xl p-2 w-9/12 mb-3"
+            >
+              {{ timeslot }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -29,14 +38,17 @@ import dayjs from 'dayjs';
 import Vue from 'vue';
 import { AvailableTimeDoc } from '../../../server/models/AvailableTime';
 import { StringKeyObject } from '../../../server/types/custom';
+import { makeCalendarMixin } from '../mixins/calendar';
 import { makeAvailableTimeRepository } from '../repositories/availableTime';
 const availableTimeRepository = makeAvailableTimeRepository;
+const calendarMixin = makeCalendarMixin;
 const DAY_FORMAT = 'YYYY-MM-DD';
 const MONTH_FORMAT = 'YYYY-MM';
 
 export default Vue.extend({
   name: 'ReservationCalendar',
   components: {},
+  mixins: [calendarMixin],
   props: {
     user: {
       type: Object,
@@ -69,6 +81,24 @@ export default Vue.extend({
       },
       set(date: string) {
         this.calendarFocusDate = date;
+      },
+    },
+    visibleTimeslots: {
+      get(): string[] {
+        const currentDayAvailableTimes = this.events.filter((availableTime) => {
+          return availableTime.formattedStartDate == this.calendarFocusDateModel;
+        });
+        const visibleTimeslots = [];
+        for (const availableTime of currentDayAvailableTimes) {
+          let startTime = dayjs(availableTime.startDate);
+          const endTime = dayjs(availableTime.endDate);
+          while (startTime.isBefore(endTime) || startTime.isSame(endTime)) {
+            const formattedTime = startTime.format((this as any).AUTOCOMPLETE_DATE_FORMAT.HOUR);
+            visibleTimeslots.push(formattedTime);
+            startTime = startTime.add(30, 'minutes');
+          }
+        }
+        return visibleTimeslots;
       },
     },
   },
