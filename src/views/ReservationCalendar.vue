@@ -1,7 +1,7 @@
 <template>
-  <div class="flex justify-center items-center bg-gray-50 min-h-screen">
-    <div class="w-full md:w-8/12 md:rounded-lg h-auto bg-white">
-      <div class="flex flex-wrap md:flex-nowrap h-auto my-10">
+  <div class="flex justify-center items-center h-screen bg-gray-50">
+    <div class="w-full md:w-8/12 md:rounded-lg h-full md:h-5/6 bg-white py-8">
+      <div class="flex flex-wrap md:flex-nowrap h-full">
         <div class="w-4/12">
           <p>Lesson Details</p>
           <p>x Lessons left to reserve</p>
@@ -17,7 +17,7 @@
           ></v-date-picker>
           your timezone
         </div>
-        <div class="flex-grow">
+        <div class="flex-grow overflow-y-auto">
           <div class="flex flex-col justify-center items-center">
             <button
               v-for="timeslot in visibleTimeslots"
