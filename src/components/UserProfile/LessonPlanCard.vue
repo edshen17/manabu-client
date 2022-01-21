@@ -12,12 +12,12 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <button
-            class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100"
+            class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100 w-full"
             v-bind="attrs"
             v-on="on"
           >
             <div class="m-4 text-left">
-              <p class="text-lg" :style="{ color: getRandomColor(pkg.name) }">
+              <p class="text-lg capitalize" :style="{ color: getRandomColor(pkg.name) }">
                 {{ getPackageTitle(pkg) }}
               </p>
               <p class="mt-2 text-gray-600">{{ getPackageDescription(pkg) }}</p>
@@ -42,7 +42,7 @@
           </button>
         </template>
         <v-card>
-          <div class="flex flex-col h-screen bg-white">
+          <div class="flex flex-col h-auto bg-white">
             <div class="py-8 md:py-6 text-2xl font-bold border-b-2 border-gray-200">
               <div class="flex static">
                 <h5 class="flex-1 text-center">Choose your lesson plan</h5>
@@ -61,30 +61,17 @@
                   :key="dialogPkg._id"
                   class="w-2/6 mx-auto"
                 >
-                  <button class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100">
+                  <button
+                    class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100 bg-white w-full"
+                  >
                     <div class="m-4 text-left">
-                      <p class="text-lg" :style="{ color: getRandomColor(dialogPkg.name) }">
+                      <p
+                        class="text-lg capitalize"
+                        :style="{ color: getRandomColor(dialogPkg.name) }"
+                      >
                         {{ getPackageTitle(dialogPkg) }}
                       </p>
                       <p class="mt-2 text-gray-600">{{ getPackageDescription(dialogPkg) }}</p>
-                      <div
-                        v-if="exchangeRates && exchangeRates.SGD"
-                        class="
-                          py-1
-                          mt-3
-                          w-24
-                          shadow-md
-                          bg-blue-400
-                          no-underline
-                          rounded-full
-                          text-white
-                          font-semibold
-                          text-sm text-center
-                        "
-                      >
-                        ~{{ getPackagePrice(dialogPkg.lessonAmount).toLocaleString() }}+
-                        {{ currency }}
-                      </div>
                     </div>
                   </button>
                 </div>
@@ -119,10 +106,7 @@ export default Vue.extend({
   data() {
     return {
       showDialog: false,
-      dialog: false,
-      notifications: false,
-      sound: true,
-      widgets: false,
+      events: [],
     };
   },
   computed: {
@@ -165,7 +149,12 @@ export default Vue.extend({
       const packageDescription =
         pkg.type == 'default'
           ? this.$t(`userProfile.teacher.lessonTypes.${pkg.name}.description`)
-          : pkg.description!;
+          : pkg.description! ||
+            `With this plan, you will receive ${
+              pkg.lessonAmount
+            } personalized lessons, which is about ${Math.ceil(
+              pkg.lessonAmount / 4
+            )} lessons every week.`;
       return packageDescription;
     },
     getRandomColor(seed: string) {

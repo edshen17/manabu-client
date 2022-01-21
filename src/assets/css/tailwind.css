@@ -110,3 +110,7 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance:textfield; /* Firefox */
 }
+
+.v-picker__title {
+    @apply bg-blue-500;
+}

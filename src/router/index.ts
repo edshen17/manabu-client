@@ -9,6 +9,7 @@ const Onboarding = () => import('../views/Onboarding.vue');
 const UserAuthForm = () => import('../views/UserAuthForm.vue');
 const TeacherSignup = () => import('../views/TeacherSignup.vue');
 const UserProfile = () => import('../views/UserProfile.vue');
+const ReservationCalendar = () => import('../views/ReservationCalendar.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -70,6 +71,13 @@ const routes: Array<RouteConfig> = [
     name: 'UserProfile',
     component: UserProfile,
     meta: { ...layout },
+  },
+  {
+    path: '/user/:userId/calendar',
+    name: 'ReservationCalendar',
+    component: ReservationCalendar,
+    beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: {},
   },
 ];
 

@@ -188,17 +188,17 @@
       "lessonTypes": {
         "mainichi": {
           "title": "Mainichi Plan",
-          "description": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 22 personalized lessons every month or about 5 lessons every week.",
+          "description": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 22 personalized lessons, which is about 6 lessons every week.",
           "amount": "Mainichi ({amount} lessons)"
         },
         "moderate": {
           "title": "Moderate Plan",
-          "description": "This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons every month or about 3 lessons every week.",
+          "description": "This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons, which is about 3 lessons every week.",
           "amount": "Moderate ({amount} lessons)"
         },
         "light": {
           "title": "Light Plan",
-          "description": "This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons every month or about 1 lesson every week.",
+          "description": "This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons, which is about 1 lesson every week.",
           "amount": "Light ({amount} lessons)"
         }
       },
