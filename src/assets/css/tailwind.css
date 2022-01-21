@@ -29,6 +29,16 @@
     }
 }
 
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
 .form-border {
     @apply block border-2 border-gray-300 disabled:border-gray-200 rounded-md border-solid disabled:bg-gray-50  disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed;
 }

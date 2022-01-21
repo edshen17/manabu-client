@@ -9,7 +9,7 @@ const Onboarding = () => import('../views/Onboarding.vue');
 const UserAuthForm = () => import('../views/UserAuthForm.vue');
 const TeacherSignup = () => import('../views/TeacherSignup.vue');
 const UserProfile = () => import('../views/UserProfile.vue');
-const ReservationCalendar = () => import('../views/ReservationCalendar.vue');
+const AppointmentCalendar = () => import('../views/AppointmentCalendar.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -74,8 +74,8 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/user/:userId/calendar',
-    name: 'ReservationCalendar',
-    component: ReservationCalendar,
+    name: 'AppointmentCalendar',
+    component: AppointmentCalendar,
     beforeEnter: loginProtectedRouterGuard.consume(),
     meta: {},
   },
