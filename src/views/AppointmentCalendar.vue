@@ -58,7 +58,7 @@ export default Vue.extend({
   components: {},
   mixins: [calendarMixin],
   props: {
-    user: {
+    hostedByData: {
       type: Object,
       required: false,
       default: () => ({}),
@@ -81,10 +81,10 @@ export default Vue.extend({
     ...mapGetters({
       locale: 'user/locale',
     }),
-    userId: {
+    hostedById: {
       get(): string {
-        const userId = this.$route.params.userId || this.user._id;
-        return userId;
+        const hostedById = this.$route.params.userId || this.hostedByData._id;
+        return hostedById;
       },
     },
     currentUserTimezone: {
@@ -162,7 +162,7 @@ export default Vue.extend({
     async getAvailableTimes(month: string): Promise<void> {
       const startMonth = dayjs(month, MONTH_FORMAT);
       const { data } = await availableTimeRepository.get({
-        path: `/users/${this.userId}/availableTimes`,
+        path: `/users/${this.hostedById}/availableTimes`,
         query: {
           startDate: startMonth.toString(),
           endDate: startMonth.add(startMonth.daysInMonth() - 1, 'days').toString(),

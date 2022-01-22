@@ -11,35 +11,7 @@
         transition="dialog-bottom-transition"
       >
         <template v-slot:activator="{ on, attrs }">
-          <button
-            class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100 w-full"
-            v-bind="attrs"
-            v-on="on"
-          >
-            <div class="m-4 text-left">
-              <p class="text-lg capitalize" :style="{ color: getRandomColor(pkg.name) }">
-                {{ getPackageTitle(pkg) }}
-              </p>
-              <p class="mt-2 text-gray-600">{{ getPackageDescription(pkg) }}</p>
-              <div
-                v-if="exchangeRates && exchangeRates.SGD"
-                class="
-                  py-1
-                  mt-3
-                  w-24
-                  shadow-md
-                  bg-blue-400
-                  no-underline
-                  rounded-full
-                  text-white
-                  font-semibold
-                  text-sm text-center
-                "
-              >
-                ~{{ getPackagePrice(pkg.lessonAmount).toLocaleString() }}+ {{ currency }}
-              </div>
-            </div>
-          </button>
+          <teacher-package-button :pkg="pkg" :teacher="teacher" :attrs="attrs" :on="on" />
         </template>
         <v-card>
           <div class="flex flex-col h-auto bg-white">
@@ -52,7 +24,7 @@
               </div>
             </div>
             <div class="mt-5">
-              <progress-bar :step-index="0" :step-total="4" />
+              <progress-bar :step-index="stepIndex" :step-total="4" />
             </div>
             <div class="flex justify-center items-center h-full bg-white">
               <div>
@@ -61,19 +33,7 @@
                   :key="dialogPkg._id"
                   class="w-2/6 mx-auto"
                 >
-                  <button
-                    class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100 bg-white w-full"
-                  >
-                    <div class="m-4 text-left">
-                      <p
-                        class="text-lg capitalize"
-                        :style="{ color: getRandomColor(dialogPkg.name) }"
-                      >
-                        {{ getPackageTitle(dialogPkg) }}
-                      </p>
-                      <p class="mt-2 text-gray-600">{{ getPackageDescription(dialogPkg) }}</p>
-                    </div>
-                  </button>
+                  <teacher-package-button :pkg="dialogPkg" :teacher="teacher" :show-price="false" />
                 </div>
               </div>
             </div>
@@ -92,13 +52,14 @@ import randomColor from 'randomcolor';
 import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
 import { mapGetters } from 'vuex';
 import ProgressBar from '../ProgressBar/ProgressBar.vue';
+import TeacherPackageButton from './TeacherPackageButton.vue';
 
 export default Vue.extend({
-  name: 'LessonPlanCard',
-  components: { ProgressBar },
+  name: 'TeacherPackagesCard',
+  components: { ProgressBar, TeacherPackageButton },
   mixins: [makeExchangeRateMixin],
   props: {
-    user: {
+    teacher: {
       type: Object,
       required: true,
     },
@@ -107,6 +68,7 @@ export default Vue.extend({
     return {
       showDialog: false,
       events: [],
+      stepIndex: 0,
     };
   },
   computed: {
@@ -115,7 +77,7 @@ export default Vue.extend({
     }),
     visiblePackages: {
       get(): PackageDoc[] {
-        const visiblePackages = this.user.teacherData.packages.filter((pkg: PackageDoc) => {
+        const visiblePackages = this.teacher.teacherData.packages.filter((pkg: PackageDoc) => {
           return pkg.isOffering;
         });
         return visiblePackages;
@@ -127,7 +89,7 @@ export default Vue.extend({
   },
   methods: {
     getPackagePrice(lessonAmount: number): number {
-      const priceData = this.user.teacherData.priceData;
+      const priceData = this.teacher.teacherData.priceData;
       const { hourlyRate, currency } = priceData;
       const convertedHourlyRate = (this as any).convert({
         amount: hourlyRate,
