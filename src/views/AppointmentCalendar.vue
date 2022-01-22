@@ -1,6 +1,9 @@
 <template>
-  <div class="flex justify-center items-center h-screen bg-gray-50">
-    <div class="w-full md:w-8/12 md:rounded-lg h-full md:h-5/6 bg-white md:py-8">
+  <div
+    class="flex justify-center items-center bg-white"
+    :class="{ 'h-auto': isMobile, 'h-screen': !isMobile }"
+  >
+    <div class="w-full md:w-8/12 md:rounded-lg h-full md:h-5/6 bg-white">
       <div class="flex flex-wrap md:flex-nowrap h-full">
         <div class="md:w-4/12">
           <p>Lesson Details</p>

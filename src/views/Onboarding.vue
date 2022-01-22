@@ -1,6 +1,10 @@
 <template>
   <div class="lg:pb-10 min-h-screen">
-    <progress-bar class="pt-8 md:pt-10" :step-index="stepIndex" :step-total="stepTotal" />
+    <progress-bar
+      class="pt-8 md:pt-10 mb-3 md:mb-7"
+      :step-index="stepIndex"
+      :step-total="stepTotal"
+    />
     <name-step v-if="stepIndex == 0" :user-data="userData" :name="name" />
     <language-name-step
       v-show="stepIndex == 1"
