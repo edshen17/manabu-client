@@ -3,6 +3,7 @@
     class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100 w-full"
     v-bind="attrs"
     v-on="on"
+    @click="$emit('click', pkg)"
   >
     <div class="m-4 text-left">
       <p class="text-lg capitalize" :style="{ color: getRandomColor(pkg.name) }">

@@ -50,13 +50,12 @@ import { mapGetters } from 'vuex';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 const availableTimeRepository = makeAvailableTimeRepository;
-const calendarMixin = makeCalendarMixin;
 const DAY_FORMAT = 'YYYY-MM-DD';
 const MONTH_FORMAT = 'YYYY-MM';
 export default Vue.extend({
   name: 'AppointmentCalendar',
   components: {},
-  mixins: [calendarMixin],
+  mixins: [makeCalendarMixin],
   props: {
     hostedByData: {
       type: Object,
