@@ -185,6 +185,11 @@
       "appPending": "Teacher application pending",
       "approveApp": "Approve application",
       "viewLicense": "View professional license",
+      "lessonSelection": {
+        "choose": "Choose your lesson plan",
+        "options": "Lesson plan options",
+        "times": "Choose your lesson times"
+      },
       "lessonTypes": {
         "mainichi": {
           "title": "Mainichi Plan",

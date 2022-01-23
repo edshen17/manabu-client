@@ -27,6 +27,7 @@ module.exports = {
     "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
     "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
     "@typescript-eslint/no-var-requires": "off",
+    "vue/no-async-in-computed-properties": "off",
     "vue/no-reserved-keys": "off",
     "vue/no-unused-components": 2,
     "@typescript-eslint/no-this-alias": "off",

@@ -2,6 +2,7 @@ import { TiptapVuetifyPlugin } from 'tiptap-vuetify';
 import 'tiptap-vuetify/dist/main.css';
 import vClickOutside from 'v-click-outside';
 import Vue from 'vue';
+import AsyncComputed from 'vue-async-computed';
 import VueCookies from 'vue-cookies';
 import ReadMore from 'vue-read-more';
 import VueScrollTo from 'vue-scrollto';
@@ -41,6 +42,7 @@ Vue.use(TiptapVuetifyPlugin, {
 });
 Vue.use(ReadMore);
 Vue.use(VueScrollTo);
+Vue.use(AsyncComputed);
 
 new Vue({
   router,

@@ -17,7 +17,7 @@
         <div class="flex flex-col h-auto">
           <div class="py-8 md:py-6 text-2xl font-bold border-b-2 border-gray-200">
             <div class="flex static">
-              <h5 class="flex-1 text-center">{{ stepTitle }}</h5>
+              <h5 class="flex-1 text-center capitalize">{{ stepTitle }}</h5>
               <div class="absolute mx-4 md:mx-10">
                 <i class="fas fa-times cursor-pointer" @click="onCloseDialog"></i>
               </div>
@@ -50,6 +50,9 @@
               <lesson-duration-button
                 v-for="lessonDuration in lessonDurations"
                 :key="lessonDuration"
+                :pkg="selectedPackage"
+                :teacher="teacher"
+                :lesson-duration="lessonDuration"
               />
             </div>
           </div>
@@ -114,11 +117,11 @@ export default Vue.extend({
       },
     },
     stepTitle: {
-      get(): TranslateResult | string[] {
+      get(): TranslateResult {
         const stepTitles = [
-          'Choose your lesson plan',
-          'Lesson plan options',
-          'choose your lesson times',
+          this.$t('userProfile.teacher.lessonSelection.choose'),
+          this.$t('userProfile.teacher.lessonSelection.options'),
+          this.$t('userProfile.teacher.lessonSelection.times'),
         ];
         return stepTitles[this.stepIndex];
       },

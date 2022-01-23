@@ -18,7 +18,6 @@ import { TranslateResult } from 'vue-i18n';
 import { PackageDoc } from '../../../../server/models/Package';
 import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
 import randomColor from 'randomcolor';
-import { mapGetters } from 'vuex';
 import DialogButton from './DialogButton.vue';
 import PricePill from './PricePill.vue';
 
@@ -42,33 +41,24 @@ export default Vue.extend({
     },
   },
   data() {
-    return {
-      packagePrice: '',
-    };
+    return {};
   },
-  computed: {
-    ...mapGetters({
-      currency: 'user/currency',
-    }),
+  asyncComputed: {
+    packagePrice: {
+      async get() {
+        const packagePrice = await (this as any).getPackagePrice({
+          teacher: this.teacher,
+          pkg: this.pkg,
+          lessonDuration: 60,
+        });
+        return packagePrice;
+      },
+    },
   },
-  async mounted() {
-    this.packagePrice = await this.getPackagePrice();
+  mounted() {
+    return;
   },
   methods: {
-    async getPackagePrice(): Promise<string> {
-      const priceData = this.teacher.teacherData.priceData;
-      const lessonAmount = this.pkg.lessonAmount;
-      const { hourlyRate, currency } = priceData;
-      const convertedHourlyRate = await (this as any).convert({
-        amount: hourlyRate,
-        sourceCurrency: currency,
-        targetCurrency: this.currency,
-        isRounding: true,
-      });
-      const total = convertedHourlyRate * lessonAmount;
-      const packagePrice = `~${total.toLocaleString()}+ ${this.currency}`;
-      return packagePrice;
-    },
     getPackageTitle(pkg: PackageDoc): TranslateResult | string {
       const packageTitle =
         pkg.type == 'default'
