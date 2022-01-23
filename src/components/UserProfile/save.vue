@@ -1,15 +1,32 @@
 <template>
-  <dialog-button @click="$emit('click', pkg)">
-    <template v-slot:title>
+  <button
+    class="border-solid border-2 rounded-md mb-5 hover:bg-gray-100 w-full"
+    @click="$emit('click', pkg)"
+  >
+    <div class="m-4 text-left">
       <p class="text-lg capitalize" :style="{ color: getRandomColor(pkg.name) }">
         {{ getPackageTitle(pkg) }}
       </p>
-    </template>
-    <template v-slot:body>
       <p class="mt-2 text-gray-600">{{ getPackageDescription(pkg) }}</p>
-      <price-pill v-show="showPrice" :price="price" />
-    </template>
-  </dialog-button>
+      <div
+        v-if="exchangeRates && exchangeRates.SGD && showPrice"
+        class="
+          py-1
+          mt-3
+          w-24
+          shadow-md
+          bg-blue-400
+          no-underline
+          rounded-full
+          text-white
+          font-semibold
+          text-sm text-center
+        "
+      >
+        ~{{ getPackagePrice(pkg.lessonAmount).toLocaleString() }}+ {{ currency }}
+      </div>
+    </div>
+  </button>
 </template>
 
 <script lang="ts">
@@ -19,12 +36,10 @@ import { PackageDoc } from '../../../../server/models/Package';
 import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
 import randomColor from 'randomcolor';
 import { mapGetters } from 'vuex';
-import DialogButton from './DialogButton.vue';
-import PricePill from './PricePill.vue';
 
 export default Vue.extend({
   name: 'TeacherPackageButton',
-  components: { DialogButton, PricePill },
+  components: {},
   mixins: [makeExchangeRateMixin],
   props: {
     teacher: {
@@ -48,14 +63,6 @@ export default Vue.extend({
     ...mapGetters({
       currency: 'user/currency',
     }),
-    price: {
-      get(): string {
-        const price = `~${this.getPackagePrice(this.pkg.lessonAmount).toLocaleString()}+ ${
-          this.currency
-        }`;
-        return price;
-      },
-    },
   },
   mounted() {
     return;

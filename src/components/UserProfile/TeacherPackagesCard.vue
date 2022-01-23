@@ -3,52 +3,57 @@
     <p class="justify-center p-6 mx-auto text-2xl">{{ $t('userProfile.teacher.lessonPlans') }}</p>
     <div v-for="pkg in visiblePackages" :key="pkg._id" class="px-6 mx-auto">
       <teacher-package-button :pkg="pkg" :teacher="teacher" @click="onPackageClick" />
-      <v-dialog
-        v-model="showDialog"
-        persistent
-        :retain-focus="false"
-        fullscreen
-        hide-overlay
-        transition="dialog-bottom-transition"
-        class="h-auto"
-      >
-        <v-card>
-          <div class="flex flex-col h-auto bg-white">
-            <div class="py-8 md:py-6 text-2xl font-bold border-b-2 border-gray-200">
-              <div class="flex static">
-                <h5 class="flex-1 text-center">Choose your lesson plan</h5>
-                <div class="absolute mx-4 md:mx-10">
-                  <i class="fas fa-times cursor-pointer" @click="onCloseDialog"></i>
-                </div>
-              </div>
-            </div>
-            <div class="mt-5">
-              <progress-bar :step-index="stepIndex" :step-total="4" />
-            </div>
-            <div
-              v-show="stepIndex == 0"
-              class="flex justify-center items-center h-full bg-white mt-3 md:mt-7"
-            >
-              <div>
-                <div
-                  v-for="dialogPkg in visiblePackages"
-                  :key="dialogPkg._id"
-                  class="w-2/6 mx-auto"
-                >
-                  <teacher-package-button
-                    :pkg="dialogPkg"
-                    :teacher="teacher"
-                    :show-price="false"
-                    @click="onPackageClick"
-                  />
-                </div>
-              </div>
-            </div>
-            <appointment-calendar v-show="stepIndex == 1" :hosted-by-data="teacher" />
-          </div>
-        </v-card>
-      </v-dialog>
     </div>
+    <v-dialog
+      v-model="showDialog"
+      persistent
+      :retain-focus="false"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+      class="h-auto"
+    >
+      <v-card>
+        <div class="flex flex-col h-auto bg-white">
+          <div class="py-8 md:py-6 text-2xl font-bold border-b-2 border-gray-200">
+            <div class="flex static">
+              <h5 class="flex-1 text-center">{{ stepTitle }}</h5>
+              <div class="absolute mx-4 md:mx-10">
+                <i class="fas fa-times cursor-pointer" @click="onCloseDialog"></i>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5">
+            <progress-bar :step-index="stepIndex" :step-total="4" />
+          </div>
+          <div v-show="stepIndex == 0" class="flex h-full bg-white mt-3 md:mt-7">
+            <div class="mb-4 mx-5">
+              <div
+                v-for="dialogPkg in visiblePackages"
+                :key="dialogPkg._id"
+                :class="dialogButtonClass"
+                class="lg:w-4/12"
+              >
+                <teacher-package-button
+                  :pkg="dialogPkg"
+                  :teacher="teacher"
+                  :show-price="false"
+                  @click="onPackageClick"
+                />
+              </div>
+            </div>
+          </div>
+          <div v-show="stepIndex == 1" class="flex h-full bg-white mt-3 md:mt-7 mx-8">
+            <dialog-button :class="dialogButtonClass">
+              <template v-slot:title>
+                <p class="text-lg">test</p>
+              </template>
+            </dialog-button>
+          </div>
+          <appointment-calendar v-show="stepIndex == 2" :hosted-by-data="teacher" />
+        </div>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -61,10 +66,12 @@ import ProgressBar from '../ProgressBar/ProgressBar.vue';
 import TeacherPackageButton from './TeacherPackageButton.vue';
 import AppointmentCalendar from '../../views/AppointmentCalendar.vue';
 import { EventBus } from '../EventBus/EventBus';
+import { TranslateResult } from 'vue-i18n';
+import DialogButton from './DialogButton.vue';
 
 export default Vue.extend({
   name: 'TeacherPackagesCard',
-  components: { ProgressBar, TeacherPackageButton, AppointmentCalendar },
+  components: { ProgressBar, TeacherPackageButton, AppointmentCalendar, DialogButton },
   mixins: [makeExchangeRateMixin],
   props: {
     teacher: {
@@ -74,8 +81,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      showDialog: false,
-      stepIndex: 0,
+      showDialog: true,
+      stepIndex: 1,
       selectedPackage: null as any,
     };
   },
@@ -83,12 +90,28 @@ export default Vue.extend({
     ...mapGetters({
       currency: 'user/currency',
     }),
+    dialogButtonClass: {
+      get(): string {
+        const dialogButtonClass = 'w-11/12 md:w-96  mx-auto';
+        return dialogButtonClass;
+      },
+    },
     visiblePackages: {
       get(): PackageDoc[] {
         const visiblePackages = this.teacher.teacherData.packages.filter((pkg: PackageDoc) => {
           return pkg.isOffering;
         });
         return visiblePackages;
+      },
+    },
+    stepTitle: {
+      get(): TranslateResult | string[] {
+        const stepTitles = [
+          'Choose your lesson plan',
+          'Lesson plan options',
+          'choose your lesson times',
+        ];
+        return stepTitles[this.stepIndex];
       },
     },
   },

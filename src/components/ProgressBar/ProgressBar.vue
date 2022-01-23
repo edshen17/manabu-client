@@ -1,13 +1,11 @@
 <template>
   <div class="flex justify-center mx-auto items-center">
-    <button class="mb-1 md:mb-0" @click="emitStepBackward">
-      <i
-        :class="{
-          'opacity-0': stepIndex <= 0,
-        }"
-        class="fas fa-arrow-left pr-3 md:text-lg md:pr-4 lg:text-xl"
-      ></i>
-    </button>
+    <div class="h-6">
+      <button v-show="stepIndex > 0" @click="emitStepBackward">
+        <i class="fas fa-arrow-left pr-3 md:text-2xl md:pr-4 text-xl"></i>
+      </button>
+    </div>
+
     <div class="relative w-10/12 lg:w-10/12 2xl:w-7/12">
       <div class="overflow-hidden h-2 text-xs flex rounded bg-green-200">
         <div
