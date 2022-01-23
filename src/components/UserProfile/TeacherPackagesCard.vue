@@ -42,15 +42,16 @@
               </div>
             </div>
           </div>
-          <div v-show="stepIndex == 1" class="flex h-full bg-white mt-3 md:mt-7 mx-4">
-            <dialog-button :class="dialogButtonClass">
-              <template v-slot:title>
-                <p class="text-lg">30 mins x 12 lessons</p>
-              </template>
-              <template v-slot:body>
-                <price-pill price="130 SGD" />
-              </template>
-            </dialog-button>
+          <div
+            v-show="stepIndex == 1"
+            class="flex h-full bg-white mt-3 md:mt-7 mx-4 justify-center"
+          >
+            <div :class="dialogButtonClass">
+              <lesson-duration-button
+                v-for="lessonDuration in lessonDurations"
+                :key="lessonDuration"
+              />
+            </div>
           </div>
           <appointment-calendar v-show="stepIndex == 2" :hosted-by-data="teacher" />
         </div>
@@ -69,12 +70,11 @@ import TeacherPackageButton from './TeacherPackageButton.vue';
 import AppointmentCalendar from '../../views/AppointmentCalendar.vue';
 import { EventBus } from '../EventBus/EventBus';
 import { TranslateResult } from 'vue-i18n';
-import DialogButton from './DialogButton.vue';
-import PricePill from './PricePill.vue';
+import LessonDurationButton from './LessonDurationButton.vue';
 
 export default Vue.extend({
   name: 'TeacherPackagesCard',
-  components: { ProgressBar, TeacherPackageButton, AppointmentCalendar, DialogButton, PricePill },
+  components: { ProgressBar, TeacherPackageButton, AppointmentCalendar, LessonDurationButton },
   mixins: [makeExchangeRateMixin],
   props: {
     teacher: {
@@ -95,7 +95,7 @@ export default Vue.extend({
     }),
     dialogButtonClass: {
       get(): string {
-        const dialogButtonClass = 'w-11/12 md:w-96 mx-auto';
+        const dialogButtonClass = 'w-11/12 md:w-4/12 mx-auto';
         return dialogButtonClass;
       },
     },
@@ -105,6 +105,12 @@ export default Vue.extend({
           return pkg.isOffering;
         });
         return visiblePackages;
+      },
+    },
+    lessonDurations: {
+      get(): number[] {
+        const lessonDurations = this.selectedPackage ? this.selectedPackage.lessonDurations : [];
+        return lessonDurations;
       },
     },
     stepTitle: {

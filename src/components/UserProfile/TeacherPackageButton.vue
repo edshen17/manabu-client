@@ -67,7 +67,6 @@ export default Vue.extend({
       });
       const total = convertedHourlyRate * lessonAmount;
       const packagePrice = `~${total.toLocaleString()}+ ${this.currency}`;
-      console.log(packagePrice);
       return packagePrice;
     },
     getPackageTitle(pkg: PackageDoc): TranslateResult | string {
