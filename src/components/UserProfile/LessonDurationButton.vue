@@ -1,10 +1,17 @@
 <template>
-  <dialog-button>
+  <dialog-button @click="$emit('click', lessonDuration)">
     <template v-slot:title>
-      <p class="text-lg">{{ lessonDuration }} mins x {{ pkg.lessonAmount }} lessons</p>
+      <p class="text-lg">
+        {{
+          $t('userProfile.teacher.lessonSelection.price', {
+            lessonDuration,
+            lessonAmount: pkg.lessonAmount,
+          })
+        }}
+      </p>
     </template>
     <template v-slot:body>
-      <price-pill :price="packagePrice" />
+      <price-pill :price="packagePrice || ''" />
     </template>
   </dialog-button>
 </template>

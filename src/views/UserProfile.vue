@@ -4,7 +4,6 @@
       <div class="w-full md:w-8/12 md:mx-2">
         <profile-bio-card :user="user" :is-teacher="isTeacher" />
         <teacher-packages-card v-if="isTeacher" :teacher="user" />
-        <t />
       </div>
       <div class="w-full md:w-4/12 md:mx-3 max-h-96 sticky top-24 rounded-lg bg-white shadow-md">
         <div class="max-h-96 h-96">sa</div>

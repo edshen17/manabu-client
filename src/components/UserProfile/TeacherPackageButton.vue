@@ -7,7 +7,7 @@
     </template>
     <template v-slot:body>
       <p class="mt-2 text-gray-600">{{ getPackageDescription(pkg) }}</p>
-      <price-pill v-show="showPrice" :price="packagePrice" />
+      <price-pill v-show="showPrice" :price="packagePrice || ''" />
     </template>
   </dialog-button>
 </template>

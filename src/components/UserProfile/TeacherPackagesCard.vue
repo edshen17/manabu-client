@@ -53,10 +53,15 @@
                 :pkg="selectedPackage"
                 :teacher="teacher"
                 :lesson-duration="lessonDuration"
+                @click="onLessonDurationClick"
               />
             </div>
           </div>
-          <appointment-calendar v-show="stepIndex == 2" :hosted-by-data="teacher" />
+          <appointment-calendar
+            v-show="stepIndex == 2"
+            :hosted-by-data="teacher"
+            :duration="selectedLessonDuration"
+          />
         </div>
       </v-card>
     </v-dialog>
@@ -90,6 +95,7 @@ export default Vue.extend({
       showDialog: false,
       stepIndex: 0,
       selectedPackage: null as any,
+      selectedLessonDuration: 60,
     };
   },
   computed: {
@@ -135,6 +141,10 @@ export default Vue.extend({
       this.showDialog = true;
       this.stepIndex = 1;
       this.selectedPackage = pkg;
+    },
+    onLessonDurationClick(lessonDuration: number): void {
+      this.stepIndex++;
+      this.selectedLessonDuration = lessonDuration;
     },
     onCloseDialog(): void {
       this.selectedPackage = null;
