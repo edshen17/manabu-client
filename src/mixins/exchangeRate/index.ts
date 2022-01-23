@@ -13,13 +13,14 @@ const makeExchangeRateMixin = {
     }),
   },
   methods: {
-    convert(props: {
+    async convert(props: {
       amount: number;
       sourceCurrency: string;
       targetCurrency: string;
       isRounding?: boolean;
-    }): number {
+    }): Promise<number> {
       const { amount, sourceCurrency, targetCurrency, isRounding } = props;
+      await (this as any).$store.dispatch('exchangeRate/getEntityStateData');
       fx.base = 'USD'; // default open exchange rate base
       fx.rates = (this as StringKeyObject).exchangeRates;
       let convertedAmount = fx(amount)

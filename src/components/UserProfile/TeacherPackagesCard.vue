@@ -14,7 +14,7 @@
       class="h-auto"
     >
       <v-card>
-        <div class="flex flex-col h-auto bg-white">
+        <div class="flex flex-col h-auto">
           <div class="py-8 md:py-6 text-2xl font-bold border-b-2 border-gray-200">
             <div class="flex static">
               <h5 class="flex-1 text-center">{{ stepTitle }}</h5>
@@ -23,16 +23,15 @@
               </div>
             </div>
           </div>
-          <div class="mt-5">
+          <div class="mt-5 mb-3">
             <progress-bar :step-index="stepIndex" :step-total="4" />
           </div>
-          <div v-show="stepIndex == 0" class="flex h-full bg-white mt-3 md:mt-7">
-            <div class="mb-4 mx-5">
+          <div v-show="stepIndex == 0" class="flex h-full mt-3 md:mt-7">
+            <div class="mb-4 justify-center items-center mx-auto">
               <div
                 v-for="dialogPkg in visiblePackages"
                 :key="dialogPkg._id"
                 :class="dialogButtonClass"
-                class="lg:w-4/12"
               >
                 <teacher-package-button
                   :pkg="dialogPkg"
@@ -43,10 +42,13 @@
               </div>
             </div>
           </div>
-          <div v-show="stepIndex == 1" class="flex h-full bg-white mt-3 md:mt-7 mx-8">
+          <div v-show="stepIndex == 1" class="flex h-full bg-white mt-3 md:mt-7 mx-4">
             <dialog-button :class="dialogButtonClass">
               <template v-slot:title>
-                <p class="text-lg">test</p>
+                <p class="text-lg">30 mins x 12 lessons</p>
+              </template>
+              <template v-slot:body>
+                <price-pill price="130 SGD" />
               </template>
             </dialog-button>
           </div>
@@ -68,10 +70,11 @@ import AppointmentCalendar from '../../views/AppointmentCalendar.vue';
 import { EventBus } from '../EventBus/EventBus';
 import { TranslateResult } from 'vue-i18n';
 import DialogButton from './DialogButton.vue';
+import PricePill from './PricePill.vue';
 
 export default Vue.extend({
   name: 'TeacherPackagesCard',
-  components: { ProgressBar, TeacherPackageButton, AppointmentCalendar, DialogButton },
+  components: { ProgressBar, TeacherPackageButton, AppointmentCalendar, DialogButton, PricePill },
   mixins: [makeExchangeRateMixin],
   props: {
     teacher: {
@@ -81,8 +84,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      showDialog: true,
-      stepIndex: 1,
+      showDialog: false,
+      stepIndex: 0,
       selectedPackage: null as any,
     };
   },
@@ -92,7 +95,7 @@ export default Vue.extend({
     }),
     dialogButtonClass: {
       get(): string {
-        const dialogButtonClass = 'w-11/12 md:w-96  mx-auto';
+        const dialogButtonClass = 'w-11/12 md:w-96 mx-auto';
         return dialogButtonClass;
       },
     },

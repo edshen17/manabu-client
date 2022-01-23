@@ -7,7 +7,7 @@
     </template>
     <template v-slot:body>
       <p class="mt-2 text-gray-600">{{ getPackageDescription(pkg) }}</p>
-      <price-pill v-show="showPrice" :price="price" />
+      <price-pill v-show="showPrice" :price="packagePrice" />
     </template>
   </dialog-button>
 </template>
@@ -42,35 +42,32 @@ export default Vue.extend({
     },
   },
   data() {
-    return {};
+    return {
+      packagePrice: '',
+    };
   },
   computed: {
     ...mapGetters({
       currency: 'user/currency',
     }),
-    price: {
-      get(): string {
-        const price = `~${this.getPackagePrice(this.pkg.lessonAmount).toLocaleString()}+ ${
-          this.currency
-        }`;
-        return price;
-      },
-    },
   },
-  mounted() {
-    return;
+  async mounted() {
+    this.packagePrice = await this.getPackagePrice();
   },
   methods: {
-    getPackagePrice(lessonAmount: number): number {
+    async getPackagePrice(): Promise<string> {
       const priceData = this.teacher.teacherData.priceData;
+      const lessonAmount = this.pkg.lessonAmount;
       const { hourlyRate, currency } = priceData;
-      const convertedHourlyRate = (this as any).convert({
+      const convertedHourlyRate = await (this as any).convert({
         amount: hourlyRate,
         sourceCurrency: currency,
         targetCurrency: this.currency,
         isRounding: true,
       });
-      const packagePrice = convertedHourlyRate * lessonAmount;
+      const total = convertedHourlyRate * lessonAmount;
+      const packagePrice = `~${total.toLocaleString()}+ ${this.currency}`;
+      console.log(packagePrice);
       return packagePrice;
     },
     getPackageTitle(pkg: PackageDoc): TranslateResult | string {
