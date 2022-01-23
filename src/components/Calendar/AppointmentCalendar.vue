@@ -1,9 +1,9 @@
 <template>
   <div
-    class="flex justify-center items-center bg-white"
+    class="flex justify-center items-center"
     :class="{ 'h-auto': isMobile, 'h-screen': !isMobile }"
   >
-    <div class="w-full md:w-8/12 md:rounded-lg h-full md:h-5/6 bg-white">
+    <div class="w-full md:w-8/12 md:rounded-lg h-full">
       <div class="flex flex-wrap md:flex-nowrap h-full">
         <div class="md:w-4/12">
           <p>Lesson Details</p>
@@ -43,10 +43,10 @@
 <script lang="ts">
 import dayjs from 'dayjs';
 import Vue from 'vue';
-import { AvailableTimeDoc } from '../../../server/models/AvailableTime';
-import { StringKeyObject } from '../../../server/types/custom';
-import { makeCalendarMixin } from '../mixins/calendar';
-import { makeAvailableTimeRepository } from '../repositories/availableTime';
+import { AvailableTimeDoc } from '../../../../server/models/AvailableTime';
+import { StringKeyObject } from '../../../../server/types/custom';
+import { makeCalendarMixin } from '../../mixins/calendar';
+import { makeAvailableTimeRepository } from '../../repositories/availableTime';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { mapGetters } from 'vuex';

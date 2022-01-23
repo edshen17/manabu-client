@@ -26,42 +26,41 @@
           <div class="mt-5 mb-3">
             <progress-bar :step-index="stepIndex" :step-total="4" />
           </div>
-          <div v-show="stepIndex == 0" class="flex h-full mt-3 md:mt-7">
-            <div class="mb-4 justify-center items-center mx-auto">
-              <div
-                v-for="dialogPkg in visiblePackages"
-                :key="dialogPkg._id"
-                :class="dialogButtonClass"
-              >
-                <teacher-package-button
-                  :pkg="dialogPkg"
+          <div class="mt-3 md:mt-7">
+            <div v-show="stepIndex == 0" class="flex h-full">
+              <div class="mb-4 justify-center items-center mx-auto">
+                <div
+                  v-for="dialogPkg in visiblePackages"
+                  :key="dialogPkg._id"
+                  :class="dialogButtonClass"
+                >
+                  <teacher-package-button
+                    :pkg="dialogPkg"
+                    :teacher="teacher"
+                    :show-price="false"
+                    @click="onPackageClick"
+                  />
+                </div>
+              </div>
+            </div>
+            <div v-show="stepIndex == 1" class="flex h-full bg-white mx-4 justify-center">
+              <div :class="dialogButtonClass">
+                <lesson-duration-button
+                  v-for="lessonDuration in lessonDurations"
+                  :key="lessonDuration"
+                  :pkg="selectedPackage"
                   :teacher="teacher"
-                  :show-price="false"
-                  @click="onPackageClick"
+                  :lesson-duration="lessonDuration"
+                  @click="onLessonDurationClick"
                 />
               </div>
             </div>
+            <appointment-calendar
+              v-show="stepIndex == 2"
+              :hosted-by-data="teacher"
+              :duration="selectedLessonDuration"
+            />
           </div>
-          <div
-            v-show="stepIndex == 1"
-            class="flex h-full bg-white mt-3 md:mt-7 mx-4 justify-center"
-          >
-            <div :class="dialogButtonClass">
-              <lesson-duration-button
-                v-for="lessonDuration in lessonDurations"
-                :key="lessonDuration"
-                :pkg="selectedPackage"
-                :teacher="teacher"
-                :lesson-duration="lessonDuration"
-                @click="onLessonDurationClick"
-              />
-            </div>
-          </div>
-          <appointment-calendar
-            v-show="stepIndex == 2"
-            :hosted-by-data="teacher"
-            :duration="selectedLessonDuration"
-          />
         </div>
       </v-card>
     </v-dialog>
@@ -75,7 +74,7 @@ import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
 import { mapGetters } from 'vuex';
 import ProgressBar from '../ProgressBar/ProgressBar.vue';
 import TeacherPackageButton from './TeacherPackageButton.vue';
-import AppointmentCalendar from '../../views/AppointmentCalendar.vue';
+import AppointmentCalendar from '../Calendar/AppointmentCalendar.vue';
 import { EventBus } from '../EventBus/EventBus';
 import { TranslateResult } from 'vue-i18n';
 import LessonDurationButton from './LessonDurationButton.vue';
