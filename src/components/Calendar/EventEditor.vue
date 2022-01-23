@@ -196,7 +196,9 @@ export default Vue.extend({
     showEventEditorModel: {
       get(): boolean {
         const showEventEditorModel =
-          this.showEventEditor && this.eventId == this.selectedEvent.attributes._id;
+          this.showEventEditor &&
+          this.selectedEvent.attributes &&
+          this.eventId == this.selectedEvent.attributes._id;
         return showEventEditorModel;
       },
       set(value: boolean): void {

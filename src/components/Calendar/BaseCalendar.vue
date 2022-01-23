@@ -16,7 +16,7 @@
         <v-btn fab text small color="grey darken-2" @click="moveCalendar('forward')">
           <v-icon small> mdi-chevron-right </v-icon>
         </v-btn>
-        <v-toolbar-title v-if="$refs.calendar" class="lg:mx-4">
+        <v-toolbar-title v-if="$refs.calendar" class="md:mx-4">
           {{ $refs.calendar.title }}
         </v-toolbar-title>
         <v-menu bottom right>

@@ -35,7 +35,7 @@
     <hr class="border-gray-400 mx-auto" />
     <basic-account-dropdown-link
       :router-links="innerRouterLinks"
-      class="my-6 lg:my-2"
+      class="mt-6 lg:my-2"
       :router-link-class="routerLinkClass"
       :active-router-link-class="activeRouterLinkClass"
       @linkClick="$emit('linkClick')"

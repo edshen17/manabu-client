@@ -16,9 +16,15 @@
       <v-card>
         <div class="flex flex-col h-auto">
           <div class="py-8 md:py-6 text-2xl font-bold border-b-2 border-gray-200">
-            <div class="flex static">
+            <div v-show="isMobile" class="flex items-center w-full">
+              <div class="mx-6">
+                <i class="fas fa-times cursor-pointer" @click="onCloseDialog"></i>
+              </div>
+              <h5 class="capitalize">{{ stepTitle }}</h5>
+            </div>
+            <div v-show="!isMobile" class="flex">
               <h5 class="flex-1 text-center capitalize">{{ stepTitle }}</h5>
-              <div class="absolute mx-4 md:mx-10">
+              <div class="absolute mx-6 md:mx-10">
                 <i class="fas fa-times cursor-pointer" @click="onCloseDialog"></i>
               </div>
             </div>
@@ -43,7 +49,7 @@
                 </div>
               </div>
             </div>
-            <div v-show="stepIndex == 1" class="flex h-full bg-white mx-4 justify-center">
+            <div v-show="stepIndex == 1" class="flex h-full mx-4 justify-center">
               <div :class="dialogButtonClass">
                 <lesson-duration-button
                   v-for="lessonDuration in lessonDurations"
@@ -59,6 +65,7 @@
               v-show="stepIndex == 2"
               :hosted-by-data="teacher"
               :duration="selectedLessonDuration"
+              :pkg="selectedPackage"
             />
           </div>
         </div>
@@ -78,6 +85,7 @@ import AppointmentCalendar from '../Calendar/AppointmentCalendar.vue';
 import { EventBus } from '../EventBus/EventBus';
 import { TranslateResult } from 'vue-i18n';
 import LessonDurationButton from './LessonDurationButton.vue';
+import { StringKeyObject } from '../../../../server/types/custom';
 
 export default Vue.extend({
   name: 'TeacherPackagesCard',
@@ -93,7 +101,7 @@ export default Vue.extend({
     return {
       showDialog: false,
       stepIndex: 0,
-      selectedPackage: null as any,
+      selectedPackage: {} as StringKeyObject,
       selectedLessonDuration: 60,
     };
   },
@@ -146,7 +154,7 @@ export default Vue.extend({
       this.selectedLessonDuration = lessonDuration;
     },
     onCloseDialog(): void {
-      this.selectedPackage = null;
+      this.selectedPackage = {};
       this.stepIndex = 0;
       this.showDialog = false;
     },

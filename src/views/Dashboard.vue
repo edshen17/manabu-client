@@ -8,7 +8,7 @@
         py-3
         md:py-7
         mx-auto
-        md:w-11/12
+        md:w-full
         xl:w-9/12
         flex-wrap
         md:flex-nowrap

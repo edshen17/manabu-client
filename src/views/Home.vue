@@ -73,6 +73,7 @@
                 class="
                   pb-8
                   w-9/12
+                  md:w-5/12
                   lg:w-7/12
                   2xl:w-9/12
                   mx-auto

@@ -63,7 +63,7 @@
         <basic-account-dropdown
           v-show="isLoggedIn"
           :inner-router-links="innerRouterLinks"
-          class="h-2/6 lg:hidden my-4"
+          class="h-2/6 lg:hidden mt-4"
           div-class="text-gray-500"
           @linkClick="closeDropdown"
         ></basic-account-dropdown>

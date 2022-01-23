@@ -3,11 +3,29 @@
     class="flex justify-center items-center"
     :class="{ 'h-auto': isMobile, 'h-screen': !isMobile }"
   >
+    <button
+      class="
+        rounded-full
+        bg-green-500
+        h-14
+        w-14
+        md:h-16 md:w-16
+        fixed
+        p-0
+        bottom-2
+        right-2
+        md:bottom-5 md:right-10
+        z-10
+      "
+    >
+      <i class="fas fa-arrow-right text-white"></i>
+    </button>
     <div class="w-full md:w-8/12 md:rounded-lg h-full">
       <div class="flex flex-wrap md:flex-nowrap h-full">
         <div class="md:w-4/12">
           <p>Lesson Details</p>
-          <p>x Lessons left to reserve</p>
+          <p>Light Plan / {{ duration }} mins</p>
+          <p>{{ lessonAmount }} Lessons left to reserve</p>
         </div>
         <div class="md:w-4/12">
           <v-date-picker
@@ -18,18 +36,27 @@
             :allowed-dates="isAllowedDate"
             @update:picker-date="getAvailableTimes"
           ></v-date-picker>
-          <div class="inline-flex items-center text-gray-600">
-            <i class="fas fa-globe-americas"></i>
-            <p class="my-3 mx-2">{{ currentUserTimezone }} ({{ now }})</p>
-            <p></p>
+          <div class="flex justify-center my-2">
+            <div class="inline-flex items-center text-gray-600">
+              <i class="fas fa-globe-americas"></i>
+              <p class="my-3 mx-2">{{ currentUserTimezone }} ({{ now }})</p>
+            </div>
           </div>
         </div>
         <div class="flex-grow overflow-y-auto no-scrollbar">
-          <div class="flex flex-col justify-center items-center">
+          <div class="flex flex-col justify-center items-center mb-2">
             <button
               v-for="timeslot in visibleTimeslots"
               :key="timeslot.startDate.toISOString()"
-              class="border-solid border border-blue-400 rounded-md text-xl p-2 w-9/12 mb-3"
+              class="
+                border-solid border border-blue-400
+                rounded-md
+                text-xl
+                p-2
+                w-9/12
+                mb-3
+                hover:bg-blue-50
+              "
             >
               {{ timeslot.formattedTime }}
             </button>
@@ -70,6 +97,16 @@ export default Vue.extend({
       required: false,
       default: 60,
     },
+    pkg: {
+      type: Object,
+      required: true,
+      default: () => ({}),
+    },
+    packageTransaction: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -77,6 +114,7 @@ export default Vue.extend({
       events: [] as StringKeyObject[],
       intervalTimerId: 0 as any,
       now: '',
+      selectedTimeslots: [] as number[],
     };
   },
   computed: {
@@ -101,6 +139,16 @@ export default Vue.extend({
         const isValidQueryDuration = this.isValidDuration(queryDuration);
         const appointmentDuration = isValidQueryDuration ? parseInt(queryDuration) : this.duration;
         return appointmentDuration;
+      },
+    },
+    lessonAmount: {
+      get(): number {
+        const remainingAppointments = this.packageTransaction.remainingAppointments;
+        const packageAmount = this.pkg.lessonAmount;
+        const lessonAmount =
+          (remainingAppointments ? remainingAppointments : packageAmount) -
+          this.selectedTimeslots.length;
+        return lessonAmount;
       },
     },
     calendarFocusDateModel: {
@@ -130,7 +178,9 @@ export default Vue.extend({
             this.appointmentDuration,
             'minutes'
           );
-          while (startDate.isBefore(endDate) || startDate.isSame(endDate)) {
+          const now = dayjs();
+          const isPast = startDate.isBefore(now);
+          while ((startDate.isBefore(endDate) || startDate.isSame(endDate)) && !isPast) {
             const formattedTime = self.formatDate({
               date: startDate.toDate(),
               dateFormat: self.DATE_FORMAT.HOUR,
@@ -176,8 +226,11 @@ export default Vue.extend({
         const isExistingEvent = this.events.some((event) => {
           return event._id == availableTime._id;
         });
-        if (!isExistingEvent) {
-          const { startDate, endDate } = availableTime;
+        const { startDate, endDate } = availableTime;
+        const now = dayjs();
+        const isPast = dayjs(startDate).isBefore(now);
+        const isSameDay = dayjs(startDate).isSame(now, 'day');
+        if (!isExistingEvent && !isPast && !isSameDay) {
           const event = {
             ...availableTime,
             formattedStartDate: dayjs(startDate).format(DAY_FORMAT),
