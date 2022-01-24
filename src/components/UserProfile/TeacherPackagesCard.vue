@@ -111,7 +111,7 @@ export default Vue.extend({
     }),
     dialogButtonClass: {
       get(): string {
-        const dialogButtonClass = 'w-11/12 md:w-4/12 mx-auto';
+        const dialogButtonClass = 'w-11/12 md:w-6/12 lg:w-4/12 mx-auto';
         return dialogButtonClass;
       },
     },

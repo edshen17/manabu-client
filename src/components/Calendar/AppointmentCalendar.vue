@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="flex justify-center items-center"
-    :class="{ 'h-auto': isMobile, 'h-screen': !isMobile }"
-  >
+  <div class="flex justify-center items-center h-auto">
     <button
       class="
         rounded-full
@@ -12,22 +9,22 @@
         md:h-16 md:w-16
         fixed
         p-0
-        bottom-2
-        right-2
+        bottom-4
+        right-4
         md:bottom-5 md:right-10
         z-10
       "
     >
       <i class="fas fa-arrow-right text-white"></i>
     </button>
-    <div class="w-full md:w-8/12 md:rounded-lg h-full">
-      <div class="flex flex-wrap md:flex-nowrap h-full">
-        <div class="md:w-4/12">
+    <div class="w-full md:w-8/12 lg:rounded-lg h-full">
+      <div class="flex flex-wrap lg:flex-nowrap h-full">
+        <div class="lg:w-4/12">
           <p>Lesson Details</p>
           <p>Light Plan / {{ duration }} mins</p>
           <p>{{ lessonAmount }} Lessons left to reserve</p>
         </div>
-        <div class="md:w-4/12">
+        <div class="lg:w-4/12">
           <v-date-picker
             v-model="calendarFocusDateModel"
             :locale="locale"
