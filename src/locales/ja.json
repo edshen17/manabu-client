@@ -164,6 +164,13 @@
     "cancelReason": "アポイントメント拒否の理由",
     "appointment": "予約"
   },
+  "payment": {
+    "gateway": {
+      "paypal": "PayPal",
+      "stripe": "Debit / Credit Card",
+      "paynow": "PayNow"
+    }
+  },
   "userProfile": {
     "common": {
       "block": "Block",

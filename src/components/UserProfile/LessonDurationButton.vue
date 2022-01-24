@@ -1,5 +1,5 @@
 <template>
-  <dialog-button @click="$emit('click', lessonDuration)">
+  <dialog-button @click="$emit('click', { lessonDuration, packagePrice })">
     <template v-slot:title>
       <p class="text-lg">
         {{
@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { StringKeyObject } from '../../../../server/types/custom';
 import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
 import DialogButton from './DialogButton.vue';
 import PricePill from './PricePill.vue';
@@ -45,13 +46,13 @@ export default Vue.extend({
   },
   asyncComputed: {
     packagePrice: {
-      async get() {
-        const packagePrice = await (this as any).getPackagePrice({
+      async get(): Promise<StringKeyObject> {
+        const { formattedTotal } = await (this as any).getPackagePriceData({
           teacher: this.teacher,
           pkg: this.pkg,
           lessonDuration: this.lessonDuration,
         });
-        return packagePrice;
+        return formattedTotal;
       },
     },
   },

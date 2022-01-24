@@ -209,6 +209,11 @@ export default Vue.extend({
       },
     },
   },
+  watch: {
+    appointmentDuration: function () {
+      this.selectedTimeslots = [];
+    },
+  },
   created() {
     const self = this as any;
     this.intervalTimerId = setInterval(() => {

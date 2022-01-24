@@ -68,6 +68,13 @@
               :pkg="selectedPackage"
               @submit-timeslots="onSubmitTimeslots"
             />
+            <payment-card
+              v-show="stepIndex == 3"
+              :teacher="teacher"
+              :timeslots="selectedTimeslots"
+              :duration="selectedLessonDuration"
+              :pkg="selectedPackage"
+            />
           </div>
         </div>
       </v-card>
@@ -78,7 +85,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { PackageDoc } from '../../../../server/models/Package';
-import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
 import { mapGetters } from 'vuex';
 import ProgressBar from '../ProgressBar/ProgressBar.vue';
 import TeacherPackageButton from './TeacherPackageButton.vue';
@@ -87,11 +93,17 @@ import { EventBus } from '../EventBus/EventBus';
 import { TranslateResult } from 'vue-i18n';
 import LessonDurationButton from './LessonDurationButton.vue';
 import { StringKeyObject } from '../../../../server/types/custom';
+import PaymentCard from './PaymentCard.vue';
 
 export default Vue.extend({
   name: 'TeacherPackagesCard',
-  components: { ProgressBar, TeacherPackageButton, AppointmentCalendar, LessonDurationButton },
-  mixins: [makeExchangeRateMixin],
+  components: {
+    ProgressBar,
+    TeacherPackageButton,
+    AppointmentCalendar,
+    LessonDurationButton,
+    PaymentCard,
+  },
   props: {
     teacher: {
       type: Object,
@@ -105,6 +117,7 @@ export default Vue.extend({
       selectedPackage: {} as StringKeyObject,
       selectedLessonDuration: 60,
       selectedTimeslots: [] as string[],
+      selectedPackagePrice: 0,
     };
   },
   computed: {
@@ -132,11 +145,12 @@ export default Vue.extend({
       },
     },
     stepTitle: {
-      get(): TranslateResult {
+      get(): TranslateResult | string {
         const stepTitles = [
           this.$t('userProfile.teacher.lessonSelection.choose'),
           this.$t('userProfile.teacher.lessonSelection.options'),
           this.$t('userProfile.teacher.lessonSelection.times'),
+          'Payment',
         ];
         return stepTitles[this.stepIndex];
       },
@@ -155,9 +169,11 @@ export default Vue.extend({
       this.stepIndex = 1;
       this.selectedPackage = pkg;
     },
-    onLessonDurationClick(lessonDuration: number): void {
+    onLessonDurationClick(lessonDurationObj: StringKeyObject): void {
+      const { lessonDuration, packagePrice } = lessonDurationObj;
       this.stepIndex++;
       this.selectedLessonDuration = lessonDuration;
+      this.selectedPackagePrice = packagePrice;
     },
     onCloseDialog(): void {
       this.selectedPackage = {};

@@ -165,6 +165,13 @@
     "cancelReason": "Reason for cancelling appointment",
     "appointment": "Appointment"
   },
+  "payment": {
+    "gateway": {
+      "paypal": "PayPal",
+      "stripe": "Debit / Credit Card",
+      "paynow": "PayNow"
+    }
+  },
   "userProfile": {
     "common": {
       "block": "Block",
