@@ -2,17 +2,22 @@
   <div class="flex justify-center items-center h-auto">
     <div class="w-full md:w-8/12 lg:rounded-lg h-full">
       <div class="flex flex-wrap lg:flex-nowrap h-full">
-        <div class="lg:w-4/12">
-          <p>Lesson Details</p>
-          <p>Light Plan / {{ duration }} mins</p>
-          <p>{{ lessonAmount }} Lessons left to reserve</p>
+        <div class="lg:w-4/12 mx-4 lg:mx-0">
+          <div class="mb-5">
+            <p class="text-2xl pb-1">Lessons Details</p>
+            <div class="text-gray-600 text-lg">
+              <p class="py-1">Light Plan / {{ duration }} mins</p>
+              <p>{{ lessonAmount }} Lessons left to reserve</p>
+            </div>
+          </div>
         </div>
         <div class="lg:w-4/12">
           <v-date-picker
             v-model="calendarFocusDateModel"
             :locale="locale"
             :full-width="true"
-            :events="colorDate"
+            event-color="bg-pink-500"
+            :events="selectedDays"
             class="h-96"
             :allowed-dates="isAllowedDate"
             @update:picker-date="getAvailableTimes"
@@ -58,6 +63,7 @@
         md:bottom-5 md:right-10
         z-10
       "
+      @click="$emit('submit-timeslots', selectedTimeslots)"
     >
       <i class="fas fa-arrow-right text-white"></i>
     </button>
@@ -112,7 +118,6 @@ export default Vue.extend({
       intervalTimerId: 0 as any,
       now: '',
       selectedTimeslots: [] as string[],
-      arrayEvents: [] as any,
     };
   },
   computed: {
@@ -212,21 +217,11 @@ export default Vue.extend({
   },
   mounted() {
     this.setCurrentTime();
-    this.arrayEvents = [...Array(6)].map(() => {
-      const day = Math.floor(Math.random() * 30);
-      const d = new Date();
-      d.setDate(day);
-      return d.toISOString().substr(0, 10);
-    });
   },
   destroyed() {
     clearInterval(this.intervalTimerId);
   },
   methods: {
-    colorDate(date: string): string[] | boolean {
-      const returnType = this.selectedDays.includes(date) ? ['bg-pink-500'] : false;
-      return returnType;
-    },
     async getAvailableTimes(month: string): Promise<void> {
       const startMonth = dayjs(month, MONTH_FORMAT);
       const { data } = await availableTimeRepository.get({

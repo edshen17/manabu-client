@@ -66,6 +66,7 @@
               :hosted-by-data="teacher"
               :duration="selectedLessonDuration"
               :pkg="selectedPackage"
+              @submit-timeslots="onSubmitTimeslots"
             />
           </div>
         </div>
@@ -103,6 +104,7 @@ export default Vue.extend({
       stepIndex: 0,
       selectedPackage: {} as StringKeyObject,
       selectedLessonDuration: 60,
+      selectedTimeslots: [] as string[],
     };
   },
   computed: {
@@ -144,6 +146,10 @@ export default Vue.extend({
     EventBus.$on('step-backward', this.handleStepBackward());
   },
   methods: {
+    onSubmitTimeslots(timeslots: string[]): void {
+      this.selectedTimeslots = timeslots;
+      this.stepIndex++;
+    },
     onPackageClick(pkg: PackageDoc): void {
       this.showDialog = true;
       this.stepIndex = 1;
