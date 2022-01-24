@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white h-auto min-h-screen mx-4 lg:mx-0">
+  <div class="bg-white h-auto mx-4 lg:mx-0">
     <div class="flex flex-wrap lg:flex-nowrap w-full lg:w-9/12 mx-auto lg:py-1">
       <div class="w-full lg:w-8/12 lg:mx-2">
         <div class="rounded-lg border-solid border-2 h-auto bg-white">
@@ -41,8 +41,40 @@
           lg:my-0
         "
       >
-        <div class="max-h-96 h-96">
-          <div class="flex">{{ packagePriceData }}</div>
+        <div class="h-auto w-full">
+          <div class="flex m-4">
+            <img :src="teacher.profileImageUrl" class="rounded-full h-16" />
+            <div class="mx-4">
+              <p class="text-lg">{{ teacher.name }}</p>
+              <p>{{ getPackageName(pkg) }} / {{ duration }} mins</p>
+              <p>{{ pkg.lessonAmount }} lessons</p>
+              <p></p>
+            </div>
+          </div>
+          <div class="flex">
+            <p class="flex-1 mx-4">Subtotal</p>
+            <p class="mx-8">{{ packagePriceData.formattedSubTotal }}</p>
+          </div>
+          <div class="flex">
+            <p class="flex-1 mx-4">Processing Fee</p>
+            <p class="mx-8">{{ packagePriceData.formattedProcessingFee }}</p>
+          </div>
+          <div class="flex"></div>
+          <div class="flex">
+            <p class="flex-1 mx-4">Total</p>
+            <p class="mx-8">{{ packagePriceData.formattedTotal }}</p>
+          </div>
+          <div class="flex w-full">
+            <button
+              class="rounded-lg my-4 py-2 text-white w-full mx-5"
+              :class="{
+                'bg-indigo-500': !isPaymentButtonDisabled,
+                'bg-gray-200 text-white-200': isPaymentButtonDisabled,
+              }"
+            >
+              Pay Now
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -52,13 +84,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import { StringKeyObject } from '../../../../server/types/custom';
-import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
+import { makePackageMixin } from '../../mixins/package';
 import DialogButton from './DialogButton.vue';
 
 export default Vue.extend({
   name: 'PaymentCard',
   components: { DialogButton },
-  mixins: [makeExchangeRateMixin],
+  mixins: [makePackageMixin],
   props: {
     teacher: {
       type: Object,
@@ -96,6 +128,12 @@ export default Vue.extend({
           },
         ];
         return paymentGateways;
+      },
+    },
+    isPaymentButtonDisabled: {
+      get(): boolean {
+        const isPaymentButtonDisabled = this.selectedPaymentGateway.length == 0;
+        return isPaymentButtonDisabled;
       },
     },
   },

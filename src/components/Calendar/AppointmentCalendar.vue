@@ -4,7 +4,7 @@
       <div class="flex flex-wrap lg:flex-nowrap h-full">
         <div class="lg:w-4/12 mx-4 lg:mx-0">
           <div class="mb-5">
-            <p class="text-2xl pb-1">Lessons Details</p>
+            <p class="text-xl pb-1">Lessons Details</p>
             <div class="text-gray-600 text-lg">
               <p class="py-1">Light Plan / {{ duration }} mins</p>
               <p>{{ lessonAmount }} Lessons left to reserve</p>

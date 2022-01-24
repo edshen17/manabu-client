@@ -19,14 +19,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { StringKeyObject } from '../../../../server/types/custom';
-import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
+import { makePackageMixin } from '../../mixins/package';
 import DialogButton from './DialogButton.vue';
 import PricePill from './PricePill.vue';
 
 export default Vue.extend({
   name: 'LessonDurationButton',
   components: { DialogButton, PricePill },
-  mixins: [makeExchangeRateMixin],
+  mixins: [makePackageMixin],
   props: {
     pkg: {
       type: Object,

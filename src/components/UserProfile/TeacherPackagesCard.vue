@@ -17,16 +17,16 @@
         <div class="flex flex-col h-auto">
           <div class="py-8 md:py-6 text-2xl font-bold border-b-2 border-gray-200">
             <div v-show="isMobile" class="flex items-center w-full">
-              <div class="mx-6">
+              <button class="mx-6">
                 <i class="fas fa-times cursor-pointer" @click="onCloseDialog"></i>
-              </div>
+              </button>
               <h5 class="capitalize">{{ stepTitle }}</h5>
             </div>
             <div v-show="!isMobile" class="flex">
               <h5 class="flex-1 text-center capitalize">{{ stepTitle }}</h5>
-              <div class="absolute mx-6 md:mx-10">
+              <button class="absolute mx-6 md:mx-10">
                 <i class="fas fa-times cursor-pointer" @click="onCloseDialog"></i>
-              </div>
+              </button>
             </div>
           </div>
           <div class="mt-5 mb-3">

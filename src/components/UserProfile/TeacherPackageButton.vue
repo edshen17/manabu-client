@@ -2,7 +2,7 @@
   <dialog-button @click="$emit('click', pkg)">
     <template v-slot:title>
       <p class="text-lg capitalize" :style="{ color: getRandomColor(pkg.name) }">
-        {{ getPackageTitle(pkg) }}
+        {{ getPackageName(pkg) }}
       </p>
     </template>
     <template v-slot:body>
@@ -14,9 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TranslateResult } from 'vue-i18n';
-import { PackageDoc } from '../../../../server/models/Package';
-import { makeExchangeRateMixin } from '../../mixins/exchangeRate';
+import { makePackageMixin } from '../../mixins/package';
 import randomColor from 'randomcolor';
 import DialogButton from './DialogButton.vue';
 import PricePill from './PricePill.vue';
@@ -24,7 +22,7 @@ import PricePill from './PricePill.vue';
 export default Vue.extend({
   name: 'TeacherPackageButton',
   components: { DialogButton, PricePill },
-  mixins: [makeExchangeRateMixin],
+  mixins: [makePackageMixin],
   props: {
     teacher: {
       type: Object,
@@ -59,25 +57,6 @@ export default Vue.extend({
     return;
   },
   methods: {
-    getPackageTitle(pkg: PackageDoc): TranslateResult | string {
-      const packageTitle =
-        pkg.type == 'default'
-          ? this.$t(`userProfile.teacher.lessonTypes.${pkg.name}.title`)
-          : pkg.name;
-      return packageTitle;
-    },
-    getPackageDescription(pkg: PackageDoc): TranslateResult | string {
-      const packageDescription =
-        pkg.type == 'default'
-          ? this.$t(`userProfile.teacher.lessonTypes.${pkg.name}.description`)
-          : pkg.description! ||
-            `With this plan, you will receive ${
-              pkg.lessonAmount
-            } personalized lessons, which is about ${Math.ceil(
-              pkg.lessonAmount / 4
-            )} lessons every week.`;
-      return packageDescription;
-    },
     getRandomColor(seed: string) {
       const color = randomColor({
         luminosity: 'dark',
