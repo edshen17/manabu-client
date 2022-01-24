@@ -1,22 +1,5 @@
 <template>
   <div class="flex justify-center items-center h-auto">
-    <button
-      class="
-        rounded-full
-        bg-green-500
-        h-14
-        w-14
-        md:h-16 md:w-16
-        fixed
-        p-0
-        bottom-4
-        right-4
-        md:bottom-5 md:right-10
-        z-10
-      "
-    >
-      <i class="fas fa-arrow-right text-white"></i>
-    </button>
     <div class="w-full md:w-8/12 lg:rounded-lg h-full">
       <div class="flex flex-wrap lg:flex-nowrap h-full">
         <div class="lg:w-4/12">
@@ -29,6 +12,7 @@
             v-model="calendarFocusDateModel"
             :locale="locale"
             :full-width="true"
+            :events="colorDate"
             class="h-96"
             :allowed-dates="isAllowedDate"
             @update:picker-date="getAvailableTimes"
@@ -45,15 +29,13 @@
             <button
               v-for="timeslot in visibleTimeslots"
               :key="timeslot.startDate.toISOString()"
-              class="
-                border-solid border border-blue-400
-                rounded-md
-                text-xl
-                p-2
-                w-9/12
-                mb-3
-                hover:bg-blue-50
-              "
+              class="border-solid border border-blue-400 rounded-md text-xl p-2 w-9/12 mb-3"
+              :class="{
+                'bg-indigo-500 text-white': selectedTimeslots.includes(
+                  timeslot.startDate.toISOString()
+                ),
+              }"
+              @click="onTimeslotClick(timeslot)"
             >
               {{ timeslot.formattedTime }}
             </button>
@@ -61,6 +43,24 @@
         </div>
       </div>
     </div>
+    <button
+      v-show="selectedTimeslots.length > 0"
+      class="
+        rounded-full
+        bg-green-500
+        h-14
+        w-14
+        md:h-16 md:w-16
+        fixed
+        p-0
+        bottom-4
+        right-4
+        md:bottom-5 md:right-10
+        z-10
+      "
+    >
+      <i class="fas fa-arrow-right text-white"></i>
+    </button>
   </div>
 </template>
 
@@ -111,13 +111,22 @@ export default Vue.extend({
       events: [] as StringKeyObject[],
       intervalTimerId: 0 as any,
       now: '',
-      selectedTimeslots: [] as number[],
+      selectedTimeslots: [] as string[],
+      arrayEvents: [] as any,
     };
   },
   computed: {
     ...mapGetters({
       locale: 'user/locale',
     }),
+    selectedDays: {
+      get(): string[] {
+        const selectedDays = this.selectedTimeslots.map((startDateKey) => {
+          return dayjs(startDateKey).format(DAY_FORMAT);
+        });
+        return selectedDays;
+      },
+    },
     hostedById: {
       get(): string {
         const hostedById = this.$route.params.userId || this.hostedByData._id;
@@ -203,11 +212,21 @@ export default Vue.extend({
   },
   mounted() {
     this.setCurrentTime();
+    this.arrayEvents = [...Array(6)].map(() => {
+      const day = Math.floor(Math.random() * 30);
+      const d = new Date();
+      d.setDate(day);
+      return d.toISOString().substr(0, 10);
+    });
   },
   destroyed() {
     clearInterval(this.intervalTimerId);
   },
   methods: {
+    colorDate(date: string): string[] | boolean {
+      const returnType = this.selectedDays.includes(date) ? ['bg-pink-500'] : false;
+      return returnType;
+    },
     async getAvailableTimes(month: string): Promise<void> {
       const startMonth = dayjs(month, MONTH_FORMAT);
       const { data } = await availableTimeRepository.get({
@@ -258,6 +277,19 @@ export default Vue.extend({
       const validDurations = [30, 60, 90];
       const isValidDuration = validDurations.includes(parseInt(duration));
       return isValidDuration;
+    },
+    onTimeslotClick(timeslot: StringKeyObject): void {
+      const startDateKey = timeslot.startDate.toISOString();
+      const isSelected = this.selectedTimeslots.some((ts) => {
+        return ts == startDateKey;
+      });
+      if (!isSelected && this.lessonAmount > 0) {
+        this.selectedTimeslots.push(startDateKey);
+      } else {
+        this.selectedTimeslots = this.selectedTimeslots.filter((ts) => {
+          return ts != startDateKey;
+        });
+      }
     },
   },
 });
