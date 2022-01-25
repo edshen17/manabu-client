@@ -264,7 +264,7 @@ export default Vue.extend({
       }
     },
   },
-  mounted() {
+  created() {
     EventBus.$on('step-forward', this.handleStepForward());
     EventBus.$on('step-backward', this.handleStepBackward());
   },

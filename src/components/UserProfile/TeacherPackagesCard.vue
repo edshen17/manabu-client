@@ -94,6 +94,7 @@ import { TranslateResult } from 'vue-i18n';
 import LessonDurationButton from './LessonDurationButton.vue';
 import { StringKeyObject } from '../../../../server/types/custom';
 import PaymentCard from './PaymentCard.vue';
+import { ls } from '@/store/plugins';
 
 export default Vue.extend({
   name: 'TeacherPackagesCard',
@@ -156,8 +157,18 @@ export default Vue.extend({
       },
     },
   },
-  mounted() {
+  created() {
     EventBus.$on('step-backward', this.handleStepBackward());
+    const paymentData = ls.get('paymentData');
+    if (paymentData) {
+      const { timeslots, duration, pkg } = paymentData;
+      this.selectedPackage = timeslots;
+      this.selectedLessonDuration = duration;
+      this.selectedPackage = pkg;
+      this.stepIndex = 3;
+      this.showDialog = true;
+    }
+    return;
   },
   methods: {
     onSubmitTimeslots(timeslots: string[]): void {
@@ -179,6 +190,7 @@ export default Vue.extend({
       this.selectedPackage = {};
       this.stepIndex = 0;
       this.showDialog = false;
+      ls.remove('paymentData');
     },
     handleStepBackward(): () => void {
       const self = this;

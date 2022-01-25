@@ -58,6 +58,7 @@
 </template>
 
 <script lang="ts">
+import { ls } from '@/store/plugins';
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
@@ -101,6 +102,11 @@ export default Vue.extend({
     // if (!this.isFinishedOnboarding) {
     //   this.$router.push('/onboarding');
     // }
+    const paymentData = ls.get('paymentData');
+    const { teacher } = paymentData;
+    if (paymentData) {
+      this.$router.push({ path: `/user/${teacher._id}` });
+    }
   },
   methods: {},
 });

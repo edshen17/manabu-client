@@ -48,7 +48,7 @@ export default Vue.extend({
       },
     },
   },
-  async mounted() {
+  async created() {
     await this.getUser();
   },
   methods: {

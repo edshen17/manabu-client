@@ -4,7 +4,7 @@ import { secureLsConfig } from '../../config/secureLsConfig';
 
 const ls = new SecureLS(secureLsConfig);
 
-export const plugins = [
+const plugins = [
   createPersistedState({
     key: 'vuex',
     storage: {
@@ -16,3 +16,5 @@ export const plugins = [
     },
   }),
 ];
+
+export { plugins, ls };

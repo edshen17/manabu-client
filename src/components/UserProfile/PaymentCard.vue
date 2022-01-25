@@ -1,5 +1,6 @@
 <template>
   <div class="bg-white h-auto mx-4 lg:mx-0">
+    <vue-topprogress ref="topProgress"></vue-topprogress>
     <div class="flex flex-wrap lg:flex-nowrap w-full lg:w-9/12 mx-auto lg:py-1">
       <div class="w-full lg:w-8/12 lg:mx-2">
         <div class="rounded-lg border-solid border-2 h-auto bg-white">
@@ -51,18 +52,19 @@
               <p></p>
             </div>
           </div>
-          <div class="flex">
-            <p class="flex-1 mx-4">Subtotal</p>
-            <p class="mx-8">{{ packagePriceData.formattedSubTotal }}</p>
-          </div>
-          <div class="flex">
-            <p class="flex-1 mx-4">Processing Fee</p>
-            <p class="mx-8">{{ packagePriceData.formattedProcessingFee }}</p>
-          </div>
-          <div class="flex"></div>
-          <div class="flex">
-            <p class="flex-1 mx-4">Total</p>
-            <p class="mx-8">{{ packagePriceData.formattedTotal }}</p>
+          <div v-if="packagePriceData">
+            <div class="flex">
+              <p class="flex-1 mx-4">Subtotal</p>
+              <p class="mx-8">{{ packagePriceData.formattedSubTotal }}</p>
+            </div>
+            <div class="flex">
+              <p class="flex-1 mx-4">Processing Fee</p>
+              <p class="mx-8">{{ packagePriceData.formattedProcessingFee }}</p>
+            </div>
+            <div class="flex">
+              <p class="flex-1 mx-4">Total</p>
+              <p class="mx-8">{{ packagePriceData.formattedTotal }}</p>
+            </div>
           </div>
           <div class="flex w-full">
             <button
@@ -71,6 +73,7 @@
                 'bg-indigo-500': !isPaymentButtonDisabled,
                 'bg-gray-200 text-white-200': isPaymentButtonDisabled,
               }"
+              @click="onPaymentClick"
             >
               Pay Now
             </button>
@@ -87,11 +90,14 @@ import { makePackageMixin } from '../../mixins/package';
 import DialogButton from './DialogButton.vue';
 import { makePackageTransactionCheckoutRepository } from '@/repositories/checkout/packageTransaction';
 import { StringKeyObject } from '@server/types/custom';
+import { ls } from '@/store/plugins';
+import { mapGetters } from 'vuex';
+import { vueTopprogress } from 'vue-top-progress';
 const packageTransactionCheckoutRepository = makePackageTransactionCheckoutRepository;
 
 export default Vue.extend({
   name: 'PaymentCard',
-  components: { DialogButton },
+  components: { DialogButton, vueTopprogress },
   mixins: [makePackageMixin],
   props: {
     teacher: {
@@ -117,6 +123,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapGetters({
+      isLoggedIn: 'user/isLoggedIn',
+    }),
     paymentGateways: {
       get(): StringKeyObject[] {
         const paymentGateways = [
@@ -152,17 +161,45 @@ export default Vue.extend({
       },
     },
   },
-  mounted() {
-    return;
+  created() {
+    const paymentData = ls.get('paymentData');
+    if (paymentData) {
+      const { paymentGateway } = paymentData;
+      this.selectedPaymentGateway = paymentGateway;
+    }
   },
   methods: {
     onPaymentGatewayClick(paymentGateway: StringKeyObject): void {
       this.selectedPaymentGateway = paymentGateway.name;
     },
     async onPaymentClick(): Promise<void> {
-      // if not logged in, log in...
-      // else...
-      return;
+      if (this.isLoggedIn) {
+        (this as any).$refs.topProgress.start();
+        const packageTransactionCheckoutRes = await packageTransactionCheckoutRepository.create({
+          query: {
+            paymentGateway: this.selectedPaymentGateway,
+          },
+          payload: {
+            teacherId: this.teacher.teacherData._id,
+            packageId: this.pkg._id,
+            lessonDuration: this.duration,
+            lessonLanguage: this.teacher.teacherData.teachingLanguages[0].code,
+          },
+        });
+        (this as any).$refs.topProgress.done();
+        const { data } = packageTransactionCheckoutRes;
+        const { redirectUrl } = data;
+        window.location.href = redirectUrl;
+      } else {
+        ls.set('paymentData', {
+          teacher: this.teacher,
+          timeslots: this.timeslots,
+          duration: this.duration,
+          pkg: this.pkg,
+          paymentGateway: this.selectedPaymentGateway,
+        });
+        this.$router.push('/signup');
+      }
     },
   },
 });

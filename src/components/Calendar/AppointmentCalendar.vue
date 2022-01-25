@@ -219,8 +219,6 @@ export default Vue.extend({
     this.intervalTimerId = setInterval(() => {
       self.setCurrentTime();
     }, 1 * 10 * 1000);
-  },
-  mounted() {
     this.setCurrentTime();
   },
   destroyed() {

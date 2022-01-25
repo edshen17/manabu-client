@@ -185,10 +185,10 @@ export default Vue.extend({
     this.intervalTimerId = setInterval(() => {
       this.setCurrentTime();
     }, 5 * 60 * 1000);
+    this.setCurrentTime();
   },
   mounted() {
     this.isCalendarReady = true;
-    this.setCurrentTime();
   },
   destroyed() {
     clearInterval(this.intervalTimerId);
