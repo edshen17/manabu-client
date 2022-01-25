@@ -15,12 +15,12 @@
       "webpack-env"
     ],
     "paths": {
+      "@server/*": [
+        "../server/*"
+      ],
       "@/*": [
         "src/*"
       ],
-      "@server/*": [
-        "../server/*"
-      ]
     },
     "lib": [
       "esnext",
@@ -37,7 +37,7 @@
   ],
   "references": [
     {
-        "path": "../server/"
+        "path": "../"
     }
   ]
 }

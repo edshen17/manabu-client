@@ -83,9 +83,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { StringKeyObject } from '../../../../server/types/custom';
 import { makePackageMixin } from '../../mixins/package';
 import DialogButton from './DialogButton.vue';
+import { makePackageTransactionCheckoutRepository } from '@/repositories/checkout/packageTransaction';
+import { StringKeyObject } from '@server/types/custom';
+const packageTransactionCheckoutRepository = makePackageTransactionCheckoutRepository;
 
 export default Vue.extend({
   name: 'PaymentCard',
@@ -156,6 +158,11 @@ export default Vue.extend({
   methods: {
     onPaymentGatewayClick(paymentGateway: StringKeyObject): void {
       this.selectedPaymentGateway = paymentGateway.name;
+    },
+    async onPaymentClick(): Promise<void> {
+      // if not logged in, log in...
+      // else...
+      return;
     },
   },
 });

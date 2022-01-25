@@ -20,14 +20,14 @@ const makePackageMixin = {
     getPackageName(pkg: PackageDoc): TranslateResult | string {
       const packageTitle =
         pkg.type == 'default'
-          ? this.$t(`userProfile.teacher.lessonTypes.${pkg.name}.title`)
+          ? (this as any).$t(`userProfile.teacher.lessonTypes.${pkg.name}.title`)
           : pkg.name;
       return packageTitle;
     },
     getPackageDescription(pkg: PackageDoc): TranslateResult | string {
       const packageDescription =
         pkg.type == 'default'
-          ? this.$t(`userProfile.teacher.lessonTypes.${pkg.name}.description`)
+          ? (this as any).$t(`userProfile.teacher.lessonTypes.${pkg.name}.description`)
           : pkg.description! ||
             `With this plan, you will receive ${
               pkg.lessonAmount

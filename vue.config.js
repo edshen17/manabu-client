@@ -23,6 +23,14 @@ module.exports = {
       enableInSFC: true,
     },
   },
-
+  configureWebpack: {
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+        '@server': path.resolve(__dirname, '../server'),
+      },
+      extensions: ['.tsx', '.ts', '.js', '.jsx', '.css', '.scss', '.sass', '.vue'],
+    },
+  },
   transpileDependencies: ['vuetify'],
 };
