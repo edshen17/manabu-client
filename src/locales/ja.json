@@ -169,7 +169,11 @@
       "paypal": "PayPal",
       "stripe": "Debit / Credit Card",
       "paynow": "PayNow"
-    }
+    },
+    "method": "Payment Method",
+    "subtotal": "Subtotal",
+    "processingFee": "Processing Fee",
+    "total": "Total"
   },
   "userProfile": {
     "common": {
@@ -181,8 +185,11 @@
       "hideCalendar": "HIDE CALENDAR",
       "profilePicture": "プロフィール画像"
     },
-    "student": "生徒",
-    "user": "ユーザー",
+    "role": {
+      "user": "ユーザー",
+      "admin": "アドミン",
+      "teacher": "教師"
+    },
     "learning": "Learning",
     "teacher": {
       "teaches": "Teaches",
@@ -217,6 +224,8 @@
       },
       "lessonDuration": "{duration} minutes",
       "lessonPlans": "Lesson Plans",
+      "lessonAmount": "{lessonAmount} lessons left to reserve",
+      "lessonDetails": "Lesson Details",
       "hourlyRate": "Lessons starting from ~{rate} {currency}/hour"
     }
   },
@@ -238,7 +247,8 @@
       "cancel": "キャンセル",
       "upload": "アップロード",
       "showMore": "もっと見る",
-      "showLess": "少なめに表示"
+      "showLess": "少なめに表示",
+      "payNow": "Pay Now"
     },
     "onboarding": {
       "next": "次へ"

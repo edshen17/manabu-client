@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-50 h-auto min-h-screen">
+  <div v-if="isFinishedOnboarding" class="bg-gray-50 h-auto min-h-screen">
     <div
       class="
         flex
@@ -16,7 +16,7 @@
     >
       <profile-image-card :user-data="userData" class="bg-white max-h-72 max-w-sm" />
       <div class="w-full">
-        <div class="shadow-md rounded-lg bg-white mb-2">
+        <!-- <div class="shadow-md rounded-lg bg-white mb-2">
           <p class="leading-relaxed text-base">scss sadas</p>
           <div class="flex md:mt-4 mt-6">
             <button
@@ -49,11 +49,11 @@
               </svg>
             </a>
           </div>
-        </div>
+        </div> -->
         <users-card :title="usersCardTitle" :user-data="userData" :is-admin="isAdmin" />
       </div>
     </div>
-    <edit-calendar :user-id="userData._id" />
+    <edit-calendar v-if="isTeacher" :user-id="userData._id" />
   </div>
 </template>
 
@@ -99,9 +99,9 @@ export default Vue.extend({
     },
   },
   created() {
-    // if (!this.isFinishedOnboarding) {
-    //   this.$router.push('/onboarding');
-    // }
+    if (!this.isFinishedOnboarding) {
+      return this.$router.push('/onboarding');
+    }
     const paymentData = ls.get('paymentData');
     const { teacher } = paymentData;
     if (paymentData) {

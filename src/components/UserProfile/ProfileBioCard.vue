@@ -84,7 +84,7 @@ export default Vue.extend({
       get(): TranslateResult {
         const userRole = this.isTeacher
           ? this.$t(`userProfile.teacher.${this.user.teacherData!.type}`)
-          : this.$t('userProfile.user');
+          : this.$t('userProfile.role.user');
         return userRole;
       },
     },

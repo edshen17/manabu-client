@@ -25,10 +25,9 @@
       />
       <div class="col-span-9 my-3 mx-6 md:mx-0 font-semi-bold">
         <p class="text-lg">{{ userData.name }}</p>
-        <div class="flex flex-wrap space-x-4 mt-3">
-          <p>Level 53</p>
-          <span class="border-l-2 border-gray-400"></span>
-          <p>Lifetime</p>
+        <div class="flex flex-wrap space-x-4 mt-3 items-center">
+          <p class="capitalize">{{ $t(`userProfile.role.${userData.role}`) }}</p>
+          <p class="text-lg">ฅ^•ﻌ•^ฅ</p>
         </div>
       </div>
     </div>

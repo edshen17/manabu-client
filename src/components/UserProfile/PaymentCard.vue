@@ -5,7 +5,7 @@
       <div class="w-full lg:w-8/12 lg:mx-2">
         <div class="rounded-lg border-solid border-2 h-auto bg-white">
           <div class="justify-center px-4 pt-4 mx-auto">
-            <p class="text-2xl mb-4">Payment Method</p>
+            <p class="text-2xl mb-4">{{ $t('payment.method') }}</p>
             <dialog-button
               v-for="paymentGateway in paymentGateways"
               :key="paymentGateway.name"
@@ -47,22 +47,27 @@
             <img :src="teacher.profileImageUrl" class="rounded-full h-16" />
             <div class="mx-4">
               <p class="text-lg">{{ teacher.name }}</p>
-              <p>{{ getPackageName(pkg) }} / {{ duration }} mins</p>
-              <p>{{ pkg.lessonAmount }} lessons</p>
+              <p>
+                {{ getPackageName(pkg) }} /
+                {{ $t('userProfile.teacher.lessonDuration', { duration }) }}
+              </p>
+              <p>
+                {{ $t('userProfile.teacher.lessonAmount', { lessonAmount: pkg.lessonAmount }) }}
+              </p>
               <p></p>
             </div>
           </div>
           <div v-if="packagePriceData">
             <div class="flex">
-              <p class="flex-1 mx-4">Subtotal</p>
+              <p class="flex-1 mx-4">{{ $t('payment.subtotal') }}</p>
               <p class="mx-8">{{ packagePriceData.formattedSubTotal }}</p>
             </div>
             <div class="flex">
-              <p class="flex-1 mx-4">Processing Fee</p>
+              <p class="flex-1 mx-4">{{ $t('payment.processingFee') }}</p>
               <p class="mx-8">{{ packagePriceData.formattedProcessingFee }}</p>
             </div>
             <div class="flex">
-              <p class="flex-1 mx-4">Total</p>
+              <p class="flex-1 mx-4">{{ $t('payment.total') }}</p>
               <p class="mx-8">{{ packagePriceData.formattedTotal }}</p>
             </div>
           </div>
@@ -75,7 +80,7 @@
               }"
               @click="onPaymentClick"
             >
-              Pay Now
+              {{ $t('button.common.payNow') }}
             </button>
           </div>
         </div>
@@ -184,11 +189,13 @@ export default Vue.extend({
             packageId: this.pkg._id,
             lessonDuration: this.duration,
             lessonLanguage: this.teacher.teacherData.teachingLanguages[0].code,
+            timeslots: this.timeslots,
           },
         });
         (this as any).$refs.topProgress.done();
         const { data } = packageTransactionCheckoutRes;
         const { redirectUrl } = data;
+        ls.remove('paymentData');
         window.location.href = redirectUrl;
       } else {
         ls.set('paymentData', {

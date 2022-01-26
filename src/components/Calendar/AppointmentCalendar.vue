@@ -4,10 +4,13 @@
       <div class="flex flex-wrap lg:flex-nowrap h-full">
         <div class="lg:w-4/12 mx-4 lg:mx-0">
           <div class="mb-5">
-            <p class="text-xl pb-1">Lessons Details</p>
+            <p class="text-xl pb-1">{{ $t('userProfile.teacher.lessonDetails') }}</p>
             <div class="text-gray-600 text-lg">
-              <p class="py-1">Light Plan / {{ duration }} mins</p>
-              <p>{{ lessonAmount }} Lessons left to reserve</p>
+              <p class="py-1">
+                {{ getPackageName(pkg) }} /
+                {{ $t('userProfile.teacher.lessonDuration', { duration }) }}
+              </p>
+              <p>{{ $t('userProfile.teacher.lessonAmount', { lessonAmount }) }}</p>
             </div>
           </div>
         </div>
@@ -36,9 +39,7 @@
               :key="timeslot.startDate.toISOString()"
               class="border-solid border border-blue-400 rounded-md text-xl p-2 w-9/12 mb-3"
               :class="{
-                'bg-indigo-500 text-white': selectedTimeslots.includes(
-                  timeslot.startDate.toISOString()
-                ),
+                'bg-indigo-500 text-white': isTimeslotSelected(timeslot),
               }"
               @click="onTimeslotClick(timeslot)"
             >
@@ -80,15 +81,17 @@ import { makeAvailableTimeRepository } from '../../repositories/availableTime';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { mapGetters } from 'vuex';
+import { makePackageMixin } from '@/mixins/package';
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
 const availableTimeRepository = makeAvailableTimeRepository;
 const DAY_FORMAT = 'YYYY-MM-DD';
 const MONTH_FORMAT = 'YYYY-MM';
 export default Vue.extend({
   name: 'AppointmentCalendar',
   components: {},
-  mixins: [makeCalendarMixin],
+  mixins: [makeCalendarMixin, makePackageMixin],
   props: {
     hostedByData: {
       type: Object,
@@ -117,7 +120,7 @@ export default Vue.extend({
       events: [] as StringKeyObject[],
       intervalTimerId: 0 as any,
       now: '',
-      selectedTimeslots: [] as string[],
+      selectedTimeslots: [] as { startDate: Date; endDate: Date }[],
     };
   },
   computed: {
@@ -126,7 +129,8 @@ export default Vue.extend({
     }),
     selectedDays: {
       get(): string[] {
-        const selectedDays = this.selectedTimeslots.map((startDateKey) => {
+        const selectedDays = this.selectedTimeslots.map((timeslot) => {
+          const startDateKey = timeslot.startDate.toISOString();
           return dayjs(startDateKey).format(DAY_FORMAT);
         });
         return selectedDays;
@@ -231,7 +235,7 @@ export default Vue.extend({
         path: `/users/${this.hostedById}/availableTimes`,
         query: {
           startDate: startMonth.toString(),
-          endDate: startMonth.add(startMonth.daysInMonth() - 1, 'days').toString(),
+          endDate: startMonth.add(40, 'days').toString(),
         },
         isAbsolutePath: true,
       });
@@ -271,6 +275,12 @@ export default Vue.extend({
         dateFormat: self.DATE_FORMAT.HOUR,
       });
     },
+    isTimeslotSelected(timeslot: StringKeyObject): boolean {
+      const isTimeslotSelected = this.selectedTimeslots.some((ts) => {
+        return ts.startDate.toISOString() == timeslot.startDate.toISOString();
+      });
+      return isTimeslotSelected;
+    },
     isValidDuration(duration: string): boolean {
       const validDurations = [30, 60, 90];
       const isValidDuration = validDurations.includes(parseInt(duration));
@@ -278,14 +288,13 @@ export default Vue.extend({
     },
     onTimeslotClick(timeslot: StringKeyObject): void {
       const startDateKey = timeslot.startDate.toISOString();
-      const isSelected = this.selectedTimeslots.some((ts) => {
-        return ts == startDateKey;
-      });
+      const isSelected = this.isTimeslotSelected(timeslot);
       if (!isSelected && this.lessonAmount > 0) {
-        this.selectedTimeslots.push(startDateKey);
+        const { startDate, endDate } = timeslot;
+        this.selectedTimeslots.push({ startDate, endDate });
       } else {
         this.selectedTimeslots = this.selectedTimeslots.filter((ts) => {
-          return ts != startDateKey;
+          return ts.startDate.toISOString() != startDateKey;
         });
       }
     },

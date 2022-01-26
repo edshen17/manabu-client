@@ -134,7 +134,7 @@ export default Vue.extend({
         return [
           {
             title: this.$t('nav.profile'),
-            path: '/profile',
+            path: `/user/${this.userData._id}`,
             isShowing: this.isLoggedIn,
           },
           {

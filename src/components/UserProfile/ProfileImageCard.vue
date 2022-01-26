@@ -5,11 +5,13 @@
       <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">{{ userData.name }}</h2>
       <div class="flex">
         <language-bars
+          v-if="nonTargetLanguage"
           :language-level="nonTargetLanguage.level"
           :language-code="nonTargetLanguage.code"
           class="mx-3"
         />
         <language-bars
+          v-if="targetLanguage"
           :language-level="targetLanguage.level"
           :language-code="targetLanguage.code"
         />
@@ -49,16 +51,16 @@ export default Vue.extend({
       },
     },
     targetLanguage: {
-      get(): StringKeyObject {
+      get(): StringKeyObject | undefined {
         const languages = this.languages;
-        const targetLanguage = languages[0];
+        const targetLanguage = this.languages.length > 0 ? languages[0] : undefined;
         return targetLanguage;
       },
     },
     nonTargetLanguage: {
-      get(): StringKeyObject {
+      get(): StringKeyObject | undefined {
         const languages = this.languages;
-        const nonTargetLanguage = languages[1];
+        const nonTargetLanguage = this.languages.length > 0 ? languages[1] : undefined;
         return nonTargetLanguage;
       },
     },

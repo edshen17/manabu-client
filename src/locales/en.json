@@ -163,14 +163,19 @@
     "lessonTime": "Lesson Time",
     "commTool": "Communication Tool",
     "cancelReason": "Reason for cancelling appointment",
-    "appointment": "Appointment"
+    "appointment": "Appointment",
+    "duration": "{duration} mins"
   },
   "payment": {
     "gateway": {
       "paypal": "PayPal",
       "stripe": "Debit / Credit Card",
       "paynow": "PayNow"
-    }
+    },
+    "method": "Payment Method",
+    "subtotal": "Subtotal",
+    "processingFee": "Processing Fee",
+    "total": "Total"
   },
   "userProfile": {
     "common": {
@@ -182,8 +187,11 @@
       "hideCalendar": "HIDE CALENDAR",
       "profilePicture": "Profile Picture"
     },
-    "student": "Student",
-    "user": "User",
+    "role": {
+      "user": "User",
+      "admin": "Admin",
+      "teacher": "Teacher"
+    },
     "learning": "Learning",
     "teacher": {
       "teaches": "Teaches",
@@ -218,6 +226,8 @@
       },
       "lessonDuration": "{duration} minutes",
       "lessonPlans": "Lesson Plans",
+      "lessonAmount": "{lessonAmount} lessons left to reserve",
+      "lessonDetails": "Lesson Details",
       "hourlyRate": "Lessons starting from ~{rate} {currency}/hour"
     }
   },
@@ -239,7 +249,8 @@
       "cancel": "Cancel",
       "upload": "Upload",
       "showMore": "Show more",
-      "showLess": "Show less"
+      "showLess": "Show less",
+      "payNow": "Pay Now"
     },
     "onboarding": {
       "next": "Next"
