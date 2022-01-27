@@ -66,6 +66,7 @@
               v-show="isActiveEditor(EDITOR_NAME.START)"
               ref="autocomplete-start"
               v-model="autoCompleteStartModel"
+              :class="autoCompleteClass"
               autofocus
               auto-select-first
               dense
@@ -88,6 +89,7 @@
               v-show="isActiveEditor(EDITOR_NAME.END)"
               ref="autocomplete-end"
               v-model="autoCompleteEndModel"
+              :class="autoCompleteClass"
               autofocus
               auto-select-first
               dense
@@ -184,6 +186,12 @@ export default Vue.extend({
       get(): string {
         const menuWidth = '340px';
         return menuWidth;
+      },
+    },
+    autoCompleteClass: {
+      get(): string {
+        const autoCompleteClass = 'fit h-0 m-0 text-base';
+        return autoCompleteClass;
       },
     },
     showMenuOnLeft: {

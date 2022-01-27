@@ -47,6 +47,14 @@
     @apply border-none ring-opacity-0 !important;
 }
 
+.v-select.fit {
+    width: min-content;
+}
+.v-select.fit  .v-select__selection--comma {
+      text-overflow: unset;
+}
+
+
 .calendar .v-text-field__details {
     @apply hidden !important;
 }

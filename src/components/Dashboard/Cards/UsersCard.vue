@@ -21,6 +21,7 @@
           </div>
         </router-link>
         <button
+          v-if="users.length > 3"
           class="text-center uppercase text-gray-500 text-sm hover:bg-gray-100 py-2 border-solid"
           @click="onButtonClick"
         >
