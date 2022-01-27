@@ -1,6 +1,6 @@
 <template>
-  <div v-if="user" :key="userId" class="bg-gray-50 h-auto min-h-screen">
-    <div class="flex flex-wrap lg:flex-nowrap w-full lg:w-9/12 mx-auto lg:py-7">
+  <div :key="userId" class="bg-gray-50 h-auto min-h-screen">
+    <div v-if="user" class="flex flex-wrap lg:flex-nowrap w-full lg:w-9/12 mx-auto lg:py-7">
       <div class="w-full lg:w-8/12 lg:mx-2">
         <profile-bio-card :user="user" :is-teacher="isTeacher" />
         <teacher-packages-card v-if="isTeacher" :teacher="user" />

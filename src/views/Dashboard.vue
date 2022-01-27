@@ -98,7 +98,7 @@ export default Vue.extend({
       },
     },
   },
-  created() {
+  async created() {
     if (!this.isFinishedOnboarding) {
       return this.$router.push('/onboarding');
     }
@@ -107,6 +107,7 @@ export default Vue.extend({
     if (paymentData) {
       this.$router.push({ path: `/user/${teacher._id}` });
     }
+    await this.$store.dispatch('appointment/getEntityStateData');
   },
   methods: {},
 });

@@ -11,7 +11,6 @@ type ModuleActionInitParams<OptionalModuleActionInitParams> = RequiredModuleActi
 type RequiredModuleActionInitParams = {
   makeRepository: IRepository;
   makeModuleState: IModuleState<any, any>;
-  moduleName: string;
 };
 
 type GetEntityStateDataResponse<EntityStateData> =

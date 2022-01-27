@@ -123,11 +123,11 @@ export default Vue.extend({
         return userLocale;
       },
       set(locale: string): void {
-        const _id = this.userId;
+        const userId = this.userId;
         const settings = this.userSettings;
         this.$store.dispatch('user/updateLocale', {
           locale,
-          _id,
+          userId,
           settings,
           currentVueComponent: this,
         });
@@ -139,11 +139,11 @@ export default Vue.extend({
         return userCurrency;
       },
       set(currency: string): void {
-        const _id = this.userId;
+        const userId = this.userId;
         const settings = this.userSettings;
         this.$store.dispatch('user/updateCurrency', {
           currency,
-          _id,
+          userId,
           settings,
         });
       },

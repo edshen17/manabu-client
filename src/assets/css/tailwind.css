@@ -54,7 +54,6 @@
       text-overflow: unset;
 }
 
-
 .calendar .v-text-field__details {
     @apply hidden !important;
 }

@@ -16,7 +16,6 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
 {
   protected _repository!: IRepository;
   protected _moduleState!: IModuleState<any, EntityStateData>;
-  protected _moduleName!: string;
 
   public getModuleActions = (): ActionTree<IEntityState<EntityStateData>, IRootState> => {
     const self = this;
@@ -87,7 +86,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     } catch (err: any) {
       const entityStatePromise = err.response;
       entityStatePromise.data = {};
-      entityStatePromise.data[this._moduleName] = state.entityStateData;
+      (Object.values(entityStatePromise.data)[0] as any) = state.entityStateData;
       commit('setEntityStatePromise', entityStatePromise);
     }
   };
@@ -98,7 +97,8 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
   };
 
   protected _getEntityStatePayload = (entityStatePromise: StringKeyObject): StringKeyObject => {
-    const entityStatePayload = entityStatePromise && entityStatePromise.data[this._moduleName];
+    const entityStatePayload =
+      entityStatePromise && (Object.values(entityStatePromise.data)[0] as any);
     return entityStatePayload;
   };
 
@@ -130,11 +130,9 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
   };
 
   public init = (initParams: ModuleActionInitParams<OptionalModuleActionInitParams>): this => {
-    const { makeRepository, makeModuleState, moduleName, ...optionalModuleActionInitParams } =
-      initParams;
+    const { makeRepository, makeModuleState, ...optionalModuleActionInitParams } = initParams;
     this._repository = makeRepository;
     this._moduleState = makeModuleState;
-    this._moduleName = moduleName;
     this._initTemplate(optionalModuleActionInitParams);
     return this;
   };
@@ -142,7 +140,7 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
   protected _initTemplate = (
     optionalModuleActionInitParams: Omit<
       ModuleActionInitParams<OptionalModuleActionInitParams>,
-      'makeRepository' | 'makeModuleState' | 'moduleName'
+      'makeRepository' | 'makeModuleState'
     >
   ): void => {
     return;

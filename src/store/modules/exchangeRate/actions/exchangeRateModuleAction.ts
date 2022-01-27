@@ -1,5 +1,4 @@
 import { AbstractModuleAction } from '@/store/abstractions/AbstractModuleAction';
-import { MODULE_NAME } from '@/store/abstractions/IModuleFactory';
 import { StringKeyObject } from '@server/types/custom';
 import { ExchangeRateEntityStateData } from '../state/exchangeRateModuleState';
 
@@ -15,12 +14,6 @@ class ExchangeRateModuleAction extends AbstractModuleAction<
       query: {},
     });
     return entityStatePromise;
-  };
-
-  protected _getEntityStatePayload = (entityStatePromise: StringKeyObject): StringKeyObject => {
-    const entityStatePayload =
-      entityStatePromise && entityStatePromise.data[`${MODULE_NAME.EXCHANGE_RATE}s`];
-    return entityStatePayload;
   };
 }
 export { ExchangeRateModuleAction };
