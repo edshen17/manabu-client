@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-50 h-auto min-h-screen">
+  <div v-if="user" :key="userId" class="bg-gray-50 h-auto min-h-screen">
     <div class="flex flex-wrap lg:flex-nowrap w-full lg:w-9/12 mx-auto lg:py-7">
       <div class="w-full lg:w-8/12 lg:mx-2">
         <profile-bio-card :user="user" :is-teacher="isTeacher" />
@@ -37,26 +37,30 @@ export default Vue.extend({
   name: 'UserProfile',
   components: { ProfileBioCard, TeacherPackagesCard },
   props: {},
-  data() {
-    return { user: {} as unknown as JoinedUserDoc };
-  },
   computed: {
     isTeacher: {
       get(): boolean {
-        const isTeacher = 'teacherData' in this.user;
+        const self = this as any;
+        const isTeacher = self.user && 'teacherData' in self.user;
         return isTeacher;
       },
     },
-  },
-  async created() {
-    await this.getUser();
-  },
-  methods: {
-    async getUser(): Promise<void> {
-      const { data } = await userRepository.getById({ _id: this.$route.params.userId, query: {} });
-      const { user } = data;
-      this.user = user;
+    userId: {
+      get(): string {
+        const userId = this.$route.params.userId;
+        return userId;
+      },
     },
   },
+  asyncComputed: {
+    user: {
+      async get(): Promise<JoinedUserDoc> {
+        const { data } = await userRepository.getById({ _id: this.userId, query: {} });
+        const { user } = data;
+        return user;
+      },
+    },
+  },
+  methods: {},
 });
 </script>

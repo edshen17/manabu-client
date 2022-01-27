@@ -206,6 +206,7 @@ export default Vue.extend({
       }
     },
     onMouseDownTime(tms: StringKeyObject): void {
+      this._showEventEditor(false);
       const mouse = this.convertToMs(tms);
       if (this.dragEvent && this.dragTime === null) {
         const start = this.dragEvent.start;
