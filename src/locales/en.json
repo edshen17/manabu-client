@@ -266,6 +266,14 @@
     "myTeachers": "My teachers",
     "myStudents": "My students"
   },
+  "appointment": {
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
+  },
 
 
 

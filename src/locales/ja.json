@@ -264,6 +264,14 @@
     "myTeachers": "私の教師",
     "myStudents": "私の生徒"
   },
+  "appointment": {
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    }
+  },
 
 
 

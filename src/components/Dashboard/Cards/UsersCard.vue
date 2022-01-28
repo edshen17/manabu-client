@@ -98,7 +98,7 @@ export default Vue.extend({
       },
     },
   },
-  async mounted() {
+  async created() {
     await this.getUsersBrancher();
   },
   methods: {
