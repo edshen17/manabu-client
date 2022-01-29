@@ -10,7 +10,7 @@
               type="text"
               :placeholder="
                 $t('onboarding.contactMethodIdInput', {
-                  contactMethod: $t(`onboarding.contactMethods.${contactMethodName}`),
+                  contactMethod: $t(`contactMethod.${contactMethodName}`),
                 })
               "
               class="form-border mx-auto place-items-center"
@@ -19,7 +19,7 @@
             <p v-show="$v.id.$error" class="vuelidate-error mt-2">
               {{
                 $t('error.onboarding.contactMethodId', {
-                  contactMethod: $t(`onboarding.contactMethods.${contactMethodName}`),
+                  contactMethod: $t(`contactMethod.${contactMethodName}`),
                 })
               }}
             </p>

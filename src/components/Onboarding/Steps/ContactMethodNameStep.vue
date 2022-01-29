@@ -68,28 +68,28 @@ export default Vue.extend({
       }[] {
         const contactMethods = [
           {
-            name: this.$t('onboarding.contactMethods.skype'),
+            name: this.$t('contactMethod.skype'),
             value: 'skype',
             iconClass: 'fab fa-skype fa-3x',
             logoHex: '#00AFF0',
             backgroundHex: '#FFF',
           },
           {
-            name: this.$t('onboarding.contactMethods.line'),
+            name: this.$t('contactMethod.line'),
             iconClass: 'fab fa-line fa-3x',
             value: 'line',
             logoHex: '#00B900',
             backgroundHex: '#FFF',
           },
           {
-            name: this.$t('onboarding.contactMethods.discord'),
+            name: this.$t('contactMethod.discord'),
             iconClass: 'fab fa-discord fa-3x',
             logoHex: '#7289DA',
             value: 'discord',
             backgroundHex: '#FFF',
           },
           {
-            name: this.$t('onboarding.contactMethods.zoom'),
+            name: this.$t('contactMethod.zoom'),
             iconClass: 'fas fa-video fa-2x',
             logoHex: '#FFF',
             value: 'zoom',

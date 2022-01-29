@@ -73,7 +73,7 @@
                   </div>
                   <div class="flex mt-5 space-x-2">
                     <span class="text-lg font-light leading-relaxed text-gray-700">
-                      <p class="inline">{{ $t('onboarding.package.lessonAmount') }}</p>
+                      <p class="inline">{{ $t('onboarding.package.lessonAmount') }}:</p>
                       <p
                         v-show="!isEditingPackage(pkg)"
                         class="inline px-1 py-1"

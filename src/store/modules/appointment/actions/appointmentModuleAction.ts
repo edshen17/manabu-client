@@ -16,6 +16,11 @@ class AppointmentModuleAction extends AbstractModuleAction<
   OptionalAppointmentModuleActionInitParams,
   AppointmentEntityStateData
 > {
+  protected _getSelfParams = (): StringKeyObject => {
+    const getSelfParams = { query: { startDate: new Date() } };
+    return getSelfParams;
+  };
+
   protected _getModuleActionsTemplate = (): ActionTree<
     IEntityState<AppointmentEntityStateData>,
     IRootState

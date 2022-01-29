@@ -11,7 +11,7 @@
         }"
       >
         <left-card-layout class="rounded-l-none">
-          <div v-if="appointmentData" class="px-4 py-3 flex flex-col">
+          <div v-if="appointmentData" class="px-4 py-4 flex flex-col">
             <div class="flex">
               <div class="flex flex-col">
                 <p class="text-lg">
@@ -57,37 +57,15 @@
               </div>
               <p></p>
             </div>
-            <div class="flex py-4">
-              <div class="flex flex-col">
-                <p class="text-gray-400 text-sm uppercase">language</p>
-                <p>japanese</p>
-              </div>
-              <div class="flex flex-col">
-                <p class="text-gray-400 text-sm uppercase">duration</p>
-                <p>
-                  {{
-                    $t('calendar.duration', {
-                      duration: appointmentData.packageTransactionData.lessonDuration,
-                    })
-                  }}
-                </p>
-              </div>
-              <div class="flex flex-col">
-                <p class="text-gray-400 text-sm uppercase">appointment id</p>
-                <p>{{ $route.params.appointmentId }}</p>
-              </div>
-            </div>
-            <div class="flex flex-col">
-              <p>Communication Tool</p>
-              <div class="flex">
-                <div>skype</div>
-                <div class="flex flex-col">
-                  <p>Teacher account</p>
-                  <p>id</p>
-                </div>
-                <div class="flex flex-col">
-                  <p>student account</p>
-                  <p>id</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-0">
+              <div v-for="(column, i) in columnData" :key="i">
+                <div v-for="(innerData, j) in columnData[i]" :key="j">
+                  <div class="py-2 md:py-5">
+                    <p class="text-gray-400 text-sm uppercase">
+                      {{ innerData.title }}
+                    </p>
+                    <p>{{ innerData.text }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -104,7 +82,9 @@ import TwoCardLayout from '@/components/UserProfile/Layouts/TwoCardLayout.vue';
 import { makeDateMixin } from '@/mixins/date';
 import { makePackageMixin } from '@/mixins/package';
 import { makeAppointmentRepository } from '@/repositories/appointment';
+import { StringKeyObject } from '@server/types/custom';
 import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
 const appointmentRepository = makeAppointmentRepository;
 
 export default Vue.extend({
@@ -134,6 +114,62 @@ export default Vue.extend({
       },
     },
   },
+  computed: {
+    columnData: {
+      get(): StringKeyObject[] {
+        const self = this as any;
+        const columnData = [
+          [
+            {
+              title: this.$t('appointment.language'),
+              text: this.$t(
+                `localeCode.${self.appointmentData.packageTransactionData.lessonLanguage}`
+              ),
+            },
+            {
+              title: this.$t('appointment.commTool'),
+              text: this.$t(`contactMethod.${self.appointmentData.locationData.name}`),
+            },
+          ],
+          [
+            {
+              title: this.$t('appointment.lessonDuration'),
+              text: this.$t('calendar.duration', {
+                duration: self.appointmentData.packageTransactionData.lessonDuration,
+              }),
+            },
+            {
+              title: this.teacherAccount,
+              text: self.appointmentData.locationData.hostedByContactMethod.address,
+            },
+          ],
+          [
+            {
+              title: this.$t('appointment.id'),
+              text: this.$route.params.appointmentId,
+            },
+            {
+              title: this.studentAccount,
+              text: self.appointmentData.locationData.reservedByContactMethod.address,
+            },
+          ],
+        ];
+        return columnData;
+      },
+    },
+    teacherAccount: {
+      get(): TranslateResult {
+        const teacherAccount = this.getAccountId(true);
+        return teacherAccount;
+      },
+    },
+    studentAccount: {
+      get(): TranslateResult {
+        const studentAccount = this.getAccountId(false);
+        return studentAccount;
+      },
+    },
+  },
   mounted() {
     return;
   },
@@ -147,6 +183,21 @@ export default Vue.extend({
       const { data } = getAppointmentRes;
       const { appointment } = data;
       return appointment;
+    },
+    getAccountId(isHostedBy: boolean): TranslateResult {
+      const self = this as any;
+      const locationData = self.appointmentData.locationData;
+      const isAlternate = locationData.name && locationData.name == 'alternative';
+      const contactMethod = isHostedBy
+        ? locationData.hostedByContactMethod
+        : locationData.reservedByContactMethod;
+      const accountTitle = isHostedBy
+        ? this.$t('appointment.teacherAccount')
+        : this.$t('appointment.studentAccount');
+      const studentAccount = isAlternate
+        ? `${accountTitle} (${this.$t(`contactMethod.${contactMethod.name}`)})`
+        : accountTitle;
+      return studentAccount;
     },
   },
 });

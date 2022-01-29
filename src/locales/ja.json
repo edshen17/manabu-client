@@ -98,6 +98,13 @@
     },
     "copyright": "Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved."
   },
+  "contactMethod": {
+    "skype": "スカイプ",
+    "line": "ライン",
+    "discord": "ディスコード",
+    "zoom": "ズーム",
+    "alternative": "Alternative"
+  },
   "onboarding": {
     "learningTargetLanguage": "習いたい言語は？",
     "teachingTargetLanguage": "教えたい言語は？",
@@ -112,12 +119,6 @@
       "proficient": "堪能（C2）"
     },
     "contactMethod": "希望連絡方法は？",
-    "contactMethods": {
-      "skype": "スカイプ",
-      "line": "ライン",
-      "discord": "ディスコード",
-      "zoom": "ズーム"
-    },
     "contactMethodId": "{contactMethod}のIDを入力してください。",
     "contactMethodIdInput": "{contactMethod}のID",
     "userProfile": {
@@ -136,8 +137,8 @@
     "teacherPriceDataTooltip": "教員免許を持っている教師のみ時給を設定できます。",
     "package": {
       "title": "レッスンの設定を確認してください。",
-      "lessonAmount": "レッスン回数：",
-      "lessonDuration": "継続時間：",
+      "lessonAmount": "レッスン回数",
+      "lessonDuration": "継続時間",
       "lessonDurations": "{lessonDuration}分",
       "isOffering": "提供"
     },
@@ -159,10 +160,7 @@
     "day":"日",
     "week":"週",
     "availableTime": "都合がつく時間",
-    "lessonTime": "レッスン時間",
-    "commTool": "コミュニケーションツール",
-    "cancelReason": "アポイントメント拒否の理由",
-    "appointment": "予約"
+    "lessonTime": "レッスン時間"
   },
   "payment": {
     "gateway": {
@@ -271,83 +269,14 @@
       "confirmed": "Confirmed",
       "cancelled": "Cancelled",
       "completed": "Completed"
-    }
-  },
-
-
-
-
-
-  "modal": {
-    "cancel": "キャンセル",
-    "delete": "削除",
-    "yes": "はい",
-    "no": "いいえ",
-    "available": "都合がつく時間",
-    "save": "保存",
-    "ok": "OK",
-    "continue": "続ける",
-    "confirm": "承認",
-    "confirmAppoint": "この予約を承認しますか？",
-    "confirmCancel": "この予約を本当にキャンセルしてよろしいですか？",
-    "confirmDelete": "この予約を本当に削除してよろしいですか？",
-    "confirmDeleteTitle": "このタイムスロットを削除しますか？",
-    "processErr": "リクエストの処理中にエラーが発生しました。もう一度やり直してください",
-    "cancellationReason": {
-      "scheduleChange": "スケジュールの変更",
-      "uncomfortableStudent": "この学生とレッスンをしたくありません"
     },
-    "priceModalText": {
-      "priceModalTitle": "レッスン計画を選んでください",
-      "lessonPlan": "レッスン計画",
-      "lessonDuration": "レッスン時間",
-      "estimatedPrice": "推定価格：",
-      "disclaimerText": {
-        "disclaimer": "免責事項",
-        "minuteBank": "教師が次の生徒の準備をする時間を作るために、レッスンは5分早く終了します。ただし、各レッスンの後に、その教師に使用できる5分のクレジットを受け取ることができます。たとえば、60分のレッスンを購入した場合、12レッスン後に自動的に「無料」のレッスンが受けられます。クレジットの有効期限はありませんが、プランの有効期限が切れると追加レッスンの有効期限が切れます。", 
-        "expiration": "レッスンプランは購入後1か月で自動的に期限切れになり、未使用のレッスンは繰り越されません。定期購入オプション（近日公開）を選択すると、毎月新しいレッスンプランが自動的に受け取れます。"
-      }
-    }
-  },
-  "form": {
-    "region": "国/地域",
-    "regionErr": "地域を指定してください",
-    "timezone": "タイムゾーン",
-    "timezoneErr": "タイムゾーンを選んでください",
-    "prefComm": "主なコミュニケーションツール",
-    "prefCommErr": "コミュニケーションツールを選んでください",
-    "idErr": "IDを入力してください",
-    "submit": "続ける"
-  },
-  "profile": {
-    "common": {
-      "block": "ブロック",
-      "report": "通報",
-      "lastOnline": "Last online {date}",
-      "alsoSpeaks": "他に話せる言語",
-      "viewCalendar": "カレンダーを見る",
-      "hideCalendar": "カレンダーを閉じる"
-    },
-    "teacher": {
-      "manabuVerified": "Manabu Verified Teacher since {date}",
-      "appPending": "Teacher application pending",
-      "approveApp": "Approve application",
-      "viewLicense": "View professional license",
-      "lessonTypes": {
-        "mainichi": "毎日 ({amount}個のレッスン)",
-        "mainichiAlt": "毎日プラン",
-        "mainichiDesc": "こちらは、早く効率的に、そして日本語を話すことに没頭したいと思う生徒向けのプランです。このプランでは、約週5回、毎月22回の個人レッスンを受けることができます。",
-        "moderate": "スタンダード ({amount}個のレッスン)",
-        "moderateAlt": "スタンダードプラン",
-        "moderateDesc": "こちらは、スケジュールのバランスを考慮しながら集中した学習をしたい生徒向けのコースです。このプランでは、約週3回、毎月12回の個人レッスンを受けることができます。",
-        "light": "ライト ({amount}個のレッスン)",
-        "lightAlt": "ライトプラン",
-        "lightDesc": "こちらはカジュアルなスケジュールで日本語を学習したい生徒向けのプランです。このプランでは、週1回、毎月5回の個人レッスンを受けることができます。"
-      },
-      "lessonDuration": "{duration}分",
-      "lessonPlans": "レッスン計画",
-      "hourlyRate": "レッスンは1時間約{rate} {currency}です",
-      "bookNow": "予約する"
-    }
+    "language": "言語",
+    "lessonDuration": "@:onboarding.package.lessonDuration",
+    "id": "Appointment Id",
+    "commTool": "コミュニケーションツール",
+    "cancelReason": "アポイントメント拒否の理由",
+    "appointment": "予約",
+    "teacherAccount": "Teacher Account",
+    "studentAccount": "Student Account"
   }
 }

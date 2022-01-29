@@ -47,7 +47,7 @@
       v-if="stepIndex == 8"
       :step-title="
         $t('onboarding.contactMethodId', {
-          contactMethod: $t(`onboarding.contactMethods.${contactMethodName}`),
+          contactMethod: $t(`contactMethod.${contactMethodName}`),
         })
       "
       :contact-method-name="contactMethodName"

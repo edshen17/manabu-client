@@ -12,7 +12,8 @@
       z-20
       top-0
       bg-white
-      shadow-md
+      border-b-2
+      md:border-none md:shadow-md
       relative
     "
   >

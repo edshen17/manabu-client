@@ -99,6 +99,13 @@
     },
     "copyright": "Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved."
   },
+  "contactMethod": {
+    "skype": "Skype",
+    "line": "LINE",
+    "discord": "Discord",
+    "zoom": "Zoom",
+    "alternative": "Alternative"
+  },
   "onboarding": {
     "learningTargetLanguage": "I want to learn...",
     "teachingTargetLanguage": "I want to teach...",
@@ -113,12 +120,6 @@
       "proficient": "Proficient (C2)"
     },
     "contactMethod": "My preferred contact method is...",
-    "contactMethods": {
-      "skype": "Skype",
-      "line": "LINE",
-      "discord": "Discord",
-      "zoom": "Zoom"
-    },
     "contactMethodId": "My {contactMethod} ID is...",
     "contactMethodIdInput": "{contactMethod} ID",
     "userProfile": {
@@ -137,8 +138,8 @@
     "teacherPriceDataTooltip": "Only professional teachers can set their hourly prices.",
     "package": {
       "title": "Please set up your lesson packages.",
-      "lessonAmount": "Lesson Amount:",
-      "lessonDuration": "Duration:",
+      "lessonAmount": "Lesson Amount",
+      "lessonDuration": "Duration",
       "lessonDurations": "{lessonDuration} minutes",
       "isOffering": "Offer"
     },
@@ -161,9 +162,6 @@
     "week":"Week",
     "availableTime": "Available",
     "lessonTime": "Lesson Time",
-    "commTool": "Communication Tool",
-    "cancelReason": "Reason for cancelling appointment",
-    "appointment": "Appointment",
     "duration": "{duration} mins"
   },
   "payment": {
@@ -205,7 +203,7 @@
         "choose": "Choose your lesson plan",
         "options": "Lesson plan options",
         "times": "Choose your lesson times",
-        "price": "{lessonDuration} mins x {lessonAmount} lessons"
+        "price": "{lessonDuration} minutes x {lessonAmount} lessons"
       },
       "lessonTypes": {
         "mainichi": {
@@ -234,7 +232,7 @@
   "dateFormat": {
     "dayHour": "D h:mma",
     "hour": "h:mma",
-    "hourWithDuration": "h:mma ({hours} [hrs])",
+    "hourWithDuration": "h:mma ({hours} [hours])",
     "abridgedDate": "dddd, MMMM D",
     "fullDate": "dddd, MMMM D, YYYY"
   },
@@ -273,50 +271,14 @@
       "confirmed": "Confirmed",
       "cancelled": "Cancelled",
       "completed": "Completed"
-    }
-  },
-
-
-
-  "modal": {
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "yes": "Yes",
-    "no": "No",
-    "available": "Available",
-    "save": "Save",
-    "ok": "OK",
-    "continue": "Continue",
-    "confirm": "Confirm",
-    "confirmAppoint": "Confirm this appointment?",
-    "confirmCancel": "Are you sure you want to cancel the appointment?",
-    "confirmDelete": "Are you sure you want to delete this timeslot?",
-    "confirmDeleteTitle": "Delete this timeslot?",
-    "processErr": "There was an error processing your request. Please try again.",
-    "cancellationReason": {
-      "scheduleChange": "My schedule changed",
-      "uncomfortableStudent": "I am uncomfortable with this student"
     },
-    "priceModalText": {
-      "priceModalTitle": "Select a lesson plan",
-      "lessonPlan": "Lesson plan",
-      "lessonDuration": "Lesson duration",
-      "estimatedPrice": "Estimated price:",
-      "disclaimerText": {
-        "disclaimer": "Disclaimer",
-        "minuteBank": "To give teachers time to prepare for their next student, lessons end 5 minutes early. However, after each lesson you will receive a 5 minute credit that you can use for that teacher. For example, if you buy 60 minute lessons, you will automatically get a \"free\" lesson after 12 lessons. The credits do not expire, but the extra lesson will expire when the plan expires.", 
-        "expiration": "Lesson plans automatically expire 1 month after purchasing and unused lessons will not carryforward. If you choose the subscription option (coming soon) you will automatically receive a new lesson plan every month."
-      }
-    }
-  },
-  "form": {
-    "region": "Country/Region",
-    "regionErr": "Please provide a region",
-    "timezone": "Timezone",
-    "timezoneErr": "Please provide a timezone",
-    "prefComm": "Preferred Communication Tool",
-    "prefCommErr": "Please provide a communication tool",
-    "idErr": "Please provide an ID",
-    "submit": "Submit"
+    "language": "Language",
+    "lessonDuration": "@:onboarding.package.lessonDuration",
+    "id": "Appointment Id",
+    "commTool": "Communication Tool",
+    "cancelReason": "Reason for cancelling appointment",
+    "appointment": "Appointment",
+    "teacherAccount": "Teacher Account",
+    "studentAccount": "Student Account"
   }
 }
