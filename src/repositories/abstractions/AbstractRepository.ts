@@ -28,11 +28,13 @@ abstract class AbstractRepository implements IRepository {
     return await this._client.get(`${apiUrl}?${queryString}`);
   };
 
-  public getSelf = async (): Promise<StringKeyObject> => {
+  public getSelf = async (props: { query: StringKeyObject }): Promise<StringKeyObject> => {
+    const { query } = props;
+    const queryString = this._queryStringHandler.stringifyQueryStringObj(query);
     const isUserResource = this._resourcePath == '/users';
     const apiUrl = isUserResource
       ? `${this._resourcePath}/self`
-      : `/users/self${this._resourcePath}`;
+      : `/users/self${this._resourcePath}?${queryString}`;
     return await this._client.get(apiUrl);
   };
 

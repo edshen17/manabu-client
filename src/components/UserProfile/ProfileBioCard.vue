@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user._id" class="rounded-lg shadow-md bg-white">
+  <left-card-layout v-if="user._id">
     <video v-if="isTeacher" controls>
       <source :src="user.teacherData.introductionVideoUrl" type="video/mp4" />
     </video>
@@ -42,7 +42,7 @@
         :max-chars="200"
       ></read-more>
     </div>
-  </div>
+  </left-card-layout>
 </template>
 
 <script lang="ts">
@@ -54,12 +54,13 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { TranslateResult } from 'vue-i18n';
 import DOMPurify from 'dompurify';
 import { StringKeyObject } from '../../../../server/types/custom';
+import LeftCardLayout from './Layouts/LeftCardLayout.vue';
 
 dayjs.extend(relativeTime);
 
 export default Vue.extend({
   name: 'ProfileBioCard',
-  components: { LanguageBars },
+  components: { LanguageBars, LeftCardLayout },
   props: {
     user: {
       type: Object,

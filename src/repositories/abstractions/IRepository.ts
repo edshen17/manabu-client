@@ -9,7 +9,7 @@ enum REPOSITORY_NAME {
 interface IRepository {
   get: (props: any) => Promise<StringKeyObject>;
   getById: (props: any) => Promise<StringKeyObject>;
-  getSelf: () => Promise<StringKeyObject>;
+  getSelf: (props: any) => Promise<StringKeyObject>;
   create: (props: any) => Promise<StringKeyObject>;
   updateById: (props: any) => Promise<StringKeyObject>;
   deleteById: (_id: string) => Promise<StringKeyObject>;

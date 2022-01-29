@@ -92,8 +92,14 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
   };
 
   protected _getEntityStatePromise = async (): Promise<StringKeyObject> => {
-    const entityStatePromise = await this._repository.getSelf();
+    const getSelfParams = this._getSelfParams();
+    const entityStatePromise = await this._repository.getSelf(getSelfParams);
     return entityStatePromise;
+  };
+
+  protected _getSelfParams = (): StringKeyObject => {
+    const getSelfParams = {};
+    return getSelfParams;
   };
 
   protected _getEntityStatePayload = (entityStatePromise: StringKeyObject): StringKeyObject => {

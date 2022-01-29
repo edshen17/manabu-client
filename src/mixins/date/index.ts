@@ -10,6 +10,7 @@ enum DATE_FORMAT {
   HOUR = 'hour',
   HOUR_WITH_DURATION = 'hourWithDuration',
   ABRIDGED_DATE = 'abridgedDate',
+  FULL_DATE = 'fullDate',
 }
 
 enum AUTOCOMPLETE_DATE_FORMAT {

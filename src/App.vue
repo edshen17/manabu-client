@@ -6,21 +6,16 @@
       integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
       crossorigin="anonymous"
     />
-    <router-view :key="locale" />
+    <router-view />
   </component>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
 
 export default Vue.extend({
   name: 'App',
-  computed: {
-    ...mapGetters({
-      locale: 'user/locale',
-    }),
-  },
+  computed: {},
   async created() {
     await this.$store.dispatch('user/getEntityStateData');
     await this.$store.dispatch('exchangeRate/getEntityStateData');

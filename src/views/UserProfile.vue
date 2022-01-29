@@ -1,28 +1,13 @@
 <template>
-  <div :key="userId" class="bg-gray-50 h-auto min-h-screen">
-    <div v-if="user" class="flex flex-wrap lg:flex-nowrap w-full lg:w-9/12 mx-auto lg:py-7">
-      <div class="w-full lg:w-8/12 lg:mx-2">
+  <two-card-layout>
+    <template v-slot:left-cards>
+      <div v-if="user">
         <profile-bio-card :user="user" :is-teacher="isTeacher" />
-        <teacher-packages-card v-if="isTeacher" :teacher="user" />
+        <teacher-packages-card v-if="isTeacher" :teacher="user" class="mt-5 h-auto pb-2" />
       </div>
-      <div
-        class="
-          w-full
-          lg:w-4/12 lg:mx-3
-          max-h-96
-          sticky
-          top-24
-          rounded-lg
-          bg-white
-          shadow-md
-          my-5
-          lg:my-0
-        "
-      >
-        <div class="max-h-96 h-96">sa</div>
-      </div>
-    </div>
-  </div>
+    </template>
+    <template v-slot:right-cards> sa </template>
+  </two-card-layout>
 </template>
 
 <script lang="ts">
@@ -31,11 +16,12 @@ import { JoinedUserDoc } from '../../../server/models/User';
 import TeacherPackagesCard from '../components/UserProfile/TeacherPackagesCard.vue';
 import ProfileBioCard from '../components/UserProfile/ProfileBioCard.vue';
 import { makeUserRepository } from '../repositories/user';
+import TwoCardLayout from '@/components/UserProfile/Layouts/TwoCardLayout.vue';
 const userRepository = makeUserRepository;
 
 export default Vue.extend({
   name: 'UserProfile',
-  components: { ProfileBioCard, TeacherPackagesCard },
+  components: { ProfileBioCard, TeacherPackagesCard, TwoCardLayout },
   props: {},
   computed: {
     isTeacher: {

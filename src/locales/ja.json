@@ -233,7 +233,8 @@
     "dayHour": "DD ah:mm",
     "hour": "ah:mm",
     "hourWithDuration": "ah:mm ({hours}時間)",
-    "abridgedDate": "MMMM D日 (dddd)"
+    "abridgedDate": "MMMM D日 (dddd)",
+    "fullDate": "dddd・YYYY年MMMMD日 "
   },
   "localeCode": {
     "en": "英語",

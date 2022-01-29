@@ -1,12 +1,23 @@
 <template>
   <div>
-    <button
+    <router-link
       v-for="appointment in visibleAppointments"
       :key="appointment._id"
-      class="shadow-md rounded-lg bg-white mb-4 h-auto w-full hover:bg-gray-100 text-left"
+      :to="{ name: 'AppointmentCard', params: { appointmentId: appointment._id, appointment } }"
+      class="
+        shadow-md
+        rounded-lg rounded-l-none
+        bg-white
+        mb-4
+        h-auto
+        w-full
+        hover:bg-gray-100
+        text-left
+      "
+      tag="button"
     >
       <div
-        class="border-l-4 w-full h-full rounded-sm px-4 pt-3 pb-5 border-solid"
+        class="border-l-4 w-full h-full px-4 pt-3 pb-5 border-solid"
         :class="{
           'border-green-300 ': appointment.status == 'pending',
           'border-black': appointment.status == 'completed',
@@ -19,10 +30,12 @@
         </p>
         <div class="flex">
           <div class="flex flex-col flex-1">
-            <div class="text-xl">
-              {{ formatDate({ date: appointment.startDate, formatString: 'MMM D' }) }}
-              <span v-if="locale != 'ja'">@</span>
-              {{ formatDate({ date: appointment.startDate, dateFormat: DATE_FORMAT.HOUR }) }}
+            <div class="text-xl flex space-x-1">
+              <p>
+                {{ formatDate({ date: appointment.startDate, formatString: 'MMM D' }) }}
+              </p>
+              <p v-if="locale != 'ja'">@</p>
+              <p>{{ formatDate({ date: appointment.startDate, dateFormat: DATE_FORMAT.HOUR }) }}</p>
             </div>
             <p class="text-sm text-gray-400 py-1">
               {{ $t(`localeCode.${appointment.packageTransactionData.lessonLanguage}`) }} /
@@ -40,7 +53,7 @@
           />
         </div>
       </div>
-    </button>
+    </router-link>
   </div>
 </template>
 
@@ -54,13 +67,7 @@ export default Vue.extend({
   name: 'AppointmentCards',
   components: {},
   mixins: [makeDateMixin],
-  props: {
-    // prop: {
-    //   type: String,
-    //   default: '',
-    //   required: true,
-    // },
-  },
+  props: {},
   data() {
     return {};
   },

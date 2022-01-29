@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-md mt-5 h-auto pb-2 bg-white" data-app>
+  <left-card-layout data-app>
     <p class="justify-center p-6 mx-auto text-2xl">{{ $t('userProfile.teacher.lessonPlans') }}</p>
     <div v-for="pkg in visiblePackages" :key="pkg._id" class="px-6 mx-auto">
       <teacher-package-button :pkg="pkg" :teacher="teacher" @click="onPackageClick" />
@@ -79,7 +79,7 @@
         </div>
       </v-card>
     </v-dialog>
-  </div>
+  </left-card-layout>
 </template>
 
 <script lang="ts">
@@ -95,6 +95,7 @@ import LessonDurationButton from './LessonDurationButton.vue';
 import { StringKeyObject } from '../../../../server/types/custom';
 import PaymentCard from './PaymentCard.vue';
 import { ls } from '@/store/plugins';
+import LeftCardLayout from './Layouts/LeftCardLayout.vue';
 
 export default Vue.extend({
   name: 'TeacherPackagesCard',
@@ -104,6 +105,7 @@ export default Vue.extend({
     AppointmentCalendar,
     LessonDurationButton,
     PaymentCard,
+    LeftCardLayout,
   },
   props: {
     teacher: {

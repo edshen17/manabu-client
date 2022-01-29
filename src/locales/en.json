@@ -235,7 +235,8 @@
     "dayHour": "D h:mma",
     "hour": "h:mma",
     "hourWithDuration": "h:mma ({hours} [hrs])",
-    "abridgedDate": "dddd, MMMM D"
+    "abridgedDate": "dddd, MMMM D",
+    "fullDate": "dddd, MMMM D, YYYY"
   },
   "localeCode": {
     "en": "English",
