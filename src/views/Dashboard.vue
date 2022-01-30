@@ -41,7 +41,6 @@ export default Vue.extend({
     ProfileImageCard,
     UsersCard,
     AppointmentCards,
-    // AppointmentsCard,
   },
   props: {},
   data() {

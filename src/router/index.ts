@@ -79,7 +79,7 @@ const routes: Array<RouteConfig> = [
     component: AppointmentCard,
     beforeEnter: loginProtectedRouterGuard.consume(),
     props: true,
-    meta: { ...layout },
+    meta: { ...layout, requiresAuth: true },
   },
   // {
   //   path: '/user/:userId/calendar',

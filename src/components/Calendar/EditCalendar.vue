@@ -187,8 +187,19 @@ export default Vue.extend({
       const { data } = await availableTimeRepository.get({
         path: `/users/${this.userId}/availableTimes`,
         query: {
-          startDate: dayjs(start.date, 'YYYY-MM-DD').toString(),
-          endDate: dayjs(end.date, 'YYYY-MM-DD').add(1, 'day').toString(),
+          startDate: dayjs(start.date, 'YYYY-MM-DD')
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .millisecond(0)
+            .toString(),
+          endDate: dayjs(end.date, 'YYYY-MM-DD')
+            .add(1, 'day')
+            .hour(0)
+            .minute(0)
+            .second(0)
+            .millisecond(0)
+            .toString(),
         },
         isAbsolutePath: true,
       });
