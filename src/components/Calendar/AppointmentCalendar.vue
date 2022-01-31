@@ -40,10 +40,12 @@
               class="border-solid border border-blue-400 rounded-md text-xl p-2 w-9/12 mb-3"
               :class="{
                 'bg-indigo-500 text-white': isTimeslotSelected(timeslot),
+                'opacity-20 bg-gray-200': isTimeslotDisabled(timeslot),
               }"
+              :disabled="isTimeslotDisabled(timeslot)"
               @click="onTimeslotClick(timeslot)"
             >
-              {{ timeslot.formattedTime }}
+              {{ timeslot.formattedDate }}
             </button>
           </div>
         </div>
@@ -85,6 +87,8 @@ import { makePackageMixin } from '@/mixins/package';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+type Timeslot = { startDate: Date; endDate: Date; formattedDate: string };
+
 const availableTimeRepository = makeAvailableTimeRepository;
 const DAY_FORMAT = 'YYYY-MM-DD';
 const MONTH_FORMAT = 'YYYY-MM';
@@ -120,7 +124,7 @@ export default Vue.extend({
       events: [] as StringKeyObject[],
       intervalTimerId: 0 as any,
       now: '',
-      selectedTimeslots: [] as { startDate: Date; endDate: Date }[],
+      selectedTimeslots: [] as Timeslot[],
     };
   },
   computed: {
@@ -134,6 +138,29 @@ export default Vue.extend({
           return dayjs(startDateKey).format(DAY_FORMAT);
         });
         return selectedDays;
+      },
+    },
+    disabledTimeslots: {
+      get(): Timeslot[] {
+        const disabledTimeslots = [];
+        for (const timeslot of this.selectedTimeslots) {
+          for (let i = -(this.duration / 30) + 1; i < this.duration / 30; i++) {
+            const minMultiplier = 30 * i;
+            const startDate = dayjs(timeslot.startDate).add(minMultiplier, 'minutes').toDate();
+            const endDate = dayjs(timeslot.endDate).add(minMultiplier, 'minutes').toDate();
+            const formattedDate = this.formatTimeslotDate(startDate);
+            const isTimeslotSelected = formattedDate == timeslot.formattedDate;
+            if (!isTimeslotSelected) {
+              const disabledTimeslot = {
+                formattedDate,
+                startDate,
+                endDate,
+              };
+              disabledTimeslots.push(disabledTimeslot);
+            }
+          }
+        }
+        return disabledTimeslots;
       },
     },
     hostedById: {
@@ -181,7 +208,7 @@ export default Vue.extend({
       },
     },
     visibleTimeslots: {
-      get(): StringKeyObject[] {
+      get(): Timeslot[] {
         const currentDayAvailableTimes = this.events.filter((availableTime) => {
           return availableTime.formattedStartDate == this.calendarFocusDateModel;
         });
@@ -196,14 +223,14 @@ export default Vue.extend({
           const now = dayjs();
           const isPast = startDate.isBefore(now);
           while ((startDate.isBefore(endDate) || startDate.isSame(endDate)) && !isPast) {
-            const formattedTime = self.formatDate({
+            const formattedDate = self.formatDate({
               date: startDate.toDate(),
               dateFormat: self.DATE_FORMAT.HOUR,
             });
             const visibleTimeSlot = {
-              formattedTime,
+              formattedDate,
               startDate: startDate.toDate(),
-              endDate: startDate.add(this.appointmentDuration, 'minutes'),
+              endDate: startDate.add(this.appointmentDuration, 'minutes').toDate(),
             };
             visibleTimeslots.push(visibleTimeSlot);
             startDate = startDate.add(30, 'minutes');
@@ -259,8 +286,8 @@ export default Vue.extend({
       }
       const newFocusDate = this.events.find((availableTime) => {
         return dayjs(availableTime.startDate).isAfter(startMonth);
-      })!;
-      this.calendarFocusDateModel = newFocusDate.formattedStartDate;
+      });
+      this.calendarFocusDateModel = newFocusDate ? newFocusDate.formattedStartDate : '';
     },
     isAllowedDate(date: string): boolean {
       const isAllowedDate = this.events.some((availableTime) => {
@@ -275,7 +302,7 @@ export default Vue.extend({
         dateFormat: self.DATE_FORMAT.HOUR,
       });
     },
-    isTimeslotSelected(timeslot: StringKeyObject): boolean {
+    isTimeslotSelected(timeslot: Timeslot): boolean {
       const isTimeslotSelected = this.selectedTimeslots.some((ts) => {
         return ts.startDate.toISOString() == timeslot.startDate.toISOString();
       });
@@ -286,17 +313,30 @@ export default Vue.extend({
       const isValidDuration = validDurations.includes(parseInt(duration));
       return isValidDuration;
     },
-    onTimeslotClick(timeslot: StringKeyObject): void {
+    onTimeslotClick(timeslot: Timeslot): void {
       const startDateKey = timeslot.startDate.toISOString();
       const isSelected = this.isTimeslotSelected(timeslot);
       if (!isSelected && this.lessonAmount > 0) {
-        const { startDate, endDate } = timeslot;
-        this.selectedTimeslots.push({ startDate, endDate });
+        this.selectedTimeslots.push(timeslot);
       } else {
         this.selectedTimeslots = this.selectedTimeslots.filter((ts) => {
           return ts.startDate.toISOString() != startDateKey;
         });
       }
+    },
+    formatTimeslotDate(date: Date): string {
+      const self = this as any;
+      const formattedDate = self.formatDate({
+        date: date,
+        dateFormat: self.DATE_FORMAT.HOUR,
+      });
+      return formattedDate;
+    },
+    isTimeslotDisabled(timeslot: Timeslot): boolean {
+      const isTimeslotDisabled = this.disabledTimeslots.some((ts) => {
+        return ts.formattedDate == timeslot.formattedDate;
+      });
+      return isTimeslotDisabled;
     },
   },
 });
