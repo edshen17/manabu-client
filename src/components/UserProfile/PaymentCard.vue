@@ -75,11 +75,12 @@
           </div>
           <div class="flex w-full">
             <button
-              class="rounded-lg my-4 py-2 text-white w-full mx-5"
+              class="rounded-lg my-6 py-2 text-white w-full mx-5"
               :class="{
                 'bg-indigo-500': !isPaymentButtonDisabled,
                 'bg-gray-200 text-white-200': isPaymentButtonDisabled,
               }"
+              :disabled="isPaymentButtonDisabled"
               @click="onPaymentClick"
             >
               {{ $t('button.common.payNow') }}

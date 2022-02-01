@@ -8,7 +8,7 @@
             <div class="text-gray-600 text-lg">
               <p class="py-1">
                 {{ getPackageName(pkg) }} /
-                {{ $t('userProfile.teacher.lessonDuration', { duration }) }}
+                {{ $t('userProfile.teacher.lessonDuration', { lessonDuration: duration }) }}
               </p>
               <p>{{ $t('userProfile.teacher.lessonAmount', { lessonAmount }) }}</p>
             </div>

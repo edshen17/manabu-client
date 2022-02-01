@@ -10,7 +10,7 @@ const UserAuthForm = () => import('../views/UserAuthForm.vue');
 const TeacherSignup = () => import('../views/TeacherSignup.vue');
 const UserProfile = () => import('../views/UserProfile.vue');
 const AppointmentCard = () => import('../views/AppointmentCard.vue');
-// const AppointmentCalendar = () => import('../views/AppointmentCalendar.vue');
+const ExtendedAppointmentCalendar = () => import('../views/ExtendedAppointmentCalendar.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -81,13 +81,14 @@ const routes: Array<RouteConfig> = [
     props: true,
     meta: { ...layout, requiresAuth: true },
   },
-  // {
-  //   path: '/user/:userId/calendar',
-  //   name: 'AppointmentCalendar',
-  //   component: AppointmentCalendar,
-  //   beforeEnter: loginProtectedRouterGuard.consume(),
-  //   meta: {},
-  // },
+  {
+    path: '/user/:userId/calendar',
+    name: 'ExtendedAppointmentCalendar',
+    component: ExtendedAppointmentCalendar,
+    props: true,
+    beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = new VueRouter({

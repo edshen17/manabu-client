@@ -4,8 +4,14 @@
       v-for="packageTransaction in visiblePackageTransactions"
       :key="packageTransaction._id"
       :to="{
-        name: 'PackageTransactionCard',
-        params: { packageTransactionId: packageTransaction._id, packageTransaction },
+        name: 'ExtendedAppointmentCalendar',
+        params: {
+          packageTransaction,
+          pkg: packageTransaction.packageData,
+          duration: packageTransaction.lessonDuration,
+          hostedByData: packageTransaction.hostedByData,
+          userId: packageTransaction.hostedById,
+        },
       }"
       class="
         shadow-md

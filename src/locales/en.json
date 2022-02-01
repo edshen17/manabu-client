@@ -139,7 +139,7 @@
     "package": {
       "title": "Please set up your lesson packages.",
       "lessonAmount": "Lesson Amount",
-      "lessonDuration": "Duration",
+      "lessonDuration": "Lesson Duration",
       "lessonDurations": "{lessonDuration} minutes",
       "isOffering": "Offer"
     },
@@ -245,10 +245,14 @@
     "common": {
       "save": "Save",
       "cancel": "Cancel",
+      "confirm": "Confirm",
       "upload": "Upload",
       "showMore": "Show more",
       "showLess": "Show less",
       "payNow": "Pay Now"
+    },
+    "appointment": {
+      "reschedule": "Reschedule"
     },
     "onboarding": {
       "next": "Next"
@@ -266,6 +270,7 @@
   },
   "appointment": {
     "status": {
+      "title": "Status",
       "pending": "Pending",
       "confirmed": "Confirmed",
       "cancelled": "Cancelled",

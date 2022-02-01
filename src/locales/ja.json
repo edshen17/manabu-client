@@ -243,11 +243,15 @@
   "button": {
     "common": {
       "save": "保存",
+      "confirm": "Confirm",
       "cancel": "キャンセル",
       "upload": "アップロード",
       "showMore": "もっと見る",
       "showLess": "少なめに表示",
       "payNow": "Pay Now"
+    },
+    "appointment": {
+      "reschedule": "Reschedule"
     },
     "onboarding": {
       "next": "次へ"
@@ -265,6 +269,7 @@
   },
   "appointment": {
     "status": {
+      "title": "Status",
       "pending": "Pending",
       "confirmed": "Confirmed",
       "cancelled": "Cancelled",
