@@ -49,10 +49,12 @@
               <p class="text-lg">{{ teacher.name }}</p>
               <p>
                 {{ getPackageName(pkg) }} /
-                {{ $t('userProfile.teacher.lessonDuration', { duration }) }}
-              </p>
-              <p>
-                {{ $t('userProfile.teacher.lessonAmount', { lessonAmount: pkg.lessonAmount }) }}
+                {{
+                  $t('userProfile.teacher.lessonSelection.price', {
+                    lessonDuration: duration,
+                    lessonAmount: pkg.lessonAmount,
+                  })
+                }}
               </p>
               <p></p>
             </div>

@@ -161,8 +161,7 @@
     "day":"Day",
     "week":"Week",
     "availableTime": "Available",
-    "lessonTime": "Lesson Time",
-    "duration": "{duration} mins"
+    "lessonTime": "Lesson Time"
   },
   "payment": {
     "gateway": {
@@ -222,7 +221,7 @@
           "amount": "Light ({amount} lessons)"
         }
       },
-      "lessonDuration": "{duration} minutes",
+      "lessonDuration": "@:onboarding.package.lessonDurations",
       "lessonPlans": "Lesson Plans",
       "lessonAmount": "{lessonAmount} lessons left to reserve",
       "lessonDetails": "Lesson Details",
@@ -273,12 +272,13 @@
       "completed": "Completed"
     },
     "language": "Language",
-    "lessonDuration": "@:onboarding.package.lessonDuration",
+    "lessonDuration": "@:onboarding.package.lessonDurations",
     "id": "Appointment Id",
     "commTool": "Communication Tool",
     "cancelReason": "Reason for cancelling appointment",
     "appointment": "Appointment",
     "teacherAccount": "Teacher Account",
-    "studentAccount": "Student Account"
+    "studentAccount": "Student Account",
+    "remainingAppointments": "{remainingAppointments} / {totalAppointments} lessons remaining"
   }
 }

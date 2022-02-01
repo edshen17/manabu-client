@@ -6,16 +6,17 @@
         justify-center
         container
         py-3
-        md:py-7
+        lg:py-7
         mx-auto
-        md:w-full
+        lg:w-full
         xl:w-9/12
         flex-wrap
-        md:flex-nowrap
+        lg:flex-nowrap
       "
     >
       <profile-image-card :user-data="userData" class="bg-white max-h-72 max-w-sm" />
       <div class="w-full">
+        <package-transaction-cards />
         <appointment-cards />
         <users-card :title="usersCardTitle" :user-data="userData" :is-admin="isAdmin" />
       </div>
@@ -26,13 +27,14 @@
 
 <script lang="ts">
 import AppointmentCards from '@/components/Dashboard/Cards/AppointmentCards.vue';
+import PackageTransactionCards from '@/components/Dashboard/Cards/PackageTransactionCards.vue';
 import { ls } from '@/store/plugins';
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
-import EditCalendar from '../components/Calendar/EditCalendar.vue';
-import UsersCard from '../components/Dashboard/Cards/UsersCard.vue';
-import ProfileImageCard from '../components/UserProfile/ProfileImageCard.vue';
+import EditCalendar from '@/components/Calendar/EditCalendar.vue';
+import UsersCard from '@/components/Dashboard/Cards/UsersCard.vue';
+import ProfileImageCard from '@/components/UserProfile/ProfileImageCard.vue';
 
 export default Vue.extend({
   name: 'Dashboard',
@@ -41,6 +43,7 @@ export default Vue.extend({
     ProfileImageCard,
     UsersCard,
     AppointmentCards,
+    PackageTransactionCards,
   },
   props: {},
   data() {

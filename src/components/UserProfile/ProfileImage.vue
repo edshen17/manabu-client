@@ -50,7 +50,7 @@
             class="hidden"
             name="image"
             accept="image/*"
-            @change="onFileSelect($event)"
+            @input="onFileSelect($event)"
           />
           <span v-show="showProfileImage" class="items-center flex justify-center h-96">
             <img :src="userData.profileImageUrl" class="h-48 rounded-full" />
@@ -125,9 +125,14 @@ export default Vue.extend({
   },
   methods: {
     resetProfileImage(): void {
-      this.profileImage.src = '';
+      this.profileImage = {
+        src: '',
+        cropperPreview: {},
+        isSaved: false,
+      };
       this.isEditingProfileImage = false;
       this.showDialog = false;
+      (this as any).$refs.imageUploader.value = '';
     },
     updateCropperPreview(result: any) {
       this.profileImage.cropperPreview = result;
@@ -164,7 +169,6 @@ export default Vue.extend({
         });
       }
       this.profileImage.isSaved = true;
-      (this as any).$refs.imageUploader.value = '';
       this.resetProfileImage();
     },
     async _uploadBlobToStorage(blob: Blob): Promise<void> {

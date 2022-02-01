@@ -3,6 +3,7 @@ import Vuex, { StoreOptions } from 'vuex';
 import { IRootState } from './abstractions/IRootState';
 import { makeAppointmentModule } from './modules/appointment';
 import { makeExchangeRateModule } from './modules/exchangeRate';
+import { makePackageTransactionModule } from './modules/packageTransaction';
 import { makeUserModule } from './modules/user';
 import { plugins } from './plugins';
 
@@ -14,6 +15,7 @@ const _store: StoreOptions<IRootState> = {
     user: makeUserModule,
     exchangeRate: makeExchangeRateModule,
     appointment: makeAppointmentModule,
+    packageTransaction: makePackageTransactionModule,
   },
   plugins,
 };

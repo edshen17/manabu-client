@@ -66,7 +66,7 @@
         md:bottom-5 md:right-10
         z-10
       "
-      @click="$emit('submit-timeslots', selectedTimeslots)"
+      @click="$emit('submit-timeslots', emittedTimeslots)"
     >
       <i class="fas fa-arrow-right text-white"></i>
     </button>
@@ -88,6 +88,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 type Timeslot = { startDate: Date; endDate: Date; formattedDate: string };
+type CompactTimeslot = Omit<Timeslot, 'formattedDate'>;
 
 const availableTimeRepository = makeAvailableTimeRepository;
 const DAY_FORMAT = 'YYYY-MM-DD';
@@ -131,6 +132,15 @@ export default Vue.extend({
     ...mapGetters({
       locale: 'user/locale',
     }),
+    emittedTimeslots: {
+      get(): CompactTimeslot[] {
+        const emittedTimeslots = this.selectedTimeslots.map((timeslot) => {
+          const { formattedDate, ...ts } = timeslot;
+          return ts;
+        });
+        return emittedTimeslots;
+      },
+    },
     selectedDays: {
       get(): string[] {
         const selectedDays = this.selectedTimeslots.map((timeslot) => {

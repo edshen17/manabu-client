@@ -43,15 +43,15 @@
               <p class="text-sm text-gray-400 py-1">
                 {{ $t(`localeCode.${appointment.packageTransactionData.lessonLanguage}`) }} /
                 {{
-                  $t('calendar.duration', {
-                    duration: appointment.packageTransactionData.lessonDuration,
+                  $t('appointment.lessonDuration', {
+                    lessonDuration: appointment.packageTransactionData.lessonDuration,
                   })
                 }}
               </p>
             </div>
             <img
-              v-if="appointments[0]"
-              :src="appointments[0].hostedByData.profileImageUrl"
+              v-if="appointment"
+              :src="appointment.hostedByData.profileImageUrl"
               class="rounded-full h-12"
             />
           </div>
