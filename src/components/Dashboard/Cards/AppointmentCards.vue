@@ -51,7 +51,7 @@
             </div>
             <img
               v-if="appointment"
-              :src="appointment.hostedByData.profileImageUrl"
+              :src="getProfileImageUrl(appointment)"
               class="rounded-full h-12"
             />
           </div>
@@ -77,6 +77,7 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters({
+      userData: 'user/entityStateData',
       appointments: 'appointment/entityStateData',
       locale: 'user/locale',
     }),
@@ -90,6 +91,15 @@ export default Vue.extend({
   async created() {
     await this.$store.dispatch('appointment/getEntityStateData');
   },
-  methods: {},
+  methods: {
+    getProfileImageUrl(appointment: AppointmentDoc): string | undefined {
+      const isHostedBy = this.userData._id == appointment.hostedById;
+      const { hostedByData, reservedByData } = appointment;
+      let profileImageUrl = isHostedBy
+        ? reservedByData.profileImageUrl
+        : hostedByData.profileImageUrl;
+      return profileImageUrl;
+    },
+  },
 });
 </script>

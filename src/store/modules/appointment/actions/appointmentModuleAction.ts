@@ -2,6 +2,7 @@ import { AbstractModuleAction } from '@/store/abstractions/AbstractModuleAction'
 import { IEntityState } from '@/store/abstractions/IEntityState';
 import { ModuleActionInitParams } from '@/store/abstractions/IModuleAction';
 import { IRootState } from '@/store/abstractions/IRootState';
+import { AppointmentDoc } from '@server/models/Appointment';
 import { StringKeyObject } from '@server/types/custom';
 import dayjs from 'dayjs';
 import { ActionContext, ActionTree } from 'vuex';
@@ -38,7 +39,7 @@ class AppointmentModuleAction extends AbstractModuleAction<
       async updateAppointment(
         props: ActionContext<IEntityState<AppointmentEntityStateData>, IRootState>,
         payload: UpdateAppointmentParams
-      ): Promise<void> {
+      ): Promise<AppointmentDoc> {
         return await self.updateAppointment(props, payload);
       },
     };
@@ -48,12 +49,13 @@ class AppointmentModuleAction extends AbstractModuleAction<
   public updateAppointment = async (
     props: ActionContext<IEntityState<AppointmentEntityStateData>, IRootState>,
     payload: UpdateAppointmentParams
-  ): Promise<void> => {
+  ): Promise<AppointmentDoc> => {
     const { commit } = props;
     const { appointmentId, updateParams } = payload;
     const { data } = await this._repository.updateById({ _id: appointmentId, updateParams });
     const { appointment } = data;
     commit('updateAppointment', appointment);
+    return appointment;
   };
 
   protected _initTemplate = async (

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center h-auto lg:h-screen">
+  <div :class="mainClass">
     <div class="w-full md:w-8/12 lg:rounded-lg h-full">
       <div class="flex flex-wrap lg:flex-nowrap h-full">
         <div class="lg:w-4/12 mx-4 lg:mx-0">
@@ -10,7 +10,7 @@
                 {{ getPackageName(pkg) }} /
                 {{ $t('userProfile.teacher.lessonDuration', { lessonDuration: duration }) }}
               </p>
-              <p>{{ $t('userProfile.teacher.lessonAmount', { lessonAmount }) }}</p>
+              <p>{{ $t('userProfile.teacher.lessonAmount', { lessonAmount: reserveCount }) }}</p>
             </div>
           </div>
         </div>
@@ -98,25 +98,26 @@ export default Vue.extend({
   components: {},
   mixins: [makeCalendarMixin, makePackageMixin],
   props: {
-    hostedByData: {
-      type: Object,
+    mainClass: {
+      type: String,
       required: false,
-      default: () => ({}),
+      default: 'flex justify-center items-center h-auto lg:h-screen',
+    },
+    hostedById: {
+      type: String,
+      required: true,
     },
     duration: {
       type: Number,
-      required: false,
-      default: 60,
+      required: true,
+    },
+    appointmentAmount: {
+      type: Number,
+      required: true,
     },
     pkg: {
       type: Object,
       required: true,
-      default: () => ({}),
-    },
-    packageTransaction: {
-      type: Object,
-      required: false,
-      default: () => ({}),
     },
   },
   data() {
@@ -173,34 +174,16 @@ export default Vue.extend({
         return disabledTimeslots;
       },
     },
-    hostedById: {
-      get(): string {
-        const hostedById = this.$route.params.userId || this.hostedByData._id;
-        return hostedById;
-      },
-    },
     currentUserTimezone: {
       get(): string {
         const currentUserTimezone = dayjs.tz.guess();
         return currentUserTimezone;
       },
     },
-    appointmentDuration: {
+    reserveCount: {
       get(): number {
-        const queryDuration = this.$route.query.duration as string;
-        const isValidQueryDuration = this.isValidDuration(queryDuration);
-        const appointmentDuration = isValidQueryDuration ? parseInt(queryDuration) : this.duration;
-        return appointmentDuration;
-      },
-    },
-    lessonAmount: {
-      get(): number {
-        const remainingAppointments = this.packageTransaction.remainingAppointments;
-        const packageAmount = this.pkg.lessonAmount;
-        const lessonAmount =
-          (remainingAppointments ? remainingAppointments : packageAmount) -
-          this.selectedTimeslots.length;
-        return lessonAmount;
+        const reserveCount = this.appointmentAmount - this.selectedTimeslots.length;
+        return reserveCount;
       },
     },
     calendarFocusDateModel: {
@@ -226,10 +209,7 @@ export default Vue.extend({
         const self = this as any;
         for (const availableTime of currentDayAvailableTimes) {
           let startDate = dayjs(availableTime.startDate);
-          const endDate = dayjs(availableTime.endDate).subtract(
-            this.appointmentDuration,
-            'minutes'
-          );
+          const endDate = dayjs(availableTime.endDate).subtract(this.duration, 'minutes');
           const now = dayjs();
           const isPast = startDate.isBefore(now);
           while ((startDate.isBefore(endDate) || startDate.isSame(endDate)) && !isPast) {
@@ -240,7 +220,7 @@ export default Vue.extend({
             const visibleTimeSlot = {
               formattedDate,
               startDate: startDate.toDate(),
-              endDate: startDate.add(this.appointmentDuration, 'minutes').toDate(),
+              endDate: startDate.add(this.duration, 'minutes').toDate(),
             };
             visibleTimeslots.push(visibleTimeSlot);
             startDate = startDate.add(30, 'minutes');
@@ -251,7 +231,7 @@ export default Vue.extend({
     },
   },
   watch: {
-    appointmentDuration: function () {
+    duration: function () {
       this.selectedTimeslots = [];
     },
   },
@@ -318,15 +298,10 @@ export default Vue.extend({
       });
       return isTimeslotSelected;
     },
-    isValidDuration(duration: string): boolean {
-      const validDurations = [30, 60, 90];
-      const isValidDuration = validDurations.includes(parseInt(duration));
-      return isValidDuration;
-    },
     onTimeslotClick(timeslot: Timeslot): void {
       const startDateKey = timeslot.startDate.toISOString();
       const isSelected = this.isTimeslotSelected(timeslot);
-      if (!isSelected && this.lessonAmount > 0) {
+      if (!isSelected && this.reserveCount > 0) {
         this.selectedTimeslots.push(timeslot);
       } else {
         this.selectedTimeslots = this.selectedTimeslots.filter((ts) => {

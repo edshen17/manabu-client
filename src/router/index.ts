@@ -82,12 +82,12 @@ const routes: Array<RouteConfig> = [
     meta: { ...layout, requiresAuth: true },
   },
   {
-    path: '/user/:userId/calendar',
+    path: '/user/:userId/calendar/:packageTransactionId',
     name: 'ExtendedAppointmentCalendar',
     component: ExtendedAppointmentCalendar,
     props: true,
     beforeEnter: loginProtectedRouterGuard.consume(),
-    meta: { requiresAuth: true },
+    meta: { ...layout, requiresAuth: true },
   },
 ];
 

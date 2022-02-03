@@ -225,32 +225,34 @@ export default Vue.extend({
     },
     userEdgeData: {
       get(): { name: string; role: TranslateResult; profileImageUrl: string } {
-        const isHostedBy = this.userData._id == this.appointmentData.hostedById;
-        const { hostedByData, reservedByData } = this.appointmentData;
-        let userEdgeData = {
-          name: hostedByData.name,
-          role: this.$t(`userProfile.teacher.${hostedByData.teacherData.type}`),
-          profileImageUrl: hostedByData.profileImageUrl,
-        };
-        if (isHostedBy) {
-          userEdgeData = {
-            name: reservedByData.name,
-            role: this.$t('userProfile.role.user'),
-            profileImageUrl: reservedByData.profileImageUrl,
-          };
-        }
+        const self = this as any;
+        const isHostedBy = this.userData._id == self.appointmentData.hostedById;
+        const { hostedByData, reservedByData } = self.appointmentData;
+        const userEdgeData = isHostedBy
+          ? {
+              name: reservedByData.name,
+              role: this.$t('userProfile.role.user'),
+              profileImageUrl: reservedByData.profileImageUrl,
+            }
+          : {
+              name: hostedByData.name,
+              role: this.$t(`userProfile.teacher.${hostedByData.teacherData.type}`),
+              profileImageUrl: hostedByData.profileImageUrl,
+            };
         return userEdgeData;
       },
     },
     isAppointmentCancelled: {
       get(): boolean {
-        const isAppointmentCancelled = this.appointmentData.status == 'cancelled';
+        const self = this as any;
+        const isAppointmentCancelled = self.appointmentData.status == 'cancelled';
         return isAppointmentCancelled;
       },
     },
     isAppointmentConfirmed: {
       get(): boolean {
-        const isAppointmentConfirmed = this.appointmentData.status == 'confirmed';
+        const self = this as any;
+        const isAppointmentConfirmed = self.appointmentData.status == 'confirmed';
         return isAppointmentConfirmed;
       },
     },
@@ -291,16 +293,16 @@ export default Vue.extend({
       await this.updateAppointment('confirmed');
     },
     async updateAppointment(status: string): Promise<void> {
-      this.$refs.topProgress.start();
-      const { data } = await appointmentRepository.updateById({
-        _id: this.appointmentData._id,
+      const self = this as any;
+      self.$refs.topProgress.start();
+      const appointment = await this.$store.dispatch('appointment/updateAppointment', {
+        appointmentId: self.appointmentData._id,
         updateParams: {
           status: status,
         },
       });
-      const { appointment } = data;
       this.appointmentModel = appointment;
-      this.$refs.topProgress.done();
+      self.$refs.topProgress.done();
     },
   },
 });

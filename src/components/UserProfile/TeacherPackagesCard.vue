@@ -63,9 +63,10 @@
             </div>
             <appointment-calendar
               v-show="stepIndex == 2"
-              :hosted-by-data="teacher"
+              :hosted-by-id="teacher._id"
               :duration="selectedLessonDuration"
               :pkg="selectedPackage"
+              :appointment-amount="selectedPackage.lessonAmount || 0"
               @submit-timeslots="onSubmitTimeslots"
             />
             <payment-card

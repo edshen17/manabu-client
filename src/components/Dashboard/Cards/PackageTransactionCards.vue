@@ -7,10 +7,8 @@
         name: 'ExtendedAppointmentCalendar',
         params: {
           packageTransaction,
-          pkg: packageTransaction.packageData,
-          duration: packageTransaction.lessonDuration,
-          hostedByData: packageTransaction.hostedByData,
           userId: packageTransaction.hostedById,
+          packageTransactionId: packageTransaction._id,
         },
       }"
       class="
@@ -88,11 +86,17 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters({
+      userData: 'user/entityStateData',
       packageTransactions: 'packageTransaction/entityStateData',
     }),
     visiblePackageTransactions: {
       get(): PackageTransactionDoc[] {
-        const visiblePackageTransactions = this.packageTransactions.slice(0, 3);
+        const incompletePackageTransactions = this.packageTransactions.filter(
+          (packageTransaction: PackageTransactionDoc) => {
+            return packageTransaction.remainingAppointments > 0;
+          }
+        );
+        const visiblePackageTransactions = incompletePackageTransactions.slice(0, 3);
         return visiblePackageTransactions;
       },
     },
@@ -103,6 +107,15 @@ export default Vue.extend({
   mounted() {
     return;
   },
-  methods: {},
+  methods: {
+    getProfileImageUrl(packageTransaction: PackageTransactionDoc): string | undefined {
+      const isHostedBy = this.userData._id == packageTransaction.hostedById;
+      const { hostedByData, reservedByData } = packageTransaction;
+      let profileImageUrl = isHostedBy
+        ? reservedByData.profileImageUrl
+        : hostedByData.profileImageUrl;
+      return profileImageUrl;
+    },
+  },
 });
 </script>

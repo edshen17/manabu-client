@@ -40,10 +40,12 @@ export default Vue.extend({
   },
   asyncComputed: {
     user: {
-      async get(): Promise<JoinedUserDoc> {
-        const { data } = await userRepository.getById({ _id: this.userId, query: {} });
-        const { user } = data;
-        return user;
+      async get(): Promise<JoinedUserDoc | undefined> {
+        if (this.userId) {
+          const { data } = await userRepository.getById({ _id: this.userId, query: {} });
+          const { user } = data;
+          return user;
+        }
       },
     },
   },
