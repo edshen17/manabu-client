@@ -123,13 +123,13 @@ abstract class AbstractModuleAction<OptionalModuleActionInitParams, EntityStateD
     return {};
   };
 
-  public resetEntityStateData = (props: ModuleActionContext<EntityStateData>) => {
+  public resetEntityStateData = (props: ModuleActionContext<EntityStateData>): void => {
     const { commit } = props;
     const entityStatePayload = this._moduleState.getDefaultEntityStateData();
     commit('setEntityStateData', entityStatePayload);
   };
 
-  public resetEntityStatePromise = (props: ModuleActionContext<EntityStateData>) => {
+  public resetEntityStatePromise = (props: ModuleActionContext<EntityStateData>): void => {
     const { commit } = props;
     const entityStatePromise = undefined;
     commit('setEntityStatePromise', entityStatePromise);

@@ -75,9 +75,15 @@ export default Vue.extend({
       return this.$router.push('/onboarding');
     }
     const paymentData = ls.get('paymentData');
+    const paymentGatewaySuccess = ls.get('paymentGatewaySuccess');
     const { teacher } = paymentData;
     if (paymentData) {
       this.$router.push({ path: `/user/${teacher._id}` });
+    }
+    if (paymentGatewaySuccess) {
+      ls.remove('paymentGatewaySuccess');
+      this.$store.dispatch('appointment/resetEntityState');
+      await this.$store.dispatch('appointment/getEntityStateData');
     }
   },
   methods: {},

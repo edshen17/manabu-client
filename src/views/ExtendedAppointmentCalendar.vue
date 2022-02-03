@@ -90,6 +90,8 @@ export default Vue.extend({
           });
           const { packageTransaction } = data;
           this.$store.dispatch('packageTransaction/setPackageTransaction', packageTransaction);
+          this.$store.dispatch('appointment/resetEntityState');
+          await this.$store.dispatch('appointment/getEntityStateData');
         } catch (err) {
           self.$refs.topProgress.done();
           this.isLoading = false;

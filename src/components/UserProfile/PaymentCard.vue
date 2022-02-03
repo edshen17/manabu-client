@@ -199,6 +199,7 @@ export default Vue.extend({
         const { data } = packageTransactionCheckoutRes;
         const { redirectUrl } = data;
         ls.remove('paymentData');
+        ls.set('paymentGatewaySuccess', true);
         window.location.href = redirectUrl;
       } else {
         ls.set('paymentData', {
