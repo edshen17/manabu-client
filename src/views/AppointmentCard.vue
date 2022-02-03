@@ -82,6 +82,17 @@
               'bg-indigo-500': !isAppointmentCancelled,
             }"
             :disabled="isAppointmentCancelled"
+            @click="
+              $router.push({
+                name: 'ExtendedAppointmentCalendar',
+                params: {
+                  packageTransaction: appointmentData.packageTransactionData,
+                  userId: appointmentData.hostedById,
+                  packageTransactionId: appointmentData.packageTransactionData._id,
+                  reschedulingAppointment: appointmentData,
+                },
+              })
+            "
           >
             {{ $t('button.appointment.reschedule') }}
           </button>

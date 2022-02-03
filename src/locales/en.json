@@ -223,7 +223,7 @@
       },
       "lessonDuration": "@:onboarding.package.lessonDurations",
       "lessonPlans": "Lesson Plans",
-      "lessonAmount": "{lessonAmount} lessons left to reserve",
+      "lessonAmount": "{count} lesson left to reserve | {count} lessons left to reserve",
       "lessonDetails": "Lesson Details",
       "hourlyRate": "Lessons starting from ~{rate} {currency}/hour"
     }

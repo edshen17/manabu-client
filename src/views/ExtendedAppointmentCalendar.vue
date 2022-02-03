@@ -8,7 +8,7 @@
       :duration="duration"
       :appointment-amount="appointmentAmount"
       :pkg="packageData"
-      @submit-timeslots="createAppointments"
+      @submit-timeslots="onSubmitTimeslots"
     />
   </div>
 </template>
@@ -34,7 +34,7 @@ export default Vue.extend({
       required: false,
       default: () => ({}),
     },
-    pkg: {
+    reschedulingAppointment: {
       type: Object,
       required: false,
       default: () => ({}),
@@ -66,30 +66,37 @@ export default Vue.extend({
     setAppointmentCalendarData(packageTransaction: PackageTransactionDoc): void {
       const { lessonDuration, remainingAppointments, packageData } = packageTransaction;
       this.duration = lessonDuration;
-      this.appointmentAmount = remainingAppointments;
+      this.appointmentAmount = this.reschedulingAppointment._id ? 1 : remainingAppointments;
       this.packageData = packageData;
     },
-    async createAppointments(timeslots: StringKeyObject[]): Promise<void> {
+    async onSubmitTimeslots(timeslots: StringKeyObject[]): Promise<void> {
+      if (this.reschedulingAppointment._id) {
+        await this.editAppointment(timeslots);
+      } else {
+        await this.createAppointments(timeslots);
+      }
+    },
+    async editAppointment(timeslots: StringKeyObject[]): Promise<void> {
+      const timeslot = timeslots[0];
+      await this.appointmentActionTemplate(this._editAppointment(timeslot));
+    },
+    _editAppointment(timeslot: StringKeyObject): () => Promise<void> {
+      return async (): Promise<void> => {
+        await appointmentRepository.updateById({
+          _id: this.reschedulingAppointment._id,
+          updateParams: {
+            ...timeslot,
+          },
+        });
+      };
+    },
+    async appointmentActionTemplate(action: () => Promise<void>): Promise<void> {
       if (!this.isLoading) {
         this.isLoading = true;
         const self = this as any;
         self.$refs.topProgress.start();
-        const appointments = timeslots.map((ts) => {
-          return {
-            ...ts,
-            hostedById: this.$route.params.userId,
-            packageTransactionId: this.$route.params.packageTransactionId,
-          };
-        });
         try {
-          const { data } = await appointmentRepository.create({
-            payload: {
-              appointments,
-            },
-            query: {},
-          });
-          const { packageTransaction } = data;
-          this.$store.dispatch('packageTransaction/setPackageTransaction', packageTransaction);
+          await action();
           this.$store.dispatch('appointment/resetEntityState');
           await this.$store.dispatch('appointment/getEntityStateData');
         } catch (err) {
@@ -100,6 +107,29 @@ export default Vue.extend({
         this.$router.push('/dashboard');
         self.$refs.topProgress.done();
       }
+    },
+    async createAppointments(timeslots: StringKeyObject[]): Promise<void> {
+      await this.appointmentActionTemplate(this._createAppointments(timeslots));
+    },
+    _createAppointments(timeslots: StringKeyObject[]): () => Promise<void> {
+      const self = this;
+      return async (): Promise<void> => {
+        const appointments = timeslots.map((ts) => {
+          return {
+            ...ts,
+            hostedById: self.$route.params.userId,
+            packageTransactionId: self.$route.params.packageTransactionId,
+          };
+        });
+        const { data } = await appointmentRepository.create({
+          payload: {
+            appointments,
+          },
+          query: {},
+        });
+        const { packageTransaction } = data;
+        self.$store.dispatch('packageTransaction/setPackageTransaction', packageTransaction);
+      };
     },
   },
 });

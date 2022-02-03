@@ -10,7 +10,7 @@
                 {{ getPackageName(pkg) }} /
                 {{ $t('userProfile.teacher.lessonDuration', { lessonDuration: duration }) }}
               </p>
-              <p>{{ $t('userProfile.teacher.lessonAmount', { lessonAmount: reserveCount }) }}</p>
+              <p>{{ $tc('userProfile.teacher.lessonAmount', reserveCount) }}</p>
             </div>
           </div>
         </div>
