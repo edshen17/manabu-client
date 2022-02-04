@@ -1,10 +1,10 @@
 <template>
   <div data-app>
     <v-menu
-      v-model="showEventEditorModel"
+      v-model="showAvailableTimeEditorModel"
       :offset-y="isMobile"
       :close-on-content-click="false"
-      :close-on-click="false"
+      :close-on-click="true"
       :min-width="menuWidth"
       :left="showMenuOnLeft"
       offset-x
@@ -136,16 +136,16 @@ enum EDITOR_NAME {
 }
 
 export default Vue.extend({
-  name: 'EventEditor',
+  name: 'AvailableTimeEditor',
   components: { VAutocomplete, VSelect },
   mixins: [calendarMixin],
   props: {
-    showEventEditor: {
+    showAvailableTimeEditor: {
       type: Boolean,
       default: false,
       required: true,
     },
-    eventEditorCoord: {
+    selectedEventCoord: {
       type: Object,
       default: () => ({ x: 0, y: 0 }),
       required: true,
@@ -197,17 +197,17 @@ export default Vue.extend({
     showMenuOnLeft: {
       get(): boolean {
         const windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-        const showMenuOnLeft = this.eventEditorCoord.x > windowWidth / 2;
+        const showMenuOnLeft = this.selectedEventCoord.x > windowWidth / 2;
         return showMenuOnLeft;
       },
     },
-    showEventEditorModel: {
+    showAvailableTimeEditorModel: {
       get(): boolean {
-        const showEventEditorModel =
-          this.showEventEditor &&
+        const showAvailableTimeEditorModel =
+          this.showAvailableTimeEditor &&
           this.selectedEvent.attributes &&
           this.eventId == this.selectedEvent.attributes._id;
-        return showEventEditorModel;
+        return showAvailableTimeEditorModel;
       },
       set(value: boolean): void {
         this.$emit('show-event-editor:change', value);
@@ -301,14 +301,6 @@ export default Vue.extend({
     return;
   },
   methods: {
-    getEventTitle(event: StringKeyObject): TranslateResult {
-      const isAvailableTime =
-        event.attributes && event.attributes.type == EVENT_TYPE.AVAILABLE_TIME;
-      const eventTitle = isAvailableTime
-        ? this.$t('calendar.availableTime')
-        : this.$t('calendar.appointment');
-      return eventTitle;
-    },
     formatDate(props: {
       date: Date | number;
       dateFormat?: string;

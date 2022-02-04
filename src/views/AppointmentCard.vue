@@ -6,7 +6,7 @@
         <div
           class="border-solid border-l-4"
           :class="{
-            'border-green-300 ': appointmentData.status == 'pending',
+            'border-green-300': appointmentData.status == 'pending',
             'border-black': appointmentData.status == 'completed',
             'border-green-600': appointmentData.status == 'confirmed',
             'border-red-300': appointmentData.status == 'cancelled',
