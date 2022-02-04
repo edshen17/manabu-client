@@ -160,6 +160,7 @@
     "day":"日",
     "week":"週",
     "availableTime": "都合がつく時間",
+    "appointment": "予約",
     "lessonTime": "レッスン時間"
   },
   "payment": {
@@ -243,7 +244,7 @@
   "button": {
     "common": {
       "save": "保存",
-      "confirm": "Confirm",
+      "confirm": "承認",
       "cancel": "キャンセル",
       "upload": "アップロード",
       "showMore": "もっと見る",
@@ -280,7 +281,6 @@
     "id": "Appointment Id",
     "commTool": "コミュニケーションツール",
     "cancelReason": "アポイントメント拒否の理由",
-    "appointment": "予約",
     "teacherAccount": "Teacher Account",
     "studentAccount": "Student Account",
     "remainingAppointments": "{remainingAppointments} / {totalAppointments} lessons remaining"

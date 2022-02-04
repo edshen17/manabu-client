@@ -17,53 +17,57 @@
       @update:calendar-focus-date="onCalendarFocusDateUpdate"
     >
       <template v-slot:event="{ event, timed }">
-        <available-time-editor
-          v-if="event.attributes.type == 'availableTime'"
-          :event-id="event.attributes._id"
-          :show-available-time-editor="showAvailableTimeEditor"
-          :selected-event-coord="selectedEventCoord"
-          :selected-event="selectedEvent"
-          :is-selected-event-saved="isSelectedEventSaved"
-          :date-picker-date="datePickerDate"
-          @event:save="saveAvailableTime"
-          @event:cancel="cancelAvailableTime"
-          @event:delete="
-            deleteAvailableTime({ eventId: selectedEvent.attributes._id, deleteFromDb: true })
-          "
-          @date-picker:change="onDatePickerChange"
-          @auto-complete-start:change="onAutoCompleteStartChange"
-          @auto-complete-end:change="onAutoCompleteEndChange"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
-              <div class="v-event-draggable">
-                <span>
-                  {{ getEventTitle(event) }}
-                </span>
-                <br />
-                <span
-                  >{{ formatDate({ date: event.start, dateFormat: DATE_FORMAT.HOUR }) }} -
-                  {{ formatDate({ date: event.end, dateFormat: DATE_FORMAT.HOUR }) }}</span
-                >
+        <div v-if="event.attributes.type == 'availableTime'">
+          <available-time-editor
+            :event-id="event.attributes._id"
+            :show-editor="showEditor"
+            :selected-event-coord="selectedEventCoord"
+            :selected-event="selectedEvent"
+            :is-selected-event-saved="isSelectedEventSaved"
+            :date-picker-date="datePickerDate"
+            @event:save="saveAvailableTime"
+            @event:cancel="cancelAvailableTime"
+            @event:delete="
+              deleteAvailableTime({ eventId: selectedEvent.attributes._id, deleteFromDb: true })
+            "
+            @date-picker:change="onDatePickerChange"
+            @auto-complete-start:change="onAutoCompleteStartChange"
+            @auto-complete-end:change="onAutoCompleteEndChange"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
+                <div class="v-event-draggable">
+                  <span>
+                    {{ getEventTitle(event) }}
+                  </span>
+                  <br />
+                  <span
+                    >{{ formatDate({ date: event.start, dateFormat: DATE_FORMAT.HOUR }) }} -
+                    {{ formatDate({ date: event.end, dateFormat: DATE_FORMAT.HOUR }) }}</span
+                  >
+                </div>
+                <div
+                  v-if="timed"
+                  :class="{ 'v-event-drag-bottom': !isMobile }"
+                  @mousedown.stop="extendBottom(event)"
+                ></div>
               </div>
-              <div
-                v-if="timed"
-                :class="{ 'v-event-drag-bottom': !isMobile }"
-                @mousedown.stop="extendBottom(event)"
-              ></div>
-            </div>
-          </template>
-        </available-time-editor>
+            </template>
+          </available-time-editor>
+        </div>
+
         <appointment-editor
-          v-else
           :selected-event-coord="selectedEventCoord"
           :selected-event="selectedEvent"
           :event-id="event.attributes._id"
+          @event:confirm="updateAppointment($event, 'confirmed')"
+          @event:cancel="updateAppointment($event, 'cancelled')"
         >
           <template v-slot:activator="{ on, attrs }">
             <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
               <div class="v-event-draggable">
                 <span>
+                  {{ event.attributes.type }}
                   {{ getEventTitle(event) }}
                 </span>
                 <br />
@@ -99,7 +103,6 @@ import AppointmentEditor from './AppointmentEditor.vue';
 
 const availableTimeRepository = makeAvailableTimeRepository;
 const appointmentRepository = makeAppointmentRepository;
-const calendarMixin = makeCalendarMixin;
 
 enum EVENT_COLOR {
   AVAILABLE_TIME = '#3F51B5',
@@ -134,7 +137,7 @@ type GetEventParams = {
 export default Vue.extend({
   name: 'EditCalendar',
   components: { BaseCalendar, AvailableTimeEditor, AppointmentEditor },
-  mixins: [calendarMixin],
+  mixins: [makeCalendarMixin],
   props: {
     userId: {
       type: String,
@@ -150,7 +153,7 @@ export default Vue.extend({
       createEvent: null as null | EventObject,
       createStart: null as null | number,
       extendOriginal: null as null | number,
-      showAvailableTimeEditor: false,
+      showEditor: false,
       selectedEvent: {} as EventObject,
       selectedEventCoord: {
         x: 0,
@@ -295,7 +298,7 @@ export default Vue.extend({
       }
     },
     onMouseDownTime(tms: StringKeyObject): void {
-      this._showAvailableTimeEditor(false);
+      this._showEditor(false);
       const mouse = this.convertToMs(tms);
       if (this.dragEvent && this.dragTime === null) {
         const start = this.dragEvent.start;
@@ -339,10 +342,10 @@ export default Vue.extend({
       this.selectedEventCoord.x = nativeEvent.clientX;
       this.selectedEventCoord.y = nativeEvent.clientY;
       this.selectedEvent = event;
-      this._showAvailableTimeEditor(true);
+      this._showEditor(true);
     },
-    _showAvailableTimeEditor(showAvailableTimeEditor: boolean): void {
-      requestAnimationFrame(() => (this.showAvailableTimeEditor = showAvailableTimeEditor));
+    _showEditor(showEditor: boolean): void {
+      requestAnimationFrame(() => (this.showEditor = showEditor));
     },
     extendBottom(event: EventObject): void {
       const { start, end } = event;
@@ -372,7 +375,7 @@ export default Vue.extend({
           this.dragEvent!.start = newStart;
           this.dragEvent!.end = newEnd;
         }
-        this._showAvailableTimeEditor(false);
+        this._showEditor(false);
       } else if (isExtendingEvent) {
         const mouseRounded = this.roundTime(mouse, false);
         const min = Math.min(mouseRounded, this.createStart!);
@@ -382,7 +385,7 @@ export default Vue.extend({
           this.createEvent!.start = min;
           this.createEvent!.end = max;
         }
-        this._showAvailableTimeEditor(false);
+        this._showEditor(false);
       }
     },
     _isValidDate(props: { start: Date | number; end: Date | number }): boolean {
@@ -399,7 +402,7 @@ export default Vue.extend({
       this.createEvent = null;
       this.createStart = null;
       this.extendOriginal = null;
-      this._showAvailableTimeEditor(true);
+      this._showEditor(true);
     },
     onMouseLeaveNative(): void {
       if (this.createEvent) {
@@ -433,7 +436,7 @@ export default Vue.extend({
         start,
         end,
       };
-      this._showAvailableTimeEditor(false);
+      this._showEditor(false);
       try {
         if (!this.isSelectedEventSaved) {
           this.selectedEvent.attributes.creationStatus = EVENT_CREATION_STATUS.SAVED;
@@ -458,6 +461,16 @@ export default Vue.extend({
         query: {},
       });
       this.selectedEvent.attributes._id = data.availableTime._id;
+    },
+    async updateAppointment(event: EventObject, status: string): Promise<void> {
+      const appointment = await this.$store.dispatch('appointment/updateAppointment', {
+        appointmentId: event.attributes._id,
+        updateParams: {
+          status,
+        },
+      });
+      event.attributes.originalEvent.event = appointment;
+      event.color = this._getEventColor(appointment);
     },
     async _updateAvailableTime(props: { start: number; end: number }) {
       const { start, end } = props;
@@ -487,7 +500,7 @@ export default Vue.extend({
         });
         this.calendarFocusDate = newFocusDate;
       }
-      this._showAvailableTimeEditor(false);
+      this._showEditor(false);
     },
     async deleteAvailableTime(props: { eventId: string; deleteFromDb: boolean }): Promise<void> {
       const { eventId, deleteFromDb } = props;
@@ -497,7 +510,7 @@ export default Vue.extend({
       this.events = this.events.filter((event) => {
         return event.attributes._id != eventId;
       });
-      this._showAvailableTimeEditor(false);
+      this._showEditor(false);
     },
     onDatePickerChange(value: string): void {
       const selectedEventStart = dayjs(this.selectedEvent.start);
@@ -531,7 +544,7 @@ export default Vue.extend({
     _updateSelectedEvent(props: { field: string; value: unknown }): void {
       const { field, value } = props;
       (this.selectedEvent as StringKeyObject)[field] = value;
-      this._showAvailableTimeEditor(true);
+      this._showEditor(true);
     },
     onCalendarFocusDateUpdate(value: string): void {
       this.calendarFocusDate = value;

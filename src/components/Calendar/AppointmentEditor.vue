@@ -14,23 +14,39 @@
       <v-card color="grey lighten-4" flat>
         <v-card-text>
           <div class="flex">
-            <div class="flex-grow">
-              <p class="text-black text-lg tracking-wide inline">
-                {{ getEventTitle(selectedEvent) }}
-              </p>
-            </div>
-            <!-- <button v-if="isSelectedEventSaved" class="float-right" @click="$emit('event:delete')">
-              <i class="fas fa-trash-alt text-lg"></i>
-            </button> -->
+            <p
+              v-if="selectedEvent.attributes"
+              class="text-black text-lg tracking-wide inline cursor-pointer underline text-blue-400"
+            >
+              <router-link
+                target="_blank"
+                :to="{
+                  name: 'AppointmentCard',
+                  params: {
+                    appointmentId: selectedEvent.attributes.originalEvent.event._id,
+                    appointment: selectedEvent.attributes.originalEvent.event,
+                  },
+                }"
+                >{{ getEventTitle(selectedEvent) }}</router-link
+              >
+            </p>
           </div>
-          thing
+          <div class="flex flex-wrap content-start text-gray-500 inline py-2">
+            <p>
+              {{ formatDate({ date: selectedEvent.start, dateFormat: DATE_FORMAT.ABRIDGED_DATE }) }}
+            </p>
+            <p class="mx-1 text-lg -my-1 font-bold">⋅</p>
+            <p>{{ formatDate({ date: selectedEvent.start, dateFormat: DATE_FORMAT.HOUR }) }}</p>
+            <p class="mx-1 -my-1 text-lg font-thin">-</p>
+            <p>{{ formatDate({ date: selectedEvent.end, dateFormat: DATE_FORMAT.HOUR }) }}</p>
+          </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn text color="secondary" class="m-0 animate-pulse" @click="$emit('event:save')">
-            <span class="text-blue-600">{{ $t('button.common.save') }}</span>
+          <v-btn text class="m-0 animate-pulse" @click="$emit('event:confirm', selectedEvent)">
+            <p class="text-green-600">{{ $t('button.common.confirm') }}</p>
           </v-btn>
-          <v-btn text color="secondary" @click="$emit('event:cancel')">
-            {{ $t('button.common.cancel') }}
+          <v-btn text @click="$emit('event:cancel', selectedEvent)">
+            <p class="text-red-600">{{ $t('button.common.cancel') }}</p>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -40,21 +56,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TranslateResult } from 'vue-i18n';
-import { StringKeyObject } from '../../../../server/types/custom';
-import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandler';
-import { EVENT_TYPE } from '../../types/Calendar';
 import { makeCalendarMixin } from '../../mixins/calendar';
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs';
-
-const dateFormatHandler = makeDateFormatHandler;
-const calendarMixin = makeCalendarMixin;
 
 export default Vue.extend({
   name: 'AppointmentEditor',
   components: {},
-  mixins: [calendarMixin],
+  mixins: [makeCalendarMixin],
   props: {
     selectedEventCoord: {
       type: Object,
@@ -96,23 +104,7 @@ export default Vue.extend({
   mounted() {
     return;
   },
-  methods: {
-    formatDate(props: {
-      date: Date | number;
-      dateFormat?: string;
-      formatString?: string;
-      translationProps?: StringKeyObject;
-    }): string {
-      const { date, dateFormat, formatString, translationProps } = props;
-      const dateFormatString: TranslateResult | string =
-        formatString || this.$t(`dateFormat.${dateFormat}`, translationProps);
-      const formattedDate = dateFormatHandler.formatDate({
-        date,
-        formatString: dateFormatString,
-      });
-      return formattedDate;
-    },
-  },
+  methods: {},
 });
 </script>
 

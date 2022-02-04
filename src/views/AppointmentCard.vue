@@ -309,7 +309,7 @@ export default Vue.extend({
       const appointment = await this.$store.dispatch('appointment/updateAppointment', {
         appointmentId: self.appointmentData._id,
         updateParams: {
-          status: status,
+          status,
         },
       });
       this.appointmentModel = appointment;

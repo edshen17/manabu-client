@@ -161,6 +161,7 @@
     "day":"Day",
     "week":"Week",
     "availableTime": "Available",
+    "appointment": "Appointment",
     "lessonTime": "Lesson Time"
   },
   "payment": {
@@ -281,7 +282,6 @@
     "id": "Appointment Id",
     "commTool": "Communication Tool",
     "cancelReason": "Reason for cancelling appointment",
-    "appointment": "Appointment",
     "teacherAccount": "Teacher Account",
     "studentAccount": "Student Account",
     "remainingAppointments": "{remainingAppointments} / {totalAppointments} lessons remaining"

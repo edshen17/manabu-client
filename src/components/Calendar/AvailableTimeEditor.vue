@@ -1,7 +1,7 @@
 <template>
   <div data-app>
     <v-menu
-      v-model="showAvailableTimeEditorModel"
+      v-model="showEditorModel"
       :offset-y="isMobile"
       :close-on-content-click="false"
       :close-on-click="true"
@@ -116,17 +116,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TranslateResult } from 'vue-i18n';
 import { StringKeyObject } from '../../../../server/types/custom';
-import { makeDateFormatHandler } from '../../plugins/i18n/utils/dateFormatHandler';
-import { EVENT_TYPE } from '../../types/Calendar';
 import { makeCalendarMixin } from '../../mixins/calendar';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
 import { VAutocomplete, VSelect } from 'vuetify/lib'; // need explicit import for dynamic components
-
-const dateFormatHandler = makeDateFormatHandler;
-const calendarMixin = makeCalendarMixin;
 
 enum EDITOR_NAME {
   DATE_PICKER = 'datePicker',
@@ -138,9 +132,9 @@ enum EDITOR_NAME {
 export default Vue.extend({
   name: 'AvailableTimeEditor',
   components: { VAutocomplete, VSelect },
-  mixins: [calendarMixin],
+  mixins: [makeCalendarMixin],
   props: {
-    showAvailableTimeEditor: {
+    showEditor: {
       type: Boolean,
       default: false,
       required: true,
@@ -201,16 +195,16 @@ export default Vue.extend({
         return showMenuOnLeft;
       },
     },
-    showAvailableTimeEditorModel: {
+    showEditorModel: {
       get(): boolean {
-        const showAvailableTimeEditorModel =
-          this.showAvailableTimeEditor &&
+        const showEditorModel =
+          this.showEditor &&
           this.selectedEvent.attributes &&
           this.eventId == this.selectedEvent.attributes._id;
-        return showAvailableTimeEditorModel;
+        return showEditorModel;
       },
       set(value: boolean): void {
-        this.$emit('show-event-editor:change', value);
+        this.$emit('show-editor:change', value);
       },
     },
     autoCompleteStartIntervals: {
@@ -238,20 +232,21 @@ export default Vue.extend({
         const selectedEventStart = this.selectedEvent.start;
         const selectedEventEnd = this.selectedEvent.end;
         const hasSelectedEvent = selectedEventStart && selectedEventEnd;
+        const self = this as any;
         if (hasSelectedEvent) {
           let startTime = dayjs(selectedEventStart).add(30, 'minutes');
           let endTime = startTime.add(1, 'day').hour(0).minute(30);
           while (startTime.isBefore(endTime)) {
             const diffBetweenSelectedEventStart =
               startTime.diff(selectedEventStart, 'minutes') / 60;
-            const formattedTime = this.formatDate({
+            const formattedTime = self.formatDate({
               date: startTime.toDate(),
-              dateFormat: (this as any).DATE_FORMAT.HOUR_WITH_DURATION,
+              dateFormat: self.DATE_FORMAT.HOUR_WITH_DURATION,
               translationProps: { hours: diffBetweenSelectedEventStart },
             });
             const time = {
               text: formattedTime,
-              value: startTime.format((this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT),
+              value: startTime.format(self.AUTOCOMPLETE_DATE_FORMAT.DEFAULT),
               locale: this.locale,
             };
             endIntervals.push(time);
@@ -301,21 +296,6 @@ export default Vue.extend({
     return;
   },
   methods: {
-    formatDate(props: {
-      date: Date | number;
-      dateFormat?: string;
-      formatString?: string;
-      translationProps?: StringKeyObject;
-    }): string {
-      const { date, dateFormat, formatString, translationProps } = props;
-      const dateFormatString: TranslateResult | string =
-        formatString || this.$t(`dateFormat.${dateFormat}`, translationProps);
-      const formattedDate = dateFormatHandler.formatDate({
-        date,
-        formatString: dateFormatString,
-      });
-      return formattedDate;
-    },
     onDatePickerMenuInput(value: boolean): void {
       this.activeEditorName = value ? EDITOR_NAME.DATE_PICKER : EDITOR_NAME.DEFAULT;
     },
@@ -344,10 +324,11 @@ export default Vue.extend({
       (this.$refs[`autocomplete-${editorName}`] as any).$refs.menu.isActive = false;
     },
     _getAutoCompleteModel(date: Date | number) {
+      const self = this as any;
       const autoCompleteModel = date
-        ? this.formatDate({
+        ? self.formatDate({
             date,
-            formatString: (this as any).AUTOCOMPLETE_DATE_FORMAT.DEFAULT,
+            formatString: self.AUTOCOMPLETE_DATE_FORMAT.DEFAULT,
           })
         : '';
       return autoCompleteModel;
