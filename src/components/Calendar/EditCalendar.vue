@@ -17,49 +17,47 @@
       @update:calendar-focus-date="onCalendarFocusDateUpdate"
     >
       <template v-slot:event="{ event, timed }">
-        <div v-if="event.attributes.type == 'availableTime'">
-          <available-time-editor
-            :event-id="event.attributes._id"
-            :show-editor="showEditor"
-            :selected-event-coord="selectedEventCoord"
-            :selected-event="selectedEvent"
-            :is-selected-event-saved="isSelectedEventSaved"
-            :date-picker-date="datePickerDate"
-            @event:save="saveAvailableTime"
-            @event:cancel="cancelAvailableTime"
-            @event:delete="
-              deleteAvailableTime({ eventId: selectedEvent.attributes._id, deleteFromDb: true })
-            "
-            @date-picker:change="onDatePickerChange"
-            @auto-complete-start:change="onAutoCompleteStartChange"
-            @auto-complete-end:change="onAutoCompleteEndChange"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
-                <div class="v-event-draggable">
-                  <span>
-                    {{ getEventTitle(event) }}
-                  </span>
-                  <br />
-                  <span
-                    >{{ formatDate({ date: event.start, dateFormat: DATE_FORMAT.HOUR }) }} -
-                    {{ formatDate({ date: event.end, dateFormat: DATE_FORMAT.HOUR }) }}</span
-                  >
-                </div>
-                <div
-                  v-if="timed"
-                  :class="{ 'v-event-drag-bottom': !isMobile }"
-                  @mousedown.stop="extendBottom(event)"
-                ></div>
-              </div>
-            </template>
-          </available-time-editor>
-        </div>
-
-        <appointment-editor
+        <available-time-editor
+          v-if="event.attributes.type == 'availableTime'"
+          :event-id="event.attributes._id"
+          :show-editor="showEditor"
           :selected-event-coord="selectedEventCoord"
           :selected-event="selectedEvent"
-          :event-id="event.attributes._id"
+          :is-selected-event-saved="isSelectedEventSaved"
+          :date-picker-date="datePickerDate"
+          @event:save="saveAvailableTime"
+          @event:cancel="cancelAvailableTime"
+          @event:delete="
+            deleteAvailableTime({ eventId: selectedEvent.attributes._id, deleteFromDb: true })
+          "
+          @date-picker:change="onDatePickerChange"
+          @auto-complete-start:change="onAutoCompleteStartChange"
+          @auto-complete-end:change="onAutoCompleteEndChange"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
+              <div class="v-event-draggable">
+                <span>
+                  {{ getEventTitle(event) }}
+                </span>
+                <br />
+                <span
+                  >{{ formatDate({ date: event.start, dateFormat: DATE_FORMAT.HOUR }) }} -
+                  {{ formatDate({ date: event.end, dateFormat: DATE_FORMAT.HOUR }) }}</span
+                >
+              </div>
+              <div
+                v-if="timed"
+                :class="{ 'v-event-drag-bottom': !isMobile }"
+                @mousedown.stop="extendBottom(event)"
+              ></div>
+            </div>
+          </template>
+        </available-time-editor>
+        <appointment-editor
+          v-if="event.attributes.type != 'availableTime'"
+          :selected-event-coord="selectedEventCoord"
+          :selected-event="selectedEvent"
           @event:confirm="updateAppointment($event, 'confirmed')"
           @event:cancel="updateAppointment($event, 'cancelled')"
         >
@@ -67,7 +65,6 @@
             <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
               <div class="v-event-draggable">
                 <span>
-                  {{ event.attributes.type }}
                   {{ getEventTitle(event) }}
                 </span>
                 <br />
@@ -471,6 +468,8 @@ export default Vue.extend({
       });
       event.attributes.originalEvent.event = appointment;
       event.color = this._getEventColor(appointment);
+      this.$store.dispatch('appointment/resetEntityState');
+      await this.$store.dispatch('appointment/getEntityStateData');
     },
     async _updateAvailableTime(props: { start: number; end: number }) {
       const { start, end } = props;

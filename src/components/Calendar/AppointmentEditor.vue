@@ -1,6 +1,7 @@
 <template>
   <div data-app>
     <v-menu
+      v-model="showMenu"
       :offset-y="isMobile"
       :close-on-content-click="false"
       :close-on-click="true"
@@ -23,7 +24,7 @@
                 :to="{
                   name: 'AppointmentCard',
                   params: {
-                    appointmentId: selectedEvent.attributes.originalEvent.event._id,
+                    appointmentId: selectedEvent.attributes._id,
                     appointment: selectedEvent.attributes.originalEvent.event,
                   },
                 }"
@@ -42,10 +43,15 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn text class="m-0 animate-pulse" @click="$emit('event:confirm', selectedEvent)">
+          <v-btn
+            v-show="showConfirmButton"
+            text
+            class="m-0 animate-pulse"
+            @click="onButtonClick('event:confirm')"
+          >
             <p class="text-green-600">{{ $t('button.common.confirm') }}</p>
           </v-btn>
-          <v-btn text @click="$emit('event:cancel', selectedEvent)">
+          <v-btn v-show="showCancelButton" text @click="onButtonClick('event:cancel')">
             <p class="text-red-600">{{ $t('button.common.cancel') }}</p>
           </v-btn>
         </v-card-actions>
@@ -58,6 +64,7 @@
 import Vue from 'vue';
 import { makeCalendarMixin } from '../../mixins/calendar';
 import { mapGetters } from 'vuex';
+import { AppointmentDoc } from '@server/models/Appointment';
 
 export default Vue.extend({
   name: 'AppointmentEditor',
@@ -74,14 +81,11 @@ export default Vue.extend({
       default: () => ({}),
       required: true,
     },
-    eventId: {
-      type: String,
-      default: '',
-      required: true,
-    },
   },
   data() {
-    return {};
+    return {
+      showMenu: false,
+    };
   },
   computed: {
     ...mapGetters({
@@ -100,11 +104,47 @@ export default Vue.extend({
         return showMenuOnLeft;
       },
     },
+    showConfirmButton: {
+      get(): boolean | undefined {
+        if (this.selectedEvent.attributes && this.selectedEvent.attributes.originalEvent.event) {
+          const appointment = this.selectedEvent.attributes.originalEvent.event as AppointmentDoc;
+          const showConfirmButton = appointment.status == 'pending';
+          return showConfirmButton;
+        } else {
+          return false;
+        }
+      },
+    },
+    showCancelButton: {
+      get(): boolean | undefined {
+        if (this.selectedEvent.attributes && this.selectedEvent.attributes.originalEvent.event) {
+          const appointment = this.selectedEvent.attributes.originalEvent.event as AppointmentDoc;
+          const showCancelButton =
+            appointment.status != 'cancelled' && appointment.status != 'completed';
+          return showCancelButton;
+        } else {
+          return false;
+        }
+      },
+    },
+    // showCancelButton: {
+    //   get(): boolean {
+    //     const appointment = this.selectedEvent.attributes.originalEvent.event as AppointmentDoc;
+    //     const showCancelButton =
+    //       appointment.status != 'cancelled' && appointment.status != 'completed';
+    //     return showCancelButton;
+    //   },
+    // },
   },
   mounted() {
     return;
   },
-  methods: {},
+  methods: {
+    onButtonClick(eventName: string) {
+      this.$emit(eventName, this.selectedEvent);
+      this.showMenu = false;
+    },
+  },
 });
 </script>
 
