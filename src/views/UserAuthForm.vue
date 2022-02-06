@@ -254,6 +254,8 @@ export default Vue.extend({
         } else if (httpStatusCode == StatusCodes.UNAUTHORIZED) {
           apiErrorMsgLocale = 'error.userAuth.login.invalid';
         }
+        (this as any).$refs.topProgress.done();
+        this.isLoading = false;
         throw new Error(apiErrorMsgLocale);
       }
     },

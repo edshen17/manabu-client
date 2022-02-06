@@ -94,7 +94,10 @@ export default Vue.extend({
       get(): PackageTransactionDoc[] {
         const incompletePackageTransactions = this.packageTransactions.filter(
           (packageTransaction: PackageTransactionDoc) => {
-            return packageTransaction.remainingAppointments > 0;
+            return (
+              packageTransaction.remainingAppointments > 0 &&
+              this.userData._id == packageTransaction.reservedById
+            );
           }
         );
         const visiblePackageTransactions = incompletePackageTransactions.slice(0, 3);

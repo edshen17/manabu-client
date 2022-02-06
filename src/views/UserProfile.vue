@@ -1,12 +1,26 @@
 <template>
-  <two-card-layout>
+  <two-card-layout right-card-class="max-h-44">
     <template v-slot:left-cards>
       <div v-if="user">
         <profile-bio-card :user="user" :is-teacher="isTeacher" />
         <teacher-packages-card v-if="isTeacher" :teacher="user" class="mt-5 h-auto pb-2" />
       </div>
     </template>
-    <template v-slot:right-cards> sa </template>
+    <template v-slot:right-cards>
+      <div class="flex flex-col m-5 space-y-5 text-lg">
+        <div class="flex">
+          <p class="flex-1">Trial Lesson</p>
+          <p class="text-lg text-gray-500">5.00 USD</p>
+        </div>
+        <div class="flex">
+          <p class="flex-1">Lessons</p>
+          <p class="text-lg text-gray-500">30 SGD/hour</p>
+        </div>
+        <button class="rounded-lg text-white py-2 text-center bg-indigo-500 text-base">
+          Book Now
+        </button>
+      </div>
+    </template>
   </two-card-layout>
 </template>
 

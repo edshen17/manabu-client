@@ -482,7 +482,9 @@ export default Vue.extend({
       });
     },
     _undoSaveAvailableTime(originalEventBeforeSave: EventObject['attributes']['originalEvent']) {
-      this.selectedEvent.attributes.creationStatus = EVENT_CREATION_STATUS.PENDING;
+      if (!this.selectedEvent.attributes._id) {
+        this.selectedEvent.attributes.creationStatus = EVENT_CREATION_STATUS.PENDING;
+      }
       this.selectedEvent.attributes.originalEvent = originalEventBeforeSave;
     },
     async cancelAvailableTime(): Promise<void> {

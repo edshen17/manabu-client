@@ -25,7 +25,7 @@ class AppointmentModuleAction extends AbstractModuleAction<
 
   protected _getSelfParams = (): StringKeyObject => {
     const getSelfParams = {
-      query: { startDate: this._dayjs().hour(0).minute(0).second(0).millisecond(0).toString() },
+      query: { startDate: this._dayjs().minute(0).second(0).millisecond(0).toString() },
     };
     return getSelfParams;
   };

@@ -4,7 +4,7 @@
       <source :src="user.teacherData.introductionVideoUrl" type="video/mp4" />
     </video>
     <div class="flex m-4" :class="{ 'py-5': !isTeacher }">
-      <div>
+      <div class="pr-2">
         <img :src="user.profileImageUrl" class="rounded-full w-20" />
       </div>
       <div class="mx-4">
