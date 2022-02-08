@@ -100,10 +100,20 @@
             v-else
             class="rounded-lg text-white py-2 text-center"
             :class="{
-              'bg-gray-200 ': isAppointmentConfirmed || isAppointmentCancelled,
-              'bg-green-700': !isAppointmentConfirmed && !isAppointmentCancelled,
+              'bg-gray-200 ':
+                isAppointmentConfirmed ||
+                isAppointmentCancelled ||
+                appointmentData.hostedById != userData._id,
+              'bg-green-700':
+                !isAppointmentConfirmed &&
+                !isAppointmentCancelled &&
+                appointmentData.hostedById == userData._id,
             }"
-            :disabled="isAppointmentConfirmed || isAppointmentCancelled"
+            :disabled="
+              isAppointmentConfirmed ||
+              isAppointmentCancelled ||
+              appointmentData.hostedById != userData._id
+            "
             @click="confirmAppointment"
           >
             {{ $t('button.common.confirm') }}

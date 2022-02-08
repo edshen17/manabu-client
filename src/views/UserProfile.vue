@@ -1,35 +1,57 @@
 <template>
-  <two-card-layout right-card-class="max-h-44">
-    <template v-slot:left-cards>
-      <div v-if="user">
-        <profile-bio-card :user="user" :is-teacher="isTeacher" />
-        <teacher-packages-card
-          v-if="isTeacher"
-          ref="teacherPackagesCard"
-          :teacher="user"
-          class="mt-5 h-auto pb-2"
-        />
-      </div>
-    </template>
-    <template v-slot:right-cards>
-      <div class="flex flex-col m-5 space-y-5 text-lg">
-        <div class="flex">
-          <p class="flex-1">Trial Lesson</p>
-          <p class="text-lg text-gray-500">5.00 USD</p>
+  <div v-if="user">
+    <two-card-layout v-if="isTeacher" right-card-class="max-h-44">
+      <template v-slot:left-cards>
+        <div>
+          <profile-bio-card :user="user" :is-teacher="isTeacher" />
+          <teacher-packages-card
+            v-if="isTeacher"
+            ref="teacherPackagesCard"
+            :teacher="user"
+            class="mt-5 h-auto pb-2"
+          />
         </div>
-        <div class="flex">
-          <p class="flex-1">Lessons</p>
-          <p class="text-lg text-gray-500">30 SGD/hour</p>
+      </template>
+      <template v-slot:right-cards>
+        <div class="flex flex-col m-5 space-y-5 text-lg">
+          <div class="flex">
+            <p class="flex-1">Trial Lesson</p>
+            <p class="text-lg text-gray-500">5.00 USD</p>
+          </div>
+          <div class="flex">
+            <p class="flex-1">Lessons</p>
+            <p class="text-lg text-gray-500">30 SGD/hour</p>
+          </div>
+          <button
+            class="rounded-lg text-white py-2 text-center bg-indigo-500 text-base"
+            @click="showDialog"
+          >
+            Book Now
+          </button>
         </div>
-        <button
-          class="rounded-lg text-white py-2 text-center bg-indigo-500 text-base"
-          @click="showDialog"
-        >
-          Book Now
-        </button>
+      </template>
+    </two-card-layout>
+    <div v-else class="bg-gray-50 h-auto lg:min-h-screen">
+      <div
+        class="
+          flex flex-wrap
+          lg:flex-nowrap
+          w-full
+          lg:w-9/12
+          mx-auto
+          lg:py-7
+          justify-center
+          items-center
+          flex
+          mx-auto
+        "
+      >
+        <div class="w-full lg:w-8/12 lg:mx-2">
+          <profile-bio-card :user="user" :is-teacher="isTeacher" />
+        </div>
       </div>
-    </template>
-  </two-card-layout>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -73,7 +95,7 @@ export default Vue.extend({
   },
   methods: {
     showDialog(): void {
-      this.$refs.teacherPackagesCard.showDialog = true;
+      (this as any).$refs.teacherPackagesCard.showDialog = true;
     },
   },
 });

@@ -90,6 +90,7 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       locale: 'user/locale',
+      userData: 'user/entityStateData',
     }),
     menuWidth: {
       get(): string {
@@ -108,7 +109,8 @@ export default Vue.extend({
       get(): boolean | undefined {
         if (this.selectedEvent.attributes && this.selectedEvent.attributes.originalEvent.event) {
           const appointment = this.selectedEvent.attributes.originalEvent.event as AppointmentDoc;
-          const showConfirmButton = appointment.status == 'pending';
+          const showConfirmButton =
+            appointment.status == 'pending' && appointment.hostedById == this.userData._id;
           return showConfirmButton;
         } else {
           return false;
@@ -120,7 +122,9 @@ export default Vue.extend({
         if (this.selectedEvent.attributes && this.selectedEvent.attributes.originalEvent.event) {
           const appointment = this.selectedEvent.attributes.originalEvent.event as AppointmentDoc;
           const showCancelButton =
-            appointment.status != 'cancelled' && appointment.status != 'completed';
+            appointment.status != 'cancelled' &&
+            appointment.status != 'completed' &&
+            appointment.hostedById == this.userData._id;
           return showCancelButton;
         } else {
           return false;

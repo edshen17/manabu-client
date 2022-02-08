@@ -144,7 +144,7 @@ export default Vue.extend({
       const isTeacher = 'teacherData' in user;
       const userType = isTeacher
         ? this.$t(`userProfile.teacher.${user.teacherData!.type}`)
-        : this.$t('userProfile.student');
+        : this.$t('userProfile.role.user');
       return userType;
     },
   },

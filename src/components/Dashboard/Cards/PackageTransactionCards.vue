@@ -92,6 +92,7 @@ export default Vue.extend({
     }),
     visiblePackageTransactions: {
       get(): PackageTransactionDoc[] {
+        console.log(this.packageTransactions);
         const incompletePackageTransactions = this.packageTransactions.filter(
           (packageTransaction: PackageTransactionDoc) => {
             return (

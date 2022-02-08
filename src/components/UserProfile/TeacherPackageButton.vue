@@ -44,12 +44,12 @@ export default Vue.extend({
   asyncComputed: {
     packagePrice: {
       async get() {
-        const { formattedTotal } = await (this as any).getPackagePriceData({
+        const { formattedSubTotal } = await (this as any).getPackagePriceData({
           teacher: this.teacher,
           pkg: this.pkg,
           lessonDuration: 60,
         });
-        return formattedTotal;
+        return formattedSubTotal;
       },
     },
   },

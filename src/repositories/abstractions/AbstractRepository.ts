@@ -8,7 +8,7 @@ abstract class AbstractRepository implements IRepository {
   protected _resourcePath!: string | undefined;
 
   public get = async (props: {
-    isAbsolutePath: boolean;
+    isAbsolutePath?: boolean;
     path: string;
     query: StringKeyObject;
   }): Promise<StringKeyObject> => {

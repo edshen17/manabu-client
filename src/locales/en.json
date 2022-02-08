@@ -208,7 +208,7 @@
       "lessonTypes": {
         "mainichi": {
           "title": "Mainichi Plan",
-          "description": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 22 personalized lessons, which is about 6 lessons every week.",
+          "description": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 20 personalized lessons, which is about 5 lessons every week.",
           "amount": "Mainichi ({amount} lessons)"
         },
         "moderate": {
@@ -220,13 +220,18 @@
           "title": "Light Plan",
           "description": "This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons, which is about 1 lesson every week.",
           "amount": "Light ({amount} lessons)"
+        },
+        "internal": {
+          "title": "Meeting with Manabu Admin",
+          "description": "Meeting with admin.",
+          "amount": "Internal ({amount} lesson)"
         }
       },
       "lessonDuration": "@:onboarding.package.lessonDurations",
       "lessonPlans": "Lesson Plans",
       "lessonAmount": "{count} lesson left to reserve | {count} lessons left to reserve",
       "lessonDetails": "Lesson Details",
-      "hourlyRate": "Lessons starting from ~{rate} {currency}/hour"
+      "hourlyRate": "Hourly Rate"
     }
   },
   "dateFormat": {
@@ -250,7 +255,8 @@
       "upload": "Upload",
       "showMore": "Show more",
       "showLess": "Show less",
-      "payNow": "Pay Now"
+      "payNow": "Pay Now",
+      "approve": "Approve"
     },
     "appointment": {
       "reschedule": "Reschedule"

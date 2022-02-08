@@ -107,6 +107,7 @@
                       type="checkbox"
                       class="h-5 w-5 text-gray-600"
                       :checked="pkg.isOffering"
+                      :disabled="pkg.type == 'default' && pkg.name == 'trial'"
                       @change="updatePackageOffering($event, pkg._id)"
                     /><span class="ml-2 text-gray-700 text-md">{{
                       $t('onboarding.package.isOffering')

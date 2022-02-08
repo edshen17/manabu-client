@@ -7,7 +7,7 @@
       <div class="pr-2">
         <img :src="user.profileImageUrl" class="rounded-full w-20" />
       </div>
-      <div class="mx-4">
+      <div class="mx-4 flex-1">
         <p class="text-2xl">{{ user.name }}</p>
         <p class="text-sm md:text-base text-gray-400 uppercase tracking-wide my-1">
           {{ userRole }}
@@ -32,6 +32,15 @@
           </div>
         </div>
       </div>
+      <button
+        v-if="
+          isTeacher && isAdmin && user.teacherData.applicationStatus != 'approved' && !hasApproved
+        "
+        class="w-20 h-10 bg-green-500 rounded-md text-white"
+        @click="approveTeacher"
+      >
+        {{ $t('button.common.approve') }}
+      </button>
     </div>
     <div class="mx-auto border-0 border-t-2 border-solid">
       <read-more
@@ -55,8 +64,13 @@ import { TranslateResult } from 'vue-i18n';
 import DOMPurify from 'dompurify';
 import { StringKeyObject } from '../../../../server/types/custom';
 import LeftCardLayout from './Layouts/LeftCardLayout.vue';
-
+import { mapGetters } from 'vuex';
+import { makeTeacherRepository } from '@/repositories/teacher';
+import { makeUserRepository } from '@/repositories/user';
 dayjs.extend(relativeTime);
+
+const teacherRepository = makeTeacherRepository;
+const userRepository = makeUserRepository;
 
 export default Vue.extend({
   name: 'ProfileBioCard',
@@ -72,9 +86,14 @@ export default Vue.extend({
     },
   },
   data() {
-    return {};
+    return {
+      hasApproved: false,
+    };
   },
   computed: {
+    ...mapGetters({
+      isAdmin: 'user/isAdmin',
+    }),
     lastOnlineDate: {
       get(): string {
         const lastOnlineDate = dayjs().to(dayjs(this.user.lastOnlineDate));
@@ -124,9 +143,33 @@ export default Vue.extend({
       },
     },
   },
-  async mounted() {
-    return;
+  created() {
+    if (this.isTeacher) {
+      this.hasApproved = this.user.teacherData.applicationStatus == 'approved';
+    }
   },
-  methods: {},
+  methods: {
+    async approveTeacher(): Promise<void> {
+      try {
+        this.hasApproved = true;
+        await teacherRepository.updateById({
+          _id: this.user.teacherData._id,
+          updateParams: {
+            approvalDate: new Date(),
+            applicationStatus: 'approved',
+          },
+        });
+        await userRepository.updateById({
+          _id: this.user._id,
+          updateParams: {
+            role: 'teacher',
+          },
+        });
+      } catch (err) {
+        this.hasApproved = false;
+        throw err;
+      }
+    },
+  },
 });
 </script>

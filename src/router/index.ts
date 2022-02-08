@@ -11,6 +11,7 @@ const TeacherSignup = () => import('../views/TeacherSignup.vue');
 const UserProfile = () => import('../views/UserProfile.vue');
 const AppointmentCard = () => import('../views/AppointmentCard.vue');
 const ExtendedAppointmentCalendar = () => import('../views/ExtendedAppointmentCalendar.vue');
+const FindTeacher = () => import('../views/FindTeacher.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -88,6 +89,13 @@ const routes: Array<RouteConfig> = [
     props: true,
     beforeEnter: loginProtectedRouterGuard.consume(),
     meta: { ...layout, requiresAuth: true },
+  },
+  {
+    path: '/teachers',
+    name: 'FindTeacher',
+    component: FindTeacher,
+    beforeEnter: loginProtectedRouterGuard.consume(),
+    meta: { ...layout },
   },
 ];
 

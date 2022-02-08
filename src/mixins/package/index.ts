@@ -3,7 +3,7 @@ import { JoinedUserDoc } from '@server/models/User';
 import { StringKeyObject } from '@server/types/custom';
 import { TranslateResult } from 'vue-i18n';
 import { mapGetters } from 'vuex';
-import { PAYMENT_GATEWAY_FEE } from '../../../../server/constants';
+import { PACKAGE_DISCOUNT_RATE, PAYMENT_GATEWAY_FEE } from '../../../../server/constants';
 import { makeExchangeRateMixin } from '../exchangeRate';
 
 const makePackageMixin = {
@@ -54,7 +54,9 @@ const makePackageMixin = {
         targetCurrency: targetCurrency,
         isRounding: true,
       });
-      const subTotal = self.formatCurrency(convertedHourlyRate * lessonAmount);
+      const subTotal =
+        self.formatCurrency(convertedHourlyRate * lessonAmount) *
+        (1 - PACKAGE_DISCOUNT_RATE(lessonAmount));
       const processingFee = paymentGateway
         ? self.formatCurrency(PAYMENT_GATEWAY_FEE[paymentGateway.toUpperCase()](subTotal))
         : 0;
