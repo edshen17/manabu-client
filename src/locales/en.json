@@ -203,9 +203,15 @@
         "choose": "Choose your lesson plan",
         "options": "Lesson plan options",
         "times": "Choose your lesson times",
-        "price": "{lessonDuration} minutes x {lessonAmount} lessons"
+        "price": "{lessonDuration} minutes x {lessonAmount} lessons",
+        "discount": "{formattedDiscount} off"
       },
       "lessonTypes": {
+        "trial": {
+          "title": "Trial Lesson",
+          "description": "",
+          "amount": "Trial ({amount} lesson)"
+        },
         "mainichi": {
           "title": "Mainichi Plan",
           "description": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 20 personalized lessons, which is about 5 lessons every week.",
@@ -256,6 +262,7 @@
       "showMore": "Show more",
       "showLess": "Show less",
       "payNow": "Pay Now",
+      "bookNow": "Book Now",
       "approve": "Approve"
     },
     "appointment": {
@@ -273,7 +280,8 @@
       "pendingTeachers": "Pending Teachers"
     },
     "myTeachers": "My teachers",
-    "myStudents": "My students"
+    "myStudents": "My students",
+    "findTeacher": "Need help finding the right teacher? Contact us at {0} and we'll find one for you! You can also click the button below to look through our teacher list. Happy learning!"
   },
   "appointment": {
     "status": {

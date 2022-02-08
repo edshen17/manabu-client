@@ -77,6 +77,14 @@ const makePackageMixin = {
       };
       return packagePriceData;
     },
+    getPackageDiscount(lessonAmount: number): {
+      packageDiscount: number;
+      formattedDiscount: string;
+    } {
+      const packageDiscount = PACKAGE_DISCOUNT_RATE(lessonAmount);
+      const formattedDiscount = `${packageDiscount * 100}%`;
+      return { packageDiscount, formattedDiscount };
+    },
   },
 };
 

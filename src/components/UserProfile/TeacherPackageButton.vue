@@ -1,9 +1,21 @@
 <template>
   <dialog-button @click="$emit('click', pkg)">
     <template v-slot:title>
-      <p class="text-lg capitalize" :style="{ color: getRandomColor(pkg.name) }">
-        {{ getPackageName(pkg) }}
-      </p>
+      <div class="flex">
+        <p class="text-lg capitalize flex-1" :style="{ color: getRandomColor(pkg.name) }">
+          {{ getPackageName(pkg) }}
+        </p>
+        <p
+          v-if="getPackageDiscount(pkg.lessonAmount).packageDiscount > 0"
+          class="bg-red-400 text-white rounded-md py-2 px-3 text-sm"
+        >
+          {{
+            $t('userProfile.teacher.lessonSelection.discount', {
+              formattedDiscount: getPackageDiscount(pkg.lessonAmount).formattedDiscount,
+            })
+          }}
+        </p>
+      </div>
     </template>
     <template v-slot:body>
       <p class="mt-2 text-gray-600">{{ getPackageDescription(pkg) }}</p>

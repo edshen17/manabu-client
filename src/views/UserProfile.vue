@@ -15,18 +15,18 @@
       <template v-slot:right-cards>
         <div class="flex flex-col m-5 space-y-5 text-lg">
           <div class="flex">
-            <p class="flex-1">Trial Lesson</p>
-            <p class="text-lg text-gray-500">5.00 USD</p>
+            <p class="flex-1">{{ $t('userProfile.teacher.lessonTypes.trial.title') }}</p>
+            <p class="text-lg text-gray-500">{{ hourlyRate / 2 }} {{ currency }}</p>
           </div>
           <div class="flex">
-            <p class="flex-1">Lessons</p>
-            <p class="text-lg text-gray-500">30 SGD/hour</p>
+            <p class="flex-1">{{ $t('userProfile.teacher.hourlyRate') }}</p>
+            <p class="text-lg text-gray-500">{{ hourlyRate }} {{ currency }}</p>
           </div>
           <button
             class="rounded-lg text-white py-2 text-center bg-indigo-500 text-base"
             @click="showDialog"
           >
-            Book Now
+            {{ $t('button.common.bookNow') }}
           </button>
         </div>
       </template>
@@ -61,13 +61,19 @@ import TeacherPackagesCard from '../components/UserProfile/TeacherPackagesCard.v
 import ProfileBioCard from '../components/UserProfile/ProfileBioCard.vue';
 import { makeUserRepository } from '../repositories/user';
 import TwoCardLayout from '@/components/UserProfile/Layouts/TwoCardLayout.vue';
+import { makeExchangeRateMixin } from '@/mixins/exchangeRate';
+import { mapGetters } from 'vuex';
 const userRepository = makeUserRepository;
 
 export default Vue.extend({
   name: 'UserProfile',
   components: { ProfileBioCard, TeacherPackagesCard, TwoCardLayout },
+  mixins: [makeExchangeRateMixin],
   props: {},
   computed: {
+    ...mapGetters({
+      currency: 'user/currency',
+    }),
     isTeacher: {
       get(): boolean {
         const self = this as any;
@@ -89,6 +95,22 @@ export default Vue.extend({
           const { data } = await userRepository.getById({ _id: this.userId, query: {} });
           const { user } = data;
           return user;
+        }
+      },
+    },
+    hourlyRate: {
+      async get(): Promise<number | undefined> {
+        if (this.isTeacher) {
+          const self = this as any;
+          const priceData = self.user.teacherData.priceData;
+          const { hourlyRate, currency } = priceData;
+          const convertedHourlyRate = await self.convert({
+            amount: hourlyRate,
+            sourceCurrency: currency,
+            targetCurrency: this.currency,
+            isRounding: true,
+          });
+          return convertedHourlyRate;
         }
       },
     },

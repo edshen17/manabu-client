@@ -68,6 +68,20 @@
         </div>
       </div>
     </router-link>
+    <div class="bg-white p-4 border-solid shadow-md rounded-md mb-4 h-auto w-full">
+      <div>
+        <i18n path="dashboard.findTeacher" tag="label">
+          <a href="mailto:support@manabu.sg" class="text-blue-500">support@manabu.sg</a>
+        </i18n>
+        <router-link
+          to="/teachers"
+          tag="button"
+          class="bg-green-500 text-white rounded-lg p-2 my-2 block"
+        >
+          Find a teacher
+        </router-link>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -88,11 +102,12 @@ export default Vue.extend({
   computed: {
     ...mapGetters({
       userData: 'user/entityStateData',
+      isTeacher: 'user/isTeacher',
+      isAdmin: 'user/isAdmin',
       packageTransactions: 'packageTransaction/entityStateData',
     }),
     visiblePackageTransactions: {
       get(): PackageTransactionDoc[] {
-        console.log(this.packageTransactions);
         const incompletePackageTransactions = this.packageTransactions.filter(
           (packageTransaction: PackageTransactionDoc) => {
             return (

@@ -1,5 +1,5 @@
 <template>
-  <component :is="this.$route.meta.layout || 'div'" class="font-noto-sans">
+  <component :is="this.$route.meta.layout || 'div'" class="font-noto-sans" translate="no">
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
