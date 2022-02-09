@@ -68,7 +68,10 @@
         </div>
       </div>
     </router-link>
-    <div class="bg-white p-4 border-solid shadow-md rounded-md mb-4 h-auto w-full">
+    <div
+      v-if="!isAdmin && !isTeacher && visiblePackageTransactions.length == 0"
+      class="bg-white p-4 border-solid shadow-md rounded-md mb-4 h-auto w-full"
+    >
       <div>
         <i18n path="dashboard.findTeacher" tag="label">
           <a href="mailto:support@manabu.sg" class="text-blue-500">support@manabu.sg</a>
