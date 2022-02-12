@@ -65,7 +65,7 @@
         "emailExists": "An account with that email already exists."
       }
     },
-    "currencyInput": "You must input a valid currency amount.",
+    "currencyInput": "You must input an integer that is greater than or equal to 5.",
     "calendar": {
       "pastAppointment": "You cannot reserve an appointment in the past.",
       "unevenAvailableTime": "Your appointments must be in 30 minute to 1 hour intervals.",

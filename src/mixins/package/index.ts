@@ -52,7 +52,7 @@ const makePackageMixin = {
         amount: hourlyRate * (lessonDuration / 60),
         sourceCurrency: currency,
         targetCurrency: targetCurrency,
-        isRounding: true,
+        isRounding: false,
       });
       const subTotal =
         self.formatCurrency(convertedHourlyRate * lessonAmount) *

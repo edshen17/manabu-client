@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  publicPath: '',
+  publicPath: '/',
   outputDir: path.resolve(__dirname, '../server/dist/server/public'),
   devServer: {
     open: process.platform === 'darwin',

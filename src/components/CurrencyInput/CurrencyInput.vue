@@ -6,7 +6,7 @@
       :disabled="isDisabled"
       type="text"
       class="form-border"
-      min="0"
+      min="5"
       @change="validateInput"
     />
     <p v-show="$v.value.$error" class="vuelidate-error mt-3">
@@ -63,7 +63,7 @@ export default Vue.extend({
   validations: {
     value: {
       required,
-      minValue: minValue(0),
+      minValue: minValue(5),
       integer,
     },
   },

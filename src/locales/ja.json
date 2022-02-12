@@ -54,7 +54,7 @@
         "emailExists": "このメールアドレスを持つアカウントがすでに存在しています。"
       }
     },
-    "currencyInput": "通貨量を入力してください。",
+    "currencyInput": "You must input an integer that is greater than or equal to 5.",
     "calendar": {
       "pastAppointment": "過去時間の予約をすることはできません。",
       "unevenAvailableTime": "30分から1時間の間隔でアポイントメントが取れます。",

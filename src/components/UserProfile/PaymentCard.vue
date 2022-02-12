@@ -141,10 +141,10 @@ export default Vue.extend({
             name: 'paypal',
             iconClass: 'fab fa-paypal',
           },
-          {
-            name: 'stripe',
-            iconClass: 'fas fa-credit-card',
-          },
+          // {
+          //   name: 'stripe',
+          //   iconClass: 'fas fa-credit-card',
+          // },
         ];
         return paymentGateways;
       },

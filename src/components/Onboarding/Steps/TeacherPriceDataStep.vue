@@ -8,7 +8,7 @@
               <currency-input
                 :key="isProTeacher"
                 v-model="teacherHourlyRate"
-                :options="{ currency, valueRange: { min: 0 } }"
+                :options="{ currency, valueRange: { min: 5 } }"
                 :is-disabled="!isProTeacher"
               />
             </div>
