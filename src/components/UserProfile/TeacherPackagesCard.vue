@@ -136,9 +136,14 @@ export default Vue.extend({
     },
     visiblePackages: {
       get(): PackageDoc[] {
-        const visiblePackages = this.teacher.teacherData.packages.filter((pkg: PackageDoc) => {
-          return pkg.isOffering;
-        });
+        const visiblePackages = this.teacher.teacherData.packages
+          .filter((pkg: PackageDoc) => {
+            return pkg.isOffering;
+          })
+          .sort(
+            (a: PackageDoc, b: PackageDoc) =>
+              b.type.localeCompare(a.type) || a.lessonAmount - b.lessonAmount
+          );
         return visiblePackages;
       },
     },

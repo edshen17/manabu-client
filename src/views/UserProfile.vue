@@ -77,7 +77,7 @@ export default Vue.extend({
     isTeacher: {
       get(): boolean {
         const self = this as any;
-        const isTeacher = self.user && 'teacherData' in self.user;
+        const isTeacher = self.user && 'teacherData' in self.user && self.user.role != 'admin';
         return isTeacher;
       },
     },

@@ -42,6 +42,16 @@
     "loginHere": "ここにログイン",
     "googleLogin": "Googleで続ける"
   },
+  "nav": {
+    "findTeacher": "先生を見つける",
+    "becomeTeacher": "先生になる",
+    "login": "@:userAuth.login",
+    "signup": "@:userAuth.signup",
+    "logout": "ログアウト",
+    "settings": "設定",
+    "guidelines": "Manabu ガイドライン",
+    "profile": "プロフィール"
+  },
   "error": {
     "userAuth": {
       "name": "名前を入力してください。",
@@ -54,7 +64,7 @@
         "emailExists": "このメールアドレスを持つアカウントがすでに存在しています。"
       }
     },
-    "currencyInput": "You must input an integer that is greater than or equal to 5.",
+    "currencyInput": "5以上の整数を入力してください。",
     "calendar": {
       "pastAppointment": "過去時間の予約をすることはできません。",
       "unevenAvailableTime": "30分から1時間の間隔でアポイントメントが取れます。",
@@ -70,23 +80,13 @@
       "package": {
         "name": "パッケージの名前を入力してください。",
         "lessonAmount": "レッスン回数を入力してください。",
-        "lessonDurations": "最低でも1つの継続時間が必要です。",
-        "isOffering": "最低でも1つのパッケージを提供しなければなりません。"
+        "lessonDurations": "最低でも1つのレッスン時間を記入してください。",
+        "isOffering": "最低でも1つのパッケージを提供してください。"
       },
-      "name": "名前を入力してください。",
-      "paymentData": "ペイパルのメールアドレスを入力してください。"
+      "name": "@error.userAuth.name",
+      "paymentData": "PayPalのメールアドレスを入力してください。"
     },
     "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
-  },
-  "nav": {
-    "findTeacher": "先生を見つける",
-    "becomeTeacher": "先生になる",
-    "login": "@:userAuth.login",
-    "signup": "@:userAuth.signup",
-    "logout": "ログアウト",
-    "settings": "設定",
-    "guidelines": "Manabu ガイドライン",
-    "profile": "プロフィール"
   },
   "footer": {
     "questions": {
@@ -103,13 +103,13 @@
     "line": "ライン",
     "discord": "ディスコード",
     "zoom": "ズーム",
-    "alternative": "Alternative"
+    "alternative": "その他の連絡手段"
   },
   "onboarding": {
     "learningTargetLanguage": "習いたい言語は？",
     "teachingTargetLanguage": "教えたい言語は？",
-    "languageLevel": "{language}能力は？",
     "speakingNonTargetLanguage": "話せる言語は？",
+    "languageLevel": "{language}能力は？",
     "languageLevels": {
       "beginner": "ゼロ初級（A1）",
       "elementary": "初級（A2）",
@@ -124,23 +124,23 @@
     "userProfile": {
       "image": "プロフィール画像をアップロードしてください。",
       "bio": "自己紹介を書いてください。",
-      "teacherType": "申し込んでいるのは？",
+      "teacherType": "どちらに申し込みたいですか？",
       "teacherTypes": {
         "licensed": "@:userProfile.teacher.licensed",
         "unlicensed": "@:userProfile.teacher.unlicensed"
       }
     },
-    "teacherLicenseUpload": "教員免許をアップロードしてください。",
-    "teacherLicenseUploadTooltip": "教員免許を持っている教師のみアップロードしなければなりません。",
+    "teacherLicenseUpload": "日本語教師の資格や、それに相当する証明書をアップロードしてください。",
+    "teacherLicenseUploadTooltip": "プロティーチャーのみ資格等証明書のアップロードが必須です。",
     "teacherIntroductionVideoUpload": "自己紹介の動画をアップロードしてください。",
-    "teacherPriceData": "時給を設定ください。",
-    "teacherPriceDataTooltip": "教員免許を持っている教師のみ時給を設定できます。",
+    "teacherPriceData": "時給を設定してください。",
+    "teacherPriceDataTooltip": "プロティーチャーのみ時給を設定できます。",
     "package": {
       "title": "レッスンの設定を確認してください。",
       "lessonAmount": "レッスン回数",
       "lessonDuration": "継続時間",
       "lessonDurations": "{lessonDuration}分",
-      "isOffering": "提供"
+      "isOffering": "提供の有無"
     },
     "region": "お住まいは？",
     "timezone": "タイムゾーンは？",
@@ -151,8 +151,8 @@
       "placeholder": "名前"
     },
     "paymentData": {
-      "title": "ペイパルのメールアドレスは？",
-      "placeholder": "ペイパルのメールアドレス"
+      "title": "PayPalのメールアドレスは？",
+      "placeholder": "PayPalのメールアドレス"
     }
   },
   "calendar": {
@@ -166,22 +166,22 @@
   "payment": {
     "gateway": {
       "paypal": "PayPal",
-      "stripe": "Debit / Credit Card",
+      "stripe": "デビット/クレジットカード",
       "paynow": "PayNow"
     },
-    "method": "Payment Method",
-    "subtotal": "Subtotal",
-    "processingFee": "Processing Fee",
-    "total": "Total"
+    "method": "お支払い方法",
+    "subtotal": "小計",
+    "processingFee": "手数料",
+    "total": "合計"
   },
   "userProfile": {
     "common": {
-      "block": "Block",
-      "report": "Report",
-      "lastOnline": "Last online {date}",
-      "alsoSpeaks": "Also speaks",
-      "viewCalendar": "VIEW CALENDAR",
-      "hideCalendar": "HIDE CALENDAR",
+      "block": "ブロックする",
+      "report": "報告する",
+      "lastOnline": "最終ログイン{date}",
+      "alsoSpeaks": "話せる言語",
+      "viewCalendar": "カレンダーを表示する",
+      "hideCalendar": "カレンダーを隠す",
       "profilePicture": "プロフィール画像"
     },
     "role": {
@@ -189,54 +189,56 @@
       "admin": "アドミン",
       "teacher": "教師"
     },
-    "learning": "Learning",
+    "learning": "学習中の言語",
     "teacher": {
-      "teaches": "Teaches",
-      "licensed": "資格保有教師",
+      "teaches": "教えている言語",
+      "licensed": "プロティーチャー",
       "unlicensed": "コミュニティティーチャー",
-      "manabuVerified": "Manabu Verified Teacher since {date}",
-      "appPending": "Teacher application pending",
-      "approveApp": "Approve application",
-      "viewLicense": "View professional license",
+      "manabuVerified": "{date}にManabu公式教師登録",
+      "appPending": "教師の申請は承認待ちです",
+      "viewLicense": "資格や証明書を表示する",
       "lessonSelection": {
-        "choose": "Choose your lesson plan",
-        "options": "Lesson plan options",
-        "times": "Choose your lesson times",
-        "price": "{lessonDuration} mins x {lessonAmount} lessons",
-        "discount": "{formattedDiscount} off"
+        "choose": "レッスンプランを選んでください。",
+        "options": "レッスン時間を選んでください。",
+        "times": "レッスンの時間を選んでください。",
+        "price": "{lessonDuration}分 x {lessonAmount}レッスン",
+        "discount": "{formattedDiscount}引き"
       },
       "lessonTypes": {
         "trial": {
-          "title": "Trial Lesson",
+          "title": "トライアルレッスン",
           "description": "",
-          "amount": "Trial ({amount} lesson)"
+          "amount": "トライアル ({amount}レッスン)"
         },
         "mainichi": {
-          "title": "Mainichi Plan",
-          "description": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 20 personalized lessons, which is about 5 lessons every week.",
-          "amount": "Mainichi ({amount} lessons)"
+          "title": "毎日プラン",
+          "description": "早く効果的に日本語を上達させたい生徒さん向けの日本語漬けコースです。このプランでは、20回分レッスンを受けることができます。1週間に約5回のレッスンが目安です。",
+          "amount": "毎日 ({amount}レッスン)"
         },
         "moderate": {
-          "title": "Moderate Plan",
-          "description": "This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons, which is about 3 lessons every week.",
-          "amount": "Moderate ({amount} lessons)"
+          "title": "モデレートプラン",
+          "description": "日本語をバランスの取れた計画で上達させたい生徒さん向けです。このプランでは、12回分レッスンを受けることができます。1週間に約3回のレッスンが目安です。",
+          "amount": "モデレート ({amount}レッスン)"
         },
         "light": {
-          "title": "Light Plan",
-          "description": "This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons, which is about 1 lesson every week.",
-          "amount": "Light ({amount} lessons)"
+          "title": "ライトプラン",
+          "description": "日本語を気楽に学びたい生徒さん向けです。このプランでは、5回分レッスンを受けることができます。1週間に約1回のレッスンが目安です。",
+          "amount": "ライト ({amount}レッスン)"
         },
         "internal": {
-          "title": "Meeting with Manabu Admin",
-          "description": "Meeting with admin.",
-          "amount": "Internal ({amount} lesson)"
+          "title": "Manabuの運営陣との面談",
+          "description": "運営との面談",
+          "amount": "Internal ({amount}レッスン)"
+        },
+        "custom": {
+          "description": "このプランでは、{lessonAmount}回分レッスンを受けることができます。1週間に約{weeklyLessonAmount}回のレッスンが目安です。"
         }
       },
       "lessonDuration": "@:onboarding.package.lessonDurations",
-      "lessonPlans": "Lesson Plans",
-      "lessonAmount": "{count} lesson left to reserve | {count} lessons left to reserve",
-      "lessonDetails": "Lesson Details",
-      "hourlyRate": "Hourly Rate"
+      "lessonPlans": "パッケージ",
+      "lessonAmount": "{count}レッスン利用可能",
+      "lessonDetails": "レッスン詳細",
+      "hourlyRate": "時給"
     }
   },
   "dateFormat": {
@@ -255,17 +257,17 @@
   "button": {
     "common": {
       "save": "保存",
-      "confirm": "承認",
       "cancel": "キャンセル",
+      "confirm": "承認",
       "upload": "アップロード",
       "showMore": "もっと見る",
       "showLess": "少なめに表示",
-      "payNow": "Pay Now",
-      "bookNow": "Book Now",
-      "approve": "Approve"
+      "payNow": "購入に進む",
+      "bookNow": "予約に進む",
+      "approve": "承認する"
     },
     "appointment": {
-      "reschedule": "Reschedule"
+      "reschedule": "リスケジュールする"
     },
     "onboarding": {
       "next": "次へ"
@@ -280,23 +282,23 @@
     },
     "myTeachers": "私の教師",
     "myStudents": "私の生徒",
-    "findTeacher": "Need help finding the right teacher? Contact us at {0} and we'll find one for you! You can also click the button below to look through our teacher list. Happy learning!"
+    "findTeacher": "希望に合った先生を見つけるお手伝いも可能です {0}までお問い合わせください。下のボタンをクリックして、教師リストを確認することもできます。学習の旅を楽しんでください。"
   },
   "appointment": {
     "status": {
-      "title": "Status",
-      "pending": "Pending",
-      "confirmed": "Confirmed",
-      "cancelled": "Cancelled",
-      "completed": "Completed"
+      "title": "ステータス",
+      "pending": "承認待ち",
+      "confirmed": "承認済み",
+      "cancelled": "キャンセルされた",
+      "completed": "レッスン終了済"
     },
     "language": "言語",
     "lessonDuration": "@:onboarding.package.lessonDurations",
-    "id": "Appointment Id",
+    "id": "予約番号",
     "commTool": "コミュニケーションツール",
     "cancelReason": "アポイントメント拒否の理由",
-    "teacherAccount": "Teacher Account",
-    "studentAccount": "Student Account",
-    "remainingAppointments": "{remainingAppointments} / {totalAppointments} lessons remaining"
+    "teacherAccount": "先生アカウント",
+    "studentAccount": "生徒アカウント",
+    "remainingAppointments": "{remainingAppointments} / {totalAppointments} 利用可能"
   }
 }

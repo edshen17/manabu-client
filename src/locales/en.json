@@ -84,7 +84,7 @@
         "lessonDurations": "Each package needs at least 1 duration.",
         "isOffering": "You must offer at least 1 package."
       },
-      "name": "You must input a name.",
+      "name": "@error.userAuth.name",
       "paymentData": "You must input a PayPal email."
     },
     "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
@@ -197,7 +197,6 @@
       "unlicensed": "Community Teacher",
       "manabuVerified": "Manabu Verified Teacher since {date}",
       "appPending": "Teacher application pending",
-      "approveApp": "Approve application",
       "viewLicense": "View professional license",
       "lessonSelection": {
         "choose": "Choose your lesson plan",
@@ -228,9 +227,12 @@
           "amount": "Light ({amount} lessons)"
         },
         "internal": {
-          "title": "Meeting with Manabu Admin",
-          "description": "Meeting with admin.",
+          "title": "Interview with Manabu Admin",
+          "description": "Interview with admin.",
           "amount": "Internal ({amount} lesson)"
+        },
+        "custom": {
+          "description": "With this plan, you will receive {lessonAmount} personalized lessons, which is about {weeklyLessonAmount} lessons every week."
         }
       },
       "lessonDuration": "@:onboarding.package.lessonDurations",

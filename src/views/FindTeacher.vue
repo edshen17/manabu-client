@@ -7,7 +7,7 @@
             :src="teacher.profileImageUrl"
             class="rounded-full w-16 h-16 md:w-24 md:h-24 mx-4 md:mx-8"
           />
-          <div>
+          <div class="w-56">
             <p class="text-xl">{{ teacher.name }}</p>
             <p class="text-sm md:text-base text-gray-400 uppercase tracking-wide my-1">
               {{ $t(`userProfile.teacher.${teacher.teacherData.type}`) }}
@@ -20,7 +20,7 @@
               <language-bars
                 :language-level="teacher.languages[1].level"
                 :language-code="teacher.languages[1].code"
-                class="-ml-6"
+                class="-ml-14"
               />
             </div>
             <div class="my-2">

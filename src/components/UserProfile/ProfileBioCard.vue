@@ -1,6 +1,6 @@
 <template>
   <left-card-layout v-if="user._id">
-    <video v-if="isTeacher" controls>
+    <video v-if="isTeacher" controls class="w-full h-auto">
       <source :src="user.teacherData.introductionVideoUrl" type="video/mp4" />
     </video>
     <div class="flex m-4" :class="{ 'py-5': !isTeacher }">
@@ -17,14 +17,14 @@
         </p>
         <div class="mt-1 text-sm md:text-base">
           <div class="flex">
-            <p class="mt-1 mr-3 w-20 md:w-24">{{ targetLanguagePrependText }}</p>
+            <p class="mt-1 mr-3 w-28">{{ targetLanguagePrependText }}</p>
             <language-bars
               :language-level="targetLanguage.level"
               :language-code="targetLanguage.code"
             />
           </div>
           <div class="flex">
-            <p class="mt-1 mr-3 w-20 md:w-24">{{ $t('userProfile.common.alsoSpeaks') }}</p>
+            <p class="mt-1 mr-3 w-28">{{ $t('userProfile.common.alsoSpeaks') }}</p>
             <language-bars
               :language-level="nonTargetLanguage.level"
               :language-code="nonTargetLanguage.code"

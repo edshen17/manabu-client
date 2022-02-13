@@ -25,15 +25,15 @@ const makePackageMixin = {
       return packageTitle;
     },
     getPackageDescription(pkg: PackageDoc): TranslateResult | string {
+      const self = this as any;
       const packageDescription =
         pkg.type == 'default'
-          ? (this as any).$t(`userProfile.teacher.lessonTypes.${pkg.name}.description`)
+          ? self.$t(`userProfile.teacher.lessonTypes.${pkg.name}.description`)
           : pkg.description! ||
-            `With this plan, you will receive ${
-              pkg.lessonAmount
-            } personalized lessons, which is about ${Math.ceil(
-              pkg.lessonAmount / 4
-            )} lessons every week.`;
+            self.$t('userProfile.teacher.lessonTypes.custom.description', {
+              lessonAmount: pkg.lessonAmount,
+              weeklyLessonAmount: Math.ceil(pkg.lessonAmount / 4),
+            });
       return packageDescription;
     },
     async getPackagePriceData(props: {
