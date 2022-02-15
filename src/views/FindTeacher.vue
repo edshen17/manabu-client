@@ -26,7 +26,8 @@
             <div class="my-2">
               <p class="text-lg">
                 {{ $t('userProfile.teacher.hourlyRate') }}:
-                {{ teacher.teacherData.priceData.hourlyRate }} {{ currency }}
+                {{ teacher.teacherData.priceData.hourlyRate }}
+                {{ teacher.teacherData.priceData.currency }}
               </p>
             </div>
           </div>
@@ -72,6 +73,11 @@ export default Vue.extend({
       currency: 'user/currency',
     }),
   },
+  watch: {
+    currency: async function () {
+      await this.updateTeacherPrices();
+    },
+  },
   async created() {
     const { data } = await teacherRepository.get({
       path: '/',
@@ -81,11 +87,14 @@ export default Vue.extend({
     this.teachers = teachers;
   },
   async mounted() {
-    for (const teacher of this.teachers) {
-      teacher.teacherData!.priceData = await this.getConvertedPriceData(teacher);
-    }
+    await this.updateTeacherPrices();
   },
   methods: {
+    async updateTeacherPrices() {
+      for (const teacher of this.teachers) {
+        teacher.teacherData!.priceData = await this.getConvertedPriceData(teacher);
+      }
+    },
     async getConvertedPriceData(
       teacher: JoinedUserDoc
     ): Promise<{ hourlyRate: number; currency: string }> {
