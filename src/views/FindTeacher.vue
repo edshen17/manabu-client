@@ -85,8 +85,6 @@ export default Vue.extend({
     });
     const { teachers } = data;
     this.teachers = teachers;
-  },
-  async mounted() {
     await this.updateTeacherPrices();
   },
   methods: {
@@ -124,6 +122,7 @@ export default Vue.extend({
       if (teachers.length) {
         this.query.page++;
         this.teachers = this.teachers.concat(teachers);
+        await this.updateTeacherPrices();
         $state.loaded();
       } else {
         $state.complete();
