@@ -45,10 +45,17 @@
               @input="debounceInput"
             />
           </div>
-          <div v-show="tokenizedSentence.length > 0" class="flex w-full flex-wrap pb-4">
+          <div
+            v-show="tokenizedSentence.length > 0"
+            class="flex w-full flex-wrap pb-4 align-middle"
+          >
             <p v-for="(word, i) in tokenizedSentence" :key="i" class="px-2 text-xl">
               {{ word }}
             </p>
+            <div class="flex-1 flex-grow"></div>
+            <button @click="tokenizedSentence = []">
+              <i class="fas fa-times fa-lg my-4 float-right"></i>
+            </button>
           </div>
           <transition>
             <div v-show="words.length == 0 && !searchWord">
@@ -76,6 +83,9 @@
               :class="{ 'py-4': i > 0, 'pb-4': i == 0 }"
             >
               <p class="text-3xl font-extralight">{{ word.word }}</p>
+              <button v-if="word.audioLinks.length > 0" @click="playAudio(word.audioLinks[0])">
+                <i class="fas fa-play py-4"></i>
+              </button>
               <div class="text-2xl" v-html="sanitizeHtml(word.definition)"></div>
             </div>
           </transition-group>
@@ -119,7 +129,7 @@ export default Vue.extend({
         wordLanguage: 'ja',
         definitionLanguage: 'ja',
         page: 0,
-        limit: 50,
+        limit: 100,
       },
       isFocused: true,
       isAutoSearch: true,
@@ -155,7 +165,12 @@ export default Vue.extend({
     },
   },
   created() {
-    window.addEventListener('keyup', (e) => {
+    window.addEventListener('keyup', (e: any) => {
+      const path = e.path || (e.composedPath && e.composedPath());
+      const element = path[0].tagName;
+      if (element == 'INPUT') {
+        return;
+      }
       if (e.key == 'f') {
         this.isFocused = true;
       }
@@ -220,7 +235,11 @@ export default Vue.extend({
     },
     sortWords(words: StringKeyObject[]): StringKeyObject[] {
       const sortedWordArr = words.sort((a, b) => {
-        return b.pitch.length - a.pitch.length || b.definition.length - a.definition.length;
+        return (
+          b.pitch.length - a.pitch.length ||
+          a.kana.length - b.kana.length ||
+          b.definition.length - a.definition.length
+        );
       });
       return sortedWordArr;
     },
@@ -261,6 +280,12 @@ export default Vue.extend({
         this.searchWord = text;
       }
       this.debounceInput();
+    },
+    playAudio(url: string): void {
+      if (url) {
+        const audio = new Audio(url);
+        audio.play();
+      }
     },
   },
 });
