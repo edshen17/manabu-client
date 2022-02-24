@@ -12,6 +12,7 @@ const UserProfile = () => import('../views/UserProfile.vue');
 const AppointmentCard = () => import('../views/AppointmentCard.vue');
 const ExtendedAppointmentCalendar = () => import('../views/ExtendedAppointmentCalendar.vue');
 const FindTeacher = () => import('../views/FindTeacher.vue');
+const Tsuginoji = () => import('../views/Tsuginoji.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -96,6 +97,11 @@ const routes: Array<RouteConfig> = [
     component: FindTeacher,
     beforeEnter: loginProtectedRouterGuard.consume(),
     meta: { ...layout },
+  },
+  {
+    path: '/tsuginoji/:word?',
+    name: 'Tsuginoji',
+    component: Tsuginoji,
   },
 ];
 
