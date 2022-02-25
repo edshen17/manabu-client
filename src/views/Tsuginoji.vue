@@ -87,6 +87,10 @@
                 <i class="fas fa-play py-4"></i>
               </button>
               <div class="text-2xl" v-html="sanitizeHtml(word.definition)"></div>
+              <line-chart
+                :chart-data="test"
+                :options="{ responsive: true, maintainAspectRatio: false }"
+              ></line-chart>
             </div>
           </transition-group>
         </div>
@@ -111,13 +115,14 @@ import DOMPurify from 'dompurify';
 import { ls } from '@/store/plugins';
 import { focus } from 'vue-focus';
 import TokenizerJa from 'natural/lib/natural/tokenizers/tokenizer_ja';
+import LineChart from '@/components/Chart/LineChart.vue';
 const tokenizerJa = new TokenizerJa();
 
 const wordRepository = makeWordRepository;
 
 export default Vue.extend({
   name: 'Tsuginoji',
-  components: { InfiniteLoading },
+  components: { InfiniteLoading, LineChart },
   directives: { focus },
   props: {},
   data() {
@@ -133,6 +138,7 @@ export default Vue.extend({
       },
       isFocused: true,
       isAutoSearch: true,
+      test: {} as any,
     };
   },
   computed: {
@@ -187,6 +193,16 @@ export default Vue.extend({
       const { isAutoSearch } = tsuginojiSettings;
       this.isAutoSearch = isAutoSearch;
     }
+    this.test = {
+      labels: ['January', 'February'],
+      datasets: [
+        {
+          label: 'Data One',
+          backgroundColor: '#f87979',
+          data: [40, 20],
+        },
+      ],
+    };
   },
   methods: {
     debounceInput(): void {
@@ -287,6 +303,9 @@ export default Vue.extend({
         audio.play();
       }
     },
+    getRandomInt() {
+      return Math.floor(Math.random() * (50 - 5 + 1)) + 5;
+    },
   },
 });
 </script>
@@ -300,5 +319,9 @@ export default Vue.extend({
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
+}
+.small {
+  max-width: 600px;
+  margin: 150px auto;
 }
 </style>
