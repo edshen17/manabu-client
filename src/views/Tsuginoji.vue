@@ -87,10 +87,13 @@
                 <i class="fas fa-play py-4"></i>
               </button>
               <div class="text-2xl" v-html="sanitizeHtml(word.definition)"></div>
-              <line-chart
-                :chart-data="test"
-                :options="{ responsive: true, maintainAspectRatio: false }"
-              ></line-chart>
+              <div v-for="pitch in word.pitch" :key="word._id + pitch" class="pt-6">
+                <line-chart
+                  :chart-data="createPitchChartData({ kana: word.kana, pitch })"
+                  :options="chartOptions"
+                  :style="styleChart(word.kana)"
+                ></line-chart>
+              </div>
             </div>
           </transition-group>
         </div>
@@ -116,8 +119,9 @@ import { ls } from '@/store/plugins';
 import { focus } from 'vue-focus';
 import TokenizerJa from 'natural/lib/natural/tokenizers/tokenizer_ja';
 import LineChart from '@/components/Chart/LineChart.vue';
-const tokenizerJa = new TokenizerJa();
+import { IS_PRODUCTION } from '@server/constants';
 
+const tokenizerJa = new TokenizerJa();
 const wordRepository = makeWordRepository;
 
 export default Vue.extend({
@@ -138,7 +142,28 @@ export default Vue.extend({
       },
       isFocused: true,
       isAutoSearch: true,
-      test: {} as any,
+      chartOptions: {
+        devicePixelRatio: 4,
+        responsive: true,
+        maintainAspectRatio: false,
+        showTooltips: true,
+        events: [],
+        legend: {
+          display: false,
+        },
+        scales: {
+          yAxes: [
+            {
+              display: false, // this hides the y-axis in the linechart
+            },
+          ],
+        },
+        layout: {
+          padding: {
+            top: 5,
+          },
+        },
+      },
     };
   },
   computed: {
@@ -193,16 +218,6 @@ export default Vue.extend({
       const { isAutoSearch } = tsuginojiSettings;
       this.isAutoSearch = isAutoSearch;
     }
-    this.test = {
-      labels: ['January', 'February'],
-      datasets: [
-        {
-          label: 'Data One',
-          backgroundColor: '#f87979',
-          data: [40, 20],
-        },
-      ],
-    };
   },
   methods: {
     debounceInput(): void {
@@ -298,13 +313,84 @@ export default Vue.extend({
       this.debounceInput();
     },
     playAudio(url: string): void {
-      if (url) {
-        const audio = new Audio(url);
-        audio.play();
+      if (!url) {
+        return;
       }
+      let http = url.split('http://')[1];
+      let audioLink = IS_PRODUCTION ? `https://${http}` : url;
+      const audio = new Audio(audioLink);
+      audio.play();
     },
-    getRandomInt() {
-      return Math.floor(Math.random() * (50 - 5 + 1)) + 5;
+    createPitchChartData(props: { kana: string; pitch: number }) {
+      const { kana, pitch } = props;
+      const moraArr = this._getMora(kana);
+      const chartData = {
+        labels: moraArr,
+        datasets: [] as StringKeyObject[],
+      };
+      const isHeiban = pitch == 0;
+      const isAtamadaka = pitch == 1;
+      const isOdaka = pitch == moraArr.length;
+      const isNakadaka = !isHeiban && !isAtamadaka && !isOdaka;
+      const data = new Array(moraArr.length).fill(!isAtamadaka ? 1 : 0);
+      !isAtamadaka ? (data[0] = 0) : (data[0] = 1);
+      if (isNakadaka) {
+        for (let i = 0; i < data.length; i++) {
+          if (i > pitch - 1) {
+            data[i] = 0;
+          }
+        }
+      }
+      chartData.datasets.push({
+        fill: false,
+        backgroundColor: '#ffffff',
+        borderColor: '#000000',
+        pointBorderColor: '#000000',
+        data,
+      });
+      return chartData;
+    },
+    _getMora(kana: string): string[] {
+      const sokuon = [
+        'ぁ',
+        'ァ',
+        'ぃ',
+        'ィ',
+        'ぅ',
+        'ゥ',
+        'ぇ',
+        'ェ',
+        'ぉ',
+        'ォ',
+        'ゃ',
+        'ャ',
+        'ゅ',
+        'ュ',
+        'ょ',
+        'ョ',
+      ];
+      const kanaArr = kana.split('');
+      const moraArr: string[] = [];
+      for (let i = 0; i < kanaArr.length; i++) {
+        const containsSokuon = sokuon.includes(kanaArr[i]);
+        if (!containsSokuon) {
+          moraArr.push(kanaArr[i]);
+        } else {
+          moraArr[moraArr.length - 1] = moraArr[moraArr.length - 1] + kanaArr[i];
+        }
+      }
+      moraArr.push('助詞');
+      return moraArr;
+    },
+    styleChart(kana: string) {
+      let style = 'height: 60px; max-width:';
+      if (kana.length <= 2) {
+        return `${style} 130px`;
+      } else if (kana.length <= 5) {
+        return `${style} 200px;`;
+      } else {
+        return `${style} 350px;`;
+      }
     },
   },
 });

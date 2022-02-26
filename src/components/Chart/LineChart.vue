@@ -17,22 +17,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    (this as any).renderChart(
-      {
-        labels: ['January', 'February'],
-        datasets: [
-          {
-            label: 'Data One',
-            backgroundColor: '#f87979',
-            data: [40, 20],
-          },
-        ],
-      },
-      {
-        responsive: true,
-        maintainAspectRatio: false,
-      }
-    );
+    (this as any).renderChart(this.chartData, this.options);
   },
 });
 </script>
