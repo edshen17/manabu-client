@@ -316,9 +316,7 @@ export default Vue.extend({
       if (!url) {
         return;
       }
-      let http = url.split('http://')[1];
-      let audioLink = IS_PRODUCTION ? `https://${http}` : url;
-      const audio = new Audio(audioLink);
+      const audio = new Audio(url);
       audio.play();
     },
     createPitchChartData(props: { kana: string; pitch: number }) {
