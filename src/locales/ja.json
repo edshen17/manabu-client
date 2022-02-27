@@ -1,0 +1,304 @@
+{
+  "homepage": {
+    "vision": {
+      "title": "ビジョン",
+      "text": "私たちの目標は、個人個人に合わせた語学学習を提供してみなさんが世界とつながる手助けをすることです。私たちは異文化間コミュニケーション、友情と思いやり、そして生徒と教師の間の長期にわたる関係を大切に考えています。私たちは、利用可能な最高のデジタルリソースの開発に努めており、生徒の目標に合わせてレッスンを調整することに取り組んでいます。また、フィードバックを真摯に受け止め、皆さんのご要望に応じてWebサイトの更新もこまめにしております。"
+    },
+    "chooseUs": {
+      "title": "なぜ私たちを選ぶのか",
+      "tailoredLessons": {
+        "title": "個別レッスン",
+        "text": "Manabuの先生はあなたの学習スタイルや興味に合わせてレッスンプランを作ります。練習問題や教材もあなたのためだけにカスタマイズします。"
+      },
+      "immersion": {
+        "title": "イマージョン",
+        "text": "私たちは生徒が継続的に学習できるように力を尽くします。あなたが言語学習に没頭し、目標が達成できるよう手助けができる強い自信があります。"      },
+      "dataAnalytics": {
+        "title": "データ分析",
+        "text": "Manabuを通して、ご自身の学習状況や成長を確認することができます。やる気を維持するだけでなく、改善すべきところを見つけることもできます。"
+      },
+      "community": {
+        "title": "コミュニティ",
+        "text": "言語学習は大変に感じることもあります。もしあなたが言語学習の壁にぶつかった時には、私たちが精一杯助けます。強い絆で結ばれたコミュニティがあり、先生やスタッフがあなたの学習を支援します。"
+      },
+      "innovativeResources": {
+        "title": "革新的なデジタルリソース",
+        "flashcards": "デジタル単語帳",
+        "reports": "進捗状況レポート",
+        "tools": "Eラーニング教材"
+      }
+    },
+    "beta": "Manabuを一緒に育てる『ベータテスター』になって、貴方の意見をレッスンやウェブサイトに反映してくれませんか？期間限定で、レッスンプランを購入された皆様に全てのプレミアム機能とこれから私たちがマーケットを拡大した際のサービスへの永久無料アクセスをご提供しております。みなさまのご応募を心よりお待ちしております。"
+  },
+  "userAuth": {
+    "name": "お名前",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "login": "ログイン",
+    "signup": "登録",
+    "noAccount": "アカウントを持っていない場合",
+    "haveAccount": "以前アカウントを作った方",
+    "signupHere": "ここに登録",
+    "loginHere": "ここにログイン",
+    "googleLogin": "Googleで続ける"
+  },
+  "nav": {
+    "findTeacher": "先生を見つける",
+    "becomeTeacher": "先生になる",
+    "login": "@:userAuth.login",
+    "signup": "@:userAuth.signup",
+    "logout": "ログアウト",
+    "settings": "設定",
+    "guidelines": "Manabu ガイドライン",
+    "profile": "プロフィール"
+  },
+  "error": {
+    "userAuth": {
+      "name": "名前を入力してください。",
+      "email": "メールアドレスを正しく入力して下さい。",
+      "password": {
+        "length": "最低8文字のパスワードを入力して下さい。"
+      },
+      "login": {
+        "invalid": "パスワードかメールアドレスが間違っています。",
+        "emailExists": "このメールアドレスを持つアカウントがすでに存在しています。"
+      }
+    },
+    "currencyInput": "5以上の整数を入力してください。",
+    "calendar": {
+      "pastAppointment": "過去時間の予約をすることはできません。",
+      "unevenAvailableTime": "30分から1時間の間隔でアポイントメントが取れます。",
+      "badStartAvailableTime": "この時間でアポイントメントを設定することはできません。",
+      "overlapAvailableTime": "予約が重なることはできません。"
+    },
+    "onboarding": {
+      "contactMethodId": "{contactMethod}のIDを入力して下さい。",
+      "teacherLicenseUpload": "画像やPDFをアップロードしてください。",
+      "teacherIntroductionVideoUpload": "動画をアップロードしてください。",
+      "teacherPriceData": "希望の時給を入力してください。",
+      "profileBio": "自己紹介を書いてください。",
+      "package": {
+        "name": "パッケージの名前を入力してください。",
+        "lessonAmount": "レッスン回数を入力してください。",
+        "lessonDurations": "最低でも1つのレッスン時間を記入してください。",
+        "isOffering": "最低でも1つのパッケージを提供してください。"
+      },
+      "name": "@error.userAuth.name",
+      "paymentData": "PayPalのメールアドレスを入力してください。"
+    },
+    "general": "もう一度お試しください。問題が解決しない場合は、support@manabu.com までご連絡いただくか、ソーシャル・メディアでご連絡ください。"
+  },
+  "footer": {
+    "questions": {
+      "title": "お問い合わせ",
+      "text": "以下のツールから運営に連絡できます。2営業日以内に返信します。"
+    },
+    "usefulLinks": {
+      "title": "お役立ちリンク集"
+    },
+    "copyright": "Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved."
+  },
+  "contactMethod": {
+    "skype": "スカイプ",
+    "line": "ライン",
+    "discord": "ディスコード",
+    "zoom": "ズーム",
+    "alternative": "その他の連絡手段"
+  },
+  "onboarding": {
+    "learningTargetLanguage": "習いたい言語は？",
+    "teachingTargetLanguage": "教えたい言語は？",
+    "speakingNonTargetLanguage": "話せる言語は？",
+    "languageLevel": "{language}能力は？",
+    "languageLevels": {
+      "beginner": "ゼロ初級（A1）",
+      "elementary": "初級（A2）",
+      "intermediate": "中級（B1）",
+      "upperIntermediate": "中上級（B2）",
+      "advanced": "上級（C1）",
+      "proficient": "堪能（C2）"
+    },
+    "contactMethod": "希望連絡方法は？",
+    "contactMethodId": "{contactMethod}のIDを入力してください。",
+    "contactMethodIdInput": "{contactMethod}のID",
+    "userProfile": {
+      "image": "プロフィール画像をアップロードしてください。",
+      "bio": "自己紹介を書いてください。",
+      "teacherType": "どちらに申し込みたいですか？",
+      "teacherTypes": {
+        "licensed": "@:userProfile.teacher.licensed",
+        "unlicensed": "@:userProfile.teacher.unlicensed"
+      }
+    },
+    "teacherLicenseUpload": "日本語教師の資格や、それに相当する証明書をアップロードしてください。",
+    "teacherLicenseUploadTooltip": "プロティーチャーのみ資格等証明書のアップロードが必須です。",
+    "teacherIntroductionVideoUpload": "自己紹介の動画をアップロードしてください。",
+    "teacherPriceData": "時給を設定してください。",
+    "teacherPriceDataTooltip": "プロティーチャーのみ時給を設定できます。",
+    "package": {
+      "title": "レッスンの設定を確認してください。",
+      "lessonAmount": "レッスン回数",
+      "lessonDuration": "継続時間",
+      "lessonDurations": "{lessonDuration}分",
+      "isOffering": "提供の有無"
+    },
+    "region": "お住まいは？",
+    "timezone": "タイムゾーンは？",
+    "comingSoon": "近日公開！",
+    "loading": "ロード中...",
+    "name": {
+      "title": "お名前は？",
+      "placeholder": "名前"
+    },
+    "paymentData": {
+      "title": "PayPalのメールアドレスは？",
+      "placeholder": "PayPalのメールアドレス"
+    }
+  },
+  "calendar": {
+    "today": "今日",
+    "day":"日",
+    "week":"週",
+    "availableTime": "都合がつく時間",
+    "appointment": "予約",
+    "lessonTime": "レッスン時間"
+  },
+  "payment": {
+    "gateway": {
+      "paypal": "PayPal",
+      "stripe": "デビット/クレジットカード",
+      "paynow": "PayNow"
+    },
+    "method": "お支払い方法",
+    "subtotal": "小計",
+    "processingFee": "手数料",
+    "total": "合計"
+  },
+  "userProfile": {
+    "common": {
+      "block": "ブロックする",
+      "report": "報告する",
+      "lastOnline": "最終ログイン{date}",
+      "alsoSpeaks": "話せる言語",
+      "viewCalendar": "カレンダーを表示する",
+      "hideCalendar": "カレンダーを隠す",
+      "profilePicture": "プロフィール画像"
+    },
+    "role": {
+      "user": "ユーザー",
+      "admin": "アドミン",
+      "teacher": "教師"
+    },
+    "learning": "学習中の言語",
+    "teacher": {
+      "teaches": "教えている言語",
+      "licensed": "プロティーチャー",
+      "unlicensed": "コミュニティティーチャー",
+      "manabuVerified": "{date}にManabu公式教師登録",
+      "appPending": "教師の申請は承認待ちです",
+      "viewLicense": "資格や証明書を表示する",
+      "lessonSelection": {
+        "choose": "レッスンプランを選んでください。",
+        "options": "レッスン時間を選んでください。",
+        "times": "レッスンの時間を選んでください。",
+        "price": "{lessonDuration}分 x {lessonAmount}レッスン",
+        "discount": "{formattedDiscount}引き"
+      },
+      "lessonTypes": {
+        "trial": {
+          "title": "トライアルレッスン",
+          "description": "",
+          "amount": "トライアル ({amount}レッスン)"
+        },
+        "mainichi": {
+          "title": "毎日プラン",
+          "description": "早く効果的に日本語を上達させたい生徒さん向けの日本語漬けコースです。このプランでは、20回分レッスンを受けることができます。1週間に約5回のレッスンが目安です。",
+          "amount": "毎日 ({amount}レッスン)"
+        },
+        "moderate": {
+          "title": "モデレートプラン",
+          "description": "日本語をバランスの取れた計画で上達させたい生徒さん向けです。このプランでは、12回分レッスンを受けることができます。1週間に約3回のレッスンが目安です。",
+          "amount": "モデレート ({amount}レッスン)"
+        },
+        "light": {
+          "title": "ライトプラン",
+          "description": "日本語を気楽に学びたい生徒さん向けです。このプランでは、5回分レッスンを受けることができます。1週間に約1回のレッスンが目安です。",
+          "amount": "ライト ({amount}レッスン)"
+        },
+        "internal": {
+          "title": "Manabuの運営陣との面談",
+          "description": "運営との面談",
+          "amount": "Internal ({amount}レッスン)"
+        },
+        "custom": {
+          "description": "このプランでは、{lessonAmount}回分レッスンを受けることができます。1週間に約{weeklyLessonAmount}回のレッスンが目安です。"
+        }
+      },
+      "lessonDuration": "@:onboarding.package.lessonDurations",
+      "lessonPlans": "パッケージ",
+      "lessonAmount": "{count}レッスン利用可能",
+      "lessonDetails": "レッスン詳細",
+      "hourlyRate": "時給"
+    }
+  },
+  "dateFormat": {
+    "dayHour": "DD ah:mm",
+    "hour": "ah:mm",
+    "hourWithDuration": "ah:mm ({hours}時間)",
+    "abridgedDate": "MMMM D日 (dddd)",
+    "fullDate": "dddd・YYYY年MMMMD日 "
+  },
+  "localeCode": {
+    "en": "英語",
+    "ja": "日本語",
+    "kr": "韓国語",
+    "cn": "中国語"
+  },
+  "button": {
+    "common": {
+      "save": "保存",
+      "cancel": "キャンセル",
+      "confirm": "承認",
+      "upload": "アップロード",
+      "showMore": "もっと見る",
+      "showLess": "少なめに表示",
+      "payNow": "購入に進む",
+      "bookNow": "予約に進む",
+      "approve": "承認する"
+    },
+    "appointment": {
+      "reschedule": "リスケジュールする"
+    },
+    "onboarding": {
+      "next": "次へ"
+    },
+    "homepage": {
+      "signUpNow": "今すぐ登録！"
+    }
+  },
+  "dashboard": {
+    "admin": {
+      "pendingTeachers": "承認されていない教師"
+    },
+    "myTeachers": "私の教師",
+    "myStudents": "私の生徒",
+    "findTeacher": "希望に合った先生を見つけるお手伝いも可能です {0}までお問い合わせください。下のボタンをクリックして、教師リストを確認することもできます。学習の旅を楽しんでください。"
+  },
+  "appointment": {
+    "status": {
+      "title": "ステータス",
+      "pending": "承認待ち",
+      "confirmed": "承認済み",
+      "cancelled": "キャンセルされた",
+      "completed": "レッスン終了済"
+    },
+    "language": "言語",
+    "lessonDuration": "@:onboarding.package.lessonDurations",
+    "id": "予約番号",
+    "commTool": "コミュニケーションツール",
+    "cancelReason": "アポイントメント拒否の理由",
+    "teacherAccount": "先生アカウント",
+    "studentAccount": "生徒アカウント",
+    "remainingAppointments": "{remainingAppointments} / {totalAppointments} 利用可能"
+  }
+}

@@ -1,33 +1,28 @@
 <template>
-  <component :is="layout">
-    <link rel="stylesheet" 
-        href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
-        integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
-        crossorigin="anonymous">
-    <router-view :layout.sync="layout"/>
+  <component :is="this.$route.meta.layout || 'div'" class="font-noto-sans" translate="no">
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+      integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+      crossorigin="anonymous"
+    />
+    <router-view />
   </component>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
   name: 'App',
-  data() {
-    return {
-      layout: 'div',
-    };
+  computed: {},
+  async created() {
+    await this.$store.dispatch('user/getEntityStateData');
+    await this.$store.dispatch('exchangeRate/getEntityStateData');
   },
-};
+});
 </script>
 
-<style>
+<style lang="css">
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
-
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #86898b;
-  margin-top: 60px;
-}
 </style>

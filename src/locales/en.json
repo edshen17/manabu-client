@@ -1,0 +1,305 @@
+{
+  "homepage": {
+    "vision": {
+      "title": "Our Vision",
+      "text": "We strive to connect the world through personalized language learning. Above all, we value multicultural communication, friendship, and long-lasting relationships between students and teachers. We work to develop the best digital resources available and are committed to adjusting our lessons to fit students' goals. We also take feedback seriously and frequently update the website with requested features."
+    },
+    "chooseUs": {
+      "title": "Why Choose Us?",
+      "tailoredLessons": {
+        "title": "Tailored Lessons",
+        "text": "Manabu teachers create personalized lesson plans that fit your learning styles and interests. Excercises and other materials are customized specifically for you."
+      },
+      "immersion": {
+        "title": "Immersion",
+        "text": "We focus on getting students into a habit of constant learning. We are confident that we can help you immerse and achieve your fluency goals."
+      },
+      "dataAnalytics": {
+        "title": "Data Analytics",
+        "text": "Through Manabu, you can visualize your progress and growth. This can not only a way to stay motivated, but can also help you find areas of improvement."
+      },
+      "community": {
+        "title": "Community",
+        "text": "Learning a language can be difficult, so if you ever feel stuck we are happy to guide you! We have a supportive community of teachers and staff that will aid you throughout your studies."
+      },
+      "innovativeResources": {
+        "title": "Innovative Digital Resources",
+        "flashcards": "Digital Flashcards",
+        "reports": "Progress Reports",
+        "tools": "E-learning Tools"
+      }
+    },
+    "beta": "As a special thanks to beta testers, if you sign up now and purchase a lesson plan you will receive permanent free access to ALL premium features we release in the future. Happy learning!"
+  },
+  "userAuth": {
+    "name": "Name",
+    "email": "Email address",
+    "password": "Password",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?",
+    "signupHere": "Sign up here",
+    "loginHere": "Log in here",
+    "googleLogin": "Continue With Google"
+  },
+  "nav": {
+    "findTeacher": "Find a Teacher",
+    "becomeTeacher": "Become a Teacher",
+    "login": "@:userAuth.login",
+    "signup": "@:userAuth.signup",
+    "logout": "Logout",
+    "settings": "Settings",
+    "guidelines": "Manabu Guidelines",
+    "profile": "Profile"
+  },
+  "error": {
+    "userAuth": {
+      "name": "You must input a name.",
+      "email": "You must input a valid email address.",
+      "password": {
+        "length": "Your must input a password that is at least 8 characters."
+      },
+      "login": {
+        "invalid": "Invalid username or password.",
+        "emailExists": "An account with that email already exists."
+      }
+    },
+    "currencyInput": "You must input an integer that is greater than or equal to 5.",
+    "calendar": {
+      "pastAppointment": "You cannot reserve an appointment in the past.",
+      "unevenAvailableTime": "Your appointments must be in 30 minute to 1 hour intervals.",
+      "badStartAvailableTime": "You cannot start your appointments at that time (must be at the start of the hour or 30 minutes in).",
+      "overlapAvailableTime": "Your appointments cannot overlap."
+    },
+    "onboarding": {
+      "contactMethodId": "You must input a {contactMethod} id.",
+      "teacherLicenseUpload": "You must upload an image or pdf or your teaching license.",
+      "teacherIntroductionVideoUpload": "You must upload an introduction video.",
+      "teacherPriceData": "You must input an hourly rate.",
+      "profileBio": "You must write a self-introduction.",
+      "package": {
+        "name": "You must input a package name.",
+        "lessonAmount": "You must input a lesson amount.",
+        "lessonDurations": "Each package needs at least 1 duration.",
+        "isOffering": "You must offer at least 1 package."
+      },
+      "name": "@error.userAuth.name",
+      "paymentData": "You must input a PayPal email."
+    },
+    "general": "Oops, something went wrong. Please try again. If the problem continues, please contact support@manabu.com or reach out on social media."
+  },
+  "footer": {
+    "questions": {
+      "title": "Questions?",
+      "text": "Find us on any of these platforms! We usually respond in 1-2 business days."
+    },
+    "usefulLinks": {
+      "title": "Useful Links"
+    },
+    "copyright": "Minato Manabu. 68 Circular Road, #02-01, 049422, Singapore. All Rights Reserved."
+  },
+  "contactMethod": {
+    "skype": "Skype",
+    "line": "LINE",
+    "discord": "Discord",
+    "zoom": "Zoom",
+    "alternative": "Alternative"
+  },
+  "onboarding": {
+    "learningTargetLanguage": "I want to learn...",
+    "teachingTargetLanguage": "I want to teach...",
+    "speakingNonTargetLanguage": "I can speak...",
+    "languageLevel": "My {language} level is...",
+    "languageLevels": {
+      "beginner": "Beginner (A1)",
+      "elementary": "Elementary (A2)",
+      "intermediate": "Intermediate (B1)",
+      "upperIntermediate": "Upper Intermediate (B2)",
+      "advanced": "Advanced (C1)",
+      "proficient": "Proficient (C2)"
+    },
+    "contactMethod": "My preferred contact method is...",
+    "contactMethodId": "My {contactMethod} ID is...",
+    "contactMethodIdInput": "{contactMethod} ID",
+    "userProfile": {
+      "image": "Please upload a profile picture.",
+      "bio": "Please write a self-introduction.",
+      "teacherType": "I am applying to be a...",
+      "teacherTypes": {
+        "licensed": "@:userProfile.teacher.licensed",
+        "unlicensed": "@:userProfile.teacher.unlicensed"
+      }
+    },
+    "teacherLicenseUpload": "Please upload your teaching certificate.",
+    "teacherLicenseUploadTooltip": "Only professional teachers need to upload a certificate.",
+    "teacherIntroductionVideoUpload": "Please upload your self-introduction video.",
+    "teacherPriceData": "Please set your hourly price.",
+    "teacherPriceDataTooltip": "Only professional teachers can set their hourly prices.",
+    "package": {
+      "title": "Please set up your lesson packages.",
+      "lessonAmount": "Lesson Amount",
+      "lessonDuration": "Lesson Duration",
+      "lessonDurations": "{lessonDuration} minutes",
+      "isOffering": "Offer"
+    },
+    "region": "I live in...",
+    "timezone": "My timezone is...",
+    "comingSoon": "Coming soon!",
+    "loading": "Loading...",
+    "name": {
+      "title": "My name is...",
+      "placeholder": "Name"
+    },
+    "paymentData": {
+      "title": "My PayPal email is...",
+      "placeholder": "PayPal email"
+    }
+  },
+  "calendar": {
+    "today": "Today",
+    "day":"Day",
+    "week":"Week",
+    "availableTime": "Available",
+    "appointment": "Appointment",
+    "lessonTime": "Lesson Time"
+  },
+  "payment": {
+    "gateway": {
+      "paypal": "PayPal",
+      "stripe": "Debit / Credit Card",
+      "paynow": "PayNow"
+    },
+    "method": "Payment Method",
+    "subtotal": "Subtotal",
+    "processingFee": "Processing Fee",
+    "total": "Total"
+  },
+  "userProfile": {
+    "common": {
+      "block": "Block",
+      "report": "Report",
+      "lastOnline": "Last online {date}",
+      "alsoSpeaks": "Also speaks",
+      "viewCalendar": "VIEW CALENDAR",
+      "hideCalendar": "HIDE CALENDAR",
+      "profilePicture": "Profile Picture"
+    },
+    "role": {
+      "user": "User",
+      "admin": "Admin",
+      "teacher": "Teacher"
+    },
+    "learning": "Learning",
+    "teacher": {
+      "teaches": "Teaches",
+      "licensed": "Professional Teacher",
+      "unlicensed": "Community Teacher",
+      "manabuVerified": "Manabu Verified Teacher since {date}",
+      "appPending": "Teacher application pending",
+      "viewLicense": "View professional license",
+      "lessonSelection": {
+        "choose": "Choose your lesson plan",
+        "options": "Lesson plan options",
+        "times": "Choose your lesson times",
+        "price": "{lessonDuration} minutes x {lessonAmount} lessons",
+        "discount": "{formattedDiscount} off"
+      },
+      "lessonTypes": {
+        "trial": {
+          "title": "Trial Lesson",
+          "description": "",
+          "amount": "Trial ({amount} lesson)"
+        },
+        "mainichi": {
+          "title": "Mainichi Plan",
+          "description": "This is for students who want to improve quickly and immerse themselves in speaking Japanese. With this plan, you will receive 20 personalized lessons, which is about 5 lessons every week.",
+          "amount": "Mainichi ({amount} lessons)"
+        },
+        "moderate": {
+          "title": "Moderate Plan",
+          "description": "This is for students who want a balanced but intensive learning schedule. With this plan, you will receive 12 personalized lessons, which is about 3 lessons every week.",
+          "amount": "Moderate ({amount} lessons)"
+        },
+        "light": {
+          "title": "Light Plan",
+          "description": "This is for students who want to casually practice Japanese. With this plan, you will receive 5 personalized lessons, which is about 1 lesson every week.",
+          "amount": "Light ({amount} lessons)"
+        },
+        "internal": {
+          "title": "Interview with Manabu Admin",
+          "description": "Interview with admin.",
+          "amount": "Internal ({amount} lesson)"
+        },
+        "custom": {
+          "description": "With this plan, you will receive {lessonAmount} personalized lessons, which is about {weeklyLessonAmount} lessons every week."
+        }
+      },
+      "lessonDuration": "@:onboarding.package.lessonDurations",
+      "lessonPlans": "Lesson Plans",
+      "lessonAmount": "{count} lesson left to reserve | {count} lessons left to reserve",
+      "lessonDetails": "Lesson Details",
+      "hourlyRate": "Hourly Rate"
+    }
+  },
+  "dateFormat": {
+    "dayHour": "D h:mma",
+    "hour": "h:mma",
+    "hourWithDuration": "h:mma ({hours} [hours])",
+    "abridgedDate": "dddd, MMMM D",
+    "fullDate": "dddd, MMMM D, YYYY"
+  },
+  "localeCode": {
+    "en": "English",
+    "ja": "Japanese",
+    "kr": "Korean",
+    "cn": "Chinese"
+  },
+  "button": {
+    "common": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "upload": "Upload",
+      "showMore": "Show more",
+      "showLess": "Show less",
+      "payNow": "Pay Now",
+      "bookNow": "Book Now",
+      "approve": "Approve"
+    },
+    "appointment": {
+      "reschedule": "Reschedule"
+    },
+    "onboarding": {
+      "next": "Next"
+    },
+    "homepage": {
+      "signUpNow": "Sign up now!"
+    }
+  },
+  "dashboard": {
+    "admin": {
+      "pendingTeachers": "Pending Teachers"
+    },
+    "myTeachers": "My teachers",
+    "myStudents": "My students",
+    "findTeacher": "Need help finding the right teacher? Contact us at {0} and we'll find one for you! You can also click the button below to look through our teacher list. Happy learning!"
+  },
+  "appointment": {
+    "status": {
+      "title": "Status",
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed"
+    },
+    "language": "Language",
+    "lessonDuration": "@:onboarding.package.lessonDurations",
+    "id": "Appointment Id",
+    "commTool": "Communication Tool",
+    "cancelReason": "Reason for cancelling appointment",
+    "teacherAccount": "Teacher Account",
+    "studentAccount": "Student Account",
+    "remainingAppointments": "{remainingAppointments} / {totalAppointments} lessons remaining"
+  }
+}

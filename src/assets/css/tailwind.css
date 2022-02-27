@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    [type='text'],
+    [type='email'],
+    [type='url'],
+    [type='password'],
+    [type='number'],
+    [type='date'],
+    [type='datetime-local'],
+    [type='month'],
+    [type='search'],
+    [type='tel'],
+    [type='time'],
+    [type='week'],
+    [multiple],
+    textarea,
+    select {
+        @apply w-full border-gray-300 rounded shadow-sm focus:border-gray-300 focus:ring-gray-300
+    }
+    [type='checkbox'] {
+            @apply block border-2 border-gray-300 disabled:border-gray-200 rounded-md border-solid disabled:bg-gray-50  disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed;
+    },
+    [type='radio'] {
+        @apply rounded border-gray-300 focus:ring-gray-300;
+    }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.form-border {
+    @apply block border-2 border-gray-300 disabled:border-gray-200 rounded-md border-solid disabled:bg-gray-50  disabled:text-gray-500 disabled:shadow-none disabled:cursor-not-allowed;
+}
+
+.v-select__slot input {
+    @apply border-none ring-opacity-0 !important;
+}
+
+.v-select.fit {
+    width: min-content;
+}
+.v-select.fit  .v-select__selection--comma {
+      text-overflow: unset;
+}
+
+.calendar .v-text-field__details {
+    @apply hidden !important;
+}
+
+.calendar .v-text-field.v-input--dense {
+    @apply text-black opacity-60 text-xs w-2 !important;
+}
+
+.accent {
+    @apply text-blue-500 !important
+}
+
+.v-btn:not(.v-btn--outlined).primary {
+    @apply text-white bg-blue-500 !important;
+}
+
+.calendar .v-text-field.v-input--dense {
+    @apply flex flex-grow
+}
+
+.calendar .v-event-timed {
+    @apply max-w-6xl !important;
+}
+
+.progress-bar-transition {
+    transition: width 0.3s linear;
+}
+
+.tiptap-vuetify-editor ol {
+    @apply list-decimal px-4;
+}
+
+.tiptap-vuetify-editor ul {
+    @apply list-disc px-4;
+}
+
+.tiptap-vuetify-editor p {
+    @apply text-base font-normal leading-normal;
+}
+
+.tiptap-vuetify-editor .theme--light.v-sheet {
+    @apply border-gray-100 !important;
+}
+
+.tiptap-vuetify-editor .theme--light.v-toolbar.v-sheet {
+    @apply bg-gray-100 !important;
+}
+
+.vuelidate-error {
+    @apply text-sm text-red-400;
+}
+
+.profile-bio p {
+    @apply py-1
+}
+
+.profile-bio strong {
+    @apply text-xl
+}
+
+#readmore {
+    @apply text-pink-600
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    display: none;
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+.v-picker__title {
+    @apply bg-blue-500;
+}
