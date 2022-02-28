@@ -2,7 +2,8 @@
   <div data-app>
     <grid-button-layout :step-title="$t('onboarding.timezone')">
       <template v-slot:main>
-        <v-autocomplete
+        <component
+          :is="selectTimezoneComponent"
           v-model="timezoneModel"
           outlined
           dense
@@ -29,10 +30,11 @@ import ct from 'countries-and-timezones';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
+import { VAutocomplete, VSelect } from 'vuetify/lib';
 
 export default Vue.extend({
   name: 'TimezoneStep',
-  components: { GridButton, GridButtonLayout },
+  components: { GridButton, GridButtonLayout, VAutocomplete, VSelect },
   props: {
     region: {
       type: String,
@@ -84,6 +86,12 @@ export default Vue.extend({
           selectTimezones.push(selectTimezone);
         }
         return selectTimezones;
+      },
+    },
+    selectTimezoneComponent: {
+      get(): string {
+        const selectTimezoneComponent = (this as any).isMobile ? 'VSelect' : 'VAutocomplete';
+        return selectTimezoneComponent;
       },
     },
   },

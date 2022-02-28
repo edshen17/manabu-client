@@ -2,7 +2,8 @@
   <div data-app>
     <grid-button-layout :step-title="$t('onboarding.region')">
       <template v-slot:main>
-        <v-autocomplete
+        <component
+          :is="selectRegionComponent"
           v-model="selectedRegion"
           outlined
           dense
@@ -30,10 +31,11 @@ import { StringKeyObject } from '../../../../../server/types/custom';
 import GridButton from '../Common/GridButton.vue';
 import { EventBus } from '../../EventBus/EventBus';
 import GridButtonLayout from '../Layouts/GridButtonLayout.vue';
+import { VAutocomplete, VSelect } from 'vuetify/lib';
 
 export default Vue.extend({
   name: 'RegionStep',
-  components: { GridButton, GridButtonLayout },
+  components: { GridButton, GridButtonLayout, VAutocomplete, VSelect },
   props: {
     region: {
       type: String,
@@ -62,6 +64,12 @@ export default Vue.extend({
           selectRegions.push(selectRegion);
         }
         return selectRegions;
+      },
+    },
+    selectRegionComponent: {
+      get(): string {
+        const selectRegionComponent = (this as any).isMobile ? 'VSelect' : 'VAutocomplete';
+        return selectRegionComponent;
       },
     },
   },
