@@ -13,6 +13,7 @@ const AppointmentCard = () => import('../views/AppointmentCard.vue');
 const ExtendedAppointmentCalendar = () => import('../views/ExtendedAppointmentCalendar.vue');
 const FindTeacher = () => import('../views/FindTeacher.vue');
 const Tsuginoji = () => import('../views/Tsuginoji.vue');
+const Bunseki = () => import('../views/Bunseki.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -102,6 +103,11 @@ const routes: Array<RouteConfig> = [
     path: '/tsuginoji/:word?',
     name: 'Tsuginoji',
     component: Tsuginoji,
+  },
+  {
+    path: '/bunseki',
+    name: 'Bunseki',
+    component: Bunseki,
   },
 ];
 

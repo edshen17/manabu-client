@@ -1,20 +1,7 @@
 <template>
   <div class="relative" @keydown.esc="showDropdown = false">
     <button
-      class="
-        h-10
-        w-10
-        mx-4
-        relative
-        z-10
-        block
-        rounded-full
-        overflow-hidden
-        outline-none
-        border-transparent
-        ring-0
-        focus:ring-pink-600 focus:ring-2
-      "
+      class="h-10 w-10 mx-4 relative z-10 block rounded-full overflow-hidden outline-none border-transparent ring-0 focus:ring-pink-600 focus:ring-2"
       :class="{
         'outline-none ring-2 ring-pink-600  border-transparent': showDropdown || isHovering,
       }"

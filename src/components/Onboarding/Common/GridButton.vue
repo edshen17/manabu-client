@@ -1,19 +1,6 @@
 <template>
   <button
-    class="
-      py-2
-      flex
-      w-full
-      md:w-9/12
-      lg:w-6/12
-      mx-auto
-      border-solid border
-      rounded-md
-      bg-green-600
-      text-white
-      justify-center
-      uppercase
-    "
+    class="py-2 flex w-full md:w-9/12 lg:w-6/12 mx-auto border-solid border rounded-md bg-green-600 text-white justify-center uppercase"
     @click="$emit('click')"
   >
     {{ buttonText }}

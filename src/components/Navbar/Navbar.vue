@@ -1,21 +1,7 @@
 <template>
   <nav
     v-click-outside="closeDropdown"
-    class="
-      flex
-      items-center
-      justify-between
-      flex-wrap
-      p-4
-      lg:sticky
-      w-full
-      z-20
-      top-0
-      bg-white
-      border-b-2
-      md:border-none md:shadow-md
-      relative
-    "
+    class="flex items-center justify-between flex-wrap p-4 lg:sticky w-full z-20 top-0 bg-white border-b-2 md:border-none md:shadow-md relative"
   >
     <div class="flex items-center flex-shrink-0 mr-6">
       <router-link
@@ -26,20 +12,7 @@
       >
     </div>
     <button
-      class="
-        cursor-pointer
-        text-3xl
-        leading-none
-        px-3
-        py-1
-        border border-solid border-transparent
-        rounded
-        bg-transparent
-        block
-        lg:hidden
-        outline-none
-        focus:outline-none
-      "
+      class="cursor-pointer text-3xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none"
       type="button"
       @click="toggleDropdown"
     >

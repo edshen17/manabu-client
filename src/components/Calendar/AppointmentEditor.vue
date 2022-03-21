@@ -9,7 +9,7 @@
       :left="showMenuOnLeft"
       offset-x
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <slot name="activator" :on="on" :attrs="attrs" />
       </template>
       <v-card color="grey lighten-4" flat>

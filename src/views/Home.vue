@@ -1,23 +1,33 @@
 <template>
   <div>
     <main>
-      <div class="relative h-full flex content-center items-center justify-center">
-        <div class="absolute top-0 w-full h-full bg-cover bg-main lg:bg-fixed bg-left-bottom">
-          <span id="blackOverlay" class="w-full h-full absolute opacity-40 bg-black"></span>
-        </div>
-        <div class="container relative mx-auto">
-          <div class="items-center flex flex-wrap">
-            <div class="w-full lg:w-8/12 px-4 ml-auto mr-auto text-center">
-              <img src="../assets/img/logo_white.png" />
-            </div>
-          </div>
-        </div>
-      </div>
       <section class="relative">
         <div class="container mx-auto">
           <div class="flex flex-wrap justify-center">
-            <div class="w-full lg:w-8/12">
-              <h2 class="py-5 lg:py-8 text-2xl font-semibold text-center tracking-wide">
+            <div class="w-full lg:w-8/12 lg:py-4">
+              <div class="flex flex-wrap lg:flex-nowrap pb-10">
+                <div
+                  class="px-4 text-2xl font-bold leading-8 lg:leading-loose lg:w-1/2 text-center order-1 lg:order-first mx-auto"
+                >
+                  <div class="w-80 mx-auto py-4">
+                    Learn Japanese
+                    <span class="text-red-500">every day</span>
+                    with your own private teacher
+                  </div>
+                  <button
+                    class="bg-red-500 hover:bg-red-400 text-white py-2 px-6 text-lg rounded-lg font-bold mt-1"
+                  >
+                    Get Started
+                  </button>
+                </div>
+                <div class="lg:w-1/2">
+                  <img
+                    src="../assets/img/kasumi2x.jpg"
+                    class="max-w-full max-h-full lg:max-w-xl justify-end"
+                  />
+                </div>
+              </div>
+              <h2 class="-mt-4 py-5 lg:py-8 text-2xl font-semibold text-center tracking-wide">
                 {{ $t('homepage.vision.title') }}
               </h2>
               <p class="px-4 text-lg leading-8 lg:leading-loose">
@@ -56,7 +66,7 @@
           </div>
         </div>
       </section>
-      <section class="relative bg-gray-600">
+      <section class="relative bg-gray-600 pb-10 lg:pb-12">
         <div class="container mx-auto px-4 py-3">
           <div class="flex flex-wrap text-center justify-center">
             <div class="w-full lg:w-8/12">
@@ -70,19 +80,7 @@
               <div
                 v-for="card in cardData"
                 :key="card.title"
-                class="
-                  pb-8
-                  w-9/12
-                  md:w-5/12
-                  lg:w-7/12
-                  2xl:w-9/12
-                  mx-auto
-                  bg-white
-                  transform
-                  duration-500
-                  hover:-translate-y-1
-                  rounded-xl
-                "
+                class="pb-8 w-9/12 md:w-5/12 lg:w-7/12 2xl:w-9/12 mx-auto bg-white transform duration-500 hover:-translate-y-1 rounded-xl"
               >
                 <h2 class="py-3 lg:py-5 text-center text-2xl select-none">
                   {{ card.title }}
@@ -94,29 +92,19 @@
                 />
               </div>
             </section>
-            <div
-              class="flex flex-wrap justify-center text-center text-xl leading-8 lg:leading-loose"
-            >
-              <div class="w-full lg:w-6/12 px-4 my-10">
-                <p class="py-5 text-white text-lg">
-                  {{ $t('homepage.beta') }}
-                </p>
-                <router-link
-                  class="
-                    bg-green-500
-                    text-white
-                    font-bold
-                    py-2
-                    px-4
-                    rounded
-                    text-center text-lg
-                    align-middle
-                    mt-5
-                  "
-                  to="/signup"
-                  >{{ $t('button.homepage.signUpNow') }}</router-link
-                >
-              </div>
+          </div>
+        </div>
+      </section>
+      <section class="relative h-auto pb-10 lg:pb-12" style="background-color: #fdfbf6">
+        <div class="container mx-auto px-4 py-3">
+          <div class="flex flex-wrap text-center justify-center">
+            <div class="w-full lg:w-8/12">
+              <i class="fas fa-crown text-6xl text-red-400 my-5"></i>
+              <h2
+                class="text-2xl font-semibold text-center tracking-wide text-black capitalize lg:w-1/2 mx-auto"
+              >
+                #1 Online Japanese School in Singapore
+              </h2>
             </div>
           </div>
         </div>

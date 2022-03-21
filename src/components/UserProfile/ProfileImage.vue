@@ -6,7 +6,7 @@
       width="700"
       @click:outside="resetProfileImage"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <button v-bind="attrs" v-on="on">
           <img
             v-show="showProfileImage"

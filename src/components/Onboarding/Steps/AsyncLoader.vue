@@ -1,7 +1,7 @@
 <template>
   <div data-app>
     <grid-button-layout :step-title="$t('onboarding.loading')">
-      <template v-slot:main>
+      <template #main>
         <div class="hero container max-w-screen-lg mx-auto pb-10 flex justify-center">
           <v-progress-circular
             class="mx-auto"

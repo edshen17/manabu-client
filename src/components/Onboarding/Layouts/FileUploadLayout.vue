@@ -1,9 +1,9 @@
 <template>
   <div data-app>
     <grid-button-layout :step-title="stepTitle">
-      <template v-slot:main>
+      <template #main>
         <v-tooltip :disabled="!isDisabled" bottom>
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <div
               v-cloak
               class="mt-3"
@@ -29,7 +29,7 @@
           <span>{{ disabledTooltipText }}</span>
         </v-tooltip>
       </template>
-      <template v-slot:button>
+      <template #button>
         <grid-button
           :button-text="$t('button.onboarding.next')"
           class="absolute bottom-0"

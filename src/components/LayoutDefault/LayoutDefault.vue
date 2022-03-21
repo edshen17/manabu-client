@@ -1,15 +1,15 @@
 <template>
   <div id="LayoutDefault" class="flex flex-col h-screen">
     <error-boundary-component>
-      <template v-slot:navbar>
+      <template #navbar>
         <navbar-component></navbar-component>
       </template>
-      <template v-slot:main>
+      <template #main>
         <main class="LayoutDefault_main relative flex-grow">
           <slot />
         </main>
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <footer-component class="bg-light text-black"></footer-component>
       </template>
     </error-boundary-component>

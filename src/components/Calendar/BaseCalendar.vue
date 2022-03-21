@@ -20,7 +20,7 @@
           {{ $refs.calendar.title }}
         </v-toolbar-title>
         <v-menu bottom right>
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn v-show="!isMobile" outlined color="grey darken-2" v-bind="attrs" v-on="on">
               <span>{{ calendarViewData[calendarView].text }}</span>
               <v-icon right> mdi-menu-down </v-icon>
@@ -64,10 +64,10 @@
       @touchend:time="onTouchEndTime"
       @touchend:event="onTouchEndEvent"
     >
-      <template v-slot:event="{ event, timed }">
+      <template #event="{ event, timed }">
         <slot name="event" :event="event" :timed="timed" />
       </template>
-      <template v-slot:day-body="{ date, week }">
+      <template #day-body="{ date, week }">
         <div
           class="v-current-time"
           :class="{ first: date === week[0].date }"

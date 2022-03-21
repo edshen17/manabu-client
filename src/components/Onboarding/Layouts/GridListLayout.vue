@@ -5,16 +5,7 @@
         <li
           v-for="(listItem, index) in listItems"
           :key="index"
-          class="
-            list-none
-            px-3
-            py-3
-            text-lg
-            font-semibold
-            cursor-pointer
-            hover:bg-gray-100
-            border-2 border-b-0
-          "
+          class="list-none px-3 py-3 text-lg font-semibold cursor-pointer hover:bg-gray-100 border-2 border-b-0"
           :class="{
             'rounded-t-lg rounded-l-lg rounded-r-lg rounded-bl-none rounded-br-none': index == 0,
             'border-b-2 rounded-b-lg': index == listItems.length - 1,

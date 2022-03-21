@@ -46,30 +46,14 @@
               v-model="password"
               name="password"
               autocomplete="password"
-              class="
-                col-span-10
-                border-r-0
-                rounded-r-none
-                block
-                border-2 border-gray-300
-                rounded-md
-                border-solid
-              "
+              class="col-span-10 border-r-0 rounded-r-none block border-2 border-gray-300 rounded-md border-solid"
               :type="showPassword ? 'text' : 'password'"
               :placeholder="$t('userAuth.password')"
               @focus="focusedInputName = 'password'"
               @keyup.13="handleAuthFormSubmit"
             />
             <button
-              class="
-                flex-grow
-                block
-                border-2 border-gray-300
-                rounded-md
-                border-solid
-                rounded-l-none
-                col-span-2
-              "
+              class="flex-grow block border-2 border-gray-300 rounded-md border-solid rounded-l-none col-span-2"
               type="button"
               @click="togglePasswordView"
             >

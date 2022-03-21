@@ -1,7 +1,7 @@
 <template>
   <div data-app>
     <grid-button-layout :step-title="$t('onboarding.region')">
-      <template v-slot:main>
+      <template #main>
         <component
           :is="selectRegionComponent"
           v-model="selectedRegion"
@@ -13,7 +13,7 @@
           :items="selectRegions"
         />
       </template>
-      <template v-slot:button>
+      <template #button>
         <grid-button
           :button-text="$t('button.onboarding.next')"
           class="absolute bottom-0"

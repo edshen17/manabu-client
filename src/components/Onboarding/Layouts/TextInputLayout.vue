@@ -1,7 +1,7 @@
 <template>
   <div data-app>
     <grid-button-layout :step-title="stepTitle">
-      <template v-slot:main>
+      <template #main>
         <form class="mb-0 space-y-6">
           <div>
             <input
@@ -18,7 +18,7 @@
           </div>
         </form>
       </template>
-      <template v-slot:button>
+      <template #button>
         <grid-button
           :button-text="$t('button.onboarding.next')"
           class="absolute bottom-0"

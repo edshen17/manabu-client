@@ -16,7 +16,7 @@
       @touchend:event="onMouseUpEvent"
       @update:calendar-focus-date="onCalendarFocusDateUpdate"
     >
-      <template v-slot:event="{ event, timed }">
+      <template #event="{ event, timed }">
         <available-time-editor
           v-if="event.attributes.type == 'availableTime'"
           :event-id="event.attributes._id"
@@ -34,7 +34,7 @@
           @auto-complete-start:change="onAutoCompleteStartChange"
           @auto-complete-end:change="onAutoCompleteEndChange"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
               <div class="v-event-draggable">
                 <span>
@@ -61,7 +61,7 @@
           @event:confirm="updateAppointment($event, 'confirmed')"
           @event:cancel="updateAppointment($event, 'cancelled')"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <div :class="{ 'opacity-60': isPast(event.start) }" v-bind="attrs" v-on="on">
               <div class="v-event-draggable">
                 <span>
@@ -179,6 +179,22 @@ export default Vue.extend({
   mounted() {
     return;
   },
+  errorCaptured(err: StringKeyObject): boolean {
+    const errMsg = err.response.data.err;
+    switch (errMsg) {
+      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.INVALID_DURATION:
+        err.message = 'error.calendar.unevenAppointment';
+        break;
+      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.INVALID_TIME:
+        err.message = 'error.calendar.badStartAvailableTime';
+        break;
+      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.OVERLAP:
+        err.message = 'error.calendar.overlapAvailableTime';
+        break;
+    }
+    this.cancelAvailableTime();
+    return true;
+  },
   methods: {
     async getEvents({ start, end }: GetEventParams): Promise<void> {
       const availableTimes = await this.getAvailableTimes({ start, end });
@@ -278,6 +294,7 @@ export default Vue.extend({
             break;
           case 'cancelled':
             eventColor = EVENT_COLOR.CANCELLED;
+            break;
           default:
             break;
         }
@@ -583,19 +600,6 @@ export default Vue.extend({
         value: this._convertToUnixMs(newEndTime.toDate()),
       });
     },
-  },
-  errorCaptured(err: StringKeyObject): boolean {
-    const errMsg = err.response.data.err;
-    switch (errMsg) {
-      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.INVALID_DURATION:
-        err.message = 'error.calendar.unevenAppointment';
-      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.INVALID_TIME:
-        err.message = 'error.calendar.badStartAvailableTime';
-      case AVAILABLE_TIME_CONFLIT_HANDLER_ERROR.OVERLAP:
-        err.message = 'error.calendar.overlapAvailableTime';
-    }
-    this.cancelAvailableTime();
-    return true;
   },
 });
 </script>

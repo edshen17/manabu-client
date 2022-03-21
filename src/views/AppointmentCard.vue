@@ -2,7 +2,7 @@
   <div>
     <vue-topprogress ref="topProgress"></vue-topprogress>
     <two-card-layout v-if="appointmentData" right-card-class="max-h-36">
-      <template v-slot:left-cards>
+      <template #left-cards>
         <div
           class="border-solid border-l-4"
           :class="{
@@ -72,7 +72,7 @@
           </left-card-layout>
         </div>
       </template>
-      <template v-slot:right-cards>
+      <template #right-cards>
         <div class="flex flex-col m-5 space-y-5">
           <button
             v-if="!isTeacher"
