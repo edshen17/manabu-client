@@ -28,7 +28,37 @@
         "tools": "Eラーニング教材"
       }
     },
-    "beta": "Manabuを一緒に育てる『ベータテスター』になって、貴方の意見をレッスンやウェブサイトに反映してくれませんか？期間限定で、レッスンプランを購入された皆様に全てのプレミアム機能とこれから私たちがマーケットを拡大した際のサービスへの永久無料アクセスをご提供しております。みなさまのご応募を心よりお待ちしております。"
+    "beta": "Manabuを一緒に育てる『ベータテスター』になって、貴方の意見をレッスンやウェブサイトに反映してくれませんか？期間限定で、レッスンプランを購入された皆様に全てのプレミアム機能とこれから私たちがマーケットを拡大した際のサービスへの永久無料アクセスをご提供しております。みなさまのご応募を心よりお待ちしております。",
+    "testimonials": {
+      "title": "生徒さんの声",
+      "1": {
+        "reviewer": {
+          "name": "Natashah Erika Lee",
+          "occupation": "Digital Marketer in Singapore"
+        },
+        "review": "Started Manabu when they first established and I’ve been with them ever since! Lessons are always enjoyable and have helped me leaps and bounds ❤️ My listening and speaking skills have definitely improved since I first started and it’s all thanks to the lovely Rina Sensei! Misa-san is also always so willing to extend a helpful hand whenever I need anything. Thank you for always being so kind 🥺 and I hope for this relationship to continue for a long time! いつもありがとう！"
+      },
+      "2": {
+        "reviewer": {
+          "name": "Edwin Shen",
+          "occupation": "Software Engineer in New York"
+        },
+        "review": "Manabu has helped me immensely improve my Japanese as an intermediate learner. In fact, frequent lessons boosted my self-confidence so much that I can now comfortably immerse myself in the language and culture without being afraid of making mistakes. I love how friendly my teachers are, especially Hiromi and Rui sensei. They taught me how to express myself in different ways, where I was able to learn how to explain my work, hobbies/interests, and dreams in Japanese. I highly recommend Manabu and cannot wait to see more of their resources and technology in the future!"
+      },
+      "3": {
+        "reviewer": {
+          "name": "Kristyanniña Joi Alvarez-Mendoza",
+          "occupation": "English Teacher in Tokyo"
+        },
+        "review": "Thank you very much for accommodating me as your student. I can say that it was really a different experience to be able to speak with and learn from native Japanese teachers. I just felt very relaxed and confident in every lesson. Each time I got questions, Misa sensei and Rina sensei, helped me and clarified everything right away. The teachers are very friendly and accommodating. It was worth it and such a great chance for me to improve my Japanese skill. Once again, thank you very much for accommodating me. I have high hopes and best wishes for your school. I hope you can reach out to more students because you have a unique and effective support for Japanese learners like me."
+      },"4": {
+        "reviewer": {
+          "name": "Clarise Ong",
+          "occupation": "Academic Researcher in Singapore"
+        },
+        "review": "Really great Japanese lessons and friendly teachers! I’ve taken group Japanese classes at my university in Singapore as well as in Tokyo itself, but my one-to-one classes with Manabu are my favourite thus far 🥳 I really appreciate the individualised and tailored lesson plans that they make to suit each student’s needs, as well as the affordable daily lessons that keep my brain working. I find it easier to memorise words and vocab when I’m constantly exposed to Japanese, rather than taking 2 1.5 hour classes twice a week (as I did in University) and getting burnt out + confused really fast. I’m very fortunate to have found Manabu Lessons online and look forward to continuing to improve my Japanese ✨✨"
+      }
+    }
   },
   "userAuth": {
     "name": "お名前",
