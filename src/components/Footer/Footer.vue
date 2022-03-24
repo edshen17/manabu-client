@@ -33,13 +33,7 @@
           <div class="col-span-12 lg:col-span-3 my-2 lg:mt-0">
             <select
               v-model="userLocale"
-              class="
-                block
-                w-full
-                rounded-md
-                form-border
-                focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50
-              "
+              class="block w-full rounded-md form-border focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50"
             >
               <option
                 v-for="(localeName, localeCode) in SUPPORTED_LOCALES"
@@ -51,14 +45,7 @@
             </select>
             <select
               v-model="userCurrency"
-              class="
-                block
-                w-full
-                rounded-md
-                form-border
-                focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50
-                my-4
-              "
+              class="block w-full rounded-md form-border focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50 my-4"
             >
               <option
                 v-for="(currencyName, currencyCode) in SUPPORTED_CURRENCIES"

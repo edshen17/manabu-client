@@ -1,6 +1,6 @@
 <template>
   <dialog-button @click="$emit('click', { lessonDuration, packagePrice })">
-    <template v-slot:title>
+    <template #title>
       <p class="text-lg">
         {{
           $t('userProfile.teacher.lessonSelection.price', {
@@ -10,7 +10,7 @@
         }}
       </p>
     </template>
-    <template v-slot:body>
+    <template #body>
       <price-pill :price="packagePrice || ''" />
     </template>
   </dialog-button>

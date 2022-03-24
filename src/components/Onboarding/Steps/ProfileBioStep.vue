@@ -1,7 +1,7 @@
 <template>
   <div data-app>
     <grid-button-layout :step-title="stepTitle">
-      <template v-slot:main>
+      <template #main>
         <div data-app>
           <tiptap-vuetify
             :key="$vuetify.lang.current"
@@ -15,7 +15,7 @@
           </p>
         </div>
       </template>
-      <template v-slot:button>
+      <template #button>
         <grid-button
           :button-text="$t('button.onboarding.next')"
           class="absolute bottom-0"

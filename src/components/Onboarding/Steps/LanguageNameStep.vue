@@ -2,17 +2,7 @@
   <grid-col-layout :step-title="stepTitle">
     <div v-for="languageOffering in languageOfferings" :key="languageOffering.languageCode">
       <button
-        class="
-          flex flex-col
-          items-center
-          bg-gray-800
-          py-8
-          px-16
-          rounded-lg
-          cursor-pointer
-          select-none
-          focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50
-        "
+        class="flex flex-col items-center bg-gray-800 py-8 px-16 rounded-lg cursor-pointer select-none focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50"
         :disabled="!languageOffering.isTeachable"
         :class="{
           'opacity-40': !languageOffering.isTeachable,

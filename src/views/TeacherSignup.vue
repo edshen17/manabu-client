@@ -18,24 +18,7 @@
           <div class="h-full w-1 bg-gray-200 pointer-events-none"></div>
         </div>
         <div
-          class="
-            flex-shrink-0
-            w-6
-            h-6
-            rounded-full
-            mt-10
-            sm:mt-0
-            inline-flex
-            items-center
-            justify-center
-            bg-indigo-500
-            text-white
-            relative
-            z-10
-            title-font
-            font-medium
-            text-sm
-          "
+          class="flex-shrink-0 w-6 h-6 rounded-full mt-10 sm:mt-0 inline-flex items-center justify-center bg-indigo-500 text-white relative z-10 title-font font-medium text-sm"
         >
           {{ index + 1 }}
         </div>
@@ -48,20 +31,7 @@
         </div>
       </div>
       <button
-        class="
-          mx-auto
-          flex
-          bg-gray-700
-          text-white
-          font-bold
-          py-2
-          px-4
-          rounded
-          text-center text-lg
-          align-middle
-          mt-5
-          mb-14
-        "
+        class="mx-auto flex bg-gray-700 text-white font-bold py-2 px-4 rounded text-center text-lg align-middle mt-5 mb-14"
       >
         <router-link :to="routerData">Sign up for a teacher account now!</router-link>
       </button>

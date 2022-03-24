@@ -1,9 +1,9 @@
 <template>
   <div data-app>
     <grid-button-layout :step-title="$t('onboarding.teacherPriceData')">
-      <template v-slot:main>
+      <template #main>
         <v-tooltip :disabled="isProTeacher" bottom>
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <div v-bind="attrs" v-on="on">
               <currency-input
                 :key="isProTeacher"
@@ -16,7 +16,7 @@
           <span>{{ $t('onboarding.teacherPriceDataTooltip') }}</span>
         </v-tooltip>
       </template>
-      <template v-slot:button>
+      <template #button>
         <grid-button
           :button-text="$t('button.onboarding.next')"
           class="absolute bottom-0"

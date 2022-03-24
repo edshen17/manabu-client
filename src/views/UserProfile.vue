@@ -1,7 +1,7 @@
 <template>
   <div v-if="user">
     <two-card-layout v-if="isTeacher" right-card-class="max-h-44">
-      <template v-slot:left-cards>
+      <template #left-cards>
         <div>
           <profile-bio-card :user="user" :is-teacher="isTeacher" />
           <teacher-packages-card
@@ -12,7 +12,7 @@
           />
         </div>
       </template>
-      <template v-slot:right-cards>
+      <template #right-cards>
         <div class="flex flex-col m-5 space-y-5 text-lg">
           <div class="flex">
             <p class="flex-1">{{ $t('userProfile.teacher.lessonTypes.trial.title') }}</p>
@@ -33,18 +33,7 @@
     </two-card-layout>
     <div v-else class="bg-gray-50 h-auto lg:min-h-screen">
       <div
-        class="
-          flex flex-wrap
-          lg:flex-nowrap
-          w-full
-          lg:w-9/12
-          mx-auto
-          lg:py-7
-          justify-center
-          items-center
-          flex
-          mx-auto
-        "
+        class="flex flex-wrap lg:flex-nowrap w-full lg:w-9/12 mx-auto lg:py-7 justify-center items-center flex mx-auto"
       >
         <div class="w-full lg:w-8/12 lg:mx-2">
           <profile-bio-card :user="user" :is-teacher="isTeacher" />

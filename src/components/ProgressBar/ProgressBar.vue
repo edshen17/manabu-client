@@ -10,15 +10,7 @@
       <div class="overflow-hidden h-2 text-xs flex rounded bg-green-200">
         <div
           :style="`width: ${progressPercent}%`"
-          class="
-            shadow-none
-            text-center
-            whitespace-nowrap
-            text-white
-            justify-center
-            progress-bar-transition
-            bg-green-500
-          "
+          class="shadow-none text-center whitespace-nowrap text-white justify-center progress-bar-transition bg-green-500"
         ></div>
       </div>
     </div>

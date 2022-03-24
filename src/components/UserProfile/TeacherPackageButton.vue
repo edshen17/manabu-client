@@ -1,6 +1,6 @@
 <template>
   <dialog-button @click="$emit('click', pkg)">
-    <template v-slot:title>
+    <template #title>
       <div class="flex">
         <p class="text-lg capitalize flex-1" :style="{ color: getRandomColor(pkg.name) }">
           {{ getPackageName(pkg) }}
@@ -17,7 +17,7 @@
         </p>
       </div>
     </template>
-    <template v-slot:body>
+    <template #body>
       <p class="mt-2 text-gray-600">{{ getPackageDescription(pkg) }}</p>
       <price-pill v-show="showPrice" :price="packagePrice || ''" />
     </template>

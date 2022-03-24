@@ -19,18 +19,14 @@ const makeUpdateUserByIdMixin = {
       const isUserRepository = repositoryName == REPOSITORY_NAME.USER;
       const repository = isUserRepository ? userRepository : teacherRepository;
       const _id = isUserRepository ? userId : teacherId!;
-      try {
-        const { data } = await repository.updateById({
-          _id,
-          updateParams,
-        });
-        const { user } = data;
-        self.$store.dispatch('user/setEntityStateData', {
-          ...user,
-        });
-      } catch (err) {
-        throw err;
-      }
+      const { data } = await repository.updateById({
+        _id,
+        updateParams,
+      });
+      const { user } = data;
+      self.$store.dispatch('user/setEntityStateData', {
+        ...user,
+      });
     },
   },
 };

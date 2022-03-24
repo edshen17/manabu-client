@@ -6,21 +6,7 @@
       :to="{ name: 'AppointmentCard', params: { appointmentId: appointment._id, appointment } }"
     >
       <div
-        class="
-          bg-white
-          border-l-4
-          px-4
-          pt-3
-          pb-5
-          border-solid
-          shadow-md
-          rounded-lg rounded-l-none
-          mb-4
-          h-auto
-          w-full
-          hover:bg-gray-100
-          text-left
-        "
+        class="bg-white border-l-4 px-4 pt-3 pb-5 border-solid shadow-md rounded-lg rounded-l-none mb-4 h-auto w-full hover:bg-gray-100 text-left"
         :class="{
           'border-green-300 ': appointment.status == 'pending',
           'border-black': appointment.status == 'completed',

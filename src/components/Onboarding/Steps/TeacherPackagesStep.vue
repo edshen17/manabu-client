@@ -7,38 +7,19 @@
           main-class="lg:w-11/12"
           padding-class="h-20v"
         >
-          <template v-slot:main>
+          <template #main>
             <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 pt-2">
               <article
                 v-for="pkg in teacherPackages"
                 :key="pkg._id"
-                class="
-                  border-solid border-2 border-black-50
-                  shadow-md
-                  mx-auto
-                  w-full
-                  max-w-2xl
-                  transform
-                  hover:-translate-y-1
-                  duration-300
-                  hover:shadow-lg
-                "
+                class="border-solid border-2 border-black-50 shadow-md mx-auto w-full max-w-2xl transform hover:-translate-y-1 duration-300 hover:shadow-lg"
               >
                 <div class="p-7 my-auto">
                   <div class="flex">
                     <div class="flex-grow">
                       <h2
                         v-show="!isEditingPackage(pkg)"
-                        class="
-                          inline-block
-                          text-xl
-                          lg:text-2xl
-                          font-semibold
-                          text-gray-700
-                          capitalize
-                          py-1
-                          break-words
-                        "
+                        class="inline-block text-xl lg:text-2xl font-semibold text-gray-700 capitalize py-1 break-words"
                         :class="{ 'hover:bg-gray-200 cursor-pointer': isCustomPackage(pkg) }"
                         @click="
                           setEditingPackageId({ _id: pkg._id, focusedInputName: 'packageName' })
@@ -147,7 +128,7 @@
               </article>
             </div>
           </template>
-          <template v-slot:button
+          <template #button
             ><grid-button
               :button-text="$t('button.onboarding.next')"
               class="absolute bottom-10 md:block"

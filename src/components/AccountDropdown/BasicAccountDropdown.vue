@@ -8,19 +8,7 @@
     <hr class="border-gray-400 mx-auto lg:hidden" />
     <div class="grid grid-flow-col grid-cols-12">
       <img
-        class="
-          col-span-3
-          md:col-span-2
-          lg:col-span-4
-          my-4
-          mx-4
-          h-16
-          w-16
-          z-10
-          block
-          rounded-full
-          object-cover
-        "
+        class="col-span-3 md:col-span-2 lg:col-span-4 my-4 mx-4 h-16 w-16 z-10 block rounded-full object-cover"
         :src="userData.profileImageUrl"
       />
       <div class="col-span-9 my-3 mx-6 md:mx-0 font-semi-bold">

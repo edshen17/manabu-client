@@ -2,31 +2,11 @@
   <grid-col-layout :step-title="stepTitle">
     <div v-for="contactMethod in contactMethods" :key="contactMethod.value">
       <button
-        class="
-          flex flex-col
-          items-center
-          bg-gray-800
-          py-8
-          px-16
-          rounded-lg
-          cursor-pointer
-          select-none
-          focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50
-        "
+        class="flex flex-col items-center bg-gray-800 py-8 px-16 rounded-lg cursor-pointer select-none focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50"
         @click="emitStepForward(contactMethod.value)"
       >
         <span
-          class="
-            inline-flex
-            items-center
-            font-medium
-            rounded
-            px-4
-            py-3
-            leading-4
-            text-primary-100
-            m-3
-          "
+          class="inline-flex items-center font-medium rounded px-4 py-3 leading-4 text-primary-100 m-3"
           :style="{ 'background-color': contactMethod.backgroundHex }"
         >
           <i :class="contactMethod.iconClass" :style="{ color: contactMethod.logoHex }"></i>

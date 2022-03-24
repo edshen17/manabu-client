@@ -16,7 +16,7 @@
               }"
               @click="onPaymentGatewayClick(paymentGateway)"
             >
-              <template v-slot:title>
+              <template #title>
                 <div class="inline-flex items-center text-gray-600">
                   <i class="fa-lg mx-2 w-6 md:w-8" :class="paymentGateway.iconClass"></i>
                   <p class="text-lg capitalize px-1">
@@ -29,18 +29,7 @@
         </div>
       </div>
       <div
-        class="
-          w-full
-          lg:w-4/12 lg:mx-3
-          max-h-96
-          sticky
-          top-24
-          rounded-lg
-          bg-white
-          border-solid border-2
-          my-5
-          lg:my-0
-        "
+        class="w-full lg:w-4/12 lg:mx-3 max-h-96 sticky top-24 rounded-lg bg-white border-solid border-2 my-5 lg:my-0"
       >
         <div class="h-auto w-full">
           <div class="flex m-4">
@@ -141,10 +130,10 @@ export default Vue.extend({
             name: 'paypal',
             iconClass: 'fab fa-paypal',
           },
-          // {
-          //   name: 'stripe',
-          //   iconClass: 'fas fa-credit-card',
-          // },
+          {
+            name: 'stripe',
+            iconClass: 'fas fa-credit-card',
+          },
         ];
         return paymentGateways;
       },

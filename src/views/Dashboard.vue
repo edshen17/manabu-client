@@ -1,18 +1,7 @@
 <template>
   <div v-if="isFinishedOnboarding" class="bg-gray-50 h-auto min-h-screen">
     <div
-      class="
-        flex
-        justify-center
-        container
-        py-3
-        lg:py-7
-        mx-auto
-        lg:w-full
-        xl:w-9/12
-        flex-wrap
-        lg:flex-nowrap
-      "
+      class="flex justify-center container py-3 lg:py-7 mx-auto lg:w-full xl:w-9/12 flex-wrap lg:flex-nowrap"
     >
       <profile-image-card :user-data="userData" class="bg-white max-h-72 max-w-sm" />
       <div class="w-full">

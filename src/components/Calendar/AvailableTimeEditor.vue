@@ -9,7 +9,7 @@
       :left="showMenuOnLeft"
       offset-x
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <slot name="activator" :on="on" :attrs="attrs" />
       </template>
       <v-card color="grey lighten-4" flat>
@@ -35,7 +35,7 @@
               min-width="auto"
               @input="onDatePickerMenuInput"
             >
-              <template v-slot:activator="{ on, attrs }">
+              <template #activator="{ on, attrs }">
                 <button
                   :class="getDateEditorButtonClass(EDITOR_NAME.DATE_PICKER)"
                   v-bind="attrs"

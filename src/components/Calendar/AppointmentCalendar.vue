@@ -53,19 +53,7 @@
     </div>
     <button
       v-show="selectedTimeslots.length > 0"
-      class="
-        rounded-full
-        bg-green-500
-        h-14
-        w-14
-        md:h-16 md:w-16
-        fixed
-        p-0
-        bottom-4
-        right-4
-        md:bottom-5 md:right-10
-        z-10
-      "
+      class="rounded-full bg-green-500 h-14 w-14 md:h-16 md:w-16 fixed p-0 bottom-4 right-4 md:bottom-5 md:right-10 z-10"
       @click="$emit('submit-timeslots', emittedTimeslots)"
     >
       <i class="fas fa-arrow-right text-white"></i>
