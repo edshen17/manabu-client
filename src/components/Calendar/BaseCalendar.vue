@@ -11,10 +11,10 @@
           {{ $t('calendar.today') }}</v-btn
         >
         <v-btn fab text small color="grey darken-2" @click="moveCalendar('backward')">
-          <v-icon small> mdi-chevron-left </v-icon>
+          <i class="fas fa-chevron-left fa-xs"></i>
         </v-btn>
         <v-btn fab text small color="grey darken-2" @click="moveCalendar('forward')">
-          <v-icon small> mdi-chevron-right </v-icon>
+          <i class="fas fa-chevron-right fa-xs"></i>
         </v-btn>
         <v-toolbar-title v-if="$refs.calendar" class="md:mx-4">
           {{ $refs.calendar.title }}
@@ -23,7 +23,7 @@
           <template #activator="{ on, attrs }">
             <v-btn v-show="!isMobile" outlined color="grey darken-2" v-bind="attrs" v-on="on">
               <span>{{ calendarViewData[calendarView].text }}</span>
-              <v-icon right> mdi-menu-down </v-icon>
+              <i class="fas fa-caret-down pl-3 fa-sm"></i>
             </v-btn>
           </template>
           <v-list>

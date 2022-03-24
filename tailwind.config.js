@@ -7,9 +7,6 @@ module.exports = {
       fontFamily: {
         'noto-sans': ['"Noto Sans JP"'],
       },
-      backgroundImage: {
-        main: "url('../img/home.jpg')",
-      },
       height: {
         '10v': '10vh',
         '20v': '20vh',
