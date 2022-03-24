@@ -10,7 +10,7 @@
         <users-card :title="usersCardTitle" :user-data="userData" :is-admin="isAdmin" />
       </div>
     </div>
-    <edit-calendar v-if="isTeacher || isAdmin" :user-id="userData._id" />
+    <!-- <edit-calendar v-if="isTeacher || isAdmin" :user-id="userData._id" /> -->
   </div>
 </template>
 

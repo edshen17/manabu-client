@@ -14,11 +14,11 @@
                     <span class="text-red-500">every day</span>
                     with your own private teacher
                   </div>
-                  <button
+                  <router-link
                     class="bg-red-500 hover:bg-red-400 text-white py-2 px-6 text-lg rounded-lg font-bold mt-1"
+                    to="/signup"
+                    >{{ $t('button.homepage.getStarted') }}</router-link
                   >
-                    Get Started
-                  </button>
                 </div>
                 <div class="lg:w-1/2">
                   <img
