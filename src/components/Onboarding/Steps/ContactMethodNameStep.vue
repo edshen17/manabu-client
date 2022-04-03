@@ -68,13 +68,13 @@ export default Vue.extend({
             value: 'discord',
             backgroundHex: '#FFF',
           },
-          {
-            name: this.$t('contactMethod.zoom'),
-            iconClass: 'fas fa-video fa-2x',
-            logoHex: '#FFF',
-            value: 'zoom',
-            backgroundHex: '#2D8CFF',
-          },
+          // {
+          //   name: this.$t('contactMethod.zoom'),
+          //   iconClass: 'fas fa-video fa-2x',
+          //   logoHex: '#FFF',
+          //   value: 'zoom',
+          //   backgroundHex: '#2D8CFF',
+          // },
         ];
         return contactMethods;
       },

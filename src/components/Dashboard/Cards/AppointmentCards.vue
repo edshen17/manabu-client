@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link
-      v-for="appointment in visibleAppointments"
+      v-for="appointment in appointments"
       :key="appointment._id"
       :to="{ name: 'AppointmentCard', params: { appointmentId: appointment._id, appointment } }"
     >
@@ -68,16 +68,15 @@ export default Vue.extend({
       appointments: 'appointment/entityStateData',
       locale: 'user/locale',
     }),
-    visibleAppointments: {
-      get(): AppointmentDoc[] {
-        const visibleAppointments = this.appointments.slice(0, 3);
-        return visibleAppointments;
-      },
-    },
+    // visibleAppointments: {
+    //   get(): AppointmentDoc[] {
+    //     const visibleAppointments = this.appointments.slice(0, 3);
+    //     return visibleAppointments;
+    //   },
+    // },
   },
-  async created() {
-    await this.$store.dispatch('appointment/getEntityStateData');
-  },
+  // async created() {
+  // },
   methods: {
     getProfileImageUrl(appointment: AppointmentDoc): string | undefined {
       const isHostedBy = this.userData._id == appointment.hostedById;
