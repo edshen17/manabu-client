@@ -10,8 +10,6 @@
         </div>
       </div>
       <!-- <div class="md:my-5 md:ml-10 bg-white shadow-md rounded-lg p-4 border-solid mb-4 h-full">
-        Recommended
-        <content-cards />
       </div> -->
     </div>
     <edit-calendar v-if="isTeacher || isAdmin" :user-id="userData._id" />
@@ -28,7 +26,6 @@ import { mapGetters } from 'vuex';
 import EditCalendar from '@/components/Calendar/EditCalendar.vue';
 import UsersCard from '@/components/Dashboard/Cards/UsersCard.vue';
 import ProfileImageCard from '@/components/UserProfile/ProfileImageCard.vue';
-// import ContentCards from '@/components/Osusume/ContentCards.vue';
 
 export default Vue.extend({
   name: 'Dashboard',
@@ -38,7 +35,6 @@ export default Vue.extend({
     UsersCard,
     AppointmentCards,
     PackageTransactionCards,
-    // ContentCards,
   },
   props: {},
   data() {

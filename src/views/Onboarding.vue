@@ -122,6 +122,7 @@ import { PACKAGE_ENTITY_TYPE } from '../../../server/components/entities/package
 import AsyncLoader from '../components/Onboarding/Steps/AsyncLoader.vue';
 import NameStep from '../components/Onboarding/Steps/NameStep.vue';
 import PaymentEmailStep from '../components/Onboarding/Steps/PaymentEmailStep.vue';
+import { mixpanel } from '@/plugins/mixpanel';
 
 const updateUserByIdMixin = makeUpdateUserByIdMixin;
 const packageRepository = makePackageRepository;
@@ -278,6 +279,9 @@ export default Vue.extend({
           self.setData({ propertyName: emittedValueName, value: finalValue });
         }
         self.step('forward');
+        mixpanel.track(`Finish Onboarding step ${self.stepIndex + 1}`, {
+          distinct_id: self.userData._id,
+        });
       };
     },
     handleStepBackward(): () => void {
@@ -317,6 +321,7 @@ export default Vue.extend({
         },
         repositoryName: REPOSITORY_NAME.USER,
       });
+      mixpanel.track('Finish Onboarding', { distinct_id: this.userData._id });
     },
     async updateTeacherData(): Promise<void> {
       await (this as any).updateUserById({

@@ -19,7 +19,7 @@
                   </div>
                   <router-link
                     class="bg-red-500 hover:bg-red-400 text-white py-2 px-6 text-xl rounded-lg font-bold mt-1"
-                    to="/signup"
+                    to="/teachers"
                     >{{ $t('button.homepage.getStarted') }}</router-link
                   >
                 </div>
@@ -156,6 +156,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
+import { mixpanel } from '@/plugins/mixpanel/index';
 
 export default Vue.extend({
   name: 'Home',
@@ -226,6 +227,9 @@ export default Vue.extend({
         return testimonialData;
       },
     },
+  },
+  created() {
+    mixpanel.track('Landing Page');
   },
 });
 </script>

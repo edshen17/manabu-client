@@ -6,6 +6,7 @@
       integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
       crossorigin="anonymous"
     />
+
     <router-view />
   </component>
 </template>
@@ -22,7 +23,7 @@ export default Vue.extend({
       this.$store.dispatch('exchangeRate/getEntityStateData'),
       this.$store.dispatch('packageTransaction/getEntityStateData'),
       this.$store.dispatch('appointment/getEntityStateData'),
-      // this.$store.dispatch('content/getEntityStateData'),
+      this.$store.dispatch('content/getEntityStateData'),
     ];
     await Promise.all(promises);
   },

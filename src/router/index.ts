@@ -14,6 +14,7 @@ const ExtendedAppointmentCalendar = () => import('../views/ExtendedAppointmentCa
 const FindTeacher = () => import('../views/FindTeacher.vue');
 const Tsuginoji = () => import('../views/Tsuginoji.vue');
 // const Bunseki = () => import('../views/Bunseki.vue');
+// const Library = () => import('../views/Library.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -108,6 +109,12 @@ const routes: Array<RouteConfig> = [
   //   path: '/bunseki',
   //   name: 'Bunseki',
   //   component: Bunseki,
+  // },
+  // {
+  //   path: '/library',
+  //   name: 'Library',
+  //   component: Library,
+  //   meta: { ...layout },
   // },
 ];
 
