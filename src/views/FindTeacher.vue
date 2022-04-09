@@ -51,6 +51,7 @@ import { JoinedUserDoc } from '@server/models/User';
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { StringKeyObject } from '@server/types/custom';
+import { mixpanel } from '@/plugins/mixpanel';
 
 const teacherRepository = makeTeacherRepository;
 
@@ -85,6 +86,7 @@ export default Vue.extend({
     });
     const { teachers } = data;
     this.teachers = teachers;
+    mixpanel.track('View Teachers');
     await this.updateTeacherPrices();
   },
   methods: {

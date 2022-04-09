@@ -9,14 +9,17 @@
                 <div
                   class="px-4 text-2xl font-bold leading-8 lg:leading-loose lg:w-1/2 text-center order-1 lg:order-first mx-auto"
                 >
-                  <div class="w-80 mx-auto py-4">
+                  <div
+                    class="w-80 mx-auto pt-4 pb-10 lg:text-4xl lg:pt-28 lg:tracking-wide"
+                    style="line-height: 3rem"
+                  >
                     Learn Japanese
                     <span class="text-red-500">every day</span>
                     with your own private teacher
                   </div>
                   <router-link
-                    class="bg-red-500 hover:bg-red-400 text-white py-2 px-6 text-lg rounded-lg font-bold mt-1"
-                    to="/signup"
+                    class="bg-red-500 hover:bg-red-400 text-white py-2 px-6 text-xl rounded-lg font-bold mt-1"
+                    to="/teachers"
                     >{{ $t('button.homepage.getStarted') }}</router-link
                   >
                 </div>
@@ -153,6 +156,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
+import { mixpanel } from '@/plugins/mixpanel/index';
 
 export default Vue.extend({
   name: 'Home',
@@ -223,6 +227,9 @@ export default Vue.extend({
         return testimonialData;
       },
     },
+  },
+  created() {
+    mixpanel.track('Landing Page');
   },
 });
 </script>

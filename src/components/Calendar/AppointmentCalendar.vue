@@ -269,7 +269,12 @@ export default Vue.extend({
     },
     isAllowedDate(date: string): boolean {
       const isAllowedDate = this.events.some((availableTime) => {
-        return availableTime.formattedStartDate == date;
+        const { startDate, endDate } = availableTime;
+        const availableTimeDuration = dayjs(endDate).diff(startDate, 'minute');
+        const isSelectableDuration = availableTimeDuration >= this.duration;
+        const isSelectableDate = availableTime.formattedStartDate == date;
+        const isAllowedDate = isSelectableDate && isSelectableDuration;
+        return isAllowedDate;
       });
       return isAllowedDate;
     },

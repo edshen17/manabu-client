@@ -1,14 +1,16 @@
 <template>
   <div v-if="isFinishedOnboarding" class="bg-gray-50 h-auto min-h-screen">
-    <div
-      class="flex justify-center container py-3 lg:py-7 mx-auto lg:w-full xl:w-9/12 flex-wrap lg:flex-nowrap"
-    >
-      <profile-image-card :user-data="userData" class="bg-white max-h-72 max-w-sm" />
-      <div class="w-full">
-        <package-transaction-cards />
-        <appointment-cards />
-        <users-card :title="usersCardTitle" :user-data="userData" :is-admin="isAdmin" />
+    <div class="justify-center container py-3 lg:py-7 mx-auto lg:w-full xl:w-9/12">
+      <div class="flex flex-wrap lg:flex-nowrap">
+        <profile-image-card :user-data="userData" class="bg-white max-h-72 max-w-sm" />
+        <div class="w-full">
+          <package-transaction-cards />
+          <appointment-cards />
+          <users-card :title="usersCardTitle" :user-data="userData" :is-admin="isAdmin" />
+        </div>
       </div>
+      <!-- <div class="md:my-5 md:ml-10 bg-white shadow-md rounded-lg p-4 border-solid mb-4 h-full">
+      </div> -->
     </div>
     <edit-calendar v-if="isTeacher || isAdmin" :user-id="userData._id" />
   </div>

@@ -105,16 +105,11 @@ export default Vue.extend({
             );
           }
         );
-        const visiblePackageTransactions = incompletePackageTransactions.slice(0, 3);
-        return visiblePackageTransactions;
+        // const visiblePackageTransactions = incompletePackageTransactions.slice(0, 3);
+        // return visiblePackageTransactions;
+        return incompletePackageTransactions;
       },
     },
-  },
-  async created() {
-    await this.$store.dispatch('packageTransaction/getEntityStateData');
-  },
-  mounted() {
-    return;
   },
   methods: {
     getProfileImageUrl(packageTransaction: PackageTransactionDoc): string | undefined {

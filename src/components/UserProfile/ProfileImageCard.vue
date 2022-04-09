@@ -1,5 +1,5 @@
 <template>
-  <div class="py-8 shadow-lg rounded-lg w-96 md:w-5/6 md:mx-10 mb-5">
+  <div class="py-8 shadow-lg rounded-lg w-96 md:w-5/6 md:mx-10 mb-4">
     <profile-image :user-data="userData" />
     <div class="flex flex-col items-center text-center justify-center">
       <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">{{ userData.name }}</h2>

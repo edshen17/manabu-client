@@ -6,6 +6,7 @@
       integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
       crossorigin="anonymous"
     />
+
     <router-view />
   </component>
 </template>
@@ -17,8 +18,14 @@ export default Vue.extend({
   name: 'App',
   computed: {},
   async created() {
-    await this.$store.dispatch('user/getEntityStateData');
-    await this.$store.dispatch('exchangeRate/getEntityStateData');
+    const promises = [
+      this.$store.dispatch('user/getEntityStateData'),
+      this.$store.dispatch('exchangeRate/getEntityStateData'),
+      this.$store.dispatch('packageTransaction/getEntityStateData'),
+      this.$store.dispatch('appointment/getEntityStateData'),
+      this.$store.dispatch('content/getEntityStateData'),
+    ];
+    await Promise.all(promises);
   },
 });
 </script>

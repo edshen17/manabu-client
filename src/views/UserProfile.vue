@@ -52,6 +52,7 @@ import { makeUserRepository } from '../repositories/user';
 import TwoCardLayout from '@/components/UserProfile/Layouts/TwoCardLayout.vue';
 import { makeExchangeRateMixin } from '@/mixins/exchangeRate';
 import { mapGetters } from 'vuex';
+import { mixpanel } from '@/plugins/mixpanel';
 const userRepository = makeUserRepository;
 
 export default Vue.extend({
@@ -83,6 +84,7 @@ export default Vue.extend({
         if (this.userId) {
           const { data } = await userRepository.getById({ _id: this.userId, query: {} });
           const { user } = data;
+          mixpanel.track('View Teacher', { teacherId: this.userId });
           return user;
         }
       },
@@ -107,6 +109,7 @@ export default Vue.extend({
   methods: {
     showDialog(): void {
       (this as any).$refs.teacherPackagesCard.showDialog = true;
+      mixpanel.track('Checkout', { teacherId: this.userId });
     },
   },
 });
