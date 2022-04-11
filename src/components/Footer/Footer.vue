@@ -74,6 +74,8 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { StringKeyObject } from '../../../../server/types/custom';
 import { SUPPORTED_LOCALES } from '../../plugins/i18n';
+import { ipClient } from '@/plugins/ipregistry/';
+import { ls } from '@/store/plugins';
 
 export default Vue.extend({
   name: 'Footer',
@@ -189,6 +191,21 @@ export default Vue.extend({
           },
         ];
       },
+    },
+  },
+  async created() {
+    const ipData = ls.get('ipData');
+    if (!ipData) {
+      const { data } = await ipClient.originLookup();
+      ls.set('ipData', data);
+      this.setCurrencyFromIp(data);
+    }
+  },
+  methods: {
+    setCurrencyFromIp(data: StringKeyObject): void {
+      const { currency } = data;
+      const { code } = currency;
+      this.userCurrency = code;
     },
   },
 });

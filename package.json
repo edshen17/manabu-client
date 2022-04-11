@@ -9,6 +9,7 @@
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
   },
   "dependencies": {
+    "@ipregistry/client": "^4.4.2",
     "@tailwindcss/forms": "^0.3.3",
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "@types/clone-deep": "^4.0.1",

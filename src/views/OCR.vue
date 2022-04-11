@@ -1,13 +1,16 @@
 <template>
-  <div>Bunseki</div>
+  <div>
+    <content-uploader />
+  </div>
 </template>
 
 <script lang="ts">
+import ContentUploader from '@/components/OCR/ContentUploader.vue';
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'Bunseki',
-  components: {},
+  name: '',
+  components: { ContentUploader },
   props: {
     // prop: {
     //   type: String,
@@ -16,9 +19,7 @@ export default Vue.extend({
     // },
   },
   data() {
-    return {
-      imageModel: '',
-    };
+    return {};
   },
   computed: {
     // prop: {
@@ -27,9 +28,6 @@ export default Vue.extend({
     //   },
     // },
   },
-  // watch: {
-  //   prop: function () {},
-  // },
   mounted() {
     return;
   },
