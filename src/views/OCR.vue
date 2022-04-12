@@ -5,11 +5,11 @@
 </template>
 
 <script lang="ts">
-import ContentUploader from '@/components/OCR/ContentUploader.vue';
+import ContentUploader from '@/components/Ocr/ContentUploader.vue';
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: '',
+  name: 'Ocr',
   components: { ContentUploader },
   props: {
     // prop: {

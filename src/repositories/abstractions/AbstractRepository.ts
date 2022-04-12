@@ -42,12 +42,13 @@ abstract class AbstractRepository implements IRepository {
     customResourcePath?: string;
     query: StringKeyObject;
     payload: StringKeyObject;
+    config?: StringKeyObject;
   }): Promise<StringKeyObject> => {
-    const { customResourcePath, query, payload } = props;
+    const { customResourcePath, query, payload, config } = props;
     const queryString = this._queryStringHandler.stringifyQueryStringObj(query);
     const baseApiUrl = customResourcePath || `${this._resourcePath}`;
     const apiUrl = `${baseApiUrl}?${queryString}`;
-    return await this._client.post(apiUrl, payload);
+    return await this._client.post(apiUrl, payload, config);
   };
 
   public updateById = async (props: {

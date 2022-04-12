@@ -15,7 +15,7 @@ const FindTeacher = () => import('../views/FindTeacher.vue');
 const Tsuginoji = () => import('../views/Tsuginoji.vue');
 // const Bunseki = () => import('../views/Bunseki.vue');
 // const Library = () => import('../views/Library.vue');
-const OCR = () => import('../views/OCR.vue');
+const Ocr = () => import('../views/Ocr.vue');
 
 const loginProtectedRouterGuard = makeLoginProtectedRouterGuard;
 const logoutRouterGuard = makeLogoutRouterGuard;
@@ -119,8 +119,8 @@ const routes: Array<RouteConfig> = [
   // },
   {
     path: '/ocr',
-    name: 'OCR',
-    component: OCR,
+    name: 'Ocr',
+    component: Ocr,
     meta: { ...layout },
   },
 ];
