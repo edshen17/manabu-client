@@ -194,12 +194,12 @@ export default Vue.extend({
     },
   },
   async created() {
-    const ipData = ls.get('ipData');
-    if (!ipData) {
-      const { data } = await ipClient.originLookup();
-      ls.set('ipData', data);
-      this.setCurrencyFromIp(data);
-    }
+    // const ipData = ls.get('ipData');
+    // if (!ipData) {
+    //   const { data } = await ipClient.originLookup();
+    //   ls.set('ipData', data);
+    //   this.setCurrencyFromIp(data);
+    // }
   },
   methods: {
     setCurrencyFromIp(data: StringKeyObject): void {

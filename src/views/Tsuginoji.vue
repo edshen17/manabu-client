@@ -100,7 +100,6 @@ import { ls } from '@/store/plugins';
 import { focus } from 'vue-focus';
 import TokenizerJa from 'natural/lib/natural/tokenizers/tokenizer_ja';
 import LineChart from '@/components/Chart/LineChart.vue';
-import { IS_PRODUCTION } from '@server/constants';
 
 const tokenizerJa = new TokenizerJa();
 const wordRepository = makeWordRepository;
