@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "cross-env NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "i18n:report": "vue-cli-service i18n:report --src \"./src/**/*.?(js|vue)\" --locales \"./src/locales/**/*.json\""
@@ -23,6 +23,7 @@
     "clone-deep": "^4.0.1",
     "core-js": "^3.6.5",
     "countries-and-timezones": "^3.2.2",
+    "cross-env": "^7.0.3",
     "crypto-random-string": "^4.0.0",
     "currency.js": "^2.0.4",
     "dayjs": "^1.10.4",
