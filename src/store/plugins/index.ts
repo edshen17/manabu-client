@@ -9,7 +9,11 @@ const plugins = [
     key: 'vuex',
     storage: {
       getItem: (key) => {
-        ls.get(key);
+        try {
+          ls.get(key);
+        } catch (err) {
+          ls.removeAll();
+        }
       },
       setItem: (key, value) => ls.set(key, value),
       removeItem: (key) => ls.remove(key),
@@ -17,4 +21,4 @@ const plugins = [
   }),
 ];
 
-export { plugins, ls };
+export { ls, plugins };
